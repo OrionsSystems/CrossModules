@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Orions.CrossModuleTestApp": {
+      "commandName": "Project",
+      "commandLineArgs": "--id=dd57dad2-3e01-4a13-88c1-0e4cc125c96f --config=eyIkdHlwZSI6Ik9yaW9ucy5JbmZyYXN0cnVjdHVyZS5IeXBlck1lZGlhLkNyb3NzTW9kdWxlQ29uZmlnLCBPcmlvbnMuTm9kZS5OZXRTdGFuZGFyZCIsIkJpbmRpbmdBZGRyZXNzIjoiaHR0cDovLzAuMC4wLjAiLCJCaW5kaW5nUG9ydCI6NzgxNywiQ29udHJvbENvbm5lY3Rpb25TdHJpbmciOiJodHRwOi8vcm9vdDpAMTI3LjAuMC4xOjQ5OTkvRXhlY3V0ZSIsIkNsb3VkQ29ubmVjdGlvblN0cmluZyI6bnVsbCwiTm9kZUNvbm5lY3Rpb25TdHJpbmdzIjp7IiR0eXBlIjoiU3lzdGVtLlN0cmluZ1tdLCBtc2NvcmxpYiIsIiR2YWx1ZXMiOlsiaHR0cDovL3Jvb3Q6IUAxMjcuMC4wLjE6NDU4MC9FeGVjdXRlIl19LCJJZCI6Ijc4ZDBhOGEzLWM0MTctNDY4YS1hNDI1LTFiNTVlNDY5ZWM2NSIsIkpzb25TZXJpYWxpemVkIjpudWxsfQ=="
+    }
+  }
+}

@@ -1,0 +1,109 @@
+﻿@page "/"
+@inherits BaseOrionsComponent;
+
+@using Orions.CrossModules.Blazor;
+@using Orions.CrossModules.Data;
+
+@using Orions.Infrastructure.HyperMedia;
+
+
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+
+<h1>Analytics</h1>
+
+
+<div class="container-fluid">
+
+	<div class="row">
+		<div class="col-md-5">
+			<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
+			<!--
+			<TelerikChart>
+				<TelerikChartSeriesItems>
+					<TelerikChartSeries Type="ChartSeriesType.Pie" Data="@labelsChartData" VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
+										Field="@nameof(TagLabelsPieChartData.Count)"
+										CategoryField="@nameof(TagLabelsPieChartData.Label)">
+
+					</TelerikChartSeries>
+
+				</TelerikChartSeriesItems>
+
+				<TelerikChartTitle Text="Items per Label"></TelerikChartTitle>
+
+
+				<TelerikChartLegend Position="ChartLegendPosition.Right">
+				</TelerikChartLegend>
+			</TelerikChart>
+			-->
+
+
+		</div>
+		<div class="col-md-5">
+			<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
+			<!--
+			<KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData">
+			</KendoTreemap>
+			-->
+		</div>
+		<div class="col-md-2">
+
+		</div>
+
+	</div>
+
+
+</div>
+
+<div>
+	<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
+	<!--
+		<TelerikChart>
+			<TelerikChartSeriesItems>
+				<TelerikChartSeries Type="ChartSeriesType.Column"
+									Data="@tagTimingData"
+									Field="@nameof(TagStreamTimeChartData.Count)"
+									CategoryField="@nameof(TagStreamTimeChartData.Time)">
+				</TelerikChartSeries>
+
+			</TelerikChartSeriesItems>
+
+			<TelerikChartTitle Text="Items per Time"></TelerikChartTitle>
+
+			<TelerikChartLegend Position="ChartLegendPosition.Right">
+			</TelerikChartLegend>
+		</TelerikChart>
+		-->
+</div>
+
+
+@functions
+{
+
+	private string treemapId = "tagsTreemap";
+
+	private List<TagLabelsPieChartData> labelsChartData = new List<TagLabelsPieChartData>();
+
+	public List<TagStreamTimeChartData> tagTimingData = new List<TagStreamTimeChartData>();
+
+	public TreeMapItem[] tagTreemapData { get; set; } = new TreeMapItem[0];
+
+	private string Request { get; set; }
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		CrossModuleVisualizationRequest vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
+		await NodeStatisticsManager.Instance.InitDataAsync(vizRequest);
+
+		labelsChartData = NodeStatisticsManager.Instance.TagLabelsData;
+
+		tagTimingData = NodeStatisticsManager.Instance.TagTimingData;
+
+		tagTreemapData = NodeStatisticsManager.Instance.TagTreemapData.ToArray();
+
+		await base.OnInitializedAsync();
+
+	}
+
+}

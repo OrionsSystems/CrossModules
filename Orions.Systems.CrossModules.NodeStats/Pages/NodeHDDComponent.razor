@@ -1,0 +1,58 @@
+@using Microsoft.AspNetCore.Components
+@using MatBlazor
+@using Orions.Infrastructure.Common
+
+@using Telerik.Blazor
+@using Telerik.Blazor.Components.Chart
+
+@functions
+{
+   string Name => "Disk Space: " + Disk?.Caption;
+
+   [Parameter] public WMIHelper.DetailDriveInfo Disk { get; set; }
+
+   public class MyPieChartModel
+   {
+      public string SegmentName { get; set; }
+      public double SegmentValue { get; set; }
+      public string SegmentColor { get; set; }
+   }
+
+   public List<MyPieChartModel> Pies { get; set; } = new List<MyPieChartModel>();
+
+   protected override void OnInitialized()
+   {
+      Pies.Clear();
+      var taken = Disk?.Progress;
+      if (taken.HasValue)
+      {
+         Pies.Add(new MyPieChartModel() { SegmentName = "Taken", SegmentValue = taken.Value, SegmentColor = "#333" });
+         Pies.Add(new MyPieChartModel() { SegmentName = "Free", SegmentValue = 1 - taken.Value, SegmentColor = "#ccc" });
+      }
+
+      base.OnInitialized();
+   }
+
+}
+
+<TelerikChart>
+	<TelerikChartSeriesItems>
+
+		<TelerikChartSeries Type="ChartSeriesType.Pie" Data="@Pies"
+			ColorField="@nameof(MyPieChartModel.SegmentColor)"
+			Field="@nameof(MyPieChartModel.SegmentValue)" CategoryField="@nameof(MyPieChartModel.SegmentName)">
+		</TelerikChartSeries>
+	</TelerikChartSeriesItems>
+
+	<TelerikChartTitle Text="@Name"></TelerikChartTitle>
+
+	<TelerikChartLegend Position="ChartLegendPosition.Left">
+	</TelerikChartLegend>
+</TelerikChart>
+
+@*<br />
+	<b>
+		<MatButton Label="@disk.Label" OnClick="@(e => onDiskClicked(disk))"></MatButton>
+	</b>
+	<i>@disk.FileSystem</i>
+	<MatProgressBar Progress="@disk.Progress"></MatProgressBar>*@

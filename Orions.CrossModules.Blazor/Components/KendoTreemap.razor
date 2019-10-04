@@ -1,0 +1,27 @@
+﻿@using System.Threading.Tasks
+@using Microsoft.AspNetCore.Components
+@inject Microsoft.JSInterop.IJSRuntime JS
+
+<div id="treeMapContainer">
+    <div id="@TreeMapId"></div>
+
+</div>
+
+@functions
+{
+
+   [Parameter]
+   public string TreeMapId { get; set; }
+
+   //[Parameter]
+   //public TreeMapItem[] TreeMapData { get; set; }
+
+
+   protected override async Task OnAfterRenderAsync(bool firstRender)
+   {
+      throw new NotImplementedException();
+
+      //var data = TreeMapItem.GenerateTestData();
+      //await JS.InvokeAsync<object>("Orions.KendoTreemap.init", TreeMapId, TreeMapData);
+   }
+}

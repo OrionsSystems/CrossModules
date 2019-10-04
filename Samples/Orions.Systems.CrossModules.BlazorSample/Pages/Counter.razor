@@ -1,0 +1,25 @@
+@page "/counter"
+@using Orions.Systems.CrossModules.BlazorSample.Data
+@inject TestService TestService
+
+@inherits CommonComponent<TestVm>
+
+<h1>Counter</h1>
+
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="@DataContext.Command1">Click me</button>
+
+<text>@DataContext.Value1.Value</text>
+
+@code {
+   int currentCount = 0;
+
+   string xoxo { get; set; }
+
+   void IncrementCount()
+   {
+      xoxo = Program.CrossModuleInstanceHost.AppliedConfig.NodeConnections[0].ConnectionUri;
+      currentCount++;
+   }
+}

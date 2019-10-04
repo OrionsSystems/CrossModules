@@ -1,0 +1,174 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RazorLangVersion>3.0</RazorLangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.html5.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.core.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.flash.swf" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.js" />
+    <None Remove="content\jwplayer\8.4.2\jwplayer.vr.js" />
+    <None Remove="content\jwplayer\8.4.2\polyfills.intersection-observer.js" />
+    <None Remove="content\jwplayer\8.4.2\polyfills.webvtt.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.airplay.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.cast.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.flash.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.hlsjs.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.html5.js" />
+    <None Remove="content\jwplayer\8.4.2\provider.shaka.js" />
+    <None Remove="content\jwplayer\8.4.2\skins\beelden.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\bekle.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\five.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\glow.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\roundster.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\seven.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\six.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\stormtrooper.css" />
+    <None Remove="content\jwplayer\8.4.2\skins\vapor.css" />
+    <None Remove="content\jwplayer\8.4.2\vttparser.js" />
+    <None Remove="content\kendo\jquery.min.js" />
+    <None Remove="content\kendo\kendo.all.min.js" />
+    <None Remove="content\kendo\kendo.common-material.min.css" />
+    <None Remove="content\kendo\kendo.material.min.css" />
+    <None Remove="content\kendo\kendo.material.mobile.min.css" />
+    <None Remove="content\scripts\common.js" />
+    <None Remove="content\scripts\kendoComponents.js" />
+    <None Remove="content\styles.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.compatibility.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.controls.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.core.controls.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.html5.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.core.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.flash.swf">
+      <LogicalName>blazor:file:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\jwplayer.vr.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\polyfills.intersection-observer.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\polyfills.webvtt.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.airplay.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.cast.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.flash.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.hlsjs.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.html5.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\provider.shaka.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\beelden.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\bekle.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\five.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\glow.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\roundster.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\seven.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\six.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\stormtrooper.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\vapor.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\jwplayer\8.4.2\vttparser.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\kendo\jquery.min.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\kendo\kendo.all.min.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\kendo\kendo.common-material.min.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\kendo\kendo.material.min.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\kendo\kendo.material.mobile.min.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\scripts\common.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\scripts\kendoComponents.js">
+      <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="content\styles.css">
+      <LogicalName>blazor:css:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Cloud.Common\Orions.Cloud.Common.NetStandard.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
+  </ItemGroup>
+
+</Project>

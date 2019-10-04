@@ -1,0 +1,29 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:5321/",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "commandLineArgs": "--file=C:\\Development\\Orions\\Systems\\Orions.Systems.Open\\CrossModules\\Samples\\Orions.Systems.CrossHostWebAppSample\\config.json",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Orions.CrossHostWebAppSample": {
+      "commandName": "Project",
+      "commandLineArgs": "--id=56cff63b-865a-416e-83a3-904ed4514904 --config=eyIkdHlwZSI6Ik9yaW9ucy5JbmZyYXN0cnVjdHVyZS5IeXBlck1lZGlhLkNyb3NzTW9kdWxlQ29uZmlnLCBPcmlvbnMuTm9kZS5OZXRTdGFuZGFyZCIsIkJpbmRpbmdBZGRyZXNzIjoiaHR0cDovLzEyNy4wLjAuMSIsIkJpbmRpbmdQb3J0Ijo2ODE3LCJBdXRvU2VsZWN0QmluZGluZ1BvcnQiOnRydWUsIkNvbnRyb2xDb25uZWN0aW9uU3RyaW5nIjoiaHR0cDovL3Jvb3Q6QDEyNy4wLjAuMTo0OTk5L0V4ZWN1dGUiLCJDbG91ZENvbm5lY3Rpb25TdHJpbmciOm51bGwsIk5vZGVDb25uZWN0aW9uU3RyaW5ncyI6eyIkdHlwZSI6IlN5c3RlbS5TdHJpbmdbXSwgbXNjb3JsaWIiLCIkdmFsdWVzIjpbImh0dHA6Ly9yb290OkAxMjcuMC4wLjE6NDU4MC9FeGVjdXRlIl19LCJEeW5hbWljUGFyYW1ldGVycyI6bnVsbCwiSWQiOiI1OThmZmM5OS0xODUwLTRhN2ItYmMzOS1hYjdlOWFmOTI0YTAiLCJKc29uU2VyaWFsaXplZCI6bnVsbH0=",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5322/"
+    }
+  }
+}

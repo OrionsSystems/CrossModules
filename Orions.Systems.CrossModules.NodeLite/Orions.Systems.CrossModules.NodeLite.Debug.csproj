@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Orions.Systems.CrossModules.NodeLite</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.NodeLite</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="ReactNOW.Node.Lite.Template.yml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="ReactNOW.Node.Lite.Template.yml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.CrossModules.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="_ModuleParams.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Compile>
+  </ItemGroup>
+
+</Project>

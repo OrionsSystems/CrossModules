@@ -1,0 +1,28 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:2403",
+      "sslPort": 44343
+    }
+  },
+  "profiles": {
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Orions.Systems.CrossModules.NodeStats": {
+      "commandName": "Project",
+      "commandLineArgs": "--id=dd17dad2 --config=eyIkdHlwZSI6Ik9yaW9ucy5JbmZyYXN0cnVjdHVyZS5IeXBlck1lZGlhLkNyb3NzTW9kdWxlQ29uZmlnLCBPcmlvbnMuTm9kZS5OZXRTdGFuZGFyZCIsIkJpbmRpbmdBZGRyZXNzIjoiaHR0cDovLzAuMC4wLjAiLCJCaW5kaW5nUG9ydCI6NjgxNywiQXV0b1NlbGVjdEJpbmRpbmdQb3J0IjpmYWxzZSwiQ29udHJvbENvbm5lY3Rpb25TdHJpbmciOm51bGwsIkNsb3VkQ29ubmVjdGlvblN0cmluZyI6bnVsbCwiTm9kZUNvbm5lY3Rpb25TdHJpbmdzIjpudWxsLCJEeW5hbWljUGFyYW1ldGVycyI6eyIkdHlwZSI6Ik9yaW9ucy5JbmZyYXN0cnVjdHVyZS5IeXBlck1lZGlhLkNyb3NzTW9kdWxlRHluYW1pY1BhcmFtZXRlcnMsIE9yaW9ucy5Ob2RlLk5ldFN0YW5kYXJkIiwiVmFsdWVzIjp7IiR0eXBlIjoiT3Jpb25zLkluZnJhc3RydWN0dXJlLkh5cGVyTWVkaWEuQ3Jvc3NNb2R1bGVEeW5hbWljUGFyYW1ldGVycytWYWx1ZVBhaXJbXSwgT3Jpb25zLk5vZGUuTmV0U3RhbmRhcmQiLCIkdmFsdWVzIjpbeyIkdHlwZSI6Ik9yaW9ucy5JbmZyYXN0cnVjdHVyZS5IeXBlck1lZGlhLkNyb3NzTW9kdWxlRHluYW1pY1BhcmFtZXRlcnMrVmFsdWVQYWlyLCBPcmlvbnMuTm9kZS5OZXRTdGFuZGFyZCIsIktleSI6InBvcnQiLCJWYWx1ZSI6IjEyMyJ9XX0sIklkIjoiOTE5ZTM2ZmMtMmYwNC00MjM1LWFhMWYtZTEzYTI5OGI5NWIwIiwiSnNvblNlcmlhbGl6ZWQiOm51bGx9LCJJZCI6ImVlYmNjNjI0LTVmZDYtNDUyNy04OWY1LWUzOTVmMTk3YWUzNSIsIkpzb25TZXJpYWxpemVkIjpudWxsfQ== --file=C:\\Development\\Orions\\Systems\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.NodeStats\\config.json",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+    }
+  }
+}

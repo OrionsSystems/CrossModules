@@ -1,0 +1,93 @@
+ #Visual studio YAML editor: https://visualstudiogallery.msdn.microsoft.com/34423c06-f756-4721-8394-bc3d23b91ca7
+
+# SERVER Instance
+Active: true
+Role: Server
+Type: HyperServerMaster
+Config: !HyperServerMasterConfig
+  Id: ServerMaster-{id}
+  StartupDelaySeconds: 0
+  EnableCompression: true
+  DisableLogging: false
+  RunDocumentCheckFixes: True
+  Elements:
+
+# ---------------------------------------------------------------- LOGGERS
+
+  - !HyperServerElementConfig
+    Active: true
+    Role: Logger
+    Type: FileLogger
+    Config: !FileLoggerConfig
+      LogFilePath: '{id}.log.txt'
+      MinTypeFilter: Debug
+      Name: 'App.FileLogger'
+
+# ---------------------------------------------------------------- MAIN
+
+# Main Store Instance
+  - !HyperServerElementConfig
+    Active: true
+    Role: Store
+    Type: HyperExtensibleSink
+    Config: !HyperExtensibleSinkConfig
+      SecurityProviderType: HyperStoreSecurityProvider
+      SecurityProviderConfig: !HyperStoreSecurityProviderConfig
+         AuthenticationProviderType: HyperStoreAuthenticationProvider
+         AuthenticationProviderConfig: !HyperStoreAuthenticationProviderConfig
+            AllowAnonymousAccess: false
+            SystemUsers:
+               - !HyperUser
+                  Username: "root"
+                  Password: ""
+                  Permissions: 
+                     - !AdministrativePermission
+                        Permission: Administrative
+                     - !AdministrativePermission
+                        Permission: Exploitation
+            MandatoryInviteCode: ''
+            VersionPolicy: MajorMinorPartBuild
+            VersionPolicyOutcome: Warning #Ban users from logging in with a version different from the servers.
+        
+
+# Net Store Server
+  - !HyperServerElementConfig
+    Active: true
+    Role: StoreExtender
+    Type: NetStoreServer
+    Config: !NetStoreServerConfig
+        RunSilverlightPolicyServer: true
+        UseMonoCompatibilityPatch: false
+        HttpPort: {HttpPort}
+        Port: Null
+
+# DiagnosticsExtender
+  - !HyperServerElementConfig
+    Active: true
+    Role: StoreExtender
+    Type: FileStore
+    Config: !FileStoreConfig
+       RootFolder: {FileStoreFolder}
+       HyperStoreBehaviors:
+       - !ConfigPair
+         Active: true
+         Type: DocumentSystemViewHyperStoreBehavior
+#         Config:
+
+# DiagnosticsExtender
+  - !HyperServerElementConfig
+    Active: true
+    Role: StoreExtender
+    Type: DiagnosticsExtender
+
+# MONGO
+  - !HyperServerElementConfig
+    Active: true
+    Role: StoreExtender
+    Type: MongoDocumentHyperExtender
+    Config: !MongoDocumentHyperExtenderConfig
+#        RootCredentials: RootUser:J0eXAiOiJDU1
+        DatabaseName: NodeLite_{id}
+        MongoConnectionString:  mongodb://localhost
+        RunFixes: false
+

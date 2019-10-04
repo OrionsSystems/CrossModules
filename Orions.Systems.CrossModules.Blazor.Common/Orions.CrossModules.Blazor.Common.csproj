@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <LangVersion>7.3</LangVersion>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <AssemblyName>Orions.Systems.CrossModules.Blazor.Common</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.Blazor.Common</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- .js/.css files will be referenced via <script>/<link> tags; other content files will just be included in the app's 'dist' directory without any tags referencing them -->
+    <EmbeddedResource Include="content\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="content\jwplayer\initPlayer.js" />
+    <None Remove="content\kendo\jquery.min.js" />
+    <None Remove="content\kendo\kendo.all.min.js" />
+    <None Remove="content\kendo\kendo.common-material.min.css" />
+    <None Remove="content\kendo\kendo.material.min.css" />
+    <None Remove="content\kendo\kendo.material.mobile.min.css" />
+    <None Remove="content\scripts\kendoComponents.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
+  </ItemGroup>
+
+</Project>

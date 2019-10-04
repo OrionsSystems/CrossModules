@@ -1,0 +1,431 @@
+@page
+@model IndexModel
+@{
+	ViewData["Title"] = "Mission Analytics";
+
+	var routeParams = new
+	{
+		Instace = Model.Instance,
+		WorkflowInstanceIds = Model.WorkflowInstanceIds,
+		ReportDays = Model.ReportDaysValue,
+	};
+
+	var statisticUrl = Url.Action("GetStatisticsData", "MissionAnalytics", routeParams);
+
+}
+
+<div class="wrapper">
+	@if (string.IsNullOrEmpty(Model.TemplateId) || Model.TemplateId == "3")
+	{
+		@await Html.PartialAsync("_mission-v3", Model)
+	}
+	else if (Model.TemplateId == "1")
+	{
+		@await Html.PartialAsync("_mission-v1", Model)
+	}
+	else if (Model.TemplateId == "2")
+	{
+		@await Html.PartialAsync("_mission-v2", Model)
+	}
+
+</div>
+
+<div id="loading" class="ui-loading ui-loading-firstload">
+	<div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</div>
+
+@section styles
+	{
+	<style>
+		.sparkline div .ibox {
+			margin-bottom: 0px;
+		}
+
+		.sparkline {
+			margin-top: 15px;
+		}
+
+		#missionProgressTitle img,
+		#missionStatisticTitle img {
+			height: 40px;
+			margin-right: 10px;
+		}
+
+		h2#missionProgressTitle, h2#missionStatisticTitle {
+			margin-top: 5px;
+			margin-bottom: 2px;
+		}
+
+		#session-log,
+		#new-taggers-log,
+		#exploitation-saturation-log,
+		#completion-percent-log {
+			width: 100%;
+		}
+
+		.dropdown-item {
+			padding: 4px 8px !important;
+		}
+
+		.ui-loading {
+			position: fixed;
+			width: 100%;
+			height: 100%;
+			background-color: rgba(255, 255, 255, 0.8);
+			left: 0;
+			top: 0;
+			z-index: 1000
+		}
+
+			.ui-loading div {
+				animation: loading 333ms alternate infinite cubic-bezier(0.2, 0, 0.5, 1);
+				-webkit-animation: loading 333ms alternate infinite cubic-bezier(0.2, 0, 0.5, 1);
+				-moz-animation: loading 333ms alternate infinite cubic-bezier(0.2, 0, 0.5, 1);
+				width: 50px;
+				height: 50px;
+				background-color: black;
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				border-radius: 100px;
+				margin-left: -25px;
+				margin-top: -25px;
+			}
+
+		.ui-loading-firstload {
+			background: black
+		}
+
+		.lds-spinner {
+			color: official;
+			display: inline-block;
+			position: relative;
+			width: 64px;
+			height: 64px;
+		}
+
+			.lds-spinner div {
+				transform-origin: 32px 32px;
+				animation: lds-spinner 1.2s linear infinite;
+			}
+
+				.lds-spinner div:after {
+					content: " ";
+					display: block;
+					position: absolute;
+					top: 3px;
+					left: 29px;
+					width: 5px;
+					height: 14px;
+					border-radius: 20%;
+					background: #fff;
+				}
+
+				.lds-spinner div:nth-child(1) {
+					transform: rotate(0deg);
+					animation-delay: -1.1s;
+				}
+
+				.lds-spinner div:nth-child(2) {
+					transform: rotate(30deg);
+					animation-delay: -1s;
+				}
+
+				.lds-spinner div:nth-child(3) {
+					transform: rotate(60deg);
+					animation-delay: -0.9s;
+				}
+
+				.lds-spinner div:nth-child(4) {
+					transform: rotate(90deg);
+					animation-delay: -0.8s;
+				}
+
+				.lds-spinner div:nth-child(5) {
+					transform: rotate(120deg);
+					animation-delay: -0.7s;
+				}
+
+				.lds-spinner div:nth-child(6) {
+					transform: rotate(150deg);
+					animation-delay: -0.6s;
+				}
+
+				.lds-spinner div:nth-child(7) {
+					transform: rotate(180deg);
+					animation-delay: -0.5s;
+				}
+
+				.lds-spinner div:nth-child(8) {
+					transform: rotate(210deg);
+					animation-delay: -0.4s;
+				}
+
+				.lds-spinner div:nth-child(9) {
+					transform: rotate(240deg);
+					animation-delay: -0.3s;
+				}
+
+				.lds-spinner div:nth-child(10) {
+					transform: rotate(270deg);
+					animation-delay: -0.2s;
+				}
+
+				.lds-spinner div:nth-child(11) {
+					transform: rotate(300deg);
+					animation-delay: -0.1s;
+				}
+
+				.lds-spinner div:nth-child(12) {
+					transform: rotate(330deg);
+					animation-delay: 0s;
+				}
+
+		@@keyframes lds-spinner {
+			0% {
+				opacity: 1;
+			}
+
+			100% {
+				opacity: 0;
+			}
+		}
+	</style>
+}
+
+@section scripts{
+	<script type="text/javascript">
+
+		function createSessionSparklines(rowDataSource) {
+
+			var sessions = new Array();
+			rowDataSource.forEach(function (element) {
+				if (element.Content === 'Sessions') sessions.push(element.Sessions);
+			})
+
+			$("#session-log").kendoSparkline({
+				type: "area",
+				data: sessions,
+				tooltip: {
+					format: "{0} Count"
+				}
+			});
+
+			kendo.ui.progress($("#seesionChartLoading"), false);
+		}
+
+		function createNewTaggersSparklines(rowDataSource) {
+
+			var newTaggers = new Array();
+			rowDataSource.forEach(function (element) {
+				if (element.Content === 'NewTaggers')  newTaggers.push(element.NewTaggers);
+			})
+
+			$("#new-taggers-log").kendoSparkline({
+				type: "area",
+				data: newTaggers,
+				tooltip: {
+					format: "{0}"
+				}
+			});
+
+			kendo.ui.progress($("#newTaggersChartLoading"), false);
+		}
+
+		function createExploitationSaturationSparklines(rowDataSource) {
+
+			var exploitationSaturations = new Array();
+			rowDataSource.forEach(function (element) {
+				if (element.Content === 'ExploitationSaturation') exploitationSaturations.push(element.ExploitationSaturationRound);
+			})
+
+			$("#exploitation-saturation-log").kendoSparkline({
+				type: "area",
+				data: exploitationSaturations,
+				tooltip: {
+					format: "{0} %"
+				}
+			});
+
+			kendo.ui.progress($("#exploitationSaturationChartLoading"), false);
+		}
+
+		function createCompletionPercentSparklines(rowDataSource) {
+
+			var completionPercent = new Array();
+			rowDataSource.forEach(function (element) {
+				if (element.Content === 'CompletionPercent') completionPercent.push(element.CompletionPercentRound);
+			})
+
+			$("#completion-percent-log").kendoSparkline({
+				type: "area",
+				data: completionPercent,
+				tooltip: {
+					format: "{0} %"
+				}
+			});
+
+			kendo.ui.progress($("#completionPercentChartLoading"), false);
+		}
+
+		function statistic_loading() {
+
+			var statistic = $("#missionStatistic");
+			var template = statistic.data('template');
+
+			statistic.html('');
+
+			var missionStatisticTitle = $('#missionStatisticTitle');
+			missionStatisticTitle.addClass('hidden');
+
+			var url = "@Html.Raw(statisticUrl)";
+
+			if (template) url = url + '&template=' + template;
+
+			$.get(url).done(function (response) {
+
+				kendo.ui.progress($("#statisticChartLoading"), false);
+				missionStatisticTitle.removeClass('hidden');
+
+				statistic.append(response);
+
+			});
+		}
+
+		function onChartRender(e) {
+			var loading = $("#progressChartLoading", e.sender.element.parent());
+			kendo.ui.progress(loading, false);
+
+			var missionProgressTitle = $('#missionProgressTitle');
+			missionProgressTitle.removeClass('hidden');
+
+			var chart = $("#chart").data("kendoChart");
+			var rowDataSource = chart.dataSource._data;
+
+			createSessionSparklines(rowDataSource);
+			createNewTaggersSparklines(rowDataSource);
+			createExploitationSaturationSparklines(rowDataSource);
+			createCompletionPercentSparklines(rowDataSource);
+		}
+
+		function updatePageUrlAndRefresh() {
+
+			var url = getBaseAddress() + encodeQuery(getFilter());
+
+			setTimeout(function () {
+				window.location.href = url;
+			}, 300);
+		}
+
+		function getFilter() {
+
+			var instanceFilter = $('#Instances').data("kendoDropDownList").value();
+			var stageFilter = $('#Stages').data("kendoDropDownList").value();
+			var daysFilter = $('#Days').data("kendoDropDownList").value();
+
+			var workflowInstanceIds = new Array();
+			@foreach (var workflowInstanceId in Model.WorkflowInstanceIds)
+			{
+				@:workflowInstanceIds.push("@workflowInstanceId");
+			}
+
+			var filter =  {
+				ReportDays: "@Model.ReportDaysValue",
+				TimeStep: "@Model.TimeStep",
+				TemplateId: "@Model.TemplateId"
+			};
+
+			if (workflowInstanceIds && workflowInstanceIds.length > 0) {
+				filter.WorkflowInstanceIds = workflowInstanceIds;
+			}
+
+			var missionId = "@Model.MissionId";
+			if (missionId) filter.MissionId = missionId;
+
+			if (instanceFilter) filter.Instance = instanceFilter;
+			if (stageFilter) filter.Stage = stageFilter;
+			if (daysFilter) filter.ReportDays = daysFilter;
+
+			return filter;
+		}
+
+		function onChangeFilter(e) {
+
+			var chart = $("#chart").data("kendoChart");
+			chart.dataSource.read(getFilter());
+			chart.refresh();
+
+			statistic_loading();
+
+			var params = getFilter();
+			updateUrl(params);
+		}
+
+		function updateMode(e) {
+			var self = $(e);
+
+			var templateId = self.data('mode');
+
+			if (!templateId) return Error('Template Id');
+
+			console.log('template Id is: ' + templateId);
+
+			var params = getFilter();
+
+			params.TemplateId = templateId
+
+			setTimeout(function () {
+				window.location.href = getBaseAddress() + encodeQuery(params);
+			}, 300);
+
+		}
+
+		var loadingObject,
+			pointer;
+		var loading = {
+			init: function () {
+				loadingObject = $('#loading');
+			},
+			show: function () {
+				clearTimeout(pointer);
+				loadingObject.removeClass('hidden');
+				return loadingObject;
+			},
+			hide: function (timeout) {
+				clearTimeout(pointer);
+				pointer = setTimeout(function () {
+					loadingObject.addClass('hidden');
+				}, timeout || 1);
+				return loadingObject;
+			}
+		};
+
+		$(document).ready(function () {
+
+			//init main loader
+			loading.init();
+
+			var params = getFilter();
+			updateUrl(params);
+
+			kendo.ui.progress($("#progressChartLoading"), true);
+
+			kendo.ui.progress($("#seesionChartLoading"), true);
+			kendo.ui.progress($("#newTaggersChartLoading"), true);
+			kendo.ui.progress($("#exploitationSaturationChartLoading"), true);
+			kendo.ui.progress($("#completionPercentChartLoading"), true);
+
+			kendo.ui.progress($("#statisticChartLoading"), true);
+
+			statistic_loading();
+
+			loading.hide();
+
+		});
+
+	</script>
+}
+
+
+
+

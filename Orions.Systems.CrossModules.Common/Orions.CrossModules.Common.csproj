@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AssemblyName>Orions.CrossModules.Common</AssemblyName>
+    <RootNamespace>Orions.CrossModules.Common</RootNamespace>
+  </PropertyGroup>
+
+	<ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
+  </ItemGroup>
+
+</Project>

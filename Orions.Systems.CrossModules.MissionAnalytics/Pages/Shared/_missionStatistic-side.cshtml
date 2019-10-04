@@ -1,0 +1,88 @@
+﻿@model ContentStatisticsViewModel
+
+<div class="ibox ">
+	<div class="ibox-title">
+		@*<span class="label label-warning float-right">Data has changed</span>*@
+		<h5>Mission Statistics</h5>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-4">
+				<small class="stats-label">Total Content Duration:</small>
+				<h2>@Model.TotalContentDurationLabel</h2>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Content Duration:</small>
+				<h2>@Model.ContentDurationLabel</h2>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Exploiting Content:</small>
+				<h2>@Model.ExploitedDurationLabel</h2>
+			</div>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-4">
+				<small class="stats-label">Tagger Exploitation Time:</small>
+				<h2>@Model.TaggerExploitationTimeLabel</h2>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Tasks Done:</small>
+				<h1 class="no-margins">@Model.TaskDone</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Tasks Outstanding:</small>
+				<h1>@Model.TaskOutstanding</h1>
+			</div>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-4">
+				<small class="stats-label">Total Exploited %:</small>
+				<h1>@Model.TotalExploitedPercentageRound %</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Exploited %:</small>
+				<h1>@Model.ExploitedPercentageRound %</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Exploited Today %:</small>
+				<h1>@Model.TodayExploitedPercentageRound %</h1>
+			</div>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-4">
+				<small class="stats-label">Total Tags:</small>
+				<h1 title="Tags">@Model.TotalTags</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Tags:</small>
+				<h1 title="Tags">@Model.Tags</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Tags Today:</small>
+				<h1 title="Tags">@Model.TodayTags</h1>
+			</div>
+		</div>
+	</div>
+	<div class="ibox-content">
+		<div class="row">
+			<div class="col-4">
+				<small class="stats-label">Total Taggers:</small>
+				<h1>@Model.TotalTaggers</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Taggers:</small>
+				<h1>@Model.Taggers</h1>
+			</div>
+			<div class="col-4">
+				<small class="stats-label">Today Taggers:</small>
+				<h1>@Model.TodayTaggers</h1>
+			</div>
+		</div>
+	</div>
+</div>

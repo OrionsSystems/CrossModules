@@ -1,0 +1,52 @@
+﻿@if (ViewBag.Message != null)
+{
+	MessageViewModel message;
+	if (ViewBag.Message is string)
+	{
+		message = new MessageViewModel(ViewBag.Message, "", MessageType.Info);
+	}
+	else
+	{
+		message = ViewBag.Message as MessageViewModel;
+	}
+
+    <script>
+        $(document).ready(function () {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "100000",
+                "extendedTimeOut": "100000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+
+            setTimeout(function () {
+                var type = "@message.Type";
+                switch (type) {
+                    case "Success":
+                        toastr.success('@message.Text', '@message.Title');
+                        break;
+                    case "Error":
+                        toastr.error('@message.Text', '@message.Title');
+                        break;
+                    case "Info":
+                        toastr.info('@message.Text', '@message.Title');
+                        break;
+                    case "Warning":
+                        toastr.warning('@message.Text', '@message.Title');
+                        break;
+                }
+            }, 1300);
+        });
+    </script>
+}
