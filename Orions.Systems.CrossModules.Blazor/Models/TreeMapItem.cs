@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace Orions.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Blazor
 {
 	public class TreeMapItem
 	{
 		public string Name { get; set; }
 		public float Value { get; set; }
 		public ICollection<TreeMapItem> Items { get; set; }
-
 
 		public static TreeMapItem[] GenerateTestData()
 		{

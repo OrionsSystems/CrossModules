@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Orions.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Blazor
 {
 	public class ForwardRef
 	{

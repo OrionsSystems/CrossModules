@@ -4,24 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.WebUtilities;
 using System.Linq;
 using Orions.Infrastructure.HyperMedia;
+using Microsoft.AspNetCore.WebUtilities;
 
-namespace Orions.Systems.CrossModules.Blazor.Common.Components
+namespace Orions.Systems.CrossModules.Blazor
 {
 	public class BaseOrionsComponent : ComponentBase
 	{
 
 		private bool isRendered = false;
 
-		private ElementRef _ref;
+		private ElementReference _ref;
 
 		/// <summary>
 		/// Returned ElementRef reference for DOM element.
 		/// </summary>
 		[Parameter]
-		public virtual ElementRef Ref
+		public virtual ElementReference Ref
 		{
 			get => _ref;
 			set
@@ -34,14 +34,16 @@ namespace Orions.Systems.CrossModules.Blazor.Common.Components
 		[Parameter]
 		public ForwardRef RefBack { get; set; }
 
-		protected async override Task OnAfterRenderAsync()
+		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
-			if (!isRendered)
+			if (firstRender)
 			{
 				await OnFirstAfterRenderAsync();
-				isRendered = true;
-			}			
+			}
+
+			await base.OnAfterRenderAsync(firstRender);
 		}
+
 
 		protected virtual Task OnFirstAfterRenderAsync()
 		{
@@ -49,7 +51,7 @@ namespace Orions.Systems.CrossModules.Blazor.Common.Components
 		}
 
 		[Inject]
-		protected IUriHelper UriHelper { get; set; }
+		protected NavigationManager UriHelper { get; set; }
 
 
 		[Inject]
@@ -60,7 +62,7 @@ namespace Orions.Systems.CrossModules.Blazor.Common.Components
 		{
 			TType objectType = default(TType);
 
-			var uri = new Uri(UriHelper.GetAbsoluteUri());
+			var uri = new Uri(UriHelper.Uri);
 			var stringResult = QueryHelpers.ParseQuery(uri.Query).TryGetValue(queryParameter, out var paramValue) ? paramValue.First() : "";
 			if (!string.IsNullOrEmpty(stringResult))
 			{
@@ -91,22 +93,22 @@ namespace Orions.Systems.CrossModules.Blazor.Common.Components
 		/// <typeparam name="T"></typeparam>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		protected DotNetObjectRef<T> CreateDotNetObjectRef<T>(T value) where T : class
+		protected DotNetObjectReference<T> CreateDotNetObjectRef<T>(T value) where T : class
 		{
 			lock (CreateDotNetObjectRefSyncObj)
 			{
-				JSRuntime.SetCurrentJSRuntime(JsInterop);
-				return DotNetObjectRef.Create(value);
+				//JSRuntime.SetCurrentJSRuntime(JsInterop);
+				return DotNetObjectReference.Create(value);
 			}
 		}
 
-		protected void DisposeDotNetObjectRef<T>(DotNetObjectRef<T> value) where T : class
+		protected void DisposeDotNetObjectRef<T>(DotNetObjectReference<T> value) where T : class
 		{
 			if (value != null)
 			{
 				lock (CreateDotNetObjectRefSyncObj)
 				{
-					JSRuntime.SetCurrentJSRuntime(JsInterop);
+					//JSRuntime.SetCurrentJSRuntime(JsInterop);
 					value.Dispose();
 				}
 			}

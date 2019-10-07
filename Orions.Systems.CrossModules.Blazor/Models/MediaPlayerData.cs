@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Orions.Systems.CrossModules.Blazor.Common
+﻿namespace Orions.Systems.CrossModules.Blazor
 {
 	public class MediaPlayerData
 	{

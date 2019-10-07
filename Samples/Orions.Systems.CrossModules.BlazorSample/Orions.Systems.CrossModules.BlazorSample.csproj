@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Orions.CrossModules.Blazor\Orions.CrossModules.Blazor.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
   </ItemGroup>
 

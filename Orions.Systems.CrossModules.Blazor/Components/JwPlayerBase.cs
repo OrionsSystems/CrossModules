@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.Blazor.Common.Components
+using Microsoft.AspNetCore.Components;
+
+namespace Orions.Systems.CrossModules.Blazor.Components
 {
 	public class JwPlayerBase : BaseOrionsComponent
 	{
@@ -272,13 +271,13 @@ namespace Orions.Systems.CrossModules.Blazor.Common.Components
 					JwPlayerConfig.Sources = Sources;
 				}
 
-				await JsInterop.InvokeAsync<object>("Orions.JwPlayer.init", JwPlayerConfig);
+				await JsInterop.InvokeAsync<object>("Orions.JwPlayer.init", new object[] { JwPlayerConfig });
 			}
 		}
 
 		public async Task RemovePlayer(string id)
 		{
-			await JsInterop.InvokeAsync<object>("Orions.JwPlayer.remove", id);
+			await JsInterop.InvokeAsync<object>("Orions.JwPlayer.remove", new object[] { id });
 		}
 	}
 }
