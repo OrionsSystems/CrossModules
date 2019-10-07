@@ -1,20 +1,19 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+
 using EmbeddedBlazorContent;
+
 using MatBlazor;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Orions.Systems.CrossModules.Analytics.Data;
+
 using Orions.CrossModules.Blazor;
-using Orions.CrossModules.Common;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.Analytics
 {

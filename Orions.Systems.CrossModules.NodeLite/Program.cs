@@ -1,8 +1,8 @@
 ﻿using System;
 
 using Orions.Common;
-using Orions.CrossModules.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.NodeLite
 {

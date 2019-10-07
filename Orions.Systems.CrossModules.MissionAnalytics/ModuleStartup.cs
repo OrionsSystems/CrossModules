@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
-using Orions.CrossModules.Common;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {

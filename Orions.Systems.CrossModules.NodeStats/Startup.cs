@@ -17,7 +17,7 @@ using EmbeddedBlazorContent;
 
 using MatBlazor;
 using Orions.CrossModules.Blazor;
-using Orions.CrossModules.Common;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.NodeStats
 {

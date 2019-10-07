@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net.Http;
 
-namespace Orions.CrossModules.Common
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Orions.Systems.CrossModules.Common
 {
 	public class BlazorCrossModuleStartup : CrossModuleStartup
 	{
@@ -31,11 +31,9 @@ namespace Orions.CrossModules.Common
 				services.AddScoped<HttpClient>(s =>
 				{
 					// Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
-					// TODO: Bring this back
 					var uriHelper = s.GetRequiredService<NavigationManager>();
 					return new HttpClient
 					{
-						// TODO: Bring this back
 						BaseAddress = new Uri(uriHelper.BaseUri)
 					};
 				});

@@ -8,7 +8,7 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Orions.Systems.CrossModules.Common\Orions.CrossModules.Common.csproj" />
+    <ProjectReference Include="..\..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
     <ProjectReference Include="C:\Development\Orions\Systems\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
     <ProjectReference Include="C:\Development\Orions\Systems\Orions.Systems.Open\Cloud.SDK\CSharp\Orions.Cloud.Client.Http.NetStandard\Orions.Cloud.Client.Http.NetStandard.csproj" />
     <ProjectReference Include="C:\Development\Orions\Systems\Orions.Systems.Open\Common\Orions.Cloud.Common\Orions.Cloud.Common.NetStandard.csproj" />

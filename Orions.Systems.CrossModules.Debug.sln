@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.SDK.NetStandard.Debu
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Services.Contracts.NetStandard", "..\Orions.Systems.Open\Services\Orions.Services.Contracts.NetStandard\Orions.Services.Contracts.NetStandard.csproj", "{4EB706E8-4323-4312-A754-1EEE286E66F8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.CrossModules.Common", "Orions.Systems.CrossModules.Common\Orions.CrossModules.Common.csproj", "{A0128BD9-5F57-4DE6-AB96-C774B8A0F6ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Common.Debug", "Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj", "{A0128BD9-5F57-4DE6-AB96-C774B8A0F6ED}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MetadataReview.Debug", "Orions.Systems.CrossModules.MetadataReview\Orions.Systems.CrossModules.MetadataReview.Debug.csproj", "{2AAC5C38-D110-4441-B323-AE06C0E3C56B}"
 EndProject

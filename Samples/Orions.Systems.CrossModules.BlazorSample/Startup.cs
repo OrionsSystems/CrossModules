@@ -7,8 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
 using System.Net.Http;
-using Orions.CrossModules.Common;
 using Orions.Systems.CrossModules.BlazorSample.Data;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.BlazorSample
 {

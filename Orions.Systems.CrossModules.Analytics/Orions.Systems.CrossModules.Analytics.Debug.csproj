@@ -22,7 +22,7 @@
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
     <ProjectReference Include="..\Orions.CrossModules.Blazor\Orions.CrossModules.Blazor.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.CrossModules.Common.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
   </ItemGroup>
 
 </Project>

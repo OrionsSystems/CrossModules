@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 
-namespace Orions.CrossModules.Common
+namespace Orions.Systems.CrossModules.Common
 {
 	/// <summary>
 	/// Inherits AppHostHelper and implements Startup routines.

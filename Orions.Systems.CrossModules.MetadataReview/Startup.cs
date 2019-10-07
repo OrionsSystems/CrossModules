@@ -13,7 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orions.CrossModules.Blazor;
-using Orions.CrossModules.Common;
+using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.MetadataReview
 {

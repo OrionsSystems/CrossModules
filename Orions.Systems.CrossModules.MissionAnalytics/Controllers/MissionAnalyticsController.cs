@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Orions.Infrastructure.HyperMedia;
-using Orions.CrossModules.Common;
 using Orions.Systems.CrossModules.MissionAnalytics.Model;
 using System.Collections.Generic;
 using System;
