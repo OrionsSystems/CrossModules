@@ -1,12 +1,12 @@
-﻿using Orions.Common;
-using System;
-using System.Linq;
-using Orions.Infrastructure.HyperMedia;
+﻿using System;
 using System.Threading.Tasks;
+
+using Orions.Common;
 using Orions.Common.ServiceBus;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Services.Contracts;
 
-namespace Orions.CrossModuleTestApp
+namespace Orions.Systems.CrossModules.TestApp
 {
 	class Program
 	{
