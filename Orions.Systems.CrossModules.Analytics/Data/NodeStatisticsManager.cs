@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Orions.Common;
 using Orions.Infrastructure.HyperSemantic;
-using Orions.CrossModules.Blazor;
+using Orions.Systems.CrossModules.Blazor;
 
 namespace Orions.CrossModules.Data
 {

@@ -66,16 +66,16 @@ window.KendoMediaPlayer = {
                 source: source
             },
             play: function (e) {
-                DotNet.invokeMethodAsync('Orions.CrossModules.Blazor.Common', 'OnPlayAsync');
+                DotNet.invokeMethodAsync('Orions.Systems.CrossModules.Blazor', 'OnPlayAsync');
             },
             pause: function (e) {
 
-                DotNet.invokeMethodAsync('Orions.CrossModules.Blazor.Common', 'OnPauseAsync');
+                DotNet.invokeMethodAsync('Orions.Systems.CrossModules.Blazor', 'OnPauseAsync');
 
             },
 
             timeChange: function (e) {
-                DotNet.invokeMethodAsync('Orions.CrossModules.Blazor.Common', 'OnTimeChangeAsync');
+                DotNet.invokeMethodAsync('Orions.Systems.CrossModules.Blazor', 'OnTimeChangeAsync');
             }
         });
     },

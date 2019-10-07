@@ -1,18 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
+
 using EmbeddedBlazorContent;
+
 using MatBlazor;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Orions.CrossModules.Blazor;
+
+using Orions.Systems.CrossModules.Blazor;
 using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.MetadataReview
@@ -83,7 +83,6 @@ namespace Orions.Systems.CrossModules.MetadataReview
 
 			app.UseEmbeddedBlazorContent(typeof(MatBlazor.BaseMatAccordion).Assembly);
 
-			//Orions.CrossModules.Blazor.Common
 			app.UseEmbeddedBlazorContent(typeof(BaseOrionsComponent).Assembly);			
 		}
 	}
