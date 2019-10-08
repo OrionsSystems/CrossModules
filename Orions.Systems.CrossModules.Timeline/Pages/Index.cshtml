@@ -47,73 +47,15 @@
 				<div class="tab-pane fade active in show" id="timeline-tab" role="tabpanel">
 					<div id="timeline-container" style="padding: 0px 10px;">
 						<div id="timeline-filter-container">
-							<form action="@filterUrl" method="get">
-								<input hidden id="@nameof(Model.WorkflowInstanceId)" name="@nameof(Model.WorkflowInstanceId)" value="@Model.WorkflowInstanceId" />
-								<input hidden id="@nameof(Model.MissionInstanceId)" name="@nameof(Model.MissionInstanceId)" value="@Model.MissionInstanceId" />
-								<input hidden id="@nameof(Model.ServerUri)" name="@nameof(Model.ServerUri)" value="@Model.ServerUri" />
-								<input hidden id="@nameof(Model.RealmId)" name="@nameof(Model.RealmId)" value="@Model.RealmId" />
-								<input hidden id="@nameof(Model.AssetId)" name="@nameof(Model.AssetId)" value="@Model.AssetId" />
-								<div class="row m-0">
-									<div class="col-md-3 p-0">
-										<div class="row m-0">
-											<div class="col-md-2 p-1">
-												@(Html.Kendo().DropDownList()
-													.Name(nameof(Model.PageSize))
-													.BindTo(new List<SelectListItem>() {
-															new SelectListItem(){ Text="20", Value="20", Selected = Model.PageSize == 20  },
-															new SelectListItem(){ Text="50", Value="50",Selected = Model.PageSize == 50 },
-															new SelectListItem(){ Text="100", Value="100",Selected = Model.PageSize == 100 || Model.PageSize == 0},
-															new SelectListItem(){ Text="500", Value="500",Selected = Model.PageSize == 500 },
-															new SelectListItem(){ Text="1000", Value="1000",Selected = Model.PageSize == 1000 }
-													})
-													.HtmlAttributes(new { @style = "width:100%;" })
-													.Deferred())
-											</div>
-											<div class="col-md-9 p-1">
-												@(Html.Kendo().TextBox()
-														.Name(nameof(Model.FilterValue))
-														.Value(Model.FilterValue)
-														.HtmlAttributes(new { @style = "width:100%;", placeholder = "Search by title" })
-														.Deferred())
-											</div>
-										</div>
-									</div>
-									<div class="col-md-2 p-1">
-										@(Html.Kendo().DateTimePicker()
-											.Name(nameof(Model.StartTime))
-											.Value(Model.StartTime)
-											.Format("MM/dd/yyyy HH:mm:ss")
-											.TimeFormat("HH:mm:ss")
-											.HtmlAttributes(new { @style = "width: 100%;", placeholder = "Start time" })
-											.Deferred())
-									</div>
-									<div class="col-md-2 p-1">
-										@(Html.Kendo().DateTimePicker()
-											.Name(nameof(Model.EndTime))
-											.Value(Model.EndTime)
-											.Format("MM/dd/yyyy HH:mm:ss")
-											.TimeFormat("HH:mm:ss")
-											.HtmlAttributes(new { @style = "width: 100%;", placeholder = "End time" })
-											.Deferred())
-									</div>
-									<div class="col-md-1 p-1">
-										@(Html.Kendo().DropDownList()
-											.Name(nameof(Model.TimeFilter))
-											.BindTo(new List<SelectListItem>() {
-														new SelectListItem(){ Text="Wall Clock Time", Value="WallClockTime", Selected = Model.TimeFilter == "WallClockTime" },
-														new SelectListItem(){ Text="Stream Position", Value="StreamPosition", Selected = Model.TimeFilter == "StreamPosition"  },
-											})
-											.HtmlAttributes(new { @style = "width:100%;" })
-											.Deferred())
-									</div>
-									<div class="col-md-2 p-1 assets-filter-container hidden">
-										<select id="assetsFilterId" class="hidden" multiple="multiple" data-placeholder="Select assets"></select>
-									</div>
-									<div class="col-md-1 p-1">
-										<button class="btn btn-default" type="submit" id="apply">Apply</button>
-									</div>
-								</div>
-							</form>
+                            <form action="@filterUrl" method="get">
+                                <input hidden id="@nameof(Model.WorkflowInstanceId)" name="@nameof(Model.WorkflowInstanceId)" value="@Model.WorkflowInstanceId" />
+                                <input hidden id="@nameof(Model.MissionInstanceId)" name="@nameof(Model.MissionInstanceId)" value="@Model.MissionInstanceId" />
+                                <input hidden id="@nameof(Model.ServerUri)" name="@nameof(Model.ServerUri)" value="@Model.ServerUri" />
+                                <input hidden id="@nameof(Model.RealmId)" name="@nameof(Model.RealmId)" value="@Model.RealmId" />
+                                <input hidden id="@nameof(Model.AssetId)" name="@nameof(Model.AssetId)" value="@Model.AssetId" />
+
+                                @await Html.PartialAsync("_filter", Model)
+                            </form>
 						</div>
 						<div id="vertical-timeline" class="dark-timeline center-orientation">
 						</div>

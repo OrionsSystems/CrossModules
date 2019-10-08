@@ -39,7 +39,7 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 		public string FilterValue { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public int PageSize { get; set; }
+		public int PageSize { get; set; } = 20;
 
 		[BindProperty(SupportsGet = true)]
 		public string TimeFilter { get; set; }

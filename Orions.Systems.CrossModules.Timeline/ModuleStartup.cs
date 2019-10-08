@@ -81,17 +81,17 @@ namespace Orions.Systems.CrossModules.Timeline
 				endpoints.MapControllerRoute(
 						name: "playlist-track.m3u8",
 						pattern: "playlist/hls/{connection}/{assetId}/{trackId}/track.m3u8",
-						defaults: new { area = "Workbench", controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
+						defaults: new { controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
 
 				endpoints.MapControllerRoute(
 					name: "playlist-asset.m3u8",
 					pattern: "playlist/hls/{connection}/{assetId}/asset.m3u8",
-					defaults: new { area = "Workbench", controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
+					defaults: new { controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
 
 				endpoints.MapControllerRoute(
 					name: "playlist-track.index",
 					pattern: "playlist/track/hls/{connection}/{assetId}/{trackId}/{index}",
-					defaults: new { area = "Workbench", controller = "Playlist", action = "Track", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
+					defaults: new { controller = "Playlist", action = "Track", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
 
 				// Default
 				endpoints.MapControllerRoute(

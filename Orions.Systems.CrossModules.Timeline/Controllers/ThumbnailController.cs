@@ -61,6 +61,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			byte[] thumbnail = null;
 			if (!string.IsNullOrWhiteSpace(trackId))
 			{
+	
 				thumbnail = await utility.GetSliceImageDataAsync(new AssetSliceRequest()
 				{
 					AssetId = assetId,
