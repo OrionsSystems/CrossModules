@@ -17,7 +17,7 @@
     },
     "Orions.Systems.CrossModules.Analytics": {
       "commandName": "Project",
-      "commandLineArgs": "--file=C:\\Development\\Orions\\Systems\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.Analytics\\config.json",
+      "commandLineArgs": "--file=..\\..\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.Analytics\\config.json",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
