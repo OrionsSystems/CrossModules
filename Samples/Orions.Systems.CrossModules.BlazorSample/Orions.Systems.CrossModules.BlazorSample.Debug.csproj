@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Orions.Systems.CrossModules.BlazorSample</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.BlazorSample</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

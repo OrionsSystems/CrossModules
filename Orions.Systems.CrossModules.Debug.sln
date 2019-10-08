@@ -31,7 +31,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Timeline.Debug", "Orions.Systems.CrossModules.Timeline\Orions.Systems.CrossModules.Timeline.Debug.csproj", "{D4635A35-8B7A-4E3C-B749-AF3752C1C426}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.BlazorSample", "Samples\Orions.Systems.CrossModules.BlazorSample\Orions.Systems.CrossModules.BlazorSample.csproj", "{E9EB3E45-75D5-4387-A8F9-3968925F9629}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.BlazorSample.Debug", "Samples\Orions.Systems.CrossModules.BlazorSample\Orions.Systems.CrossModules.BlazorSample.Debug.csproj", "{E9EB3E45-75D5-4387-A8F9-3968925F9629}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.NodeLite.Debug", "Orions.Systems.CrossModules.NodeLite\Orions.Systems.CrossModules.NodeLite.Debug.csproj", "{E3EB98C6-34A4-49A9-B456-B0C5D44FE186}"
 EndProject
