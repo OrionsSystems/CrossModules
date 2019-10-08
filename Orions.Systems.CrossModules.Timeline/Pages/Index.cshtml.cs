@@ -43,6 +43,8 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 
 		public void OnGetAsync()
 		{
+			Logger.Instance.VeryHighPriorityInfo(this, nameof(OnGetAsync), "Request " + Request);
+
 			if (Request.Query.Any(it => it.Key == "request"))
 			{
 				var instructionQuery = Request.Query.FirstOrDefault(it => it.Key == "request");
