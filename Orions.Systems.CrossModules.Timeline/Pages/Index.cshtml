@@ -13,17 +13,15 @@
         AssetId = Model.AssetId,
         StartTime = Model.StartTime,
         EndTime = Model.EndTime,
-        FilterValue = Model.FilterValue,
-        RealmId = Model.RealmId
+        FilterValue = Model.FilterValue
     };
 
     var routeOneTagParams = new
     {
-        ServerUri = Model.ServerUri,
-        RealmId = Model.RealmId,
+        ServerUri = Model.ServerUri
     };
 
-    var filterUrl = Url.Action("Index", "Timeline", routeTagPagingParams);
+    var filterUrl = Url.Action("Index", routeTagPagingParams);
 
     var tagMoreUrl = Url.Action("Timeline_Read", "Timeline", routeTagPagingParams);
     var tagCountChildrenUrl = Url.Action("Timeline_CountChildren", "Timeline", routeTagPagingParams);
@@ -51,7 +49,6 @@
                                 <input hidden id="@nameof(Model.WorkflowInstanceId)" name="@nameof(Model.WorkflowInstanceId)" value="@Model.WorkflowInstanceId" />
                                 <input hidden id="@nameof(Model.MissionInstanceId)" name="@nameof(Model.MissionInstanceId)" value="@Model.MissionInstanceId" />
                                 <input hidden id="@nameof(Model.ServerUri)" name="@nameof(Model.ServerUri)" value="@Model.ServerUri" />
-                                <input hidden id="@nameof(Model.RealmId)" name="@nameof(Model.RealmId)" value="@Model.RealmId" />
                                 <input hidden id="@nameof(Model.AssetId)" name="@nameof(Model.AssetId)" value="@Model.AssetId" />
 
                                 @await Html.PartialAsync("_filter", Model)

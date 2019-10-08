@@ -10,7 +10,6 @@ using Orions.Node.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Common;
 using Orions.Infrastructure.HyperSemantic;
-using System.Collections.Async;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -220,7 +219,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 
 			if (!parallel.Any()) return missionTags;
 
-			await parallel.ParallelForEachAsync(async item =>
+			foreach (var item in parallel.AsParallel().WithDegreeOfParallelism(100)) 
 			{
 				try
 				{
@@ -264,12 +263,10 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 						//_tagsCache.Set(item.Key.Id, cacheElement, TimeSpan.FromSeconds(Settings.Instance.CacheExpiratonTagIntervalInSeconds));
 					}
 				}
-				catch (Exception ex)
+				catch (Exception)
 				{
-					//TODO log the error
 				}
-
-			}, maxDegreeOfParalellism: 100);
+			}
 
 			missionTags.AddRange(parallel.Where(it => it.Value.DynamicData != null).Select(it => it.Value));
 

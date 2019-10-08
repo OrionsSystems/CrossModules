@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Orions.Systems.CrossModules.Common;
-using Orions.XPlatform;
 
 namespace Orions.Systems.CrossModules.Timeline
 {

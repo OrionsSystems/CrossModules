@@ -15,9 +15,6 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 		}
 
 		[BindProperty(SupportsGet = true)]
-		public string RealmId { get; set; }
-
-		[BindProperty(SupportsGet = true)]
 		public string AssetId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
