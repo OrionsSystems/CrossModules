@@ -368,9 +368,19 @@
 			}
 		};
 
-		function timeline_initPlayer(host, assetId, second, title){
-			var url = "@Url.Content("~/playlist/hls/")" + host + "/" + assetId + "/asset.m3u8";
-			$('#playerModal').data("kendoWindow").title(title).center().open();
+        function timeline_initPlayer(host, assetId, second, title)
+        {
+			//var url = "@Url.Content("~/playlist/hls/")" + host + "/" + assetId + "/asset.m3u8";
+
+            var serverUriList = host.split(':');
+            var serverDomain = serverUriList[0];
+            var serverPort = serverUriList[1];
+
+            serverPort = parseInt(serverPort) + 1; 
+
+             var url = 'https://' + serverDomain + ':' + serverPort + '/dash/' + assetId + '/asset.mpd';
+
+            $('#playerModal').data("kendoWindow").title(title).center().open();
 			
 			if (player != null) {
 				var file = player.getPlaylistItem()['file'];
@@ -379,8 +389,9 @@
 					return;
 				}
 			}
-			var internalSeconds = second;
-            player = jwplayer('player').setup({
+            var internalSeconds = second;
+
+            var playerSetup = {
                 file: url,
                 logo: {
                     file: '@Url.Content("~/images/orions-systems-logo.png")',
@@ -388,14 +399,18 @@
                     height: '10%'
                 },
                 width: '100%',
-                stretching: "exactfit",
+                //stretching: "exactfit",
                 aspectratio: '16:9',
                 autoplay: 'true',
                 preload: 'auto',
-			});
+            };
+
+            player = jwplayer('player').setup(playerSetup);
+
             player.on('ready', function (event) {
                 player.play();
             });
+
 			player.on('firstFrame', function () {
 				setTimeout(function () {
 					player.seek(internalSeconds);
@@ -448,7 +463,7 @@
 				iframe: false,
 				close: timeline_onClosePlayer,
 				actions: [
-					"Pin",
+					//"Pin",
 					"Minimize",
 					"Maximize",
 					"Close"
