@@ -55,13 +55,19 @@ namespace Orions.Systems.CrossModules.Blazor
 		[Inject]
 		protected IJSRuntime JsInterop { get; set; }
 
+		protected string GetQueryParameterString(string queryParameter)
+		{
+			var uri = new Uri(UriHelper.Uri);
+			var stringResult = QueryHelpers.ParseQuery(uri.Query).TryGetValue(queryParameter, out var paramValue) ? paramValue.First() : "";
+
+			return stringResult;
+		}
 
 		protected TType GetObjectFromQueryString<TType>(string queryParameter)
 		{
 			TType objectType = default(TType);
 
-			var uri = new Uri(UriHelper.Uri);
-			var stringResult = QueryHelpers.ParseQuery(uri.Query).TryGetValue(queryParameter, out var paramValue) ? paramValue.First() : "";
+			var stringResult = GetQueryParameterString(queryParameter);
 			if (!string.IsNullOrEmpty(stringResult))
 			{
 				try
