@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Linq;
-using Orions.Infrastructure.HyperMedia;
+using System.Threading.Tasks;
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Blazor
 {

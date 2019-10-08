@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <Version>2.39</Version>
+    <Authors>Orionswave LLC</Authors>
+    <Company>Orionswave LLC</Company>
+    <Product>Orions CrossModules MissionAnalytics</Product>
+    <Description />
+    <Copyright>Orionswave LLC 2019</Copyright>
+    <AssemblyVersion>2.39</AssemblyVersion>
+    <FileVersion>2.39</FileVersion>
+    <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
+    <AssemblyName>Orions.Systems.CrossModules.MissionAnalytics</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.MissionAnalytics</RootNamespace>
+    <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Orions.Node" Version="2.38.136" />
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2018.1.221" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
+  </ItemGroup>
+
+</Project>

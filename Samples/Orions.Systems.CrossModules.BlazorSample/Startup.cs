@@ -1,12 +1,7 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Linq;
-using System.Net.Http;
+
 using Orions.Systems.CrossModules.BlazorSample.Data;
 using Orions.Systems.CrossModules.Common;
 
