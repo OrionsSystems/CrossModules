@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Systems.CrossModules.BlazorSample;
+using Orions.Systems.CrossModules.Blazor;
 
 namespace Orions.Systems.CrossModules.BlazorSample
 {
-	public class CommonComponent<VmType> : ComponentBase
+	public class CommonComponent<VmType> : BaseOrionsComponent
 		where VmType : BaseVm
 	{
 		VmType _dataContext = null;
@@ -25,12 +26,21 @@ namespace Orions.Systems.CrossModules.BlazorSample
 				_dataContext = value;
 				if (value != null)
 				{
-					value.PropertyChanged += Value_PropertyChanged;
+					value.PropertyChanged += DataContext_PropertyChanged;
 				}
 			}
 		}
 
-		private void Value_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		bool _initialized = false;
+
+		public CommonComponent()
+		{
+			// TODO: remove
+			object oo = new TestVm();
+			DataContext = (VmType)oo;
+		}
+
+		void DataContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (_initialized == false)
 				return;
@@ -41,14 +51,6 @@ namespace Orions.Systems.CrossModules.BlazorSample
 			});
 		}
 
-		public CommonComponent()
-		{
-			// TODO: remove
-			object oo = new TestVm();
-			DataContext = (VmType)oo;
-		}
-
-		bool _initialized = false;
 		protected override Task OnInitializedAsync()
 		{
 			_initialized = true;

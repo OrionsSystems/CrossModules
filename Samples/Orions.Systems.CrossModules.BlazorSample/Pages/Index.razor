@@ -1,5 +1,67 @@
 ﻿@page "/"
 
+@using Orions.Systems.CrossModules.Blazor;
+
+@using Orions.Infrastructure.HyperMedia;
+@using Orions.Common
+
+@inherits CommonComponent<TestVm>
+
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+<br />
+
+<textarea readonly="readonly" style="width:1400px;height:1800px">@PrintText</textarea>
+
+@code
+{
+   [Parameter]
+   public string PrintText { get; set; }
+
+   protected override Task OnInitializedAsync()
+   {
+      var sb = new System.Text.StringBuilder();
+
+      var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
+      sb.AppendLine("---- REQUEST RAW ---->>");
+      sb.AppendLine("");
+      sb.AppendLine(GetQueryParameterString("request"));
+      sb.AppendLine("");
+      sb.AppendLine("<<---- ---- ---- ---- ---- ---- ---- ---- ");
+
+      sb.AppendLine("");
+
+      sb.AppendLine("---- REQUEST JSON ---->>");
+      sb.AppendLine("");
+      if (vizRequest != null)
+         sb.AppendLine(JsonHelper.Serialize(vizRequest, false, true));
+      sb.AppendLine("");
+      sb.AppendLine("<<---- ---- ---- ---- ---- ---- ---- ---- ");
+
+      sb.AppendLine("");
+
+      sb.AppendLine("---- COMMAND LINE RAW ---->>");
+      sb.AppendLine("");
+      if (Program.CrossModuleInstanceHost.CommandLineArgs != null)
+         sb.AppendLine(String.Join(' ', Program.CrossModuleInstanceHost.CommandLineArgs));
+      sb.AppendLine("");
+      sb.AppendLine("<<---- ---- ---- ---- ---- ---- ---- ---- ");
+
+      sb.AppendLine("");
+
+      sb.AppendLine("---- COMMAND LINE APPLIED CONFIG ---->>");
+      sb.AppendLine("");
+      if (Program.CrossModuleInstanceHost.AppliedConfig != null)
+         sb.AppendLine(JsonHelper.Serialize(Program.CrossModuleInstanceHost.AppliedConfig, false, true));
+      sb.AppendLine("");
+      sb.AppendLine("<<---- ---- ---- ---- ---- ---- ---- ---- ");
+
+
+      PrintText = sb.ToString();
+
+      return base.OnInitializedAsync();
+   }
+}
