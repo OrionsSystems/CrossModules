@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,9 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Orions.Cloud.Common.Data;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
+using Orions.SDK.Utilities;
 using ISessionAspCore = Microsoft.AspNetCore.Http.ISession;
 
 namespace Orions.Systems.CrossModules.Timeline.Controllers
@@ -20,11 +24,17 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 
 		protected string ServerUri { get; set; }
 
+		protected NetStore NetStore { get; private set; }
+
 		protected string CompanyId { get; set; }
 
 		protected string TagId { get; set; }
 
 		protected const int MaxTasksThreshold = 10;
+
+		protected Dictionary<string, IHyperArgsSink> GetStores() { 
+			return new Dictionary<string, IHyperArgsSink> { { ServerUri, NetStore } };
+		}
 
 		protected User ContextUser
 		{
@@ -63,6 +73,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			CompanyId = GetParamFromRequest("companyId")?.ToString();
 
 			TagId = GetParamFromRequest("tagId")?.ToString();
+
+			NetStore = await NetStoreFactory.GetInstanceAsync(ServerUri);
 
 			await base.OnActionExecutionAsync(context, next);
 		}

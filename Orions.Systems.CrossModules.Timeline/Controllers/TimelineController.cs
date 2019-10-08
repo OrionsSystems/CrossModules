@@ -11,9 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.SDK.Utilities;
-using Orions.XPlatform;
-
-using TagPageFilterModel = Orions.XPlatform.TagPageFilterModel;
+using Orions.Systems.CrossModules.Timeline.Models;
+using Orions.Systems.CrossModules.Timeline.Utility;
 
 namespace Orions.Systems.CrossModules.Timeline.Controllers
 {
@@ -54,9 +53,9 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 
 			var timeline = new TimelineViewModel();
 
-			var service = new NodeTimelineXService(TimelineSettings.NodeInfo);
+			var utility = new TimelineUtility(NetStore);
 
-			timeline = await service.GetTimeline(filter);
+			timeline = await utility.GetTimeline(filter);
 
 			if (timeline.Tags.Any())
 			{
@@ -87,10 +86,10 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			}
 
 			request.Ids = ids.Distinct().ToList();
-			
-			var service = new AssetXService(CompanyId, Authentication);
 
-			model = await service.GetAsync(request);
+			var utility = new AssetUtility(GetStores());
+
+			model = await utility.GetAsync(request);
 
 			foreach (var item in model.Items)
 			{
@@ -120,20 +119,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 				ParentId = parentId
 			};
 
-			var tags = new List<DynamicHyperTagViewModel>();
-
-			if (string.IsNullOrWhiteSpace(realmId))
-			{
-				var service = new NodeTimelineXService(CompanyId, Authentication);
-
-				tags = await service.GetTag(filter);
-			}
-			else
-			{
-				var service = new CloudTimelineXService(CompanyId, Authentication);
-
-				tags = await service.GetTag(filter);
-			}
+			var utility = new TimelineUtility(NetStore);
+			var tags = await utility.GetTag(filter);
 
 			tags = tags.OrderByDescending(it => it.RealWorldContentTimeUTC).ToList();
 
@@ -167,22 +154,11 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 				ParentId = parentId
 			};
 
-			if (string.IsNullOrWhiteSpace(realmId))
-			{
-				var service = new NodeTimelineXService(CompanyId, Authentication);
+			var utility = new TimelineUtility(NetStore);
 
-				var result = await service.CountTag(filter);
+			var result = await utility.CountTag(filter);
 
-				return Content(result.ToString());
-			}
-			else
-			{
-				//var service = new CloudTimelineXService(CompanyId, Authentication);
-
-				//timeline = await service.GetTimeline(filter);				
-			}
-
-			return Content("0");
+			return Content(result.ToString());
 		}
 
 		public async Task<IActionResult> Timeline_Elements(
@@ -195,26 +171,11 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 				RealmId = realmId
 			};
 
-			DynamicHyperTagViewModel tag;
-			var json = "";
-			if (string.IsNullOrWhiteSpace(realmId))
-			{
-				var service = new NodeTimelineXService(CompanyId, Authentication);
+			var utility = new TimelineUtility(NetStore);
 
-				tag = await service.GetTag(filter);
+			var tag = await utility.GetTag(filter);
 
-				json = JsonHelper.Serialize(tag?.HyperTag.Elements);
-			}
-			else
-			{
-				var service = new CloudTimelineXService(CompanyId, Authentication);
-
-				tag = await service.GetTag(filter);
-
-				var elements = tag.SafeGetElementsFromJson();
-
-				json = JsonHelper.Serialize(elements);
-			}
+			var json = JsonHelper.Serialize(tag?.HyperTag.Elements);
 
 			return Content(json);
 		}

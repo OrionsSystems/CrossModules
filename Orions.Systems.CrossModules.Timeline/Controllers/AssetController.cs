@@ -2,7 +2,8 @@
 using System.Threading.Tasks;
 
 using Orions.SDK.Utilities;
-using Orions.XPlatform;
+using System.Collections.Generic;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Timeline.Controllers
 {
@@ -12,14 +13,15 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 		public async Task<ActionResult> Asset_HlsHostById(
 			string id)
 		{
-			var service = new AssetXService(TimelineSettings.NodeInfo);
+			var stores = new Dictionary<string, IHyperArgsSink> { { ServerUri, NetStore } };
+			var utility = new AssetUtility(stores);
 
-			var filter = new AssetRequest(id)
+			var request = new AssetRequest(id)
 			{
 				ServerUri = ServerUri,
 			};
 
-			var viewModel =  await service.GetAsync(filter);
+			var viewModel =  await utility.GetAsync(request);
 
 			return Json(new { Host = viewModel.HlsServerUri });
 		}
