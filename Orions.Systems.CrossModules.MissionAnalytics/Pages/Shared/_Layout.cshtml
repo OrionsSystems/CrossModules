@@ -8,14 +8,14 @@
     @await Html.PartialAsync("_favicons")
 
     <environment include="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css">
         <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css">
         <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
         <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
         <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
     </environment>
     <environment exclude="Development">
-        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="~/lib/toastr/toastr.min.css" />
         <link rel="stylesheet" href="~/css/style.min.css" asp-append-version="true" />
@@ -46,10 +46,10 @@
     <script src="https://kendo.cdn.telerik.com/2019.2.619/js/kendo.aspnetmvc.min.js"></script>
 
     <environment include="Development">
-        <script src="~/lib/toastr/toastr.js"></script>
+        <script src="~/lib/toastr/toastr.min.js"></script>
         <script src="~/lib/jquery-ui/jquery-ui.js"></script>
         <script src="~/js/Popper/popper.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.js"></script>
         <script src="~/js/inspinia.js"></script>
         <script src="~/js/common/common.js" asp-append-version="true"></script>
     </environment>
@@ -57,7 +57,7 @@
         <script src="~/lib/toastr/toastr.min.js"></script>
         <script src="~/lib/jquery-ui/jquery-ui.min.js"></script>
         <script src="~/js/Popper/popper.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.min.js"></script>
         <script src="~/js/inspinia.js"></script>
         <script src="~/js/common/common.js" asp-append-version="true"></script>
     </environment>

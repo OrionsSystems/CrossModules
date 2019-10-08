@@ -281,6 +281,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "ExploitationSaturation",
@@ -300,6 +302,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "NewTaggers",
@@ -319,6 +323,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "Sessions",
@@ -338,6 +344,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "CompletionPercent",
@@ -357,6 +365,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "TasksCompletedPerPeriod",
@@ -376,6 +386,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "TasksOutstanding",
@@ -395,6 +407,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "TasksPerformed",
@@ -414,6 +428,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "TotalDuration",
@@ -433,6 +449,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 
 			foreach (var item in resource)
 			{
+				if (item.Key == null) continue;
+
 				var contentItem = new ContentProgressViewModel()
 				{
 					Content = "ExploitedDuration",
