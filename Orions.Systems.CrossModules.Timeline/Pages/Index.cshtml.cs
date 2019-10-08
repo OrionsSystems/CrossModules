@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Timeline.Pages
 {
@@ -59,7 +60,11 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 				{
 					var wInstanceId = wInstIds.First();
 
-					if (!string.IsNullOrEmpty(wInstanceId)) WorkflowInstanceId = wInstanceId;
+					if (!string.IsNullOrEmpty(wInstanceId))
+					{
+						var wid = HyperDocumentId.TryParse(wInstanceId);
+						if (wid != null) WorkflowInstanceId = wid.Value.Id;
+					}
 				}
 			}
 
