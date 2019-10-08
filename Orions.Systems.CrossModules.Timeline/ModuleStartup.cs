@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using Orions.Systems.CrossModules.Common;
-using Orions.XPlatform;
 
 namespace Orions.Systems.CrossModules.Timeline
 {
@@ -48,17 +47,6 @@ namespace Orions.Systems.CrossModules.Timeline
 
 		public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			//load env specific configuration
-			XPlatform.Configuration.Settings.Load(AppDomain.CurrentDomain.BaseDirectory);
-			var xplatformSettings = new XPlatformSettings()
-			{
-				CloudAuthentication = XPlatform.Configuration.Settings.CloudAuthentication,
-				ServiceBusConnectionString = XPlatform.Configuration.Settings.ServiceBusConnectionString
-			};
-
-			// init XPlatform assembly
-			XPlatform.Settings.Init(xplatformSettings);
-
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -78,21 +66,6 @@ namespace Orions.Systems.CrossModules.Timeline
 
 			app.UseEndpoints(endpoints =>
 			{
-				endpoints.MapControllerRoute(
-						name: "playlist-track.m3u8",
-						pattern: "playlist/hls/{connection}/{assetId}/{trackId}/track.m3u8",
-						defaults: new { area = "Workbench", controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
-
-				endpoints.MapControllerRoute(
-					name: "playlist-asset.m3u8",
-					pattern: "playlist/hls/{connection}/{assetId}/asset.m3u8",
-					defaults: new { area = "Workbench", controller = "Playlist", action = "Hls", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
-
-				endpoints.MapControllerRoute(
-					name: "playlist-track.index",
-					pattern: "playlist/track/hls/{connection}/{assetId}/{trackId}/{index}",
-					defaults: new { area = "Workbench", controller = "Playlist", action = "Track", namespaces = new[] { "Orions.Workbench.Web.Controllers" } });
-
 				// Default
 				endpoints.MapControllerRoute(
 					name: "default_area",

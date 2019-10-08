@@ -3,6 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Timeline.Pages
 {
@@ -13,9 +14,6 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 			StartTime = null;
 			EndTime = null;
 		}
-
-		[BindProperty(SupportsGet = true)]
-		public string RealmId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public string AssetId { get; set; }
@@ -39,13 +37,15 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 		public string FilterValue { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public int PageSize { get; set; }
+		public int PageSize { get; set; } = 20;
 
 		[BindProperty(SupportsGet = true)]
 		public string TimeFilter { get; set; }
 
 		public void OnGetAsync()
 		{
+			Logger.Instance.VeryHighPriorityInfo(this, nameof(OnGetAsync), "Request " + Request);
+
 			if (Request.Query.Any(it => it.Key == "request"))
 			{
 				var instructionQuery = Request.Query.FirstOrDefault(it => it.Key == "request");
@@ -60,7 +60,11 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 				{
 					var wInstanceId = wInstIds.First();
 
-					if (!string.IsNullOrEmpty(wInstanceId)) WorkflowInstanceId = wInstanceId;
+					if (!string.IsNullOrEmpty(wInstanceId))
+					{
+						var wid = HyperDocumentId.TryParse(wInstanceId);
+						if (wid != null) WorkflowInstanceId = wid.Value.Id;
+					}
 				}
 			}
 

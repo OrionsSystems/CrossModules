@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Primitives;
 
-using Orions.XPlatform;
 using Orions.Cloud.Common.Utils;
 using Orions.SDK.Utilities;
 
@@ -37,7 +36,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			int height = 60, 
 			ulong index = 0)
 		{
-			var service = new AssetXService(TimelineSettings.NodeInfo);
+			var utility = new AssetUtility(GetStores());
 
 			var key = string.Format(cacheKeyFormat, assetId, serverUri, width, height, index).GetHashCode();
 			var byteArray = _imagesCache.Get<byte[]>(key);
@@ -50,7 +49,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			var trackId = _assetTrackCache.Get<string>(assetId);
 			if (trackId == null)
 			{
-				var assetVm = await service.GetAsync(new AssetRequest(assetId) { ServerUri = serverUri });
+				var assetVm = await utility.GetAsync(new AssetRequest(assetId) { ServerUri = serverUri });
 				var track = assetVm.HyperAsset.VideoTracks.FirstOrDefault();
 				trackId = track?.Id.ToString() ?? "";
 				if (!string.IsNullOrWhiteSpace(trackId))
@@ -62,7 +61,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			byte[] thumbnail = null;
 			if (!string.IsNullOrWhiteSpace(trackId))
 			{
-				thumbnail = await service.GetSliceImageDataAsync(new AssetSliceRequest()
+	
+				thumbnail = await utility.GetSliceImageDataAsync(new AssetSliceRequest()
 				{
 					AssetId = assetId,
 					ServerUri = serverUri,
@@ -94,7 +94,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			int height = 60, 
 			ulong index = 0)
 		{
-			var service = new AssetXService(TimelineSettings.NodeInfo);
+			var utility = new AssetUtility(GetStores());
 
 			var key = string.Format(cacheKeyFormat, assetId, serverUri, width, height, index).GetHashCode();
 
@@ -108,7 +108,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			var trackId = _assetTrackCache.Get<string>(assetId);
 			if (trackId == null)
 			{
-				var assetVm = await service.GetAsync(new AssetRequest(assetId) { ServerUri = serverUri });
+				var assetVm = await utility.GetAsync(new AssetRequest(assetId) { ServerUri = serverUri });
 				var track = assetVm.HyperAsset.VideoTracks.FirstOrDefault();
 				trackId = track?.Id.ToString() ?? "";
 				if (!string.IsNullOrWhiteSpace(trackId))
@@ -120,7 +120,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			byte[] thumbnail = null;
 			if (!string.IsNullOrWhiteSpace(trackId))
 			{
-				thumbnail = await service.GetSliceImageDataAsync(new AssetSliceRequest()
+				thumbnail = await utility.GetSliceImageDataAsync(new AssetSliceRequest()
 				{
 					AssetId = assetId,
 					ServerUri = serverUri,
@@ -147,14 +147,14 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			return base.File(data, mimeType);
 		}
 
-		private static async Task CacheNextTenSlides(
+		private async Task CacheNextTenSlides(
 			string assetId, 
 			string serverUri, 
 			int width = 80, 
 			int height = 60, 
 			ulong index = 0)
 		{
-			var service = new AssetXService(TimelineSettings.NodeInfo);
+			var utility = new AssetUtility(GetStores());
 
 			for (var i = index; i < index; i++)
 			{
@@ -163,7 +163,7 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 				var byteArray = _imagesCache.Get<byte[]>(key);
 				if (byteArray != null) continue;
 
-				var thumbnail = await service.GetSliceImageDataAsync(new AssetSliceRequest()
+				var thumbnail = await utility.GetSliceImageDataAsync(new AssetSliceRequest()
 				{
 					AssetId = assetId,
 					ServerUri = serverUri,
