@@ -86,7 +86,8 @@ namespace Orions.Systems.CrossModules.Common
 				{
 					using (var host = new CrossModuleInstanceHost()
 					{
-						DevConfig = DevConfig
+						DevConfig = DevConfig,
+						CommandLineArgs = args,
 					})
 					{
 						CrossModuleInstanceHost = host;
