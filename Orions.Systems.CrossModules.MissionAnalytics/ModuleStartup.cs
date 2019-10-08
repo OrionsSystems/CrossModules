@@ -14,37 +14,51 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 		}
 
+		public override void ConfigureServices(IServiceCollection services)
+		{
+			services.AddControllersWithViews();
+			services.AddServerSideBlazor();
+			services.AddRazorPages();
+
+			base.ConfigureServices(services);
+
+			services.AddMvc()
+				.AddSessionStateTempDataProvider()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+
+			services.AddDistributedMemoryCache();
+
+			services.AddSession();
+
+			services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin()));
+
+			// Add Kendo UI services to the services container
+			services.AddKendo();
+		}
+
 		public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			base.Configure(app, env);
 
-			app.UseMvc(routes =>
+			app.UseRouting();
+
+			app.UseEndpoints(endpoints =>
 			{
 				// Default
-				routes.MapRoute(
+				endpoints.MapControllerRoute(
 					name: "default_area",
-					template: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+					pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 				// Default
-				routes.MapRoute(
+				endpoints.MapControllerRoute(
 					name: "default",
-					template: "{controller=Home}/{action=Index}/{id?}");
+					pattern: "{controller=Home}/{action=Index}/{id?}");
+
+				endpoints.MapRazorPages();
+				endpoints.MapBlazorHub();
 			});
 
 			app.UseKendo(env);
-		}
-
-		public override void ConfigureServices(IServiceCollection services)
-		{
-			base.ConfigureServices(services);
-
-			services.AddMvc()
-				//AddJsonOptions(options => options.JsonSerializerOptions.ContractResolver = new DefaultContractResolver())
-				.AddSessionStateTempDataProvider()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
-			// Add Kendo UI services to the services container
-			services.AddKendo();
 		}
 	}
 }

@@ -3,19 +3,20 @@
 <div id="missionProgressFilterId" class="row p-1">
 	<div class="col-md-2 p-1">
 		@(Html.Kendo().DropDownList()
-					.Name("Instances")
-					.DataTextField("Label")
-					.DataValueField("Id")
-					.DataSource(source =>
-					{
-						source.Read(read =>
-						{
-							read.Action("GetMissionInstances", "MissionAnalytics", new { missionId = Model.MissionId });
-						});
-					})
-					.Value(Model.Instance)
-					.HtmlAttributes(new { style = "width: 100%" })
-					.Deferred()
+                    .Name("Instances")
+                    .DataTextField("Label")
+                    .DataValueField("Id")
+                    .DataSource(source =>
+                    {
+                        source.Read(read =>
+                        {
+                            read.Action("GetMissionInstances", "MissionAnalytics", new { missionId = Model.MissionId });
+
+                        });
+                    })
+                    .Value(Model.Instance)
+                    .HtmlAttributes(new { style = "width: 100%" })
+                    .Deferred()
 		)
 	</div>
 	<div class="col-md-2 p-1">

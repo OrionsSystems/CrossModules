@@ -16,7 +16,15 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			_helper = new AppHostHelper<ModuleStartup>();
 
+			_helper.OnReady += OnReadyHandler;
+
 			_helper.StartWithArgs(args);
+		}
+
+		private static void OnReadyHandler(AppHostHelper helper)
+		{
+			// Feed in the data
+			
 		}
 	}
 }

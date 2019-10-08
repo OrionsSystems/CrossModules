@@ -3,7 +3,7 @@
 	MessageViewModel message;
 	if (ViewBag.Message is string)
 	{
-		message = MessageBuilder.Info(ViewBag.Message);
+		message = new MessageViewModel(ViewBag.Message, "", MessageType.Info);
 	}
 	else
 	{

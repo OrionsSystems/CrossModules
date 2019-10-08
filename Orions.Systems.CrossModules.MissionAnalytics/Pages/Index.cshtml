@@ -1,16 +1,17 @@
 @page
 @model IndexModel
 @{
-	ViewData["Title"] = "Mission Analytics";
+    ViewData["Title"] = "Mission Analytics";
 
-	var routeParams = new
-	{
-		Instace = Model.Instance,
-		WorkflowInstanceIds = Model.WorkflowInstanceIds,
-		ReportDays = Model.ReportDaysValue,
-	};
+    var routeParams = new
+    {
+        Instace = Model.Instance,
+        WorkflowInstanceIds = Model.WorkflowInstanceIds,
+        ReportDays = Model.ReportDaysValue,
+    };
 
-	var statisticUrl = Url.Action("GetStatisticsData", "MissionAnalytics", routeParams);
+    var statisticUrl = Url.Action("GetStatisticsData", "MissionAnalytics", routeParams);
+    //var statisticUrl = Url.RouteUrl("MissionAnalytics/GetStatisticsData", routeParams);
 
 }
 
