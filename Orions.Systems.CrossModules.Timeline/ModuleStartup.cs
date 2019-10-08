@@ -48,17 +48,6 @@ namespace Orions.Systems.CrossModules.Timeline
 
 		public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
-			//load env specific configuration
-			XPlatform.Configuration.Settings.Load(AppDomain.CurrentDomain.BaseDirectory);
-			var xplatformSettings = new XPlatformSettings()
-			{
-				CloudAuthentication = XPlatform.Configuration.Settings.CloudAuthentication,
-				ServiceBusConnectionString = XPlatform.Configuration.Settings.ServiceBusConnectionString
-			};
-
-			// init XPlatform assembly
-			XPlatform.Settings.Init(xplatformSettings);
-
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
