@@ -5,10 +5,9 @@
 
 @foreach (var tag in Model)
 {
-	var imgUrl = baseUrl + "?width=336&height=188&assetid=" + tag.AssetGuid + "&index=" + tag.FragmentIndex + "&serverUri=" + tag.ServerUri;
+	var imgUrl = baseUrl + "?width=336&height=188&assetid=" + tag.AssetGuid + "&index=" + tag.FragmentIndex + "&serverUri=" + tag.ServerUri + "&sliceId=" + tag.SliceId;
 	var second = Convert.ToInt32(tag.WallClockTime.TotalSeconds).ToString();
-	var missionDetailsUrl = Url.Action("Details", "Workbench/Operations/Missions", new { area = "Workbench", MissionId = tag.MissionId?.ToString(), serverUri = tag.ServerUri });
-	var assetDetailsUrl = Url.Action("", "Workbench/Content/Asset", new { titleSearchInput = tag.AssetGuid, serverUri = tag.ServerUri, area = "Workbench" });
+	var assetDetailsUrl = Url.Action("Asset", new { titleSearchInput = tag.AssetGuid, serverUri = tag.ServerUri});
 	var childrenIds = string.Join("&ids=", tag.Children.Select(it => Html.Encode(it.TagId)));
 
 	var json = "";
@@ -116,11 +115,11 @@
 
 					@if (string.IsNullOrWhiteSpace(tag.MissionName?.ToString()))
 					{
-						<h5><a href="@missionDetailsUrl" target="_blank">Mission: unknown</a></h5>
+						<h5><a href="#" target="_blank">Mission: unknown</a></h5>
 					}
 					else
 					{
-						<h5><a href="@missionDetailsUrl" target="_blank">Mission: @tag.MissionName</a></h5>
+						<h5><a href="#" target="_blank">Mission: @tag.MissionName</a></h5>
 					}
 					<h5 class="timeline-tagworkflowinfo"></h5>
 					<small>Time UTC @tag.DynamicData.RealWorldContentTimeUTC</small>
