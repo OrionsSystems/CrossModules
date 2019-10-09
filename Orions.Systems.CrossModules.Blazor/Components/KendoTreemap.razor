@@ -3,25 +3,24 @@
 @inject Microsoft.JSInterop.IJSRuntime JS
 
 <div id="treeMapContainer">
-    <div id="@TreeMapId"></div>
-
+	<div id="@TreeMapId"></div>
 </div>
 
 @functions
 {
 
-   [Parameter]
-   public string TreeMapId { get; set; }
+	[Parameter]
+	public string TreeMapId { get; set; }
 
-   //[Parameter]
-   //public TreeMapItem[] TreeMapData { get; set; }
+	[Parameter]
+	public TreeMapItem[] TreeMapData { get; set; }
 
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		var data = TreeMapItem.GenerateTestData();
+	
+		if (TreeMapData == null || TreeMapData.Length == 0) return;
 
-   protected override async Task OnAfterRenderAsync(bool firstRender)
-   {
-      throw new NotImplementedException();
-
-      //var data = TreeMapItem.GenerateTestData();
-      //await JS.InvokeAsync<object>("Orions.KendoTreemap.init", TreeMapId, TreeMapData);
-   }
+		await JS.InvokeAsync<object>("Orions.KendoTreemap.init", new object[] { TreeMapId, TreeMapData });
+	}
 }
