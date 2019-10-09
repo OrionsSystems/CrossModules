@@ -31,6 +31,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			int pageNumber = 0,
 			int pageSize = 20)
 		{
+			if (string.IsNullOrWhiteSpace(workflowInstanceId)) return Content("");
+
 			var filter = new TagPageFilterModel()
 			{
 				ServerUri = ServerUri,
@@ -51,11 +53,9 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 				filter.Range = new TagPageFilterModel.PositionRange(fromSeconds.Value, toSeconds.Value);
 			}
 
-			var timeline = new TimelineViewModel();
-
 			var utility = new TimelineUtility(NetStore);
 
-			timeline = await utility.GetTimeline(filter);
+			var timeline = await utility.GetTimeline(filter);
 
 			if (timeline.Tags.Any())
 			{

@@ -376,9 +376,11 @@
             var serverDomain = serverUriList[0];
             var serverPort = serverUriList[1];
 
-            serverPort = parseInt(serverPort) + 1; 
+            serverPort = parseInt(serverPort); 
 
-             var url = 'https://' + serverDomain + ':' + serverPort + '/dash/' + assetId + '/asset.mpd';
+           
+            //var url = 'https://' + serverDomain + ':' + (serverPort + 1) + '/dash/' + assetId + '/asset.mpd';
+            var url = 'http://' + serverDomain + ':' + serverPort + '/dash/' + assetId + '/asset.mpd';
 
             $('#playerModal').data("kendoWindow").title(title).center().open();
 			
