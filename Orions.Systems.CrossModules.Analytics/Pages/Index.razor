@@ -5,7 +5,8 @@
 @using Orions.CrossModules.Data;
 
 @using Orions.Infrastructure.HyperMedia;
-
+@using Telerik.Blazor;
+@using Telerik.Blazor.Components;
 
 @inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
 
@@ -16,63 +17,45 @@
 
 	<div class="row">
 		<div class="col-md-5">
-			<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
-			<!--
 			<TelerikChart>
-				<TelerikChartSeriesItems>
-					<TelerikChartSeries Type="ChartSeriesType.Pie" Data="@labelsChartData" VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
-										Field="@nameof(TagLabelsPieChartData.Count)"
-										CategoryField="@nameof(TagLabelsPieChartData.Label)">
-
-					</TelerikChartSeries>
-
-				</TelerikChartSeriesItems>
-
-				<TelerikChartTitle Text="Items per Label"></TelerikChartTitle>
-
-
-				<TelerikChartLegend Position="ChartLegendPosition.Right">
-				</TelerikChartLegend>
+				<ChartSeriesItems>
+					<ChartSeries Type="ChartSeriesType.Pie"
+								 Data="@labelsChartData"
+								 VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
+								 Field="@nameof(TagLabelsPieChartData.Count)"
+								 CategoryField="@nameof(TagLabelsPieChartData.Label)">
+					</ChartSeries>
+				</ChartSeriesItems>
+				<ChartTitle Text="Items per Label">
+				</ChartTitle>
+				<ChartLegend Position="ChartLegendPosition.Right">
+				</ChartLegend>
 			</TelerikChart>
-			-->
-
-
 		</div>
 		<div class="col-md-5">
-			<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
-			<!--
 			<KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData">
 			</KendoTreemap>
-			-->
 		</div>
 		<div class="col-md-2">
-
 		</div>
-
 	</div>
-
 
 </div>
 
 <div>
-	<!-- TODO Add this back once we get latest Telerik.UI.for.Blazor -->
-	<!--
-		<TelerikChart>
-			<TelerikChartSeriesItems>
-				<TelerikChartSeries Type="ChartSeriesType.Column"
-									Data="@tagTimingData"
-									Field="@nameof(TagStreamTimeChartData.Count)"
-									CategoryField="@nameof(TagStreamTimeChartData.Time)">
-				</TelerikChartSeries>
-
-			</TelerikChartSeriesItems>
-
-			<TelerikChartTitle Text="Items per Time"></TelerikChartTitle>
-
-			<TelerikChartLegend Position="ChartLegendPosition.Right">
-			</TelerikChartLegend>
-		</TelerikChart>
-		-->
+	<TelerikChart>
+		<ChartSeriesItems>
+			<ChartSeries Type="ChartSeriesType.Column"
+						 Data="@tagTimingData"
+						 Field="@nameof(TagStreamTimeChartData.Count)"
+						 CategoryField="@nameof(TagStreamTimeChartData.Time)">
+			</ChartSeries>
+		</ChartSeriesItems>
+		<ChartTitle Text="Items per Time">
+		</ChartTitle>
+		<ChartLegend Position="ChartLegendPosition.Right">
+		</ChartLegend>
+	</TelerikChart>
 </div>
 
 
@@ -92,7 +75,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		CrossModuleVisualizationRequest vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+		var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
 		await NodeStatisticsManager.Instance.InitDataAsync(vizRequest);
 
