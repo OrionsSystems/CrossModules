@@ -31,7 +31,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			int pageNumber = 0,
 			int pageSize = 20)
 		{
-			if (string.IsNullOrWhiteSpace(workflowInstanceId)) return Content("");
+			if (string.IsNullOrWhiteSpace(workflowInstanceId) 
+				|| string.IsNullOrWhiteSpace(assetId)) return Content("");
 
 			var filter = new TagPageFilterModel()
 			{

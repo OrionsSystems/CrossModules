@@ -66,6 +66,18 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 						if (wid != null) WorkflowInstanceId = wid.Value.Id;
 					}
 				}
+
+				var assetIds = req.AssetIds;
+				if (assetIds != null && assetIds.Any())
+				{
+					var assetId = assetIds.First();
+
+					if (!string.IsNullOrEmpty(assetId))
+					{
+						var aId = HyperDocumentId.TryParse(assetId);
+						if (aId != null) AssetId = aId.Value.Id;
+					}
+				}
 			}
 
 			ServerUri = TimelineSettings.ServerUri;
