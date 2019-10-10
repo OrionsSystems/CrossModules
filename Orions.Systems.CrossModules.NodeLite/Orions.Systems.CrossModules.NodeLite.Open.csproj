@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Orions.Node" Version="2.38.136" />
+    <PackageReference Include="Orions.Node" Version="2.39.210-alpha" />
   </ItemGroup>
 
   <ItemGroup>
