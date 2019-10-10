@@ -3,73 +3,73 @@
 @using MatBlazor
 @using BlazorStrap
 @using Microsoft.AspNetCore.Components.Web
+@using Telerik.Blazor;
+@using Telerik.Blazor.Components;
 
 <h1>Metadata Review</h1>
 
 <MatButton Unelevated="true" OnClick="@OpenDialog" Raised="true">Select Documents</MatButton>
 
-<MatDialog @bind-IsOpen="@dialogIsOpen" >
-    <MatDialogTitle>Select Hyper Documents</MatDialogTitle>
-    <MatDialogContent>
-        <!-- TODO uncomment this once we get Telerik.UI.for.Blazor 1.2.0 -->
-        <!--<TelerikGrid Data="@MyData" Height="500px"  Pageable="true" Sortable="true" >
-            <TelerikGridColumns>
-                
-                <TelerikGridColumn>
-                    <Template>
-                        @*<MatCheckbox Checked="@((context as SampleData).IsSelected)" @bind-IsChecked="@((context as SampleData).IsSelected)">
+<MatDialog @bind-IsOpen="@dialogIsOpen">
+	<MatDialogTitle>Select Hyper Documents</MatDialogTitle>
+	<MatDialogContent>
 
-                </MatCheckbox>*@
-                        <input type="checkbox" bind="@((context as SampleData).IsSelected)" />
-                    </Template>
-                </TelerikGridColumn>
-                <TelerikGridColumn Field="@(nameof(SampleData.Id))" />
-                <TelerikGridColumn Field="@(nameof(SampleData.Name))" Title="Employee Name" />
-                <TelerikGridColumn Field="@(nameof(SampleData.Team))" Title="Team" />
-                <TelerikGridColumn Field="@(nameof(SampleData.HireDate))" Title="Hire Date" />
-            </TelerikGridColumns>
-        </TelerikGrid>
-        -->
+		<TelerikGrid Data="@MyData" Height="500px" Pageable="true" Sortable="true">
+			<GridColumns>
+				<GridColumn>
+					<Template>
+						@*<MatCheckbox Checked="@((context as SampleData).IsSelected)" @bind-IsChecked="@((context as SampleData).IsSelected)">
+						</MatCheckbox>*@
+						<input type="checkbox" bind="@((context as SampleData).IsSelected)" />
+					</Template>
+				</GridColumn>
+				<GridColumn Field="@(nameof(SampleData.Id))" />
+				<GridColumn Field="@(nameof(SampleData.Name))" Title="Employee Name" />
+				<GridColumn Field="@(nameof(SampleData.Team))" Title="Team" />
+				<GridColumn Field="@(nameof(SampleData.HireDate))" Title="Hire Date" />
+			</GridColumns>
+		</TelerikGrid>
 
-    </MatDialogContent>
-    <MatDialogActions>
-        <MatButton OnClick="@CloseDialog">Ok</MatButton>
-        <MatButton OnClick="@CloseDialog">Cancel</MatButton>
-    </MatDialogActions>
+
+	</MatDialogContent>
+	<MatDialogActions>
+		<MatButton OnClick="@CloseDialog">Ok</MatButton>
+		<MatButton OnClick="@CloseDialog">Cancel</MatButton>
+	</MatDialogActions>
 </MatDialog>
 
 
 @functions
 {
-    public IEnumerable<SampleData> MyData = null;
+	public IEnumerable<SampleData> MyData = null;
 
-    bool dialogIsOpen = false;
+	bool dialogIsOpen = false;
 
-    void OpenDialog(MouseEventArgs e)
-    {
-        MyData = Enumerable.Range(1, 30).Select(x => new SampleData
-        {
-            Id = x,
-            Name = "name " + x,
-            Team = "team " + x % 5,
-            HireDate = DateTime.Now.AddDays(-x).Date,
-            IsSelected = true
-        });
+	void OpenDialog(MouseEventArgs e)
+	{
+		MyData = Enumerable.Range(1, 30).Select(x => new SampleData
+		{
+			Id = x,
+			Name = "name " + x,
+			Team = "team " + x % 5,
+			HireDate = DateTime.Now.AddDays(-x).Date,
+			IsSelected = true
+		});
 
-        dialogIsOpen = true;
-    }
+		dialogIsOpen = true;
+	}
 
-    void CloseDialog(MouseEventArgs e)
-    {
-        dialogIsOpen = false;
-    }
+	void CloseDialog(MouseEventArgs e)
+	{
+		dialogIsOpen = false;
+	}
 
-    public class SampleData
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Team { get; set; }
-        public DateTime HireDate { get; set; }
-        public bool IsSelected { get; set; }
-    }
+	public class SampleData
+	{
+		public int Id { get; set; }
+		public string Name { get; set; }
+		public string Team { get; set; }
+		public DateTime HireDate { get; set; }
+		public bool IsSelected { get; set; }
+	}
 }
