@@ -4,43 +4,44 @@
 @using MatBlazor
 @using BlazorStrap
 @using Orions.Systems.CrossModules.NodeStats
+@using Telerik.Blazor.Components
 
 @using System.ComponentModel
 
 @functions
 {
-   int pages = 1;
+	int pages = 1;
 
-   string newNodeUrl { get; set; } = "http://root:@127.0.0.1:4580/Execute";
-   string newNodeName { get; set; } = "New Node";
+	string newNodeUrl { get; set; } = "http://root:@127.0.0.1:4580/Execute";
+	string newNodeName { get; set; } = "New Node";
 
-   string Now { get; set; }
+	string Now { get; set; }
 
-   bool newNodeDialogOpen { get; set; }
+	bool newNodeDialogOpen { get; set; }
 
-   void loadClicked()
-   {
-      pages++;
-      NodesManager.Instance.PropertyChanged += propChanged;
-   }
+	void loadClicked()
+	{
+		pages++;
+		NodesManager.Instance.PropertyChanged += propChanged;
+	}
 
-   void addNodeClicked()
-   {
-      newNodeDialogOpen = true;
-   }
+	void addNodeClicked()
+	{
+		newNodeDialogOpen = true;
+	}
 
-   void doAddNodeClicked()
-   {
-      newNodeDialogOpen = false;
-      NodesManager.Instance.AddNodeAsync(newNodeName, newNodeUrl);
-   }
+	void doAddNodeClicked()
+	{
+		newNodeDialogOpen = false;
+		NodesManager.Instance.AddNodeAsync(newNodeName, newNodeUrl);
+	}
 
-   void propChanged(object sender, PropertyChangedEventArgs e)
-   {
-      Now = DateTime.Now.ToString();
+	void propChanged(object sender, PropertyChangedEventArgs e)
+	{
+		Now = DateTime.Now.ToString();
 
-      this.InvokeAsync(() => this.StateHasChanged());
-   }
+		InvokeAsync(StateHasChanged);
+	}
 
 }
 
@@ -87,8 +88,8 @@
 	</MatDialogContent>
 
 	<MatDialogActions>
-		<MatButton OnClick="@doAddNodeClicked" >OK</MatButton>
-		<MatButton OnClick="@(e => { newNodeDialogOpen = false; })" >Cancel</MatButton>
+		<MatButton OnClick="@doAddNodeClicked">OK</MatButton>
+		<MatButton OnClick="@(e => { newNodeDialogOpen = false; })">Cancel</MatButton>
 	</MatDialogActions>
 </MatDialog>
 
@@ -103,7 +104,7 @@
 			<MatExpansionPanelSummary>
 
 				<MatExpansionPanelHeader>
-               <div class="mat-layout-grid">
+					<div class="mat-layout-grid">
 						<div class="mat-layout-grid-inner">
 							<div class="mat-layout-grid-cell  mat-layout-grid-cell-span-4 mat-layout-grid-cell-align-middle">
 								<b>@node.Name</b>
@@ -111,24 +112,24 @@
 							<div class="mat-layout-grid-cell  mat-layout-grid-cell-span-2 mat-layout-grid-cell-align-middle">
 								@foreach (var success in node.BadgeSuccesses)
 								{
-									<Badge Color="Color.Success">@success</Badge>
+									<BSBadge Color="Color.Success">@success</BSBadge>
 								}
 							</div>
 							<div class="mat-layout-grid-cell mat-layout-grid-cell-span-4 mat-layout-grid-cell-align-middle">
 
 								@foreach (var notification in node.BadgeNotifications)
 								{
-									<Badge Color="Color.Primary">@notification</Badge>
+									<BSBadge Color="Color.Primary">@notification</BSBadge>
 								}
 
 								@foreach (var warn in node.BadgeWarnings)
 								{
-									<Badge Color="Color.Warning">@warn</Badge>
+									<BSBadge Color="Color.Warning">@warn</BSBadge>
 								}
 
 								@foreach (var err in node.BadgeError)
 								{
-									<Badge Color="Color.Danger">@err</Badge>
+									<BSBadge Color="Color.Danger">@err</BSBadge>
 								}
 							</div>
 						</div>
@@ -151,14 +152,93 @@
 
 </MatAccordion>
 
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
-<br /><br /><br /><br /><br /><br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />

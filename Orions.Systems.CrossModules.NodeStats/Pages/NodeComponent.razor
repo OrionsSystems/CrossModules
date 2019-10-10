@@ -9,7 +9,7 @@
 @using BlazorStrap
 
 @using Telerik.Blazor
-@using Telerik.Blazor.Components.Chart
+@using Telerik.Blazor.Components
 
 @using System.Threading
 
@@ -18,171 +18,171 @@
 
 @functions {
 
-   public bool ModalVisible { get; set; }
+	public bool ModalVisible { get; set; }
 
-   public string ModalText { get; set; }
+	public string ModalText { get; set; }
 
-   public string ModalTitle { get; set; }
+	public string ModalTitle { get; set; }
 
-   NodeDataManager _manager = null;
+	NodeDataManager _manager = null;
 
-   [Parameter]
-   public NodeDataManager Manager
-   {
-      get
-      {
-         return _manager;
-      }
+	[Parameter]
+	public NodeDataManager Manager
+	{
+		get
+		{
+			return _manager;
+		}
 
-      set
-      {
-         if (_manager != null)
-            _manager.PropertyChanged -= propChanged;
+		set
+		{
+			if (_manager != null)
+				_manager.PropertyChanged -= propChanged;
 
-         _manager = value;
-         if (value != null)
-            value.PropertyChanged += propChanged;
-      }
-   }
+			_manager = value;
+			if (value != null)
+				value.PropertyChanged += propChanged;
+		}
+	}
 
-   public Dictionary<string, bool> PopoversOpened { get; set; } = new Dictionary<string, bool>();
+	public Dictionary<string, bool> PopoversOpened { get; set; } = new Dictionary<string, bool>();
 
-   public int ActiveIndex { get; set; }
+	public int ActiveIndex { get; set; }
 
-   void configPopoverClick()
-   {
+	void configPopoverClick()
+	{
 
-   }
+	}
 
-   void testClicked()
-   {
-   }
+	void testClicked()
+	{
+	}
 
-   void popoverChange(string id)
-   {
-   }
+	void popoverChange(string id)
+	{
+	}
 
-   void propChanged(object sender, PropertyChangedEventArgs e)
-   {
+	void propChanged(object sender, PropertyChangedEventArgs e)
+	{
 
-      if (diskSeriesData.Count == 0)
-      {
-         diskSeriesData.Clear();
-         List<string> labels = new List<string>();
+		if (diskSeriesData.Count == 0)
+		{
+			diskSeriesData.Clear();
+			List<string> labels = new List<string>();
 
-         foreach (var disk in Manager?.DrivesInfo ?? new WMIHelper.DetailDriveInfo[] { })
-         {
-            if (string.IsNullOrEmpty(disk.Label) && disk.FreeSpace == null)
-               continue;
+			foreach (var disk in Manager?.DrivesInfo ?? new WMIHelper.DetailDriveInfo[] { })
+			{
+				if (string.IsNullOrEmpty(disk.Label) && disk.FreeSpace == null)
+					continue;
 
-            diskSeriesData.Add(disk.Progress);
-            labels.Add(disk.Label);
-         }
+				diskSeriesData.Add(disk.Progress);
+				labels.Add(disk.Label);
+			}
 
-         diskSeriesXAxisItems = labels.ToArray();
-      }
+			diskSeriesXAxisItems = labels.ToArray();
+		}
 
-      this.InvokeAsync(() =>
-      {
-         //chart1.Refresh();
-         base.StateHasChanged();
-      });
-   }
+		this.InvokeAsync(() =>
+		{
+	  //chart1.Refresh();
+	  base.StateHasChanged();
+		});
+	}
 
-   void onDiskClicked(WMIHelper.DetailDriveInfo disk)
-   {
-      showModal($"Disk {disk?.Caption} Details", disk?.AdvancedInfo);
-   }
+	void onDiskClicked(WMIHelper.DetailDriveInfo disk)
+	{
+		showModal($"Disk {disk?.Caption} Details", disk?.AdvancedInfo);
+	}
 
-   public void ShowToaster(string message)
-   {
-      Toaster.Add(message, MatToastType.Info, "Info", "", config =>
-      {
-         config.ShowCloseButton = false;
-         config.ShowProgressBar = false;
-         config.MaximumOpacity = 100;
+	public void ShowToaster(string message)
+	{
+		Toaster.Add(message, MatToastType.Info, "Info", "", config =>
+		{
+			config.ShowCloseButton = false;
+			config.ShowProgressBar = false;
+			config.MaximumOpacity = 100;
 
-         //config.ShowTransitionDuration = Convert.ToInt32(_showTransitionDuration);
-         //config.VisibleStateDuration = Convert.ToInt32(_visibleStateDuration);
-         //config.HideTransitionDuration = Convert.ToInt32(_hideTransitionDuration);
+	  //config.ShowTransitionDuration = Convert.ToInt32(_showTransitionDuration);
+	  //config.VisibleStateDuration = Convert.ToInt32(_visibleStateDuration);
+	  //config.HideTransitionDuration = Convert.ToInt32(_hideTransitionDuration);
 
-         //config.RequireInteraction = _requireInteraction;
-      });
-   }
+	  //config.RequireInteraction = _requireInteraction;
+  });
+	}
 
-   protected override void OnInitialized()
-   {
-      xAxisItems = new string[10];
-      for (int i = 0; i < 10; i++)
-      {
-         xAxisItems[i] = i.ToString();
-      }
+	protected override void OnInitialized()
+	{
+		xAxisItems = new string[10];
+		for (int i = 0; i < 10; i++)
+		{
+			xAxisItems[i] = i.ToString();
+		}
 
-      base.OnInitialized();
-   }
+		base.OnInitialized();
+	}
 
-   void onOnlineStatus()
-   {
-      ShowToaster("How long the Node has been online");
-   }
+	void onOnlineStatus()
+	{
+		ShowToaster("How long the Node has been online");
+	}
 
-   public List<object> cpuData = new List<object>() { 10, 2, 5, 6 };
-   public List<object> ramData = new List<object>() { 5, 8, 2, 7 };
+	public List<object> cpuData = new List<object>() { 10, 2, 5, 6 };
+	public List<object> ramData = new List<object>() { 5, 8, 2, 7 };
 
-   public string[] xAxisItems = new string[] { };
+	public string[] xAxisItems = new string[] { };
 
-   MatTheme theme2 = new MatTheme()
-   {
-      Primary = "#455a64",
-      Secondary = "#536dfe"
-   };
+	MatTheme theme2 = new MatTheme()
+	{
+		Primary = "#455a64",
+		Secondary = "#536dfe"
+	};
 
-   BaseMatButton ButtonDiskDrives;
+	BaseMatButton ButtonDiskDrives;
 
-   public void OnClickDiskDrives(object e)
-   {
-      this.MenuDiskDrives.OpenAsync(ButtonDiskDrives.Ref);
-   }
-
-
-   BaseMatButton Button2;
-   BaseMatButton ButtonComponents;
-   BaseMatButton ButtonUsers;
-
-   BaseMatMenu Menu2;
-   BaseMatMenu MenuComponents;
-   BaseMatMenu MenuUsers;
-   BaseMatMenu MenuDiskDrives;
-
-   TelerikChart chart1;
-
-   public void OnClick2(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
-   {
-      this.Menu2.OpenAsync(Button2.Ref);
-   }
-
-   public void OnClickComponents(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
-   {
-      this.MenuComponents.OpenAsync(ButtonComponents.Ref);
-   }
-
-   public void OnClickUsers(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
-   {
-      this.MenuUsers.OpenAsync(ButtonUsers.Ref);
-   }
-
-   void showModal(string title, string message)
-   {
-      ModalTitle = title;
-      ModalText = message;
-      ModalVisible = true;
+	public void OnClickDiskDrives(object e)
+	{
+		this.MenuDiskDrives.OpenAsync(ButtonDiskDrives.Ref);
+	}
 
 
-      base.StateHasChanged();
-   }
+	BaseMatButton Button2;
+	BaseMatButton ButtonComponents;
+	BaseMatButton ButtonUsers;
 
-   public List<object> diskSeriesData { get; set; } = new List<object>();
-   public object[] diskSeriesXAxisItems { get; set; } = new object[] { };
+	BaseMatMenu Menu2;
+	BaseMatMenu MenuComponents;
+	BaseMatMenu MenuUsers;
+	BaseMatMenu MenuDiskDrives;
+
+	TelerikChart chart1;
+
+	public void OnClick2(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+	{
+		this.Menu2.OpenAsync(Button2.Ref);
+	}
+
+	public void OnClickComponents(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+	{
+		this.MenuComponents.OpenAsync(ButtonComponents.Ref);
+	}
+
+	public void OnClickUsers(Microsoft.AspNetCore.Components.Web.MouseEventArgs e)
+	{
+		this.MenuUsers.OpenAsync(ButtonUsers.Ref);
+	}
+
+	void showModal(string title, string message)
+	{
+		ModalTitle = title;
+		ModalText = message;
+		ModalVisible = true;
+
+
+		base.StateHasChanged();
+	}
+
+	public List<object> diskSeriesData { get; set; } = new List<object>();
+	public object[] diskSeriesXAxisItems { get; set; } = new object[] { };
 
 }
 
@@ -191,16 +191,16 @@
 @*------------------ MODAL ------------------ *@
 
 @*<Modal IsOpen="@ModalVisible" IsCentered="true" Size="BlazorStrap.Size.Large">
-	<ModalHeader OnClick="@(e => { ModalVisible = false; })">@ModalTitle</ModalHeader>
+		<ModalHeader OnClick="@(e => { ModalVisible = false; })">@ModalTitle</ModalHeader>
 
-	<textarea @bind="@ModalText" style="min-height:600px"></textarea>
+		<textarea @bind="@ModalText" style="min-height:600px"></textarea>
 
-	<ModalFooter>
-		<BlazorButton Color="Color.Secondary" OnClick="@(e => { ModalVisible = false; })">Close</BlazorButton>
-	</ModalFooter>
-</Modal>*@
+		<ModalFooter>
+			<BlazorButton Color="Color.Secondary" OnClick="@(e => { ModalVisible = false; })">Close</BlazorButton>
+		</ModalFooter>
+	</Modal>*@
 
-<MatDialog @bind-IsOpen="@ModalVisible" >
+<MatDialog @bind-IsOpen="@ModalVisible">
 	<MatDialogTitle>@ModalTitle</MatDialogTitle>
 	<MatDialogContent>
 
@@ -283,40 +283,33 @@
 	<div class="mat-layout-grid-inner">
 		<div class="mat-layout-grid-cell  mat-layout-grid-cell-span-4 mat-layout-grid-cell-align-middle">
 			<TelerikChart>
-			<TelerikChartSeriesItems>
-				<TelerikChartSeries Type="ChartSeriesType.Line" Name="RAM" Data="@Manager.RAMHistory">
-				</TelerikChartSeries>
-				<TelerikChartSeries Type="ChartSeriesType.Line" Name="CPU" Data="@Manager.CPUHistory">
-				</TelerikChartSeries>
-			</TelerikChartSeriesItems>
-
-			<TelerikChartCategoryAxes>
-				<TelerikChartCategoryAxis Categories="@xAxisItems"></TelerikChartCategoryAxis>
-			</TelerikChartCategoryAxes>
-
-			<TelerikChartTitle Text="System Resources"></TelerikChartTitle>
-
-			<TelerikChartLegend Position="ChartLegendPosition.Bottom">
-			</TelerikChartLegend>
-		</TelerikChart>
-
+				<ChartSeriesItems>
+					<ChartSeries Type="ChartSeriesType.Line" Name="RAM" Data="@Manager.RAMHistory">
+					</ChartSeries>
+					<ChartSeries Type="ChartSeriesType.Line" Name="CPU" Data="@Manager.CPUHistory">
+					</ChartSeries>
+				</ChartSeriesItems>
+				<ChartCategoryAxes>
+					<ChartCategoryAxis Categories="@xAxisItems"></ChartCategoryAxis>
+				</ChartCategoryAxes>
+				<ChartTitle Text="System Resources"></ChartTitle>
+				<ChartLegend Position="ChartLegendPosition.Bottom">
+				</ChartLegend>
+			</TelerikChart>
 		</div>
-		
+
 		<div class="mat-layout-grid-cell  mat-layout-grid-cell-span-4 mat-layout-grid-cell-align-middle">
 			<TelerikChart>
-				<TelerikChartSeriesItems>
-					<TelerikChartSeries Type="ChartSeriesType.Line" Name="Activity" Data="@Manager.ActivityHistory">
-					</TelerikChartSeries>
-				</TelerikChartSeriesItems>
-
-				<TelerikChartCategoryAxes>
-					<TelerikChartCategoryAxis Categories="@xAxisItems"></TelerikChartCategoryAxis>
-				</TelerikChartCategoryAxes>
-
-				<TelerikChartTitle Text="Activity"></TelerikChartTitle>
-
-				<TelerikChartLegend Position="ChartLegendPosition.Bottom">
-				</TelerikChartLegend>
+				<ChartSeriesItems>
+					<ChartSeries Type="ChartSeriesType.Line" Name="Activity" Data="@Manager.ActivityHistory">
+					</ChartSeries>
+				</ChartSeriesItems>
+				<ChartCategoryAxes>
+					<ChartCategoryAxis Categories="@xAxisItems"></ChartCategoryAxis>
+				</ChartCategoryAxes>
+				<ChartTitle Text="Activity"></ChartTitle>
+				<ChartLegend Position="ChartLegendPosition.Bottom">
+				</ChartLegend>
 			</TelerikChart>
 		</div>
 	</div>
@@ -344,40 +337,26 @@
 }
 
 <MatAccordion>
-
 	<MatExpansionPanel ExpandedChanged="@expandedChanged">
 		<MatExpansionPanelSummary>
 			<MatExpansionPanelHeader>Disk Drives</MatExpansionPanelHeader>
 		</MatExpansionPanelSummary>
-
 		<MatExpansionPanelDetails>
-
 			<div style="width:100%;height:400px">
-
 				<TelerikChart Width="100%" Height="100%" @ref="chart1">
-					<TelerikChartSeriesItems>
-
-						<TelerikChartSeries Type="ChartSeriesType.Column" Name="Free Disk Space" Data="@diskSeriesData">
-						</TelerikChartSeries>
-
-					</TelerikChartSeriesItems>
-
-					<TelerikChartCategoryAxes>
-						<TelerikChartCategoryAxis Categories="@diskSeriesXAxisItems"></TelerikChartCategoryAxis>
-					</TelerikChartCategoryAxes>
-
-					<TelerikChartTitle Text=""></TelerikChartTitle>
-
-					<TelerikChartLegend Position="ChartLegendPosition.Bottom">
-					</TelerikChartLegend>
+					<ChartSeriesItems>
+						<ChartSeries Type="ChartSeriesType.Column" Name="Free Disk Space" Data="@diskSeriesData">
+						</ChartSeries>
+					</ChartSeriesItems>
+					<ChartCategoryAxes>
+						<ChartCategoryAxis Categories="@diskSeriesXAxisItems"></ChartCategoryAxis>
+					</ChartCategoryAxes>
+					<ChartTitle Text=""></ChartTitle>
+					<ChartLegend Position="ChartLegendPosition.Bottom">
+					</ChartLegend>
 				</TelerikChart>
-
 			</div>
-
 		</MatExpansionPanelDetails>
-
 	</MatExpansionPanel>
-
-
 </MatAccordion>
 

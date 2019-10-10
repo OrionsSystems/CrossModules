@@ -2,7 +2,6 @@
 @using MatBlazor
 @using BlazorStrap
 
-
 @functions
 {
 	[Parameter] public string Name { get; set; }
@@ -54,26 +53,26 @@
 }
 
 @*<BlazorButton Id="@Id" style="margin-top: 4px;" IsOutline="true" Color="@Color" Size="Size.Small"
-				  OnClick="@(e => { showModal(); })">@Name</BlazorButton>*@
+	OnClick="@(e => { showModal(); })">@Name</BlazorButton>*@
 
 <MatListItem OnClick="@showModal">@Name</MatListItem>
 
 @*<MatButton Name="@config.ComponentType.ToString()" Label="@Manager.OnlineStatus"></MatButton>*@
 
 
-				<Modal IsOpen="@ModalVisible" IsCentered="true" Size="Size.Large">
-					<ModalHeader OnClick="(e => { ModalVisible = false; })">@PopoverTitle</ModalHeader>
+<BSModal IsOpen="@ModalVisible" IsCentered="true" Size="Size.Large">
+	<BSModalHeader OnClick="(e => { ModalVisible = false; })">@PopoverTitle</BSModalHeader>
 
-					<textarea @bind="@PopoverContents" style="min-height:600px"></textarea>
+	<textarea @bind="@PopoverContents" style="min-height:600px"></textarea>
 
-					<ModalFooter>
-						<BlazorButton Color="Color.Secondary" OnClick="(e => { ModalVisible = false; })">Close</BlazorButton>
-					</ModalFooter>
-				</Modal>
+	<BSModalFooter>
+		<BSButton Color="Color.Secondary" OnClick="(e => { ModalVisible = false; })">Close</BSButton>
+	</BSModalFooter>
+</BSModal>
 
-				@*<Popover Target="@Id" IsOpen="@PopoverVisible" Placement="Placement.Bottom">
-						<PopoverHeader>@PopoverTitle</PopoverHeader>
-						<PopoverBody>@PopoverContents</PopoverBody>
-					</Popover>*@
+@*<Popover Target="@Id" IsOpen="@PopoverVisible" Placement="Placement.Bottom">
+		<PopoverHeader>@PopoverTitle</PopoverHeader>
+		<PopoverBody>@PopoverContents</PopoverBody>
+	</Popover>*@
 
 

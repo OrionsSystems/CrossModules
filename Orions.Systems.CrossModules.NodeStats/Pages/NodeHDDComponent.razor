@@ -3,7 +3,7 @@
 @using Orions.Infrastructure.Common
 
 @using Telerik.Blazor
-@using Telerik.Blazor.Components.Chart
+@using Telerik.Blazor.Components
 
 @functions
 {
@@ -26,8 +26,8 @@
       var taken = Disk?.Progress;
       if (taken.HasValue)
       {
-         Pies.Add(new MyPieChartModel() { SegmentName = "Taken", SegmentValue = taken.Value, SegmentColor = "#333" });
-         Pies.Add(new MyPieChartModel() { SegmentName = "Free", SegmentValue = 1 - taken.Value, SegmentColor = "#ccc" });
+         Pies.Add(new MyPieChartModel { SegmentName = "Taken", SegmentValue = taken.Value, SegmentColor = "#333" });
+         Pies.Add(new MyPieChartModel { SegmentName = "Free", SegmentValue = 1 - taken.Value, SegmentColor = "#ccc" });
       }
 
       base.OnInitialized();
@@ -36,18 +36,15 @@
 }
 
 <TelerikChart>
-	<TelerikChartSeriesItems>
-
-		<TelerikChartSeries Type="ChartSeriesType.Pie" Data="@Pies"
+	<ChartSeriesItems>
+		<ChartSeries Type="ChartSeriesType.Pie" Data="@Pies"
 			ColorField="@nameof(MyPieChartModel.SegmentColor)"
 			Field="@nameof(MyPieChartModel.SegmentValue)" CategoryField="@nameof(MyPieChartModel.SegmentName)">
-		</TelerikChartSeries>
-	</TelerikChartSeriesItems>
-
-	<TelerikChartTitle Text="@Name"></TelerikChartTitle>
-
-	<TelerikChartLegend Position="ChartLegendPosition.Left">
-	</TelerikChartLegend>
+		</ChartSeries>
+	</ChartSeriesItems>
+	<ChartTitle Text="@Name"></ChartTitle>
+	<ChartLegend Position="ChartLegendPosition.Left">
+	</ChartLegend>
 </TelerikChart>
 
 @*<br />
