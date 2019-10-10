@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json.Serialization;
 using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
@@ -24,7 +25,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			services.AddMvc()
 				.AddSessionStateTempDataProvider()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+				.AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
 
 			services.AddDistributedMemoryCache();
 
@@ -57,8 +59,6 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				endpoints.MapRazorPages();
 				endpoints.MapBlazorHub();
 			});
-
-			app.UseKendo(env);
 		}
 	}
 }

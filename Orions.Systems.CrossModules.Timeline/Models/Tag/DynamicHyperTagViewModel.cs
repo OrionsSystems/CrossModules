@@ -252,6 +252,7 @@ namespace Orions.Systems.CrossModules.Timeline.Models
 		}
 
 		public HyperTagBasicML BasicMLTags { get { return (HyperTag?.GetElement<HyperTagBasicML>()); } }
+
 		public dynamic HyperId { get { return (SafeGetArrayElement(Elements, "HyperId")); } }
 		[JsonIgnore]
 		public dynamic Result { get { return (SafeGetArrayElement(Elements, "Result")); } }
@@ -262,7 +263,15 @@ namespace Orions.Systems.CrossModules.Timeline.Models
 		public string FragmentIndex { get { return (SafeGetElement(FragmentId, "Index")); } }
 		public string StreamPosition { get { return (SafeGetElement(DynamicData, "StreamPosition")); } }
 		public string WorkflowInstanceId { get { return SafeGetElement(Elements, "WorkflowInstanceId"); } }
+		
+		public ushort SliceId { 
+			get {
+				var sliceId = (SafeGetElement(HyperId, "SliceId"));
+				if (sliceId == null) return 1;
 
+				return (sliceId["Index"]);
+			} 
+		}
 
 		[JsonIgnore]
 		public string ImageGenerated { get; set; }

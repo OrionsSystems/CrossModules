@@ -40,8 +40,7 @@ namespace Orions.Systems.CrossModules.Analytics
 
 			//more code may be present here
 
-			// TODO Add this back once we get latest Telerik.UI.for.Blazor 
-			//services.AddTelerikBlazor();
+			services.AddTelerikBlazor();
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
 			if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
@@ -90,7 +89,6 @@ namespace Orions.Systems.CrossModules.Analytics
 
 			//MatBlazor
 			app.UseEmbeddedBlazorContent(typeof(BaseMatAccordion).Assembly);
-
 		}
 	}
 }

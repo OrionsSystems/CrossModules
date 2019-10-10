@@ -131,15 +131,18 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Controllers
 		{
 			var result = new List<MissionInstanceItemViewModel>();
 
-			var defaultItems = new List<MissionInstanceItemViewModel>()
+			if (string.IsNullOrWhiteSpace(missionId)) 
 			{
-				new MissionInstanceItemViewModel() { Label = "All Instances", Id = "0" },
-				new MissionInstanceItemViewModel() { Label = "Active Instances", Id = "-1" },
-			};
+				var defaultItems = new List<MissionInstanceItemViewModel>()
+				{
+					new MissionInstanceItemViewModel() { Label = "All Instances", Id = "0" },
+					new MissionInstanceItemViewModel() { Label = "Active Instances", Id = "-1" },
+				};
 
-			result.AddRange(defaultItems);
+				result.AddRange(defaultItems);
 
-			if (string.IsNullOrWhiteSpace(missionId)) return result;
+				return result;
+			}
 
 			var args = new FindHyperDocumentsArgs(true);
 			args.SetDocumentType(typeof(HyperMissionInstance));

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,13 +94,34 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Pages
 				var request = new CrossModuleVisualizationRequest();
 				JsonHelper.Populate(json, request);
 
-				MissionId = request.MissionIds?.First();
-				WorkflowInstanceIds = request.WorkflowInstanceIds;
+				var rMissionId = request.MissionIds?.First();
+				if (!string.IsNullOrEmpty(rMissionId))
+				{
+					var mId = HyperDocumentId.TryParse(rMissionId);
+					if (mId != null) MissionId = mId.Value.Id;
+				}
+
+				var wInstIds = request.WorkflowInstanceIds;
+				if (wInstIds != null && wInstIds.Any())
+				{
+					var res = new List<string>();
+					foreach (var wInstanceId in wInstIds) {
+						if (!string.IsNullOrEmpty(wInstanceId))
+						{
+							var wid = HyperDocumentId.TryParse(wInstanceId);
+							if (wid != null)
+							{
+								res.Add(wid.Value.Id);
+							}
+						}
+					}
+					WorkflowInstanceIds = res.ToArray();
+				}
 			}
 
 			// Debug info
-			// WorkflowInstanceIds = new[] { "c99da571" };
-			// MissionId = "56f8c725-6607-4b3a-aac7-85de9c0b491e";
+			//WorkflowInstanceIds = new[] { "c99da571" };
+			//MissionId = "56f8c725-6607-4b3a-aac7-85de9c0b491e";
 
 			DaysOptions = new List<SelectListItem>()
 			{

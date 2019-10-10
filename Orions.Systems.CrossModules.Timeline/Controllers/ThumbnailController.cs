@@ -12,6 +12,7 @@ using Microsoft.Extensions.Primitives;
 
 using Orions.Cloud.Common.Utils;
 using Orions.SDK.Utilities;
+using System.Collections.Generic;
 
 namespace Orions.Systems.CrossModules.Timeline.Controllers
 {
@@ -34,7 +35,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 			string serverUri, 
 			int width = 80, 
 			int height = 60, 
-			ulong index = 0)
+			ulong index = 0,
+			ushort sliceId = 1)
 		{
 			var utility = new AssetUtility(GetStores());
 
@@ -69,7 +71,8 @@ namespace Orions.Systems.CrossModules.Timeline.Controllers
 					Width = width,
 					Height = height,
 					FragmentId = index,
-					TrackId = trackId
+					TrackId = trackId,
+					SliceIds = new List<ushort>() { sliceId }
 				});
 			}
 
