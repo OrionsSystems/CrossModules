@@ -43,10 +43,10 @@ namespace Orions.Systems.CrossModules.Analytics
 			services.AddTelerikBlazor();
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
-			if (!services.Any(x => x.ServiceType == typeof(HttpClient)))
+			if (services.All(x => x.ServiceType != typeof(HttpClient)))
 			{
 				// Setup HttpClient for server side in a client side compatible fashion
-				services.AddScoped<HttpClient>(s =>
+				services.AddScoped(s =>
 				{
 					// Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
 					var uriHelper = s.GetRequiredService<NavigationManager>();
@@ -59,7 +59,7 @@ namespace Orions.Systems.CrossModules.Analytics
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public override void Configure(IApplicationBuilder app, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
+		public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
