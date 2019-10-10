@@ -32,9 +32,12 @@ namespace Orions.Systems.CrossModules.NodeStats
 
 		public async Task InitAsync(HyperConnectionSettings[] connections)
 		{
-			foreach (var connection in connections)
+			if (connections != null)
 			{
-				await AddNodeAsync(connection.Alias, connection.ConnectionUri);
+				foreach (var connection in connections)
+				{
+					await AddNodeAsync(connection.Alias, connection.ConnectionUri);
+				}
 			}
 
 			var t = Task.Factory.StartNew(UpdateWorker);
