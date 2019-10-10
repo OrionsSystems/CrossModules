@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.Common;
 
@@ -23,8 +24,10 @@ namespace Orions.Systems.CrossModules.NodeStats
 
 		private static void OnReadyHandler(AppHostHelper helper)
 		{
-			// Feed in the data for the Node connections to the local Nodes Manager.
-			// var z = NodesManager.Instance.InitAsync(helper?.AppliedConfig?.NodeConnections);
+			Task.Factory.StartNew(async () =>
+				{
+					await NodesManager.Instance.InitAsync(helper?.AppliedConfig?.NodeConnections);
+				});
 		}
 	}
 }
