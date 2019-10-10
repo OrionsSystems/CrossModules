@@ -286,7 +286,7 @@ namespace Orions.Systems.CrossModules.NodeStats
 						}
 					}
 				}
-				catch (Exception)
+				catch (Exception ex)
 				{
 				}
 			}

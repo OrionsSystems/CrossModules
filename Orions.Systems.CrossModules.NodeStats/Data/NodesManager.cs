@@ -1,24 +1,21 @@
-﻿using Orions.Common;
-using Orions.Infrastructure.HyperMedia;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+
+using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
 
 namespace Orions.Systems.CrossModules.NodeStats
 {
 	public class NodesManager : NotifyPropertyChanged, IDisposable
 	{
-		static NodesManager _instance = new NodesManager();
-
-		public static NodesManager Instance => _instance;
+		public static NodesManager Instance { get; } = new NodesManager();
 
 		static NodesManager()
 		{
-			//var t = _instance.InitAsync();
 		}
 
-		HotSwapListLite<NodeDataManager> _nodes = new HotSwapListLite<NodeDataManager>();
+		readonly HotSwapListLite<NodeDataManager> _nodes = new HotSwapListLite<NodeDataManager>();
 
 		public NodeDataManager[] Nodes => _nodes.ToArray();
 
@@ -68,8 +65,9 @@ namespace Orions.Systems.CrossModules.NodeStats
 					{
 						await node.RunUpdatesAsync();
 					}
-					catch (Exception ex)
+					catch
 					{
+						// ignored
 					}
 				}
 			}
