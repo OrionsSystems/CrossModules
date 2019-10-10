@@ -8,11 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BlazorStrap" Version="1.0.104" />
+    <PackageReference Include="BlazorStrap" Version="1.0.105" />
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
     <PackageReference Include="MatBlazor" Version="1.9.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
     <PackageReference Include="Orions.Node" Version="2.38.136" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
