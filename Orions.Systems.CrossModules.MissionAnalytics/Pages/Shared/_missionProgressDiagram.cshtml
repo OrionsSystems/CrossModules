@@ -41,6 +41,7 @@
 					.CategoryAxis(axis => axis
 						.Date()
 						.Labels(labels => labels.Rotation("auto"))
+                        .Crosshair(c => c.Visible(true))
 						.BaseUnit(ChartAxisBaseUnit.Fit)
 					)
 					.ValueAxis(axis => axis
