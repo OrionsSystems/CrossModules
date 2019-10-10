@@ -23,8 +23,6 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		private static void OnReadyHandler(AppHostHelper helper)
 		{
-			// Feed in the data
-			
 		}
 	}
 }

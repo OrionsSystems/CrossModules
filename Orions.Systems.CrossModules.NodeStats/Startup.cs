@@ -14,7 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Orions.Systems.CrossModules.Blazor;
 using Orions.Systems.CrossModules.Common;
-using Orions.Systems.CrossModules.NodeStats.Data;
+
 
 namespace Orions.Systems.CrossModules.NodeStats
 {
@@ -31,7 +31,6 @@ namespace Orions.Systems.CrossModules.NodeStats
 
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
-			services.AddSingleton<WeatherForecastService>();
 
 			services.AddMatToaster(config =>
 			{

@@ -23,8 +23,6 @@ namespace Orions.Systems.CrossModules.MetadataReview
 
 		private static void OnReadyHandler(AppHostHelper helper)
 		{
-			// Feed in the data for the Node connections to the local Nodes Manager.
-			// var z = NodesManager.Instance.InitAsync(helper?.AppliedConfig?.NodeConnections);
 		}
 	}
 }
