@@ -8,12 +8,13 @@ using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Blazor
 {
+	/// <summary>
+	/// Introduction to Blazor components
+	/// https://docs.microsoft.com/en-us/aspnet/core/blazor/components?view=aspnetcore-3.0
+	/// </summary>
 	public class BaseOrionsComponent : ComponentBase
 	{
-
-		private bool isRendered = false;
-
-		private ElementReference _ref;
+		ElementReference _ref;
 
 		/// <summary>
 		/// Returned ElementRef reference for DOM element.
@@ -32,6 +33,17 @@ namespace Orions.Systems.CrossModules.Blazor
 		[Parameter]
 		public ForwardRef RefBack { get; set; }
 
+		[Inject]
+		protected NavigationManager UriHelper { get; set; }
+
+
+		[Inject]
+		protected IJSRuntime JsInterop { get; set; }
+
+		public BaseOrionsComponent()
+		{
+		}
+
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
 			if (firstRender)
@@ -47,13 +59,6 @@ namespace Orions.Systems.CrossModules.Blazor
 		{
 			return Task.CompletedTask;
 		}
-
-		[Inject]
-		protected NavigationManager UriHelper { get; set; }
-
-
-		[Inject]
-		protected IJSRuntime JsInterop { get; set; }
 
 		protected string GetQueryParameterString(string queryParameter)
 		{
