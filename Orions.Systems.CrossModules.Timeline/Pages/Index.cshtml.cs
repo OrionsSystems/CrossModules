@@ -63,7 +63,10 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 					if (!string.IsNullOrEmpty(wInstanceId))
 					{
 						var wid = HyperDocumentId.TryParse(wInstanceId);
-						if (wid != null) WorkflowInstanceId = wid.Value.Id;
+						if (wid != null)
+						{
+							WorkflowInstanceId = wid.Value.Id;
+						}
 					}
 				}
 
@@ -74,8 +77,8 @@ namespace Orions.Systems.CrossModules.Timeline.Pages
 
 					if (!string.IsNullOrEmpty(assetId))
 					{
-						var aId = HyperDocumentId.TryParse(assetId);
-						if (aId != null) AssetId = aId.Value.Id;
+						var aId = HyperAssetId.TryParse(assetId);
+						if (aId != null) AssetId = aId.Value.CoreIdString;
 					}
 				}
 			}

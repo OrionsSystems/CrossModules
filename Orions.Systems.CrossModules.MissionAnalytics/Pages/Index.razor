@@ -1,0 +1,93 @@
+@layout MainLayout
+@inherits BaseOrionsComponent
+
+@page "/"
+
+@using Orions.Infrastructure.HyperMedia;
+
+@using Telerik.Blazor.Components.DropDownList
+
+    <dv class="container-fluid">
+
+        <!-- Filter -->
+        <div id="missionProgressFilterId" class="row p-1">
+            <div class="col-md-3 p-1">
+                <TelerikDropDownList Data="@Filter.MissionInstances"
+                                     @bind-Value=@Filter.SelectedMissionInstance
+                                     Class="w-100"
+                                     ValueField="Id" TextField="Label">
+                </TelerikDropDownList>
+            </div>
+            <div class="col-md-3 p-1">
+                <TelerikDropDownList Data="@Filter.StagesOptions"
+                                     @bind-Value=@Filter.SelectedStage
+                                     Class="w-100"
+                                     ValueField="Value" TextField="Text">
+                </TelerikDropDownList>
+            </div>
+            <div class="col-md-3 p-1">
+                <TelerikDropDownList Data="@Filter.DaysOptions"
+                                     @bind-Value=@Filter.SelectedDay
+                                     Class="w-100"
+                                     ValueField="Value" TextField="Text">
+                </TelerikDropDownList>
+            </div>
+            <div class="col-md-3 p-1">
+                <TelerikButton OnClick="@PopulateData" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <Statistic Title="Mission Statistic" 
+                           ContentStatistics="@contentStatistics">
+                </Statistic>
+            </div>
+            <div class="col-lg-8">
+                <Progress Title="Mission Progress" 
+                          ProgressData="@progressData">
+                </Progress>
+               
+            </div>
+        </div>
+    </dv>
+
+@code
+{
+
+    public FilterViewModel Filter { get; set; } = new FilterViewModel();
+
+    private List<ContentProgressViewModel> progressData = new List<ContentProgressViewModel>();
+    private ContentStatisticsViewModel contentStatistics = new ContentStatisticsViewModel();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
+        if (vizRequest == null) vizRequest = GetDemoRequest();
+
+        DataContext.Instance.Request = vizRequest;
+
+        Filter.MissionInstances = await DataContext.Instance.GetMissionInstances();
+
+
+        await PopulateData();
+
+        base.OnInitialized();
+    }
+
+    private CrossModuleVisualizationRequest GetDemoRequest() {
+        return new CrossModuleVisualizationRequest{
+            MissionIds= new[] { "e8d88c8a-b82d-4911-9639-3080ef877653" },
+            WorkflowInstanceIds = new[] { "3a3be967-533b-413e-8323-c079a81e1ff1"}
+        };
+    }
+
+    public async Task PopulateData() {
+
+        progressData = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.ReportDaysValue, Filter.TimeStep);
+
+        contentStatistics = await DataContext.Instance.GetStatisticsData(Filter.SelectedMissionInstance, Filter.ReportDaysValue);
+    }
+}

@@ -1,6 +1,5 @@
 ﻿using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.Common;
-using System.Linq;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {
@@ -22,9 +21,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			_helper.StartWithArgs(args);
 		}
 
-		private static async void OnReadyHandler(AppHostHelper helper)
+		private static void OnReadyHandler(AppHostHelper helper)
 		{
-			await DataContext.Instance.InitStoreAsync(helper?.AppliedConfig?.NodeConnections.FirstOrDefault());
 		}
 	}
 }

@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using EmbeddedBlazorContent;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json.Serialization;
+using Orions.Systems.CrossModules.Blazor;
 using Orions.Systems.CrossModules.Common;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {
@@ -17,48 +21,46 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public override void ConfigureServices(IServiceCollection services)
 		{
-			services.AddControllersWithViews();
-			services.AddServerSideBlazor();
-			services.AddRazorPages();
-
 			base.ConfigureServices(services);
 
-			services.AddMvc()
-				.AddSessionStateTempDataProvider()
-				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-				.AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+			services.AddSingleton<DataContext>();
 
-			services.AddDistributedMemoryCache();
+			services.AddRazorPages();
+			services.AddServerSideBlazor();
 
-			services.AddSession();
+			services.AddTelerikBlazor();
 
-			services.AddCors(options => options.AddPolicy("AllowAllOrigins", builder => builder.AllowAnyOrigin()));
-
-			// Add Kendo UI services to the services container
-			services.AddKendo();
+			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
+			if (services.All(x => x.ServiceType != typeof(HttpClient)))
+			{
+				// Setup HttpClient for server side in a client side compatible fashion
+				services.AddScoped(s =>
+				{
+					// Creating the URI helper needs to wait until the JS Runtime is initialized, so defer it.
+					var uriHelper = s.GetRequiredService<NavigationManager>();
+					return new HttpClient
+					{
+						BaseAddress = new Uri(uriHelper.BaseUri)
+					};
+				});
+			}
 		}
 
 		public override void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			base.Configure(app, env);
 
+			app.UseStaticFiles();
+
 			app.UseRouting();
 
 			app.UseEndpoints(endpoints =>
 			{
-				// Default
-				endpoints.MapControllerRoute(
-					name: "default_area",
-					pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-
-				// Default
-				endpoints.MapControllerRoute(
-					name: "default",
-					pattern: "{controller=Home}/{action=Index}/{id?}");
-
-				endpoints.MapRazorPages();
 				endpoints.MapBlazorHub();
+				endpoints.MapFallbackToPage("/_Host");
 			});
+
+			app.UseEmbeddedBlazorContent(typeof(BaseOrionsComponent).Assembly);
 		}
 	}
 }
