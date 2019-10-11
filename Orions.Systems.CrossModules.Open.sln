@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.TestApp.Open", "Samples\Orions.Systems.CrossModules.TestApp\Orions.Systems.CrossModules.TestApp.Open.csproj", "{1E529A11-CE70-4BB9-B774-75F31ADCB2F9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MissionAnalytics.Legacy.Open", "Orions.Systems.CrossModules.MissionAnalytics.Legacy\Orions.Systems.CrossModules.MissionAnalytics.Legacy.Open.csproj", "{5CF95B45-C4BE-48FF-B461-619388E8EF60}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MissionAnalytics.Open", "Orions.Systems.CrossModules.MissionAnalytics\Orions.Systems.CrossModules.MissionAnalytics.Open.csproj", "{27629BF2-917A-42E0-83F4-380FEC6D9BF6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{1E529A11-CE70-4BB9-B774-75F31ADCB2F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E529A11-CE70-4BB9-B774-75F31ADCB2F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E529A11-CE70-4BB9-B774-75F31ADCB2F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
