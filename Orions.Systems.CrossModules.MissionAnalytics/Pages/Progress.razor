@@ -1,74 +1,68 @@
-﻿<div id="missionProgress">
-    <h2 id="missionProgressTitle"><img src="images/progress-icon.png" />@Title</h2>
+﻿
+<TelerikChart>
+	<ChartSeriesItems>
+		<ChartSeries Type="ChartSeriesType.Area"
+					 Name="Exploited Duration"
+					 Data="@ProgressData"
+					 Field="@nameof(ContentProgressViewModel.ExploitedDurationRound)"
+					 CategoryField="@nameof(ContentProgressViewModel.Date)"
+					 Axis="hours">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Area"
+					 Name="Total Duration"
+					 Data="@ProgressData"
+					 Field="@nameof(ContentProgressViewModel.TotalDurationRound)"
+					 CategoryField="@nameof(ContentProgressViewModel.Date)"
+					 Axis="hours">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="Tasks Performed"
+					 Data="@ProgressData"
+					 Field="@nameof(ContentProgressViewModel.TasksPerformed)"
+					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="Tasks Outstanding"
+					 Data="@ProgressData"
+					 Field="@nameof(ContentProgressViewModel.TasksOutstanding)"
+					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="Tasks Completed Per Period"
+					 Data="@ProgressData"
+					 Field="@nameof(ContentProgressViewModel.TasksCompletedPerPeriod)"
+					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+		</ChartSeries>
+	</ChartSeriesItems>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <TelerikChart>
-                <ChartSeriesItems>
-                    <ChartSeries Type="ChartSeriesType.Area"
-                                 Name="Exploited Duration"
-                                 Data="@ProgressData"
-                                 Field="@nameof(ContentProgressViewModel.ExploitedDurationRound)"
-                                 CategoryField="@nameof(ContentProgressViewModel.Date)"
-                                 Axis="hours">
-                    </ChartSeries>
-                    <ChartSeries Type="ChartSeriesType.Area"
-                                 Name="Total Duration"
-                                 Data="@ProgressData"
-                                 Field="@nameof(ContentProgressViewModel.TotalDurationRound)"
-                                 CategoryField="@nameof(ContentProgressViewModel.Date)"
-                                 Axis="hours">
-                    </ChartSeries>
-                    <ChartSeries Type="ChartSeriesType.Line"
-                                 Name="Tasks Performed"
-                                 Data="@ProgressData"
-                                 Field="@nameof(ContentProgressViewModel.TasksPerformed)"
-                                 CategoryField="@nameof(ContentProgressViewModel.Date)">
-                    </ChartSeries>
-                    <ChartSeries Type="ChartSeriesType.Line"
-                                 Name="Tasks Outstanding"
-                                 Data="@ProgressData"
-                                 Field="@nameof(ContentProgressViewModel.TasksOutstanding)"
-                                 CategoryField="@nameof(ContentProgressViewModel.Date)">
-                    </ChartSeries>
-                    <ChartSeries Type="ChartSeriesType.Line"
-                                 Name="Tasks Completed Per Period"
-                                 Data="@ProgressData"
-                                 Field="@nameof(ContentProgressViewModel.TasksCompletedPerPeriod)"
-                                 CategoryField="@nameof(ContentProgressViewModel.Date)">
-                    </ChartSeries>
-                </ChartSeriesItems>
+	<ChartCategoryAxes>
+		<ChartCategoryAxis WeekStartDay="1"
+						   BaseUnit="ChartCategoryAxisBaseUnit.Months"
+						   Type="ChartCategoryAxisType.Date">
 
-                <ChartCategoryAxes>
-                    <ChartCategoryAxis WeekStartDay="1"
-                                       BaseUnit="ChartCategoryAxisBaseUnit.Months"
-                                       Type="ChartCategoryAxisType.Date">
+		</ChartCategoryAxis>
+	</ChartCategoryAxes>
 
-                    </ChartCategoryAxis>
-                </ChartCategoryAxes>
+	<ChartValueAxes>
+		<ChartValueAxis Color="green">
+			<ChartValueAxisTitle Text="Tasks"></ChartValueAxisTitle>
+		</ChartValueAxis>
+		<ChartValueAxis Color="blue" Type="ChartValueAxisType.Numeric" Name="hours">
+			<ChartValueAxisTitle Text="Hours"></ChartValueAxisTitle>
+		</ChartValueAxis>
+	</ChartValueAxes>
 
-                <ChartValueAxes>
-                    <ChartValueAxis Color="green">
-                        <ChartValueAxisTitle Text="Tasks"></ChartValueAxisTitle>
-                    </ChartValueAxis>
-                    <ChartValueAxis Color="blue" Type="ChartValueAxisType.Numeric" Name="hours">
-                        <ChartValueAxisTitle Text="Hours"></ChartValueAxisTitle>
-                    </ChartValueAxis>
-                </ChartValueAxes>
+	<ChartLegend Position="ChartLegendPosition.Bottom">
+	</ChartLegend>
 
-                <ChartLegend Position="ChartLegendPosition.Bottom">
-                </ChartLegend>
+</TelerikChart>
 
-            </TelerikChart>
-        </div>
-    </div>
-</div>
 
 @code {
 
-     [Parameter]
-    public string Title { get; set; }
+	[Parameter]
+	public string Title { get; set; }
 
-    [Parameter]
-    public List<ContentProgressViewModel> ProgressData { get; set; } = new List<ContentProgressViewModel>();
+	[Parameter]
+	public List<ContentProgressViewModel> ProgressData { get; set; } = new List<ContentProgressViewModel>();
 }

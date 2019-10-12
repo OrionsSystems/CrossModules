@@ -1,96 +1,80 @@
-﻿<h2 id="missionStatisticTitle"><img src="images/statistic-icon.png" />@Title</h2>
+﻿<div id="missionStatistic" data-template="_missionStatistic-side" class="orions-mission-stats-items">
 
-<div id="missionStatistic" data-template="_missionStatistic-side">
-
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <small class="stats-label">Total Content Duration:</small>
-                    <h2>@ContentStatistics.TotalContentDurationLabel</h2>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Content Duration:</small>
-                    <h2>@ContentStatistics.ContentDurationLabel</h2>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Exploiting Content:</small>
-                    <h2>@ContentStatistics.ExploitedDurationLabel</h2>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <small class="stats-label">Tagger Exploitation Time:</small>
-                    <h2>@ContentStatistics.TaggerExploitationTimeLabel</h2>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Tasks Done:</small>
-                    <h1 class="no-margins">@ContentStatistics.TaskDone</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Tasks Outstanding:</small>
-                    <h1>@ContentStatistics.TaskOutstanding</h1>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <small class="stats-label">Total Exploited %:</small>
-                    <h1>@ContentStatistics.TotalExploitedPercentageRound %</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Exploited %:</small>
-                    <h1>@ContentStatistics.ExploitedPercentageRound %</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Exploited Today %:</small>
-                    <h1>@ContentStatistics.TodayExploitedPercentageRound %</h1>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-4">
-                    <small class="stats-label">Total Tags:</small>
-                    <h1 title="Tags">@ContentStatistics.TotalTags</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Tags:</small>
-                    <h1 title="Tags">@ContentStatistics.Tags</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Tags Today:</small>
-                    <h1 title="Tags">@ContentStatistics.TodayTags</h1>
-                </div>
-            </div>
-        </div>
-        <div class="ibox-content">
-            <div class="row">
-                <div class="col-4">
-                    <small class="stats-label">Total Taggers:</small>
-                    <h1>@ContentStatistics.TotalTaggers</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Taggers:</small>
-                    <h1>@ContentStatistics.Taggers</h1>
-                </div>
-                <div class="col-4">
-                    <small class="stats-label">Today Taggers:</small>
-                    <h1>@ContentStatistics.TodayTaggers</h1>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Total Content Duration</span>
+		<span class="value">@ContentStatistics.TotalContentDurationLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Content Duration</span>
+		<span class="value">@ContentStatistics.ContentDurationLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Exploiting Content</span>
+		<span class="value">@ContentStatistics.ExploitedDurationLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Total Exploited Content</span>
+		<span class="value">@ContentStatistics.TotalExploitingDurationLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Exploited Content</span>
+		<span class="value">@ContentStatistics.ExploitedDurationLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Tagger Exploitation Time</span>
+		<span class="value">@ContentStatistics.TaggerExploitationTimeLabel</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Completed Tasks</span>
+		<span class="value">@ContentStatistics.TaskDone</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Outstanding Tasks</span>
+		<span class="value">@ContentStatistics.TaskOutstanding</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Total Exploited %</span>
+		<span class="value">@ContentStatistics.TotalExploitedPercentageRound %</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Exploited %</span>
+		<span class="value">@ContentStatistics.ExploitedPercentageRound %</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Exploited Today %</span>
+		<span class="value">@ContentStatistics.TodayExploitedPercentageRound %</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Total Tags</span>
+		<span class="value">@ContentStatistics.TotalTags</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Tags</span>
+		<span class="value">@ContentStatistics.Tags</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Tags Today</span>
+		<span class="value">@ContentStatistics.TodayTags</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Total Taggers</span>
+		<span class="value">@ContentStatistics.TotalTaggers</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Taggers</span>
+		<span class="value">@ContentStatistics.Taggers</span>
+	</div>
+	<div class="item rounded shadow-sm">
+		<span class="label">Taggers Today</span>
+		<span class="value">@ContentStatistics.TodayTaggers</span>
+	</div>
 </div>
 
 @code {
 
-    [Parameter]
-    public string Title { get; set; }
+	[Parameter]
+	public string Title { get; set; }
 
-    [Parameter]
-    public ContentStatisticsViewModel ContentStatistics { get; set; }
+	[Parameter]
+	public ContentStatisticsViewModel ContentStatistics { get; set; }
 }

@@ -7,49 +7,47 @@
 
 @using Telerik.Blazor.Components.DropDownList
 
-<dv class="container-fluid">
+<dv class="orions-container">
 
-	<!-- Filter -->
-	<div id="missionProgressFilterId" class="row p-1">
-		<div class="col-md-3 p-1">
+	<div id="missionProgressFilterId" class="orions-mission-analytics-header">
+		<div>
 			<TelerikDropDownList Data="@Filter.MissionInstances"
 								 @bind-Value=@Filter.SelectedMissionInstance
 								 Class="w-100"
 								 ValueField="Id" TextField="Label">
 			</TelerikDropDownList>
 		</div>
-		<div class="col-md-3 p-1">
+
+		<div>
 			<TelerikDropDownList Data="@Filter.StagesOptions"
 								 @bind-Value=@Filter.SelectedStage
 								 Class="w-100"
 								 ValueField="Value" TextField="Text">
 			</TelerikDropDownList>
 		</div>
-		<div class="col-md-3 p-1">
+
+		<div>
 			<TelerikDropDownList Data="@Filter.DaysOptions"
-								 @bind-Value=@Filter.SelectedDay
+								 @bind-Value=@Filter.SelectedDayOption
 								 Class="w-100"
 								 ValueField="Value" TextField="Text">
 			</TelerikDropDownList>
 		</div>
-		<div class="col-md-3 p-1">
-			<TelerikButton OnClick="@PopulateData" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
-		</div>
+
+		<TelerikButton OnClick="@PopulateData" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
 	</div>
 
-	<div class="row">
-		<div class="col-lg-4">
-			<Statistic Title="Mission Statistic"
-					   ContentStatistics="@contentStatistics">
-			</Statistic>
-		</div>
-		<div class="col-lg-8">
-			<Progress Title="Mission Progress"
-					  ProgressData="@progressData">
-			</Progress>
+	<div class="orions-mission-analytics-progress">
+		<Progress ProgressData="@progressData">
+		</Progress>
 
-		</div>
 	</div>
+
+	<div class="orions-mission-analytics-stats">
+		<Statistic ContentStatistics="@contentStatistics">
+		</Statistic>
+	</div>
+
 </dv>
 
 @code
