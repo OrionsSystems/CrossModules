@@ -6,8 +6,9 @@
     var routeParams = new
     {
         Instace = Model.Instance,
+		MissionId = Model.MissionId,
         WorkflowInstanceIds = Model.WorkflowInstanceIds,
-        ReportDays = Model.ReportDaysValue,
+        ReportDays = Model.ReportDaysValue
     };
 
     var statisticUrl = Url.Action("GetStatisticsData", "MissionAnalytics", routeParams);
