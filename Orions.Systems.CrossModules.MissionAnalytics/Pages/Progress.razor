@@ -3,44 +3,73 @@
 	<ChartSeriesItems>
 		<ChartSeries Type="ChartSeriesType.Area"
 					 Name="Exploited Duration"
-					 Data="@ProgressData"
-					 Field="@nameof(ContentProgressViewModel.ExploitedDurationRound)"
-					 CategoryField="@nameof(ContentProgressViewModel.Date)"
-					 Axis="hours">
+					 Data="@Model.ExploitedDuration"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 Axis="hours"
+					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 		<ChartSeries Type="ChartSeriesType.Area"
 					 Name="Total Duration"
-					 Data="@ProgressData"
-					 Field="@nameof(ContentProgressViewModel.TotalDurationRound)"
-					 CategoryField="@nameof(ContentProgressViewModel.Date)"
-					 Axis="hours">
+					 Data="@Model.TotalDuration"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 Axis="hours"
+					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 		<ChartSeries Type="ChartSeriesType.Line"
 					 Name="Tasks Performed"
-					 Data="@ProgressData"
-					 Field="@nameof(ContentProgressViewModel.TasksPerformed)"
-					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+					 Data="@Model.TasksPerformed"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 		<ChartSeries Type="ChartSeriesType.Line"
 					 Name="Tasks Outstanding"
-					 Data="@ProgressData"
-					 Field="@nameof(ContentProgressViewModel.TasksOutstanding)"
-					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+					 Data="@Model.TasksOutstanding"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 		<ChartSeries Type="ChartSeriesType.Line"
 					 Name="Tasks Completed Per Period"
-					 Data="@ProgressData"
-					 Field="@nameof(ContentProgressViewModel.TasksCompletedPerPeriod)"
-					 CategoryField="@nameof(ContentProgressViewModel.Date)">
+					 Data="@Model.TasksCompletedPerPeriod"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="Completion"
+					 Data="@Model.CompletionPercent"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="Sessions"
+					 Data="@Model.Sessions"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+					 Name="New Taggers"
+					 Data="@Model.NewTaggers"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
+		</ChartSeries>
+		<ChartSeries Type="ChartSeriesType.Line"
+		             Name="Exploitation Saturation"
+		             Data="@Model.ExploitationSaturation"
+		             Field="@nameof(KeyValueModel.Value)"
+		             CategoryField="@nameof(KeyValueModel.Key)"
+		             MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 	</ChartSeriesItems>
 
 	<ChartCategoryAxes>
-		<ChartCategoryAxis WeekStartDay="1"
-						   BaseUnit="ChartCategoryAxisBaseUnit.Months"
-						   Type="ChartCategoryAxisType.Date">
-
-		</ChartCategoryAxis>
+		<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
 	</ChartCategoryAxes>
 
 	<ChartValueAxes>
@@ -64,5 +93,8 @@
 	public string Title { get; set; }
 
 	[Parameter]
-	public List<ContentProgressViewModel> ProgressData { get; set; } = new List<ContentProgressViewModel>();
+	public object[] XAxisItems { get; set; } = new object[0];
+
+	[Parameter]
+	public ContentProgressViewModel Model { get; set; } = new ContentProgressViewModel();
 }
