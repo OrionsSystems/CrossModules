@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.MissionAnalytics.Model;
@@ -10,15 +11,19 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class DataContext
 	{
-		private NetStore _netStore;
-		public CrossModuleVisualizationRequest Request { get; set; }
-		private static Lazy<DataContext> _instance = new Lazy<DataContext>();
+		private const int RoundingFactor = 2;
+		private const MidpointRounding RoundingMethod = MidpointRounding.AwayFromZero;
 
+		private NetStore _netStore;
+
+		public CrossModuleVisualizationRequest Request { get; set; }
+
+		private static readonly Lazy<DataContext> _instance = new Lazy<DataContext>();
 		public static DataContext Instance => _instance.Value;
 
-		public string MissionId { get { return Request?.MissionIds?.First(); }}
+		public string MissionId => Request?.MissionIds?.First();
 
-		public string[] WorkflowInstanceIds { get { return Request?.WorkflowInstanceIds; } }
+		public string[] WorkflowInstanceIds => Request?.WorkflowInstanceIds;
 
 		public async Task InitStoreAsync(HyperConnectionSettings connection)
 		{
@@ -50,57 +55,56 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				workflowInstanceIds = await FindActiveWorkflowInstanceIds(MissionId);
 			}
 
-			var args = new RetrieveContentGroupStatisticsArgs()
+			var model = new ContentStatisticsViewModel();
+
+			// Get stats for the selected time range
+			var args = new RetrieveContentGroupStatisticsArgs
 			{
 				WorkflowInstanceIds = workflowInstanceIds,
 				ReportDays = reportDays
 			};
+			var data = await _netStore.ExecuteAsync(args);
 
-			ContentStatistics data = await _netStore.ExecuteAsync(args);
+			model.ContentDuration = data.ContentDuration;
+			model.ExploitedDuration = data.ExploitedDuration;
+			model.ExploitedPercentage = data.ExploitedPercentage;
+			model.ExploitingDuration = data.ExploitingDuration;
+			model.TaggerExploitationTime = data.TaggerExploitationTime;
+			model.Taggers = data.Taggers;
+			model.Tags = data.Tags;
+			model.TaskDone = data.TaskDone;
+			model.TaskOutstanding = data.TaskOutstanding;
 
-			var result = new ContentStatisticsViewModel()
-			{
-				ContentDuration = data.ContentDuration,
-				ExploitedDuration = data.ExploitedDuration,
-				ExploitedPercentage = data.ExploitedPercentage,
-				ExploitingDuration = data.ExploitingDuration,
-				TaggerExploitationTime = data.TaggerExploitationTime,
-				Taggers = data.Taggers,
-				Tags = data.Tags,
-				TaskDone = data.TaskDone,
-				TaskOutstanding = data.TaskOutstanding,
-			};
-
-			var todayArgs = new RetrieveContentGroupStatisticsArgs()
+			// Get stats for the last 24 hours
+			args = new RetrieveContentGroupStatisticsArgs
 			{
 				WorkflowInstanceIds = workflowInstanceIds,
 				ReportDays = 1
 			};
+			data = await _netStore.ExecuteAsync(args);
 
-			var today = await _netStore.ExecuteAsync(todayArgs);
+			model.TodayExploitedPercentage = data.ExploitedPercentage;
+			model.TodayTags = data.Tags;
+			model.TodayTaggers = data.Taggers;
 
-			result.TodayExploitedPercentage = today.ExploitedPercentage;
-			result.TodayTags = today.Tags;
-			result.TodayTaggers = today.Taggers;
-
-			var totalArgs = new RetrieveContentGroupStatisticsArgs()
+			// Get all time stats
+			args = new RetrieveContentGroupStatisticsArgs
 			{
 				WorkflowInstanceIds = workflowInstanceIds,
 			};
+			data = await _netStore.ExecuteAsync(args);
 
-			var total = await _netStore.ExecuteAsync(totalArgs);
+			model.TotalContentDuration = data.ContentDuration;
+			model.TotalExploitingDuration = data.ExploitingDuration;
+			model.TotalExploitedPercentage = data.ExploitedPercentage;
+			model.TotalExploitedPercentage = data.ExploitedPercentage;
+			model.TotalTags = data.Tags;
+			model.TotalTaggers = data.Taggers;
 
-			result.TotalContentDuration = total.ContentDuration;
-			result.TotalExploitingDuration = total.ExploitingDuration;
-			result.TotalExploitedPercentage = total.ExploitedPercentage;
-			result.TotalExploitedPercentage = total.ExploitedPercentage;
-			result.TotalTags = total.Tags;
-			result.TotalTaggers = total.Taggers;
-
-			return result;
+			return model;
 		}
 
-		public async Task<List<ContentProgressViewModel>> GetProgressData(
+		public async Task<ContentProgressViewModel> GetProgressData(
 			string missionInstanceId,
 			double reportDays,
 			int timeStep)
@@ -116,29 +120,28 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				workflowInstanceIds = await FindActiveWorkflowInstanceIds(MissionId);
 			}
 
-			var args = new RetrieveContentGroupProgressArgs()
+			var args = new RetrieveContentGroupProgressArgs
 			{
 				WorkflowInstanceIds = workflowInstanceIds,
 				ReportDays = reportDays,
 				TimeStep = timeStep
 			};
+			var data = await _netStore.ExecuteAsync(args);
 
-			ContentProgress data = await _netStore.ExecuteAsync(args);
+			var model = new ContentProgressViewModel
+			{
+				ExploitedDuration = GetModel(data?.ExploitedDuration),
+				TotalDuration = GetModel(data?.TotalDuration),
+				TasksPerformed = GetModel(data?.TasksPerformed),
+				TasksOutstanding = GetModel(data?.TasksOutstanding),
+				TasksCompletedPerPeriod = GetModel(data?.TasksCompletedPerPeriod),
+				CompletionPercent = GetModel(data?.CompletionPercent),
+				Sessions = GetModel(data?.Sessions),
+				NewTaggers = GetModel(data?.NewTaggers),
+				ExploitationSaturation = GetModel(data?.ExploitationSaturation)
+			};
 
-			var result = new List<ContentProgressViewModel>();
-
-			//Grouping
-			GroupExploitedDuration(result, data?.ExploitedDuration);
-			GroupTotalDuration(result, data?.TotalDuration);
-			GroupTasksPerformed(result, data?.TasksPerformed);
-			GroupTasksOutstanding(result, data?.TasksOutstanding);
-			GroupTasksCompletedPerPeriod(result, data?.TasksCompletedPerPeriod);
-			GroupCompletionPercent(result, data?.CompletionPercent);
-			GroupSessions(result, data?.Sessions);
-			GroupNewTaggers(result, data?.NewTaggers);
-			GroupExploitationSaturation(result, data?.ExploitationSaturation);
-
-			return result;
+			return model;
 		}
 
 		public async Task<IEnumerable<MissionInstanceItemViewModel>> GetMissionInstances()
@@ -147,10 +150,10 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			if (string.IsNullOrWhiteSpace(MissionId))
 			{
-				var defaultItems = new List<MissionInstanceItemViewModel>()
+				var defaultItems = new List<MissionInstanceItemViewModel>
 				{
-					new MissionInstanceItemViewModel() { Label = "All Instances", Id = "0" },
-					new MissionInstanceItemViewModel() { Label = "Active Instances", Id = "-1" },
+					new MissionInstanceItemViewModel { Label = "All Instances", Id = "0" },
+					new MissionInstanceItemViewModel { Label = "Active Instances", Id = "-1" },
 				};
 
 				result.AddRange(defaultItems);
@@ -167,12 +170,12 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			foreach (var doc in docs)
 			{
 				var hyperMissionInstance = doc.GetPayload<HyperMissionInstance>();
-				var misionConfig = hyperMissionInstance.MissionConfiguration;
+				var missionConfiguration = hyperMissionInstance.MissionConfiguration;
 
-				var item = new MissionInstanceItemViewModel()
+				var item = new MissionInstanceItemViewModel
 				{
 					Id = hyperMissionInstance.Id,
-					Name = misionConfig.Name,
+					Name = missionConfiguration.Name,
 					RunAtUTC = hyperMissionInstance.RunAtUTC,
 					StopAtUTC = hyperMissionInstance.StopAtUTC,
 					Label = $"{hyperMissionInstance.RunAtUTC} till {hyperMissionInstance.StopAtUTC}"
@@ -218,7 +221,6 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 					var workflowConfigArgs = new RetrieveHyperDocumentArgs(workflowConfig);
 
 					var hyperDocument = await _netStore.ExecuteAsync(workflowConfigArgs);
-
 					if (hyperDocument == null) continue;
 
 					var workflowConfiguration = hyperDocument.GetPayload<HyperWorkflow>();
@@ -226,7 +228,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 					var nodes = workflowConfiguration.Nodes;
 					var workflowId = workflowConfiguration.Id;
 
-					var data = nodes.Select(it => new WorkflowConfigNodeViewModel()
+					var data = nodes.Select(it => new WorkflowConfigNodeViewModel
 					{
 						Id = it.Id,
 						Name = it.Name
@@ -244,8 +246,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			if (string.IsNullOrEmpty(missionId)) return new string[] { };
 
 			// Pull statuses
-			var statsArgs = new RetrieveHyperWorkflowsStatusesArgs();
-			statsArgs.MissionIds = new string[] { missionId };
+			var statsArgs = new RetrieveHyperWorkflowsStatusesArgs { MissionIds = new[] { missionId } };
 			var statuses = await _netStore.ExecuteAsync(statsArgs);
 
 			if (statuses == null || !statuses.Any()) return new string[] { };
@@ -281,193 +282,80 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return instances.Select(it => it.Id).ToArray();
 		}
 
-		private void GroupExploitationSaturation(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, double>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "ExploitationSaturation",
-					Date = item.Key,
-					ExploitationSaturation = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupNewTaggers(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, long>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "NewTaggers",
-					Date = item.Key,
-					NewTaggers = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupSessions(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, long>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "Sessions",
-					Date = item.Key,
-					Sessions = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupCompletionPercent(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, double>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "CompletionPercent",
-					Date = item.Key,
-					CompletionPercent = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupTasksCompletedPerPeriod(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, int>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "TasksCompletedPerPeriod",
-					Date = item.Key,
-					TasksCompletedPerPeriod = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupTasksOutstanding(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, int>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "TasksOutstanding",
-					Date = item.Key,
-					TasksOutstanding = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupTasksPerformed(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, int>[] resource)
-		{
-			if (resource == null) return;
-
-			foreach (var item in resource)
-			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
-				{
-					Content = "TasksPerformed",
-					Date = item.Key,
-					TasksPerformed = item.Value
-				};
-
-				data.Add(contentItem);
-			}
-		}
-
-		private void GroupTotalDuration(
-			List<ContentProgressViewModel> data,
+		private List<KeyValueModel> GetModel(
 			KeyValuePair<DateTime, TimeSpan>[] resource)
 		{
-			if (resource == null) return;
+			if (resource == null) return new List<KeyValueModel>();
+
+			var model = new List<KeyValueModel>();
 
 			foreach (var item in resource)
 			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
+				model.Add(new KeyValueModel
 				{
-					Content = "TotalDuration",
-					Date = item.Key,
-					TotalDuration = item.Value.TotalHours
-				};
-
-				data.Add(contentItem);
+					Key = item.Key,
+					Value = Math.Round(item.Value.TotalHours, RoundingFactor, RoundingMethod)
+				});
 			}
+
+			return model;
 		}
 
-		private void GroupExploitedDuration(
-			List<ContentProgressViewModel> data,
-			KeyValuePair<DateTime, TimeSpan>[] resource)
+		private List<KeyValueModel> GetModel(
+			KeyValuePair<DateTime, int>[] resource)
 		{
-			if (resource == null) return;
+			if (resource == null) return new List<KeyValueModel>();
+
+			var model = new List<KeyValueModel>();
 
 			foreach (var item in resource)
 			{
-				if (item.Key == null) continue;
-
-				var contentItem = new ContentProgressViewModel()
+				model.Add(new KeyValueModel
 				{
-					Content = "ExploitedDuration",
-					Date = item.Key,
-					ExploitedDuration = item.Value.TotalHours
-				};
-
-				data.Add(contentItem);
+					Key = item.Key,
+					Value = item.Value
+				});
 			}
+
+			return model;
+		}
+
+		private List<KeyValueModel> GetModel(
+			KeyValuePair<DateTime, double>[] resource)
+		{
+			if (resource == null) return new List<KeyValueModel>();
+
+			var model = new List<KeyValueModel>();
+
+			foreach (var item in resource)
+			{
+				model.Add(new KeyValueModel
+				{
+					Key = item.Key,
+					Value = Math.Round(item.Value, RoundingFactor, RoundingMethod)
+				});
+			}
+
+			return model;
+		}
+
+		private List<KeyValueModel> GetModel(
+			KeyValuePair<DateTime, long>[] resource)
+		{
+			if (resource == null) return new List<KeyValueModel>();
+
+			var model = new List<KeyValueModel>();
+
+			foreach (var item in resource)
+			{
+				model.Add(new KeyValueModel
+				{
+					Key = item.Key,
+					Value = item.Value
+				});
+			}
+
+			return model;
 		}
 	}
 }

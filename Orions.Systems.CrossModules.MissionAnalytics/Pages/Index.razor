@@ -38,7 +38,8 @@
 	</div>
 
 	<div class="orions-mission-analytics-progress">
-		<Progress ProgressData="@progressData">
+		<Progress Model="@progressModel"
+				  XAxisItems="@xAxisItems.ToArray()">
 		</Progress>
 
 	</div>
@@ -55,24 +56,23 @@
 
 	public FilterViewModel Filter { get; set; } = new FilterViewModel();
 
-	private List<ContentProgressViewModel> progressData = new List<ContentProgressViewModel>();
+	private ContentProgressViewModel progressModel = new ContentProgressViewModel();
+	private object[] xAxisItems = new object[0];
 	private ContentStatisticsViewModel contentStatistics = new ContentStatisticsViewModel();
 
 
 	protected override async Task OnInitializedAsync()
 	{
 		var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
-
 		if (vizRequest == null) vizRequest = GetDemoRequest();
 
 		DataContext.Instance.Request = vizRequest;
 
 		Filter.MissionInstances = await DataContext.Instance.GetMissionInstances();
 
-
 		await PopulateData();
 
-		base.OnInitialized();
+		await base.OnInitializedAsync();
 	}
 
 	private CrossModuleVisualizationRequest GetDemoRequest()
@@ -86,8 +86,9 @@
 
 	public async Task PopulateData()
 	{
+		progressModel = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.ReportDaysValue, Filter.TimeStep);
 
-		progressData = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.ReportDaysValue, Filter.TimeStep);
+		xAxisItems = progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
 
 		contentStatistics = await DataContext.Instance.GetStatisticsData(Filter.SelectedMissionInstance, Filter.ReportDaysValue);
 	}
