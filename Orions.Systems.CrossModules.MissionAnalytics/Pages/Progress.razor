@@ -38,7 +38,7 @@
 					 CategoryField="@nameof(KeyValueModel.Key)"
 					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
+		@*<ChartSeries Type="ChartSeriesType.Line"
 					 Name="Completion"
 					 Data="@Model.CompletionPercent"
 					 Field="@nameof(KeyValueModel.Value)"
@@ -60,16 +60,16 @@
 					 MissingValues="ChartSeriesMissingValues.Gap">
 		</ChartSeries>
 		<ChartSeries Type="ChartSeriesType.Line"
-		             Name="Exploitation Saturation"
-		             Data="@Model.ExploitationSaturation"
-		             Field="@nameof(KeyValueModel.Value)"
-		             CategoryField="@nameof(KeyValueModel.Key)"
-		             MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
+					 Name="Exploitation Saturation"
+					 Data="@Model.ExploitationSaturation"
+					 Field="@nameof(KeyValueModel.Value)"
+					 CategoryField="@nameof(KeyValueModel.Key)"
+					 MissingValues="ChartSeriesMissingValues.Gap">
+		</ChartSeries>*@
 	</ChartSeriesItems>
 
 	<ChartCategoryAxes>
-		<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+		<ChartCategoryAxis Categories="@XAxisItems" StartAngle="90"></ChartCategoryAxis>
 	</ChartCategoryAxes>
 
 	<ChartValueAxes>

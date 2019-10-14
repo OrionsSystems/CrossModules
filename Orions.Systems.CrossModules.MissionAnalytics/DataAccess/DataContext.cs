@@ -107,7 +107,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		public async Task<ContentProgressViewModel> GetProgressData(
 			string missionInstanceId,
 			double reportDays,
-			int timeStep)
+			int timeStep, 
+			string formatString)
 		{
 			var workflowInstanceIds = WorkflowInstanceIds;
 			if (!string.IsNullOrEmpty(missionInstanceId) && missionInstanceId != "0" && missionInstanceId != "-1")
@@ -130,15 +131,15 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			var model = new ContentProgressViewModel
 			{
-				ExploitedDuration = GetModel(data?.ExploitedDuration),
-				TotalDuration = GetModel(data?.TotalDuration),
-				TasksPerformed = GetModel(data?.TasksPerformed),
-				TasksOutstanding = GetModel(data?.TasksOutstanding),
-				TasksCompletedPerPeriod = GetModel(data?.TasksCompletedPerPeriod),
-				CompletionPercent = GetModel(data?.CompletionPercent),
-				Sessions = GetModel(data?.Sessions),
-				NewTaggers = GetModel(data?.NewTaggers),
-				ExploitationSaturation = GetModel(data?.ExploitationSaturation)
+				ExploitedDuration = GetModel(data?.ExploitedDuration, formatString),
+				TotalDuration = GetModel(data?.TotalDuration, formatString),
+				TasksPerformed = GetModel(data?.TasksPerformed, formatString),
+				TasksOutstanding = GetModel(data?.TasksOutstanding, formatString),
+				TasksCompletedPerPeriod = GetModel(data?.TasksCompletedPerPeriod, formatString),
+				CompletionPercent = GetModel(data?.CompletionPercent, formatString),
+				Sessions = GetModel(data?.Sessions, formatString),
+				NewTaggers = GetModel(data?.NewTaggers, formatString),
+				ExploitationSaturation = GetModel(data?.ExploitationSaturation, formatString)
 			};
 
 			return model;
@@ -283,7 +284,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		}
 
 		private List<KeyValueModel> GetModel(
-			KeyValuePair<DateTime, TimeSpan>[] resource)
+			KeyValuePair<DateTime, TimeSpan>[] resource,
+			string formatString)
 		{
 			if (resource == null) return new List<KeyValueModel>();
 
@@ -293,7 +295,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			{
 				model.Add(new KeyValueModel
 				{
-					Key = item.Key,
+					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = Math.Round(item.Value.TotalHours, RoundingFactor, RoundingMethod)
 				});
 			}
@@ -302,7 +304,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		}
 
 		private List<KeyValueModel> GetModel(
-			KeyValuePair<DateTime, int>[] resource)
+			KeyValuePair<DateTime, int>[] resource,
+			string formatString)
 		{
 			if (resource == null) return new List<KeyValueModel>();
 
@@ -312,7 +315,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			{
 				model.Add(new KeyValueModel
 				{
-					Key = item.Key,
+					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = item.Value
 				});
 			}
@@ -321,7 +324,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		}
 
 		private List<KeyValueModel> GetModel(
-			KeyValuePair<DateTime, double>[] resource)
+			KeyValuePair<DateTime, double>[] resource, 
+			string formatString)
 		{
 			if (resource == null) return new List<KeyValueModel>();
 
@@ -331,7 +335,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			{
 				model.Add(new KeyValueModel
 				{
-					Key = item.Key,
+					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = Math.Round(item.Value, RoundingFactor, RoundingMethod)
 				});
 			}
@@ -340,7 +344,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		}
 
 		private List<KeyValueModel> GetModel(
-			KeyValuePair<DateTime, long>[] resource)
+			KeyValuePair<DateTime, long>[] resource,
+			string formatString)
 		{
 			if (resource == null) return new List<KeyValueModel>();
 
@@ -350,7 +355,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			{
 				model.Add(new KeyValueModel
 				{
-					Key = item.Key,
+					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = item.Value
 				});
 			}

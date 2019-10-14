@@ -27,8 +27,8 @@
 		</div>
 
 		<div>
-			<TelerikDropDownList Data="@Filter.DaysOptions"
-								 @bind-Value=@Filter.SelectedDayOption
+			<TelerikDropDownList Data="@Filter.TimeRangeOptions"
+								 @bind-Value=@Filter.SelectedTimeRangeOption
 								 Class="w-100"
 								 ValueField="Value" TextField="Text">
 			</TelerikDropDownList>
@@ -86,10 +86,10 @@
 
 	public async Task PopulateData()
 	{
-		progressModel = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.ReportDaysValue, Filter.TimeStep);
+		progressModel = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.TimeRangeValue, Filter.TimeStep, Filter.DateTimeFormatString);
 
 		xAxisItems = progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
 
-		contentStatistics = await DataContext.Instance.GetStatisticsData(Filter.SelectedMissionInstance, Filter.ReportDaysValue);
+		contentStatistics = await DataContext.Instance.GetStatisticsData(Filter.SelectedMissionInstance, Filter.TimeRangeValue);
 	}
 }

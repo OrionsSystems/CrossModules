@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics.Model
@@ -12,23 +13,23 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 		public IEnumerable<SelectListItem> StagesOptions { get; set; }
 		public string SelectedStage { get; set; }
 
-		public IEnumerable<SelectListItem> DaysOptions { get; set; }
+		public IEnumerable<SelectListItem> TimeRangeOptions { get; set; }
 
-		public string SelectedDayOption
+		public string SelectedTimeRangeOption
 		{
 			get
 			{
-				var selected = DaysOptions.FirstOrDefault(it => it.Selected);
+				var selected = TimeRangeOptions.FirstOrDefault(it => it.Selected);
 				return selected?.Value;
 			}
 			set
 			{
-				foreach (var option in DaysOptions)
+				foreach (var option in TimeRangeOptions)
 				{
 					option.Selected = false;
 				}
 
-				var selected = DaysOptions.FirstOrDefault(it => it.Value == value);
+				var selected = TimeRangeOptions.FirstOrDefault(it => it.Value == value);
 				if (selected == null) return;
 				selected.Selected = true;
 			}
@@ -36,12 +37,12 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 
 		public string TemplateId { get; set; } = "3";
 
-		public double ReportDaysValue
+		public double TimeRangeValue
 		{
 			get
 			{
-				double.TryParse(SelectedDayOption, out var days);
-				return days;
+				double.TryParse(SelectedTimeRangeOption, out var days);
+				return Math.Round(days, 4);
 			}
 		}
 
@@ -49,42 +50,94 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 		{
 			get
 			{
-				var value = Math.Round(ReportDaysValue, 4);
-				switch (value)
+				switch (TimeRangeValue)
 				{
-					case (0.0417): // Last Hour
-						return 2;
-					case (0.0833): // Last 2 Hours
-						return 5;
-					case (0.125): // Last 3 Hours
+					case Model.TimeRangeOptions.LastHour: 
+						//return 2;
 						return 10;
-					case (0.25): // Last 6 Hours
-						return 20;
-					case (0.5): // Last 12 Hours
-						return 25;
-					case (1): // Last Day
+					case Model.TimeRangeOptions.Last2Hours: 
+						//return 5;
+						return 10;
+					case Model.TimeRangeOptions.Last3Hours:
+						//return 10;
+						return 15;
+					case Model.TimeRangeOptions.Last6Hours: 
+						//return 20;
 						return 30;
-					case (3): // Last 3 days
+					case Model.TimeRangeOptions.Last12Hours: 
+						//return 25;
 						return 60;
-					case (7): // Last Week
-						return 120;
-					case (30): // Last Month
-						return 360; // 6 hours
-					case (180): // Last 6 Months
-						return 4320; // 3 days
-					case (365): // Last Year
-						return 10080; // 1 week
-					case (0): // All Time
-						return 1440 * 30; // 1 month
+					case Model.TimeRangeOptions.LastDay: 
+						//return 30;
+						return 2 * 60;
+					case Model.TimeRangeOptions.Last3Days: 
+						//return 60;
+						return 6 * 60;
+					case Model.TimeRangeOptions.LastWeek: 
+						// return 2 * 60
+						return 24 * 60;
+					case Model.TimeRangeOptions.LastMonth: 
+						//return 6 * 60; 
+						return 3 * 24 * 60;
+					case Model.TimeRangeOptions.Last3Months: 
+						//return 3 * 24 * 60; 
+						return 10 * 24 * 60;
+					case Model.TimeRangeOptions.Last6Months: 	
+						//return 3 * 24 * 60; 
+						return 15 * 24 * 60;
+					case Model.TimeRangeOptions.LastYear: 
+						//return 7 * 24 * 60; 
+						return 30 * 24 * 60;
+					case Model.TimeRangeOptions.Ever: 
+						//return 30 * 24 * 60;
+						return 30 * 24 * 60;
 					default:
-						return 5;
+						throw new NotImplementedException();
+				}
+			}
+		}
+
+		public string DateTimeFormatString
+		{
+			get
+			{
+				switch (TimeRangeValue)
+				{
+					case Model.TimeRangeOptions.LastHour: 
+						return "h:mm tt";
+					case Model.TimeRangeOptions.Last2Hours: 
+						return "h:mm tt";
+					case Model.TimeRangeOptions.Last3Hours:
+						return "h:mm tt";
+					case Model.TimeRangeOptions.Last6Hours: 
+						return "h:mm tt";
+					case Model.TimeRangeOptions.Last12Hours: 
+						return "h:mm tt";
+					case Model.TimeRangeOptions.LastDay: 
+						return "M/d h tt";
+					case Model.TimeRangeOptions.Last3Days: 
+						return "M/d h tt";
+					case Model.TimeRangeOptions.LastWeek: 
+						return "d";
+					case Model.TimeRangeOptions.LastMonth: 
+						return "d";
+					case Model.TimeRangeOptions.Last3Months: 
+						return "d";
+					case Model.TimeRangeOptions.Last6Months: 	
+						return "d";
+					case Model.TimeRangeOptions.LastYear: 
+						return "M/yyyy";
+					case Model.TimeRangeOptions.Ever: 
+						return "M/yyyy";
+					default:
+						throw new NotImplementedException();
 				}
 			}
 		}
 
 		public FilterViewModel()
 		{
-			DaysOptions = SetDaysOptions();
+			TimeRangeOptions = SetDaysOptions();
 			StagesOptions = SetStagesOptions();
 		}
 
@@ -92,18 +145,19 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 		{
 			return new List<SelectListItem>
 			{
-				new SelectListItem { Text = "Last Hour", Value = "0.0417"},
-				new SelectListItem { Text = "Last 2 Hours", Value = "0.0833"},
-				new SelectListItem { Text = "Last 3 Hours", Value = "0.125"},
-				new SelectListItem { Text = "Last 6 Hours", Value = "0.25"},
-				new SelectListItem { Text = "Last 12 Hours", Value = "0.5"},
-				new SelectListItem { Text = "Last Day", Value = "1"},
-				new SelectListItem { Text = "Last 3 days", Value = "3"},
-				new SelectListItem { Text = "Last Week", Value = "7", Selected = true },
-				new SelectListItem { Text = "Last Month", Value = "30"},
-				new SelectListItem { Text = "Last 6 Months", Value = "180"},
-				new SelectListItem { Text = "Last Year", Value = "365"},
-				new SelectListItem { Text = "All Time", Value = "0" }
+				new SelectListItem { Text = "Last Hour", Value = Model.TimeRangeOptions.LastHour.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 2 Hours", Value = Model.TimeRangeOptions.Last2Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Hours", Value = Model.TimeRangeOptions.Last3Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Hours", Value = Model.TimeRangeOptions.Last6Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 12 Hours", Value = Model.TimeRangeOptions.Last12Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Day", Value = Model.TimeRangeOptions.LastDay.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 days", Value = Model.TimeRangeOptions.Last3Days.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Week", Value = Model.TimeRangeOptions.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
+				new SelectListItem { Text = "Last Month", Value = Model.TimeRangeOptions.LastMonth.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Months", Value = Model.TimeRangeOptions.Last3Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Months", Value = Model.TimeRangeOptions.Last6Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Year", Value = Model.TimeRangeOptions.LastYear.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "All Time", Value = Model.TimeRangeOptions.Ever.ToString(CultureInfo.InvariantCulture) }
 			}.AsQueryable();
 		}
 
@@ -115,5 +169,22 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 				new SelectListItem { Text = "Mission Active Stages", Value = "1" }
 			}.AsQueryable();
 		}
+	}
+
+	public struct TimeRangeOptions
+	{
+		public const double LastHour = 0.0417;
+		public const double Last2Hours = 0.0833;
+		public const double Last3Hours = 0.125;
+		public const double Last6Hours = 0.25;
+		public const double Last12Hours = 0.5;
+		public const double LastDay = 1;
+		public const double Last3Days = 3;
+		public const double LastWeek = 7;
+		public const double LastMonth = 30;
+		public const double Last3Months = 90;
+		public const double Last6Months = 180;
+		public const double LastYear = 365;
+		public const double Ever = 0;
 	}
 }
