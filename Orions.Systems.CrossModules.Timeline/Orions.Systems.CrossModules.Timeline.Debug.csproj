@@ -22,8 +22,8 @@
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.76" />
-		<PackageReference Include="System.Drawing.Common" Version="4.5.1" />
-    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
+    <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,7 +34,8 @@
 	  <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
 	  <ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
 	  <ProjectReference Include="..\..\Orions.Systems.Open\Services\Orions.Services.Contracts.NetStandard\Orions.Services.Contracts.NetStandard.csproj" />
-	  <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />	  
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Debug.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
 	</ItemGroup>
 
 </Project>
