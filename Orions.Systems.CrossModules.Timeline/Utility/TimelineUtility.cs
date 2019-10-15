@@ -116,7 +116,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 
 			if (filter.Ids != null && filter.Ids.Any())
 			{
-				findHyperTagsArgs.DocumentConditions.AddCondition("_id", filter.Ids, ScopeCondition.Comparators.In);
+				findHyperTagsArgs.DocumentConditions.AddCondition("_id", filter.Ids, Comparers.In);
 			}
 
 			if (filter.AssetIds != null && filter.AssetIds.Any())
@@ -130,7 +130,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 						Assist.GetPropertyName((HyperTag t) => t.Elements) + $".{nameof(HyperId)}." +
 						Assist.GetPropertyName((HyperId m) => m.AssetId);
 
-					assetDescriptorConditions.AddCondition(key, regexText, ScopeCondition.Comparators.Regex);
+					assetDescriptorConditions.AddCondition(key, regexText, Comparers.Regex);
 				}
 				findHyperTagsArgs.DescriptorConditions.AddCondition(assetDescriptorConditions);
 			}
@@ -146,7 +146,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 					findHyperTagsArgs.DescriptorConditions.AddCondition(
 						field,
 						new DateTime(filter.Start.Value.Ticks, DateTimeKind.Utc),
-						ScopeCondition.Comparators.GreaterThanOrEqual);
+						Comparers.GreaterThanOrEqual);
 				}
 
 				if (filter.End.HasValue)
@@ -154,7 +154,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 					findHyperTagsArgs.DescriptorConditions.AddCondition(
 						field,
 						new DateTime(filter.End.Value.Ticks, DateTimeKind.Utc),
-						ScopeCondition.Comparators.LessThanOrEqual);
+						Comparers.LessThanOrEqual);
 				}
 			}
 
@@ -200,12 +200,12 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 				findHyperTagsArgs.DescriptorConditions.AddCondition(
 					field,
 					fromExtended.Value.FragmentId.Index,
-					ScopeCondition.Comparators.GreaterThanOrEqual);
+					Comparers.GreaterThanOrEqual);
 
 				findHyperTagsArgs.DescriptorConditions.AddCondition(
 					field,
 					toExtended.Value.FragmentId.Index,
-					ScopeCondition.Comparators.LessThanOrEqual);
+					Comparers.LessThanOrEqual);
 			};
 
 			var documents = await _store.ExecuteAsync(findHyperTagsArgs);
@@ -296,13 +296,13 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 
 			if (!filter.Children)
 			{
-				findHyperTagsArgs.DescriptorConditions.AddCondition(elementType, nameof(HyperTagReference), ScopeCondition.Comparators.DoesNotEqual);
+				findHyperTagsArgs.DescriptorConditions.AddCondition(elementType, nameof(HyperTagReference), Comparers.DoesNotEqual);
 			}
 			else
 			{
-				findHyperTagsArgs.DescriptorConditions.AddCondition(elementType, nameof(HyperTagReference), ScopeCondition.Comparators.Equals);
+				findHyperTagsArgs.DescriptorConditions.AddCondition(elementType, nameof(HyperTagReference), Comparers.Equals);
 				var elementRefrenceId = Assist.GetPropertyName((HyperTag t) => t.Elements) + ".ReferenceId";
-				findHyperTagsArgs.DescriptorConditions.AddCondition(elementRefrenceId, filter.ParentId, ScopeCondition.Comparators.Equals);
+				findHyperTagsArgs.DescriptorConditions.AddCondition(elementRefrenceId, filter.ParentId, Comparers.Equals);
 			}
 
 			findHyperTagsArgs.OrderByFields = new OrderByField[]
@@ -334,7 +334,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 
 			if (filter.Ids != null && filter.Ids.Any())
 			{
-				findHyperTagsArgs.DocumentConditions.AddCondition("_id", filter.Ids, ScopeCondition.Comparators.In);
+				findHyperTagsArgs.DocumentConditions.AddCondition("_id", filter.Ids, Comparers.In);
 			}
 
 			if (filter.AssetIds != null || filter.AssetIds.Any())
@@ -343,7 +343,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 					Assist.GetPropertyName((HyperTag t) => t.Elements) + $".{nameof(HyperId)}." +
 					Assist.GetPropertyName((HyperId m) => m.AssetId);
 
-				findHyperTagsArgs.DocumentConditions.AddCondition(key, filter.AssetIds, ScopeCondition.Comparators.In);
+				findHyperTagsArgs.DocumentConditions.AddCondition(key, filter.AssetIds, Comparers.In);
 			}
 
 			if (filter.Start.HasValue || filter.End.HasValue)
@@ -357,7 +357,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 					findHyperTagsArgs.DescriptorConditions.AddCondition(
 						field,
 						new DateTime(filter.Start.Value.Ticks, DateTimeKind.Utc),
-						ScopeCondition.Comparators.GreaterThanOrEqual);
+						Comparers.GreaterThanOrEqual);
 				}
 
 				if (filter.End.HasValue)
@@ -365,7 +365,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 					findHyperTagsArgs.DescriptorConditions.AddCondition(
 						field,
 						new DateTime(filter.End.Value.Ticks, DateTimeKind.Utc),
-						ScopeCondition.Comparators.LessThanOrEqual);
+						Comparers.LessThanOrEqual);
 				}
 			}
 

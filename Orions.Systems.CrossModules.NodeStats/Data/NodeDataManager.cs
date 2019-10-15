@@ -236,7 +236,7 @@ namespace Orions.Systems.CrossModules.NodeStats
 				{
 					var loginsArgs = new FindHyperDocumentsArgs(typeof(HyperUserLoginAttempt));
 					loginsArgs.Limit = 20;
-					loginsArgs.DescriptorConditions.AddCondition(nameof(HyperUserLoginAttempt.DateTimeUTC), DateTime.UtcNow - TimeSpan.FromMinutes(120), ScopeCondition.Comparators.GreaterThanOrEqual);
+					loginsArgs.DescriptorConditions.AddCondition(nameof(HyperUserLoginAttempt.DateTimeUTC), DateTime.UtcNow - TimeSpan.FromMinutes(120), Comparers.GreaterThanOrEqual);
 
 					var docs = await store.ExecuteAsync(loginsArgs);
 
