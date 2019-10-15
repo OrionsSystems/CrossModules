@@ -1,0 +1,66 @@
+﻿.width-4-per {
+	width: 4%;
+}
+
+.width-8-per {
+    width: 8%;
+}
+
+.width-10-per {
+    width: 10%;
+}
+
+.width-12-per {
+    width: 12%;
+}
+
+.width-15-per {
+    width: 15%;
+}
+
+.width-20-per {
+    width: 20%;
+}
+
+.width-25-per {
+    width: 25%;
+}
+
+.width-76-per {
+    width: 76%;
+}
+
+.width-48-per {
+    width: 48%;
+}
+
+.width-80-px {
+    width: 80px;
+}
+
+.k-tabstrip-wrapper,
+.k-widget.k-tabstrip {
+    padding: 0px;
+}
+
+.k-tabstrip .k-content {
+    padding: 0px 5px 0px 5px;
+}
+
+#timeline-container {
+    overflow: auto !important;
+}
+
+#timeline-json-container,
+#timeline-filter-container,
+#timeline-assets-container {
+    overflow: hidden !important;
+}
+
+#loading-panel {
+    text-align: center;
+}
+
+#timeline-bottom{
+    height:200px;
+}

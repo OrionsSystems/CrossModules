@@ -1,0 +1,486 @@
+@page
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Systems.CrossModules.Timeline.Pages
+@model IndexModel
+@{
+    ViewData["Title"] = "Timeline";
+
+    var routeTagPagingParams = new
+    {
+        ServerUri = Model.ServerUri,
+        WorkflowInstanceId = Model.WorkflowInstanceId,
+        MissionInstanceId = Model.MissionInstanceId,
+        AssetId = Model.AssetId,
+        StartTime = Model.StartTime,
+        EndTime = Model.EndTime,
+        FilterValue = Model.FilterValue
+    };
+
+    var routeOneTagParams = new
+    {
+        ServerUri = Model.ServerUri
+    };
+
+    var filterUrl = Url.Action("Index", routeTagPagingParams);
+
+    var tagMoreUrl = Url.Action("Timeline_Read", "Timeline", routeTagPagingParams);
+    var tagCountChildrenUrl = Url.Action("Timeline_CountChildren", "Timeline", routeTagPagingParams);
+
+    var tagChildrenUrl = Url.Action("Timeline_Children", "Timeline", routeOneTagParams);
+    var tagElementsUrl = Url.Action("Timeline_Elements", "Timeline", routeOneTagParams);
+
+    var assetHostByIdUrl = Url.Action("Asset_HlsHostById", "Asset", routeOneTagParams);
+
+    var tagTypeName = typeof(HyperTagElement[]).FullName;
+}
+
+<div class="panel">
+	<div class="panel-body p-0">
+		<div class="tabs-container">
+			<ul class="nav nav-tabs" role="tablist">
+				<li><a class="nav-link active show" aria-expanded="true" href="#timeline-tab" data-toggle="tab">Timeline</a></li>
+				<li><a class="nav-link indexes" href="#json-tab" data-toggle="tab">Json</a></li>
+			</ul>
+			<div class="tab-content">
+				<div class="tab-pane fade active in show" id="timeline-tab" role="tabpanel">
+					<div id="timeline-container" style="padding: 0px 10px;">
+						<div id="timeline-filter-container">
+                            <form action="@filterUrl" method="get">
+                                <input hidden id="@nameof(Model.WorkflowInstanceId)" name="@nameof(Model.WorkflowInstanceId)" value="@Model.WorkflowInstanceId" />
+                                <input hidden id="@nameof(Model.MissionInstanceId)" name="@nameof(Model.MissionInstanceId)" value="@Model.MissionInstanceId" />
+                                <input hidden id="@nameof(Model.ServerUri)" name="@nameof(Model.ServerUri)" value="@Model.ServerUri" />
+                                <input hidden id="@nameof(Model.AssetId)" name="@nameof(Model.AssetId)" value="@Model.AssetId" />
+
+                                @await Html.PartialAsync("_filter", Model)
+                            </form>
+						</div>
+						<div id="vertical-timeline" class="dark-timeline center-orientation">
+						</div>
+						<div id="loading-panel" class="m-md">
+							<h4 id="timeline-loading">
+								<span class="spinner"></span>
+							</h4>
+							<div class="clearfix m-b-md"></div>
+							<button id="timeline-load-more" class="k-primary k-button hidden" type="submit">Load More</button>
+						</div>
+					</div>
+				</div>
+
+				<div class="tab-pane fade" id="json-tab" role="tabpanel">
+					<div id="timeline-json-container">
+						<textarea id="timeline-json" class="form-control" style="position:absolute;height:calc(100% - 50px);width:100%;padding:0px;margin:0px;"></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="playerModal" style="padding:0px; background-color:black;">
+	<div id="player"></div>
+</div>
+
+@section styles
+{
+	<link href="~/css/timeline.css" rel="stylesheet" asp-append-version="true" />
+}
+
+@section scripts{
+	<script type="text/javascript">
+
+		var timeline_lazy = new LazyLoad({});
+		var pageNumber = 0;
+		var player;
+		var timeline_gridAssets;
+		var _thumbnailStopPreview;
+		var _thumbnailTimer;
+
+		function thumbnailMouseOver(sender) {
+
+			_thumbnailStopPreview = false;
+
+			var baseUrl = "@Url.Action("preview", "thumbnail")";
+			var fragments = 100;
+			var interval = 500;
+
+			var element = $(sender);
+			var assetid = element.data('asset-id');
+			var serverUri = "@Model.ServerUri";
+
+			var fragment = element.data('fragment-index');
+
+			_thumbnailTimer = setInterval(function () {
+				if (_thumbnailStopPreview) return;
+				var url = baseUrl + "?width=336&height=188&assetid=" + assetid + "&index=" + fragment + "&serverUri=" + serverUri;
+				
+				element.attr('src', url);
+				timeline_lazy.update();
+				
+				fragment++;
+				console.log('Fragment: ' + fragment);
+				if (fragment > fragments) fragment = 0;
+
+			}, interval);
+		}
+
+		function thumbnailMouseOut(sender) {
+
+			_thumbnailStopPreview = true;
+			clearInterval(_thumbnailTimer);
+			var element = $(sender);
+
+			var orignUrl = element.data('src');
+			element.attr('src', orignUrl);
+		}
+
+		function timeline_copyId(sender) {
+			var container = $(sender).closest(".timeline.container-fluid");
+			var id = container.data("id");
+			if (copyTextToClipboard(id))
+				toastr.success("Copy id to clipboard succeeded.")
+		};
+
+		function timeline_children_load(sender) {
+			var container = $(sender).closest(".container-fluid");
+			var wallclock = container.data("wallclock");
+			var taggingTitle = container.data("taggingtitle");
+			var windowTitle = "Timeline: " + wallclock + " > " + taggingTitle
+			var windowId = "tagChildrenWindow" + global_getGuidId();
+			var htmlWindow = "<div id='" + windowId + "' style='padding: 10px;' class='ibox-content dark-timeline center-orientation'>" + spinnerFullPage() + "</div>";
+
+			var elementWindow = $(htmlWindow).appendTo(document.body);
+			var size = global_getResponsiveWindowSize();
+			elementWindow.kendoWindow({
+				width: size.Width + "px",
+				height: size.Height + "px",
+				title: windowTitle,
+				modal: true,
+				visible: false,
+				iframe: false,
+				actions: ["Minimize", "Maximize", "Close"],
+				deactivate: function () {
+					this.element.closest(".k-window").remove();
+				}
+			});
+			var windowSelector = $("#" + windowId);
+			windowSelector.data("kendoWindow").center().open();
+
+			var childrenUrl = "@tagChildrenUrl";
+			var parentId = encodeURIComponent(container.data("id"));
+			if (childrenUrl.indexOf("?") > 0) {
+				childrenUrl += "&parentId=" + parentId;
+			} else {
+				childrenUrl += "?parentId=" + parentId;
+			}
+
+			$.ajax({
+				method: "POST",
+				url: childrenUrl
+			}).success(function (response) {
+				windowSelector.html(response);
+			}).error(function (response) {
+				elementWindow.html("");
+			});
+		};
+
+		function timeline_elements(sender) {
+			var container = $(sender).closest(".timeline.container-fluid");
+			var url = "@tagElementsUrl";
+			var id = encodeURIComponent(container.data("id"));
+			if (url.indexOf("?") > 0) {
+				url += "&id=" + id;
+			} else {
+				url += "?id=" + id;
+			}
+			var model = {};
+			model.type = "@tagTypeName"
+			model.title = "Tag Elements";
+			model.postUrl = url;
+			model.getUrl = url;
+			model.editable = "false";
+			propertyGrid_Run(this, model);
+		};
+
+		@*function timeline_redirectToAsset(sender) {
+			var row = $(sender).closest("tr");
+			var id = row.find("td.assetId").html();
+			var nodeId = row.find("td.nodeId").html();
+			var url = "@assetDetailUrl"
+			url += "?titleSearchInput=" + id;
+			url += "&nodeId=" + nodeId;
+            window.open(url, '_blank');
+		}*@
+
+		function timeline_filterByAsset(sender) {
+			var row = $(sender).closest("tr");
+			var id = row.find("td.assetId").html();
+			var url = "@filterUrl";
+			url += "&assetId=" + id;
+			window.open(url, '_blank');
+		}
+
+		function timeline_gridAssetsOnDataBound(sender) {
+			timeline_gridAssets.dataSource._total = 10000;
+			if ("@Model.AssetId" == "") return;
+			var grid = timeline_gridAssets;
+			$.each(grid.tbody.find('tr'), function () {
+				var model = grid.dataItem(this);
+				if (model.Id == "@Model.AssetId") {
+					var info = $("#timeline-filterByAsset-info");
+					info.html("Asset: " + model.Asset.Title);
+					info.data("id", model.Id)
+					$('[data-uid=' + model.uid + ']').addClass('k-state-selected');
+					return;
+				}
+			});
+		}
+
+		function timeline_loading(pageNumber, pageSize) {
+			var spinner = $("#timeline-loading .spinner");
+			if (spinner.html() == "") {
+				spinner.removeClass("hidden");
+				spinner.html(spinnerBounce());
+			}
+			var url = "@Html.Raw(tagMoreUrl)" + "&pageNumber=" + pageNumber + "&pageSize=" + pageSize;
+			$.get(url).done(function (response) {
+				spinner.html("");
+				if (response == "" || response == undefined) {
+					$("#timeline-load-more").addClass("hidden");
+				} else {
+					$("#timeline-load-more").removeClass("hidden");
+				}								
+				$("#vertical-timeline").append(response);
+				timeline_countTags();
+				timeline_json();
+				timeline_realodAssetGrid();
+				timeline_children_count();
+				timeline_lazy.update();
+
+				// manage asset multiselect
+				//manageAssetMultiselect();
+			});
+		}
+
+		function manageAssetMultiselect() {
+			
+			var assetIds = new Set();
+			$.each($("#vertical-timeline").find('.vertical-timeline-block'), function () {
+				var assetId = $(this).find(".vertical-timeline-content").data("assetid");
+				if (assetId != undefined && assetId != "") {
+					assetIds.add(assetId);
+				}
+			});
+
+			var assetFilter = $('#assetsFilterId');
+			if (assetIds.size > 1) {
+
+				assetIds.forEach(function (element) {
+					assetFilter.append($('<option>', {
+						value: element,
+						text: element
+					}));
+				});
+
+				assetFilter.removeClass('hidden');
+
+				// create MultiSelect from select HTML element
+				assetFilter.kendoMultiSelect({
+					autoClose: false
+				}).data("kendoMultiSelect");
+				
+			} 
+		}
+
+		function timeline_json() {
+			var textview = $("#timeline-json");
+			textview.append("[");
+			var json = "";
+			$.each($("#vertical-timeline").find('.vertical-timeline-block .timeline-tagjson'), function (index, value) {
+				if (json == "") {
+					json += $(this).html();
+				} else {
+					json += ","+$(this).html();
+				}
+			});
+			textview.append(json+"]");
+		}
+
+		function timeline_children_count() {
+			var url = "@tagCountChildrenUrl";
+			$.each($("#vertical-timeline").find('.vertical-timeline-block .timeline-children-container').not(".count"), function (index, value) {
+				$(this).addClass("count");
+				var container = $(this);
+				var parentId = $(this).closest(".vertical-timeline-content").data("id");
+				var getUrl = url + "&parentId=" + encodeURIComponent(parentId);
+				$.get(getUrl).done(function (response) {
+					var children = parseInt(response);
+					var html = "<a onclick='timeline_children_load(this)'>Children: " + response + "</a>";
+					if (children > 0) {
+						html = "<a onclick='timeline_children_load(this)'><b>Children: " + response + "</b></a>"
+					} 
+					container.html(html)
+				});
+			});
+		}
+
+		function timeline_onGridAssetFilter(arg){
+			var assetIds = [];
+			$.each($("#vertical-timeline").find('.vertical-timeline-block'), function () {
+				var assetId = $(this).find(".vertical-timeline-content").data("assetid");
+				if (assetId != undefined && assetId != "") {
+					assetIds.push(assetId);
+				}
+			});
+			return { ids :  assetIds }
+		}
+
+		function timeline_realodAssetGrid() {
+			//timeline_gridAssets.dataSource.read();
+		}
+
+		function timeline_countTags() {
+			var countContainer = $("#timeline-loading .count");
+			var elements = 0;
+			$.each($("#vertical-timeline").find('.vertical-timeline-block'), function () {
+				elements++;
+			});
+			countContainer.html(elements);
+		}
+
+
+		function timeline_onlyUnique(value, index, self) {
+			return self.indexOf(value) === index;
+		}
+
+		function timeline_playAsset(sender) {
+			var button = $(sender);
+			var assetId = button.data('assetid');
+			var host = button.data('host');
+			var title = button.data('title');
+			var second = button.data('second');
+			if (host == "" || host == undefined) {
+				var assetUrl = "@assetHostByIdUrl" + "&id=" + assetId;
+				$.getJSON(assetUrl, function (response) {
+					timeline_initPlayer(response.Host, assetId, second, title);
+				});
+			} else {
+				timeline_initPlayer(host, assetId, second, title);
+			}
+		};
+
+        function timeline_initPlayer(host, assetId, second, title)
+        {
+			//var url = "@Url.Content("~/playlist/hls/")" + host + "/" + assetId + "/asset.m3u8";
+
+            var serverUriList = host.split(':');
+            var serverDomain = serverUriList[0];
+            var serverPort = serverUriList[1];
+
+            serverPort = parseInt(serverPort); 
+           
+            var url = 'https://' + serverDomain + ':' + (serverPort + 1) + '/dash/' + assetId + '/asset.mpd';
+            //var url = 'http://' + serverDomain + ':' + serverPort + '/dash/' + assetId + '/asset.mpd';
+
+            $('#playerModal').data("kendoWindow").title(title).center().open();
+			
+			if (player != null) {
+				var file = player.getPlaylistItem()['file'];
+				if (file == url) {
+					player.seek(second);
+					return;
+				}
+			}
+            var internalSeconds = second;
+
+            var playerSetup = {
+                file: url,
+                logo: {
+                    file: '@Url.Content("~/images/orions-systems-logo.png")',
+                    position: 'top-right',
+                    height: '10%'
+                },
+                width: '100%',
+                //stretching: "exactfit",
+                aspectratio: '16:9',
+                autoplay: 'true',
+                preload: 'auto',
+            };
+
+            player = jwplayer('player').setup(playerSetup);
+
+            player.on('ready', function (event) {
+                player.play();
+            });
+
+			player.on('firstFrame', function () {
+				setTimeout(function () {
+					player.seek(internalSeconds);
+				}, 1000)
+			});
+		};
+
+		function timeline_filterBuilderApply(sender) {
+			var json = $("#@nameof(Model.FilterValue)").renderFilter();
+			$("#@nameof(Model.FilterValue)").val(json);
+			$(this).closest("div.modal").modal('hide');
+		};
+
+		function timeline_onClosePlayer(sender) {
+			if (player !== null) {
+				player.remove();
+				player = null;
+			}
+		}
+
+		$(document).ready(function () {
+			$("#tabstrip").kendoTabStrip({});
+
+			function resizeGrids() {
+				var containerHeight = $("#page-wrapper").height();
+				var headerHeight = $(".k-tabstrip-items").height();
+				var height = containerHeight - headerHeight;
+				$(".k-tabstrip-wrapper").height(height);
+				$(".k-widget.k-tabstrip").height(height);
+				$(".k-tabstrip .k-content").each(function(){
+					$(this).height(height);
+				});
+				$("#timeline-container").height(height);
+
+			}
+
+			resizeGrids();
+
+			$(window).resize(function () {
+				resizeGrids();
+			});
+
+			timeline_gridAssets = $("#timeline_gridAssets").data("kendoGrid");
+
+			$("#playerModal").kendoWindow({
+				width: "900px",
+				height: "510px",
+				title: "",
+				visible: false,
+				iframe: false,
+				close: timeline_onClosePlayer,
+				actions: [
+					//"Pin",
+					"Minimize",
+					"Maximize",
+					"Close"
+				],
+			}).data("kendoWindow").center();
+
+			$("#timeline-load-more").click(function () {
+				pageNumber++;
+				timeline_loading(pageNumber, $("#PageSize").data("kendoDropDownList").value());
+			});
+
+			timeline_loading(pageNumber, $("#PageSize").data("kendoDropDownList").value());
+		});
+	</script>
+}
+
+
+
+

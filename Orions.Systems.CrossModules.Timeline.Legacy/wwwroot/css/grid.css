@@ -1,0 +1,23 @@
+﻿html,
+body,
+#grid,
+#wrapper,
+#page-wrapper,
+#grid-wrapper {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 0;
+    border-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#page-wrapper {    
+    overflow: hidden;
+	margin: 0px !important;
+}
+
+.k-link.k-pager-nav.k-pager-last, .k-link.k-pager-nav.k-pager-first, .k-pager-info.k-label {
+    display: none !important;
+}
