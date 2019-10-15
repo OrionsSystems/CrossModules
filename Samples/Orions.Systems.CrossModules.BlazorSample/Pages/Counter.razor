@@ -1,25 +1,24 @@
 @page "/counter"
+@using Orions.Systems.CrossModules.Blazor
 @using Orions.Systems.CrossModules.BlazorSample.Data
 @inject TestService TestService
 
-@inherits CommonComponent<TestVm>
+@inherits BaseBlazorComponent<CounterSampleVm>
 
 <h1>Counter</h1>
 
-<p>Current count: @currentCount</p>
+<button class="btn btn-primary" @onclick="@DataContext.CommandStop">Click me</button>
 
-<button class="btn btn-primary" @onclick="@DataContext.Command1">Click me</button>
+<datalist id="dl">
+   <option value="one"></option>
+   <option value="two"></option>
+   <option value="three"></option>
+</datalist>
 
-<text>@DataContext.Value1.Value</text>
+<text>@DataContext.TimeValueProp.Value</text>
+
+<Orions.Systems.CrossModules.Blazor.Components.JwPlayer></Orions.Systems.CrossModules.Blazor.Components.JwPlayer>
 
 @code {
-   int currentCount = 0;
-
-   string xoxo { get; set; }
-
-   void IncrementCount()
-   {
-      xoxo = Program.CrossModuleInstanceHost.AppliedConfig.NodeConnections[0].ConnectionUri;
-      currentCount++;
-   }
+   // xcsczzc
 }

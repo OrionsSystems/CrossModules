@@ -4,13 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Orions.Systems.CrossModules.BlazorSample;
-using Orions.Systems.CrossModules.Blazor;
 
-namespace Orions.Systems.CrossModules.BlazorSample
+namespace Orions.Systems.CrossModules.Blazor
 {
-	public class CommonComponent<VmType> : BaseOrionsComponent
-		where VmType : BaseVm
+	public class BaseBlazorComponent : BaseOrionsComponent
+	{
+	}
+
+	public class BaseBlazorComponent<VmType> : BaseBlazorComponent
+		where VmType : BaseVm, new()
 	{
 		VmType _dataContext = null;
 
@@ -33,11 +35,10 @@ namespace Orions.Systems.CrossModules.BlazorSample
 
 		bool _initialized = false;
 
-		public CommonComponent()
+		public BaseBlazorComponent()
 		{
-			// TODO: remove
-			object oo = new TestVm();
-			DataContext = (VmType)oo;
+			// Create a default Vm instance.
+			DataContext = new VmType();
 		}
 
 		void DataContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

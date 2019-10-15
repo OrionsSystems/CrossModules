@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.BlazorSample
 {
-	public class SupCommand : DefaultCommand, IHandleEvent
+	/// <summary>
+	/// Provides conversion mechanism between the Blazor event system and the DefaultCommand pattern.
+	/// </summary>
+	public class BlazorCommand : DefaultCommand, IHandleEvent
 	{
-		public SupCommand()
+		public BlazorCommand()
 		{
 		}
 
-		public static implicit operator EventCallback(SupCommand comm)
+		public static implicit operator EventCallback(BlazorCommand comm)
 		{
 			return new EventCallback(comm, null);
 		}

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Orions.Common;
+using Orions.Systems.CrossModules.Blazor;
 
 namespace Orions.Systems.CrossModules.BlazorSample
 {
@@ -10,26 +11,30 @@ namespace Orions.Systems.CrossModules.BlazorSample
 	/// The ViewModel is what drives the logic behind the User Interface, in a MVVM based interface.
 	/// This is a sample Vm that shows how to use the basic common classes to express properties, commands and more.
 	/// </summary>
-	public class TestVm : BaseVm
+	public class CounterSampleVm : BlazorVm
 	{
-		public ViewModelProperty<string> Value1 { get; set; } = new ViewModelProperty<string>("helloo");
+		public ViewModelProperty<string> TimeValueProp { get; set; } = new ViewModelProperty<string>("...");
 
-		public SupCommand Command1 { get; set; } = new SupCommand();
+		public BlazorCommand CommandStop { get; set; } = new BlazorCommand();
 
 		bool _isStopped = false;
 
-		public TestVm()
+		public CounterSampleVm()
 		{
-			Command1.Delegate = OnCommand1;
+			CommandStop.Delegate = OnCommand1;
 
 			Task.Factory.StartNew(() =>
 			{
 				while (_isStopped == false)
 				{
-					Value1.Value = DateTime.Now.ToString();
+					TimeValueProp.Value = DateTime.Now.ToString();
 					Thread.Sleep(1000);
 				}
 			});
+		}
+
+		public void OnTextEdited(/* */)
+		{
 		}
 
 		private void OnCommand1(DefaultCommand command, object parameter)
