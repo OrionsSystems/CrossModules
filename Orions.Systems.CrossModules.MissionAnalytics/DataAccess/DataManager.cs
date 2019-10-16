@@ -158,28 +158,31 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 					CompletionPercent = GetModel(data?.CompletionPercent, dateFormatString),
 					Sessions = GetModel(data?.Sessions, dateFormatString),
 					NewTaggers = GetModel(data?.NewTaggers, dateFormatString),
-					ExploitationSaturation = GetModel(data?.ExploitationSaturation, dateFormatString)
+					ExploitationSaturation = GetModel(data?.ExploitationSaturation, dateFormatString),
+					CompletionPercentMinValue = 0,
+					SessionsMinValue = 0,
+					NewTaggersMinValue = 0,
+					ExploitationSaturationMinValue = 0
 				};
 
-				// Set max and min values for better UX
-				model.CompletionPercentMinValue = 0;
-				model.CompletionPercentMaxValue = 100;
+				if (data?.CompletionPercent != null)
+				{
+					var value = GetMaxValue(data.CompletionPercent.Select(it => it.Value));
+					if (value > 0) model.CompletionPercentMaxValue = value;
+				}
 
-				model.SessionsMinValue = 0;
 				if (data?.Sessions != null)
 				{
 					var value = GetMaxValue(data.Sessions.Select(it => it.Value));
-					if (value > 0) model.SessionsMaxValue = value;
+					if (value > 10) model.SessionsMaxValue = value;
 				}
 
-				model.NewTaggersMinValue = 0;
 				if (data?.NewTaggers != null)
 				{
 					var value = GetMaxValue(data.NewTaggers.Select(it => it.Value));
-					if (value > 0) model.NewTaggersMaxValue = value;
+					if (value > 10) model.NewTaggersMaxValue = value;
 				}
 
-				model.ExploitationSaturationMinValue = 0;
 				if (data?.ExploitationSaturation != null)
 				{
 					var value = GetMaxValue(data.ExploitationSaturation.Select(it => it.Value));
