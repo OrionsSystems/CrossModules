@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.Blazor;
 
 namespace Orions.Systems.CrossModules.BlazorSample
@@ -39,6 +40,8 @@ namespace Orions.Systems.CrossModules.BlazorSample
 
 		private void OnCommand1(DefaultCommand command, object parameter)
 		{
+			var z = this.OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
 			_isStopped = true;
 		}
 
