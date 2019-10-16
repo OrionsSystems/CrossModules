@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
-using Orions.Systems.CrossModules.MissionAnalytics.Model;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {
