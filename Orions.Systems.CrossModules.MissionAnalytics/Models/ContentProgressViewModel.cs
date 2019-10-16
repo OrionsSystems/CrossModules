@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Orions.Systems.CrossModules.MissionAnalytics.Model
+namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class ContentProgressViewModel
 	{
