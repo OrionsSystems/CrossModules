@@ -1,0 +1,80 @@
+﻿
+<img class="@Class" src="@Source" @onclick="OnThumbnailClick" @onmouseover="OnThumbnailOver" @onmouseout="OnThumbnailOut" />
+
+@code {
+
+    private bool _thumbnailStopPreview;
+    private int timeInternal = 500;
+
+    public string Source { get; set; }
+
+    [Parameter]
+    public DynamicHyperTagViewModel Tag { get; set; }
+
+    [Parameter]
+    public string Default { get; set; }
+
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+    [Parameter]
+    public EventCallback OnMouseOver { get; set; }
+    [Parameter]
+    public EventCallback OnMouseOut { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Source = Default;
+        Source = await GetTagThumbnail(Tag);
+    }
+
+    private async Task OnThumbnailOver(MouseEventArgs e)
+    {
+        _thumbnailStopPreview = false;
+
+        ulong.TryParse(Tag.FragmentIndex, out var fragmentIndex);
+        var firstFragment = fragmentIndex;
+        while (!_thumbnailStopPreview)
+        {
+            var innerDataSource = await GetTagThumbnail(Tag, fragmentIndex);
+            if (innerDataSource != null) Source = innerDataSource;
+            fragmentIndex++;
+            if (fragmentIndex > 100) fragmentIndex = firstFragment;
+            StateHasChanged();
+
+            await Task.Delay(timeInternal);
+        }
+
+        var data = await GetTagThumbnail(Tag);
+        if (string.IsNullOrWhiteSpace(Source)) Source = data;
+    }
+
+    public void OnThumbnailOut()
+    {
+        _thumbnailStopPreview = true;
+    }
+
+    public void OnThumbnailClick()
+    {
+        // Set logic
+    }
+
+    private async Task<string> GetTagThumbnail(DynamicHyperTagViewModel tag, ulong? fragmentIndex = null)
+    {
+        if (tag == null) return Default;
+
+        ulong index = 0;
+        if (fragmentIndex == null)
+        {
+            ulong.TryParse(tag.FragmentIndex, out index);
+        }
+        else {
+            index = fragmentIndex.Value;
+        }
+
+        var data = await DataContext.Instance.GetThumbnail(tag.AssetGuid, 336, 188, index, tag.SliceId);
+        return $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
+    }
+}
