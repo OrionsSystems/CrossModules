@@ -16,18 +16,32 @@
 	.orions-mission-analytics-header div {
 		margin-right: 10px;
 		width: 100%;
-		
 	}
 
-.orions-mission-analytics-header button {
-	width: 100px;
-}
+	.orions-mission-analytics-header button {
+		width: 100px;
+	}
 
 .orions-mission-analytics-progress {
 	width: 100%;
 	min-width: 600px;
 	margin-top: 1rem;
 }
+
+	.orions-mission-analytics-progress .line-2 {
+		width: 100%;
+		margin-top: 1rem;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+	}
+
+	.orions-mission-analytics-progress .line-2 .chart{
+		width: 23%;
+		min-height: 200px;
+		background-color: #eee;
+		margin-right: 1rem;
+	}
 
 .orions-mission-analytics-stats {
 	width: 100%;

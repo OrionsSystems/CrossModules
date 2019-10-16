@@ -1,91 +1,154 @@
 ﻿
-<TelerikChart>
-	<ChartSeriesItems>
-		<ChartSeries Type="ChartSeriesType.Area"
-					 Name="Exploited Duration"
-					 Data="@Model.ExploitedDuration"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 Axis="hours"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Area"
-					 Name="Total Duration"
-					 Data="@Model.TotalDuration"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 Axis="hours"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Tasks Performed"
-					 Data="@Model.TasksPerformed"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Tasks Outstanding"
-					 Data="@Model.TasksOutstanding"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Tasks Completed Per Period"
-					 Data="@Model.TasksCompletedPerPeriod"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		@*<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Completion"
-					 Data="@Model.CompletionPercent"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Sessions"
-					 Data="@Model.Sessions"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="New Taggers"
-					 Data="@Model.NewTaggers"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>
-		<ChartSeries Type="ChartSeriesType.Line"
-					 Name="Exploitation Saturation"
-					 Data="@Model.ExploitationSaturation"
-					 Field="@nameof(KeyValueModel.Value)"
-					 CategoryField="@nameof(KeyValueModel.Key)"
-					 MissingValues="ChartSeriesMissingValues.Gap">
-		</ChartSeries>*@
-	</ChartSeriesItems>
+<div>
+	<TelerikChart Width="100%">
+		<ChartSeriesItems>
+			<ChartSeries Type="ChartSeriesType.Area"
+						 Name="Total Duration"
+						 Data="@Model.TotalDuration"
+						 Field="@nameof(KeyValueModel.Value)"
+						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Axis="hours"
+						 Color="#FFD21B">
+			</ChartSeries>
+			<ChartSeries Type="ChartSeriesType.Area"
+						 Name="Exploited Duration"
+						 Data="@Model.ExploitedDuration"
+						 Field="@nameof(KeyValueModel.Value)"
+						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Axis="hours"
+						 Color="#8B79E6">
+			</ChartSeries>
+			<ChartSeries Type="ChartSeriesType.Line"
+						 Name="Tasks Performed"
+						 Data="@Model.TasksPerformed"
+						 Field="@nameof(KeyValueModel.Value)"
+						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Color="#0785C8">
+			</ChartSeries>
+			<ChartSeries Type="ChartSeriesType.Line"
+						 Name="Tasks Outstanding"
+						 Data="@Model.TasksOutstanding"
+						 Field="@nameof(KeyValueModel.Value)"
+						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Color="#FC1B2B">
+			</ChartSeries>
+			<ChartSeries Type="ChartSeriesType.Line"
+						 Name="Tasks Completed Per Period"
+						 Data="@Model.TasksCompletedPerPeriod"
+						 Field="@nameof(KeyValueModel.Value)"
+						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Color="#11B200">
+			</ChartSeries>
+		</ChartSeriesItems>
 
-	<ChartCategoryAxes>
-		<ChartCategoryAxis Categories="@XAxisItems" StartAngle="90"></ChartCategoryAxis>
-	</ChartCategoryAxes>
+		<ChartCategoryAxes>
+			<ChartCategoryAxis Categories="@XAxisItems" StartAngle="90"></ChartCategoryAxis>
+		</ChartCategoryAxes>
 
-	<ChartValueAxes>
-		<ChartValueAxis Color="green">
-			<ChartValueAxisTitle Text="Tasks"></ChartValueAxisTitle>
-		</ChartValueAxis>
-		<ChartValueAxis Color="blue" Type="ChartValueAxisType.Numeric" Name="hours">
-			<ChartValueAxisTitle Text="Hours"></ChartValueAxisTitle>
-		</ChartValueAxis>
-	</ChartValueAxes>
+		<ChartValueAxes>
+			<ChartValueAxis>
+				<ChartValueAxisTitle Text="Tasks"></ChartValueAxisTitle>
+			</ChartValueAxis>
+			<ChartValueAxis Type="ChartValueAxisType.Numeric" Name="hours">
+				<ChartValueAxisTitle Text="Hours"></ChartValueAxisTitle>
+			</ChartValueAxis>
+		</ChartValueAxes>
 
-	<ChartLegend Position="ChartLegendPosition.Bottom">
-	</ChartLegend>
+		<ChartLegend Position="ChartLegendPosition.Bottom">
+		</ChartLegend>
 
-</TelerikChart>
-
+	</TelerikChart>
+</div>
+<div class="line-2">
+	<div class="chart">
+		<TelerikChart Width="100%" Height="100%">
+			<ChartSeriesItems>
+				<ChartSeries Type="ChartSeriesType.Line"
+							 Name="Completion"
+							 Data="@Model.CompletionPercent"
+							 Field="@nameof(KeyValueModel.Value)"
+							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Color="#FC1B2B">
+				</ChartSeries>
+			</ChartSeriesItems>
+			<ChartCategoryAxes>
+				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+			</ChartCategoryAxes>
+			<ChartValueAxes>
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.CompletionPercentMinValue" Max="@Model.CompletionPercentMaxValue">
+				</ChartValueAxis>
+			</ChartValueAxes>
+			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
+			</ChartLegend>
+		</TelerikChart>
+	</div>
+	<div class="chart">
+		<TelerikChart Width="100%" Height="100%">
+			<ChartSeriesItems>
+				<ChartSeries Type="ChartSeriesType.Line"
+							 Name="Sessions"
+							 Data="@Model.Sessions"
+							 Field="@nameof(KeyValueModel.Value)"
+							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Color="#FC1B2B">
+				</ChartSeries>
+			</ChartSeriesItems>
+			<ChartCategoryAxes>
+				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+			</ChartCategoryAxes>
+			<ChartValueAxes>
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.SessionsMinValue" Max="@Model.SessionsMaxValue">
+				</ChartValueAxis>
+			</ChartValueAxes>
+			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
+			</ChartLegend>
+		</TelerikChart>
+	</div>
+	<div class="chart">
+		<TelerikChart Width="100%" Height="100%">
+			<ChartSeriesItems>
+				<ChartSeries Type="ChartSeriesType.Line"
+							 Name="New Taggers"
+							 Data="@Model.NewTaggers"
+							 Field="@nameof(KeyValueModel.Value)"
+							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Color="#FC1B2B">
+				</ChartSeries>
+			</ChartSeriesItems>
+			<ChartCategoryAxes>
+				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+			</ChartCategoryAxes>
+			<ChartValueAxes>
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.NewTaggersMinValue" Max="@Model.NewTaggersMaxValue">
+				</ChartValueAxis>
+			</ChartValueAxes>
+			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
+			</ChartLegend>
+		</TelerikChart>
+	</div>
+	<div class="chart">
+		<TelerikChart Width="100%" Height="100%">
+			<ChartSeriesItems>
+				<ChartSeries Type="ChartSeriesType.Line"
+							 Name="Exploitation Saturation"
+							 Data="@Model.ExploitationSaturation"
+							 Field="@nameof(KeyValueModel.Value)"
+							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Color="#FC1B2B">
+				</ChartSeries>
+			</ChartSeriesItems>
+			<ChartCategoryAxes>
+				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+			</ChartCategoryAxes>
+			<ChartValueAxes>
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.ExploitationSaturationMinValue" Max="@Model.ExploitationSaturationMaxValue">
+				</ChartValueAxis>
+			</ChartValueAxes>
+			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
+			</ChartLegend>
+		</TelerikChart>
+	</div>
+</div>
 
 @code {
 

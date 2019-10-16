@@ -148,6 +148,31 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 					ExploitationSaturation = GetModel(data?.ExploitationSaturation, dateFormatString)
 				};
 
+				// Set max and min values for better UX
+				model.CompletionPercentMinValue = 0;
+				model.CompletionPercentMaxValue = 100;
+
+				model.SessionsMinValue = 0;
+				if (data?.Sessions != null)
+				{
+					var value = GetMaxValue(data.Sessions.Select(it => it.Value));
+					if (value > 0) model.SessionsMaxValue = value;
+				}
+
+				model.NewTaggersMinValue = 0;
+				if (data?.NewTaggers != null)
+				{
+					var value = GetMaxValue(data.NewTaggers.Select(it => it.Value));
+					if (value > 0) model.NewTaggersMaxValue = value;
+				}
+
+				model.ExploitationSaturationMinValue = 0;
+				if (data?.ExploitationSaturation != null)
+				{
+					var value = GetMaxValue(data.ExploitationSaturation.Select(it => it.Value));
+					if (value > 0) model.ExploitationSaturationMaxValue = value;
+				}
+
 				return model;
 			}
 			catch (Exception ex)
@@ -347,6 +372,27 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			}
 
 			return model;
+		}
+
+		private static long GetMaxValue(IEnumerable<long> values)
+		{
+			if (values == null) throw new ArgumentException(nameof(values));
+
+			var max1 = values.Max();
+			var max2 = max1 * 100 / 66;
+
+			if (max1 == max2) max2 += max1;
+
+			return max2;
+		}
+
+		private static double GetMaxValue(IEnumerable<double> values)
+		{
+			if (values == null) throw new ArgumentException(nameof(values));
+
+			var max = values.Max();
+
+			return (max * 100) / 66;
 		}
 	}
 }
