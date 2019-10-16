@@ -16,6 +16,7 @@ namespace Orions.Systems.CrossModules.Blazor
 	{
 		VmType _dataContext = null;
 
+		[Parameter]
 		public VmType DataContext
 		{
 			get
