@@ -10,6 +10,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public static CrossModuleInstanceHost CrossModuleInstanceHost => _helper?.CrossModuleInstanceHost;
 
+		public static HyperConnectionSettings HyperConnectionSettings => _helper?.AppliedConfig?.NodeConnections.FirstOrDefault();
+
 		/// <summary>
 		/// Main entry point for the application.
 		/// </summary>
@@ -17,14 +19,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			_helper = new AppHostHelper<ModuleStartup>();
 
-			_helper.OnReady += OnReadyHandler;
-
 			_helper.StartWithArgs(args);
-		}
-
-		private static async void OnReadyHandler(AppHostHelper helper)
-		{
-			await DataContext.Instance.InitStoreAsync(helper?.AppliedConfig?.NodeConnections.FirstOrDefault());
 		}
 	}
 }

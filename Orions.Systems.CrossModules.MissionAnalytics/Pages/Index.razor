@@ -11,24 +11,24 @@
 
 	<div id="missionProgressFilterId" class="orions-mission-analytics-header">
 		<div>
-			<TelerikDropDownList Data="@Filter.MissionInstances"
-								 @bind-Value=@Filter.SelectedMissionInstance
-								 Class="w-100"
-								 ValueField="Id" TextField="Label">
-			</TelerikDropDownList>
-		</div>
-
-		<div>
-			<TelerikDropDownList Data="@Filter.StagesOptions"
-								 @bind-Value=@Filter.SelectedStage
+			<TelerikDropDownList Data="@_filterModel.MissionInstanceOptions"
+								 @bind-Value=@_filterModel.SelectedMissionInstance
 								 Class="w-100"
 								 ValueField="Value" TextField="Text">
 			</TelerikDropDownList>
 		</div>
 
 		<div>
-			<TelerikDropDownList Data="@Filter.TimeRangeOptions"
-								 @bind-Value=@Filter.SelectedTimeRangeOption
+			<TelerikDropDownList Data="@_filterModel.StageOptions"
+								 @bind-Value=@_filterModel.SelectedStage
+								 Class="w-100"
+								 ValueField="Value" TextField="Text">
+			</TelerikDropDownList>
+		</div>
+
+		<div>
+			<TelerikDropDownList Data="@_filterModel.TimeRangeOptions"
+								 @bind-Value=@_filterModel.SelectedTimeRange
 								 Class="w-100"
 								 ValueField="Value" TextField="Text">
 			</TelerikDropDownList>
@@ -38,14 +38,13 @@
 	</div>
 
 	<div class="orions-mission-analytics-progress">
-		<Progress Model="@progressModel"
-				  XAxisItems="@xAxisItems.ToArray()">
+		<Progress Model="@_progressModel" XAxisItems="@xAxisItems">
 		</Progress>
 
 	</div>
 
 	<div class="orions-mission-analytics-stats">
-		<Statistic ContentStatistics="@contentStatistics">
+		<Statistic ContentStatistics="@_statsModel">
 		</Statistic>
 	</div>
 
@@ -53,43 +52,49 @@
 
 @code
 {
-
-	public FilterViewModel Filter { get; set; } = new FilterViewModel();
-
-	private ContentProgressViewModel progressModel = new ContentProgressViewModel();
+	private DataManager _dataManager;
+	private readonly FilterViewModel _filterModel = new FilterViewModel();
+	private ContentProgressViewModel _progressModel = new ContentProgressViewModel();
+	private ContentStatisticsViewModel _statsModel = new ContentStatisticsViewModel();
 	private object[] xAxisItems = new object[0];
-	private ContentStatisticsViewModel contentStatistics = new ContentStatisticsViewModel();
-
 
 	protected override async Task OnInitializedAsync()
 	{
-		var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
-		if (vizRequest == null) vizRequest = GetDemoRequest();
+		var request = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request") ?? GetDemoRequest();
 
-		DataContext.Instance.Request = vizRequest;
+		_dataManager = new DataManager(request);
+		await _dataManager.InitStoreAsync(Program.HyperConnectionSettings);
 
-		Filter.MissionInstances = await DataContext.Instance.GetMissionInstances();
-
+		_filterModel.MissionInstanceOptions = await _dataManager.GetMissionInstanceOptionsAsync();
+		_filterModel.SelectedMissionInstance = _dataManager.Request.MissionInstanceId;
+		
 		await PopulateData();
 
 		await base.OnInitializedAsync();
+	}
+
+	public async Task PopulateData()
+	{
+		_progressModel = await _dataManager.GetProgressData(
+			_filterModel.SelectedMissionInstance, 
+			_filterModel.TimeRangeValue, 
+			_filterModel.TimeStep, 
+			_filterModel.DateTimeFormatString);
+
+		xAxisItems = _progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
+
+		_statsModel = await _dataManager.GetStatisticsData(
+			_filterModel.SelectedMissionInstance, 
+			_filterModel.TimeRangeValue);
 	}
 
 	private CrossModuleVisualizationRequest GetDemoRequest()
 	{
 		return new CrossModuleVisualizationRequest
 		{
-			MissionIds = new[] { "e8d88c8a-b82d-4911-9639-3080ef877653" },
-			WorkflowInstanceIds = new[] { "3a3be967-533b-413e-8323-c079a81e1ff1" }
+			MissionIds = new[] { "e8d88c8a-b82d-4911-9539-3080ef877653" },
+			MissionInstanceIds = new[] { "0" }
 		};
 	}
 
-	public async Task PopulateData()
-	{
-		progressModel = await DataContext.Instance.GetProgressData(Filter.SelectedMissionInstance, Filter.TimeRangeValue, Filter.TimeStep, Filter.DateTimeFormatString);
-
-		xAxisItems = progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
-
-		contentStatistics = await DataContext.Instance.GetStatisticsData(Filter.SelectedMissionInstance, Filter.TimeRangeValue);
-	}
 }
