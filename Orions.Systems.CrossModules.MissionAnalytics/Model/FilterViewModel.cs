@@ -7,41 +7,35 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 {
 	public class FilterViewModel
 	{
-		public IEnumerable<MissionInstanceItemViewModel> MissionInstances { get; set; }
-		public string SelectedMissionInstance { get; set; }
+		public IEnumerable<SelectListItem> MissionInstanceOptions { get; set; }
+		
+		public string SelectedMissionInstance 
+		{
+			get => GetSelectedValue(MissionInstanceOptions);
+			set => SetSelectedValue(MissionInstanceOptions, value);
+		}
 
-		public IEnumerable<SelectListItem> StagesOptions { get; set; }
-		public string SelectedStage { get; set; }
+		public IEnumerable<SelectListItem> StageOptions { get; set; }
+
+		public string SelectedStage
+		{
+			get => GetSelectedValue(StageOptions);
+			set => SetSelectedValue(StageOptions, value);
+		}
 
 		public IEnumerable<SelectListItem> TimeRangeOptions { get; set; }
 
-		public string SelectedTimeRangeOption
+		public string SelectedTimeRange
 		{
-			get
-			{
-				var selected = TimeRangeOptions.FirstOrDefault(it => it.Selected);
-				return selected?.Value;
-			}
-			set
-			{
-				foreach (var option in TimeRangeOptions)
-				{
-					option.Selected = false;
-				}
-
-				var selected = TimeRangeOptions.FirstOrDefault(it => it.Value == value);
-				if (selected == null) return;
-				selected.Selected = true;
-			}
+			get => GetSelectedValue(TimeRangeOptions);
+			set => SetSelectedValue(TimeRangeOptions, value);
 		}
-
-		public string TemplateId { get; set; } = "3";
 
 		public double TimeRangeValue
 		{
 			get
 			{
-				double.TryParse(SelectedTimeRangeOption, out var days);
+				double.TryParse(SelectedTimeRange, out var days);
 				return Math.Round(days, 4);
 			}
 		}
@@ -52,43 +46,43 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 			{
 				switch (TimeRangeValue)
 				{
-					case Model.TimeRangeOptions.LastHour: 
+					case Model.TimeRangeOptions.LastHour:
 						//return 2;
 						return 10;
-					case Model.TimeRangeOptions.Last2Hours: 
+					case Model.TimeRangeOptions.Last2Hours:
 						//return 5;
 						return 10;
 					case Model.TimeRangeOptions.Last3Hours:
 						//return 10;
 						return 15;
-					case Model.TimeRangeOptions.Last6Hours: 
+					case Model.TimeRangeOptions.Last6Hours:
 						//return 20;
 						return 30;
-					case Model.TimeRangeOptions.Last12Hours: 
+					case Model.TimeRangeOptions.Last12Hours:
 						//return 25;
 						return 60;
-					case Model.TimeRangeOptions.LastDay: 
+					case Model.TimeRangeOptions.LastDay:
 						//return 30;
 						return 2 * 60;
-					case Model.TimeRangeOptions.Last3Days: 
+					case Model.TimeRangeOptions.Last3Days:
 						//return 60;
 						return 6 * 60;
-					case Model.TimeRangeOptions.LastWeek: 
+					case Model.TimeRangeOptions.LastWeek:
 						// return 2 * 60
 						return 24 * 60;
-					case Model.TimeRangeOptions.LastMonth: 
+					case Model.TimeRangeOptions.LastMonth:
 						//return 6 * 60; 
 						return 3 * 24 * 60;
-					case Model.TimeRangeOptions.Last3Months: 
+					case Model.TimeRangeOptions.Last3Months:
 						//return 3 * 24 * 60; 
 						return 10 * 24 * 60;
-					case Model.TimeRangeOptions.Last6Months: 	
+					case Model.TimeRangeOptions.Last6Months:
 						//return 3 * 24 * 60; 
 						return 15 * 24 * 60;
-					case Model.TimeRangeOptions.LastYear: 
+					case Model.TimeRangeOptions.LastYear:
 						//return 7 * 24 * 60; 
 						return 30 * 24 * 60;
-					case Model.TimeRangeOptions.Ever: 
+					case Model.TimeRangeOptions.Ever:
 						//return 30 * 24 * 60;
 						return 30 * 24 * 60;
 					default:
@@ -103,31 +97,31 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 			{
 				switch (TimeRangeValue)
 				{
-					case Model.TimeRangeOptions.LastHour: 
+					case Model.TimeRangeOptions.LastHour:
 						return "h:mm tt";
-					case Model.TimeRangeOptions.Last2Hours: 
+					case Model.TimeRangeOptions.Last2Hours:
 						return "h:mm tt";
 					case Model.TimeRangeOptions.Last3Hours:
 						return "h:mm tt";
-					case Model.TimeRangeOptions.Last6Hours: 
+					case Model.TimeRangeOptions.Last6Hours:
 						return "h:mm tt";
-					case Model.TimeRangeOptions.Last12Hours: 
+					case Model.TimeRangeOptions.Last12Hours:
 						return "h:mm tt";
-					case Model.TimeRangeOptions.LastDay: 
+					case Model.TimeRangeOptions.LastDay:
 						return "M/d h tt";
-					case Model.TimeRangeOptions.Last3Days: 
+					case Model.TimeRangeOptions.Last3Days:
 						return "M/d h tt";
-					case Model.TimeRangeOptions.LastWeek: 
+					case Model.TimeRangeOptions.LastWeek:
 						return "d";
-					case Model.TimeRangeOptions.LastMonth: 
+					case Model.TimeRangeOptions.LastMonth:
 						return "d";
-					case Model.TimeRangeOptions.Last3Months: 
+					case Model.TimeRangeOptions.Last3Months:
 						return "d";
-					case Model.TimeRangeOptions.Last6Months: 	
+					case Model.TimeRangeOptions.Last6Months:
 						return "d";
-					case Model.TimeRangeOptions.LastYear: 
+					case Model.TimeRangeOptions.LastYear:
 						return "M/yyyy";
-					case Model.TimeRangeOptions.Ever: 
+					case Model.TimeRangeOptions.Ever:
 						return "M/yyyy";
 					default:
 						throw new NotImplementedException();
@@ -137,11 +131,11 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 
 		public FilterViewModel()
 		{
-			TimeRangeOptions = SetDaysOptions();
-			StagesOptions = SetStagesOptions();
+			TimeRangeOptions = GetTimeRangeOptions();
+			StageOptions = GetStageOptions();
 		}
 
-		private IEnumerable<SelectListItem> SetDaysOptions()
+		private static IEnumerable<SelectListItem> GetTimeRangeOptions()
 		{
 			return new List<SelectListItem>
 			{
@@ -161,30 +155,32 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 			}.AsQueryable();
 		}
 
-		private IEnumerable<SelectListItem> SetStagesOptions()
+		private static IEnumerable<SelectListItem> GetStageOptions()
 		{
 			return new List<SelectListItem>
 			{
-				new SelectListItem { Text = "All Mission Stages", Value = "0", Selected = true },
-				new SelectListItem { Text = "Mission Active Stages", Value = "1" }
+				new SelectListItem { Text = "All Stages", Value = "0", Selected = true },
+				new SelectListItem { Text = "Active Stages", Value = "1" }
 			}.AsQueryable();
 		}
-	}
 
-	public struct TimeRangeOptions
-	{
-		public const double LastHour = 0.0417;
-		public const double Last2Hours = 0.0833;
-		public const double Last3Hours = 0.125;
-		public const double Last6Hours = 0.25;
-		public const double Last12Hours = 0.5;
-		public const double LastDay = 1;
-		public const double Last3Days = 3;
-		public const double LastWeek = 7;
-		public const double LastMonth = 30;
-		public const double Last3Months = 90;
-		public const double Last6Months = 180;
-		public const double LastYear = 365;
-		public const double Ever = 0;
+		private static string GetSelectedValue(IEnumerable<SelectListItem> items)
+		{
+			return items?.FirstOrDefault(it => it.Selected)?.Value;
+		}
+
+		private static void SetSelectedValue(IEnumerable<SelectListItem> items, string value)
+		{
+			if (items == null) throw new ArgumentException(nameof(items));
+
+			foreach (var option in items)
+			{
+				option.Selected = false;
+			}
+
+			var selected = items.FirstOrDefault(it => it.Value == value);
+			if (selected == null) return;
+			selected.Selected = true;
+		}
 	}
 }
