@@ -251,8 +251,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			var text = missionName;
 
-			if (instance.StopAtUTC.HasValue) text += $"({instance.RunAtUTC:d} - {instance.StopAtUTC.Value:d})";
-			else text += $"({instance.RunAtUTC:d})";
+			if (instance.StopAtUTC.HasValue) text += $" ({instance.RunAtUTC:d} - {instance.StopAtUTC.Value:d})";
+			else text += $" ({instance.RunAtUTC:d})";
 
 			return text;
 		}
