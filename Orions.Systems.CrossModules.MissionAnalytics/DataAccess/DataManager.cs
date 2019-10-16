@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,6 +15,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 	{
 		private const int RoundingFactor = 2;
 		private const MidpointRounding RoundingMethod = MidpointRounding.AwayFromZero;
+		private const string TimeSpanFormatString = "c"; 
 
 		private NetStore _netStore;
 		public CrossModuleVisualizationRequest Request { get; }
@@ -66,9 +68,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				var model = new ContentStatisticsViewModel
 				{
 					ContentDuration = data.ContentDuration,
+					ExploitingDuration = data.ExploitingDuration,
 					ExploitedDuration = data.ExploitedDuration,
 					ExploitedPercentage = data.ExploitedPercentage,
-					ExploitingDuration = data.ExploitingDuration,
 					TaggerExploitationTime = data.TaggerExploitationTime,
 					Taggers = data.Taggers,
 					Tags = data.Tags,
@@ -96,11 +98,22 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				data = await _netStore.ExecuteAsync(args);
 
 				model.TotalContentDuration = data.ContentDuration;
+				
 				model.TotalExploitingDuration = data.ExploitingDuration;
-				model.TotalExploitedPercentage = data.ExploitedPercentage;
 				model.TotalExploitedPercentage = data.ExploitedPercentage;
 				model.TotalTags = data.Tags;
 				model.TotalTaggers = data.Taggers;
+
+				// Get labels
+				model.ContentDurationLabel = GetLabel(model.ContentDuration);
+				model.ExploitingDurationLabel = GetLabel(model.ExploitingDuration);
+				model.ExploitedDurationLabel = GetLabel(model.ExploitedDuration);
+				model.ExploitedPercentageLabel = GetLabel(GetRounded(model.ExploitedPercentage));
+				model.TaggerExploitationTimeLabel = GetLabel(model.TaggerExploitationTime);
+				model.TodayExploitedPercentageLabel = GetLabel(GetRounded(model.TodayExploitedPercentage));
+				model.TotalContentDurationLabel = GetLabel(model.TotalContentDuration);
+				model.TotalExploitingDurationLabel = GetLabel(model.TotalExploitingDuration);
+				model.TotalExploitedPercentageLabel = GetLabel(GetRounded(model.TotalExploitedPercentage));
 
 				return model;
 			}
@@ -307,7 +320,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				model.Add(new KeyValueModel
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
-					Value = Math.Round(item.Value.TotalHours, RoundingFactor, RoundingMethod)
+					Value = GetRounded(item.Value.TotalHours)
 				});
 			}
 
@@ -347,7 +360,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				model.Add(new KeyValueModel
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
-					Value = Math.Round(item.Value, RoundingFactor, RoundingMethod)
+					Value = GetRounded(item.Value)
 				});
 			}
 
@@ -374,7 +387,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return model;
 		}
 
-		private static long GetMaxValue(IEnumerable<long> values)
+		private static long GetMaxValue(
+			IEnumerable<long> values)
 		{
 			if (values == null) throw new ArgumentException(nameof(values));
 
@@ -386,13 +400,33 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return max2;
 		}
 
-		private static double GetMaxValue(IEnumerable<double> values)
+		private static double GetMaxValue(
+			IEnumerable<double> values)
 		{
 			if (values == null) throw new ArgumentException(nameof(values));
 
 			var max = values.Max();
 
-			return (max * 100) / 66;
+			return max * 100 / 66;
+		}
+
+
+		private static double GetRounded(
+			double value)
+		{
+			return Math.Round(value, RoundingFactor, RoundingMethod);
+		}
+
+		private static string GetLabel(
+			double value)
+		{
+			return value.ToString(CultureInfo.InvariantCulture);
+		}
+
+		private static string GetLabel(
+			TimeSpan value)
+		{
+			return value.ToString(TimeSpanFormatString);
 		}
 	}
 }
