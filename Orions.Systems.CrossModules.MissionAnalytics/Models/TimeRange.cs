@@ -1,6 +1,6 @@
 ﻿namespace Orions.Systems.CrossModules.MissionAnalytics
 {
-	public struct TimeRangeOptions
+	public struct TimeRange
 	{
 		public const double LastHour = 0.0417;
 		public const double Last2Hours = 0.0833;

@@ -1,10 +1,12 @@
 ﻿
+@inherits BaseBlazorComponent<Orions.Systems.CrossModules.MissionAnalytics.ContentProgressVm>
+
 <div>
 	<TelerikChart Width="100%">
 		<ChartSeriesItems>
 			<ChartSeries Type="ChartSeriesType.Area"
 						 Name="Total Duration"
-						 Data="@Model.TotalDuration"
+						 Data="@DataContext.TotalDurationProp.Value"
 						 Field="@nameof(KeyValueModel.Value)"
 						 CategoryField="@nameof(KeyValueModel.Key)"
 						 Axis="hours"
@@ -12,7 +14,7 @@
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Area"
 						 Name="Exploited Duration"
-						 Data="@Model.ExploitedDuration"
+						 Data="@DataContext.ExploitedDurationProp.Value"
 						 Field="@nameof(KeyValueModel.Value)"
 						 CategoryField="@nameof(KeyValueModel.Key)"
 						 Axis="hours"
@@ -20,21 +22,21 @@
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Performed"
-						 Data="@Model.TasksPerformed"
+						 Data="@DataContext.TasksPerformedProp.Value"
 						 Field="@nameof(KeyValueModel.Value)"
 						 CategoryField="@nameof(KeyValueModel.Key)"
 						 Color="#0785C8">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Outstanding"
-						 Data="@Model.TasksOutstanding"
+						 Data="@DataContext.TasksOutstandingProp.Value"
 						 Field="@nameof(KeyValueModel.Value)"
 						 CategoryField="@nameof(KeyValueModel.Key)"
 						 Color="#FC1B2B">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Completed Per Period"
-						 Data="@Model.TasksCompletedPerPeriod"
+						 Data="@DataContext.TasksCompletedPerPeriodProp.Value"
 						 Field="@nameof(KeyValueModel.Value)"
 						 CategoryField="@nameof(KeyValueModel.Key)"
 						 Color="#11B200">
@@ -42,7 +44,7 @@
 		</ChartSeriesItems>
 
 		<ChartCategoryAxes>
-			<ChartCategoryAxis Categories="@XAxisItems" StartAngle="90"></ChartCategoryAxis>
+			<ChartCategoryAxis Categories="@DataContext.CategoriesProp.Value" StartAngle="90"></ChartCategoryAxis>
 		</ChartCategoryAxes>
 
 		<ChartValueAxes>
@@ -65,17 +67,19 @@
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Completion %"
-							 Data="@Model.CompletionPercent"
+							 Data="@DataContext.CompletionPercentProp.Value"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
 			<ChartCategoryAxes>
-				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+				<ChartCategoryAxis Categories="@DataContext.CategoriesProp.Value" Visible="false"></ChartCategoryAxis>
 			</ChartCategoryAxes>
 			<ChartValueAxes>
-				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.CompletionPercentMinValue" Max="@Model.CompletionPercentMaxValue">
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" 
+								Min="@DataContext.CompletionPercentMinValueProp.Value"
+								Max="@DataContext.CompletionPercentMaxValueProp.Value">
 				</ChartValueAxis>
 			</ChartValueAxes>
 			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
@@ -87,17 +91,19 @@
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Sessions"
-							 Data="@Model.Sessions"
+							 Data="@DataContext.SessionsProp.Value"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
 			<ChartCategoryAxes>
-				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+				<ChartCategoryAxis Categories="@DataContext.CategoriesProp.Value" Visible="false"></ChartCategoryAxis>
 			</ChartCategoryAxes>
 			<ChartValueAxes>
-				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.SessionsMinValue" Max="@Model.SessionsMaxValue">
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" 
+								Min="@DataContext.SessionsMinValueProp.Value" 
+								Max="@DataContext.SessionsMaxValueProp.Value">
 				</ChartValueAxis>
 			</ChartValueAxes>
 			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
@@ -109,17 +115,19 @@
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="New Taggers"
-							 Data="@Model.NewTaggers"
+							 Data="@DataContext.NewTaggersProp.Value"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
 			<ChartCategoryAxes>
-				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+				<ChartCategoryAxis Categories="@DataContext.CategoriesProp.Value" Visible="false"></ChartCategoryAxis>
 			</ChartCategoryAxes>
 			<ChartValueAxes>
-				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.NewTaggersMinValue" Max="@Model.NewTaggersMaxValue">
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" 
+								Min="@DataContext.NewTaggersMinValueProp.Value" 
+								Max="@DataContext.NewTaggersMaxValueProp.Value">
 				</ChartValueAxis>
 			</ChartValueAxes>
 			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
@@ -131,17 +139,19 @@
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Exploitation Saturation %"
-							 Data="@Model.ExploitationSaturation"
+							 Data="@DataContext.ExploitationSaturationProp.Value"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
 			<ChartCategoryAxes>
-				<ChartCategoryAxis Categories="@XAxisItems" Visible="false"></ChartCategoryAxis>
+				<ChartCategoryAxis Categories="@DataContext.CategoriesProp.Value" Visible="false"></ChartCategoryAxis>
 			</ChartCategoryAxes>
 			<ChartValueAxes>
-				<ChartValueAxis Type="ChartValueAxisType.Numeric" Min="@Model.ExploitationSaturationMinValue" Max="@Model.ExploitationSaturationMaxValue">
+				<ChartValueAxis Type="ChartValueAxisType.Numeric" 
+								Min="@DataContext.ExploitationSaturationMinValueProp.Value" 
+								Max="@DataContext.ExploitationSaturationMaxValueProp.Value">
 				</ChartValueAxis>
 			</ChartValueAxes>
 			<ChartLegend Position="Telerik.Blazor.ChartLegendPosition.Bottom">
@@ -149,15 +159,3 @@
 		</TelerikChart>
 	</div>
 </div>
-
-@code {
-
-	[Parameter]
-	public string Title { get; set; }
-
-	[Parameter]
-	public object[] XAxisItems { get; set; } = new object[0];
-
-	[Parameter]
-	public ContentProgressViewModel Model { get; set; } = new ContentProgressViewModel();
-}

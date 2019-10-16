@@ -40,94 +40,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			}
 		}
 
-		public int TimeStep
-		{
-			get
-			{
-				switch (TimeRangeValue)
-				{
-					case Model.TimeRangeOptions.LastHour:
-						//return 2;
-						return 10;
-					case Model.TimeRangeOptions.Last2Hours:
-						//return 5;
-						return 10;
-					case Model.TimeRangeOptions.Last3Hours:
-						//return 10;
-						return 15;
-					case Model.TimeRangeOptions.Last6Hours:
-						//return 20;
-						return 30;
-					case Model.TimeRangeOptions.Last12Hours:
-						//return 25;
-						return 60;
-					case Model.TimeRangeOptions.LastDay:
-						//return 30;
-						return 2 * 60;
-					case Model.TimeRangeOptions.Last3Days:
-						//return 60;
-						return 6 * 60;
-					case Model.TimeRangeOptions.LastWeek:
-						// return 2 * 60
-						return 24 * 60;
-					case Model.TimeRangeOptions.LastMonth:
-						//return 6 * 60; 
-						return 3 * 24 * 60;
-					case Model.TimeRangeOptions.Last3Months:
-						//return 3 * 24 * 60; 
-						return 10 * 24 * 60;
-					case Model.TimeRangeOptions.Last6Months:
-						//return 3 * 24 * 60; 
-						return 15 * 24 * 60;
-					case Model.TimeRangeOptions.LastYear:
-						//return 7 * 24 * 60; 
-						return 30 * 24 * 60;
-					case Model.TimeRangeOptions.Ever:
-						//return 30 * 24 * 60;
-						return 30 * 24 * 60;
-					default:
-						throw new NotImplementedException();
-				}
-			}
-		}
-
-		public string DateTimeFormatString
-		{
-			get
-			{
-				switch (TimeRangeValue)
-				{
-					case Model.TimeRangeOptions.LastHour:
-						return "h:mm tt";
-					case Model.TimeRangeOptions.Last2Hours:
-						return "h:mm tt";
-					case Model.TimeRangeOptions.Last3Hours:
-						return "h:mm tt";
-					case Model.TimeRangeOptions.Last6Hours:
-						return "h:mm tt";
-					case Model.TimeRangeOptions.Last12Hours:
-						return "h:mm tt";
-					case Model.TimeRangeOptions.LastDay:
-						return "M/d h tt";
-					case Model.TimeRangeOptions.Last3Days:
-						return "M/d h tt";
-					case Model.TimeRangeOptions.LastWeek:
-						return "d";
-					case Model.TimeRangeOptions.LastMonth:
-						return "d";
-					case Model.TimeRangeOptions.Last3Months:
-						return "d";
-					case Model.TimeRangeOptions.Last6Months:
-						return "d";
-					case Model.TimeRangeOptions.LastYear:
-						return "M/yyyy";
-					case Model.TimeRangeOptions.Ever:
-						return "M/yyyy";
-					default:
-						throw new NotImplementedException();
-				}
-			}
-		}
+	
 
 		public FilterViewModel()
 		{
@@ -139,19 +52,19 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			return new List<SelectListItem>
 			{
-				new SelectListItem { Text = "Last Hour", Value = Model.TimeRangeOptions.LastHour.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 2 Hours", Value = Model.TimeRangeOptions.Last2Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 Hours", Value = Model.TimeRangeOptions.Last3Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 6 Hours", Value = Model.TimeRangeOptions.Last6Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 12 Hours", Value = Model.TimeRangeOptions.Last12Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Day", Value = Model.TimeRangeOptions.LastDay.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 days", Value = Model.TimeRangeOptions.Last3Days.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Week", Value = Model.TimeRangeOptions.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
-				new SelectListItem { Text = "Last Month", Value = Model.TimeRangeOptions.LastMonth.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 Months", Value = Model.TimeRangeOptions.Last3Months.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 6 Months", Value = Model.TimeRangeOptions.Last6Months.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Year", Value = Model.TimeRangeOptions.LastYear.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "All Time", Value = Model.TimeRangeOptions.Ever.ToString(CultureInfo.InvariantCulture) }
+				new SelectListItem { Text = "Last Hour", Value = TimeRange.LastHour.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 2 Hours", Value = TimeRange.Last2Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Hours", Value = TimeRange.Last3Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Hours", Value = TimeRange.Last6Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 12 Hours", Value = TimeRange.Last12Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Day", Value = TimeRange.LastDay.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 days", Value = TimeRange.Last3Days.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Week", Value = TimeRange.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
+				new SelectListItem { Text = "Last Month", Value = TimeRange.LastMonth.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Months", Value = TimeRange.Last3Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Months", Value = TimeRange.Last6Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Year", Value = TimeRange.LastYear.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "All Time", Value = TimeRange.Ever.ToString(CultureInfo.InvariantCulture) }
 			}.AsQueryable();
 		}
 

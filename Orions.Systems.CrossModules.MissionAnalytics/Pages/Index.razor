@@ -1,9 +1,7 @@
 @layout MainLayout
-@inherits BaseOrionsComponent
+@inherits BaseBlazorComponent<Orions.Systems.CrossModules.MissionAnalytics.MissionAnalyticsVm>
 
 @page "/"
-
-@using Orions.Infrastructure.HyperMedia;
 
 @using Telerik.Blazor.Components.DropDownList
 
@@ -11,8 +9,8 @@
 
 	<div id="missionProgressFilterId" class="orions-mission-analytics-header">
 		<div>
-			<TelerikDropDownList Data="@_filterModel.MissionInstanceOptions"
-								 @bind-Value=@_filterModel.SelectedMissionInstance
+			<TelerikDropDownList Data="@DataContext.FilterVmProp.Value.MissionInstanceOptions"
+								 @bind-Value=@DataContext.FilterVmProp.Value.SelectedMissionInstance
 								 ValueField="Value"
 								 TextField="Text"
 								 Width="100%">
@@ -20,25 +18,23 @@
 		</div>
 
 		<div>
-			<TelerikDropDownList Data="@_filterModel.TimeRangeOptions"
-								 @bind-Value=@_filterModel.SelectedTimeRange
+			<TelerikDropDownList Data="@DataContext.FilterVmProp.Value.TimeRangeOptions"
+								 @bind-Value=@DataContext.FilterVmProp.Value.SelectedTimeRange
 								 ValueField="Value"
 								 TextField="Text"
 								 Width="100%">
 			</TelerikDropDownList>
 		</div>
 
-		<TelerikButton OnClick="@PopulateData" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
+		<TelerikButton OnClick="@DataContext.LoadCommand" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
 	</div>
 
 	<div class="orions-mission-analytics-progress">
-		<Progress Model="@_progressModel" XAxisItems="@xAxisItems">
-		</Progress>
-
+		<Progress></Progress>
 	</div>
 
 	<div class="orions-mission-analytics-stats">
-		<Statistic ContentStatistics="@_statsModel">
+		<Statistic ContentStatistics="@DataContext.StatsVmProp.Value">
 		</Statistic>
 	</div>
 
@@ -46,49 +42,14 @@
 
 @code
 {
-	private DataManager _dataManager;
-	private readonly FilterViewModel _filterModel = new FilterViewModel();
-	private ContentProgressViewModel _progressModel = new ContentProgressViewModel();
-	private ContentStatisticsViewModel _statsModel = new ContentStatisticsViewModel();
-	private object[] xAxisItems = new object[0];
-
+	
 	protected override async Task OnInitializedAsync()
 	{
-		var request = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request") ?? GetDemoRequest();
+		await DataContext.InitStoreAsync(Program.HyperConnectionSettings);
 
-		_dataManager = new DataManager(request);
-		await _dataManager.InitStoreAsync(Program.HyperConnectionSettings);
-
-		_filterModel.MissionInstanceOptions = await _dataManager.GetMissionInstanceOptionsAsync();
-		_filterModel.SelectedMissionInstance = _dataManager.Request.MissionInstanceId;
-
-		await PopulateData();
+		await DataContext.LoadDataAsync();
 
 		await base.OnInitializedAsync();
-	}
-
-	public async Task PopulateData()
-	{
-		_progressModel = await _dataManager.GetProgressData(
-			_filterModel.SelectedMissionInstance,
-			_filterModel.TimeRangeValue,
-			_filterModel.TimeStep,
-			_filterModel.DateTimeFormatString);
-
-		xAxisItems = _progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
-
-		_statsModel = await _dataManager.GetStatisticsData(
-			_filterModel.SelectedMissionInstance,
-			_filterModel.TimeRangeValue);
-	}
-
-	private CrossModuleVisualizationRequest GetDemoRequest()
-	{
-		return new CrossModuleVisualizationRequest
-		{
-			MissionIds = new[] { "e8d88c8a-b82d-4911-9539-3080ef877653" },
-			MissionInstanceIds = new[] { "0" }
-		};
 	}
 
 }
