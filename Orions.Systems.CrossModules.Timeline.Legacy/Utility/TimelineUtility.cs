@@ -219,7 +219,7 @@ namespace Orions.Systems.CrossModules.Timeline.Utility
 
 			if (!parallel.Any()) return missionTags;
 
-			foreach (var item in parallel.AsParallel().WithDegreeOfParallelism(100)) 
+			foreach (var item in parallel.AsParallel().WithDegreeOfParallelism(100))
 			{
 				try
 				{

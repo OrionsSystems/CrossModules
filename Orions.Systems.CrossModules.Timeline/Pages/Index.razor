@@ -1,0 +1,325 @@
+@layout MainLayout
+@inherits BaseOrionsComponent
+
+@page "/"
+
+@using Orions.Infrastructure.HyperMedia;
+
+<TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
+    <TabStripTab Title="Timeline">
+        <div class="timeline-container">
+            <div class="timeline-filter-container">
+                <div class="row">
+                    <div class="col-md-1 p-1">
+                        <TelerikDropDownList Data="@Filter.PageSizeOptions"
+                                             @bind-Value=@Filter.PageSize
+                                             Class="w-100"
+                                              ValueField="Value" TextField="Text">
+                        </TelerikDropDownList>
+                    </div>
+                    <div class="col-md-3 p-1">
+                        <TelerikTextBox Label="@Filter.Input" Width="100%"></TelerikTextBox>
+                    </div>
+                    <div class="col-md-2 p-1">
+                        <TelerikDateTimePicker @bind-Value="@Filter.StartTime" Class="w-100"></TelerikDateTimePicker>
+                    </div>
+                    <div class="col-md-2 p-1">
+                        <TelerikDateTimePicker @bind-Value="@Filter.EndTime" Class="w-100"></TelerikDateTimePicker>
+                    </div>
+                    <div class="col-md-2 p-1">
+                        <TelerikDropDownList Data="@Filter.TimeFilterOptions"
+                                             @bind-Value=@Filter.TimeFilterValue
+                                             Class="w-100"
+                                             ValueField="Value" TextField="Text">
+                        </TelerikDropDownList>
+                    </div>
+                    <div class="col-md-2 p-1">
+                        <TelerikButton OnClick="@ApplyFilter" Primary="true"> Apply</TelerikButton>
+                    </div>
+                </div>
+                </div>
+            <div class="dark-timeline center-orientation">
+                @if (Timeline?.Tags != null)
+                {
+                    @foreach (var tag in Timeline?.Tags)
+                    {
+
+                        <div class="vertical-timeline-block">
+                            <div class="vertical-timeline-icon timeline-icon-bg">
+                                <i class="fa fa-tag"></i>
+                            </div>
+                            <div class="vertical-timeline-content timeline container-fluid">
+                                <div class="row box-timeline">
+                                    <div class="col-md-5 timeline video-col-timeline">
+                                        <img class="img-fluid timeline" src="images/default.png" />
+                                        @*@GetTagThumbnail(tag)*@
+                                        <a class="player-icon">
+                                            <i class="fa fa-play-circle-o fa-4x"></i>
+                                        </a>
+                                    </div>
+
+                                    <div class="col details-col-timeline" style="padding-bottom: 5px;">
+                                        @if (!string.IsNullOrWhiteSpace(tag.Title?.ToString()))
+                                        {
+                                            <h4 class="timline-tag-title">@tag.Title</h4>
+                                        }
+
+                                        @if (string.IsNullOrWhiteSpace(tag.TaggingTitle?.ToString()))
+                                        {
+                                            if (tag.BasicMLTags != null && tag.BasicMLTags.Labels != null)
+                                            {
+                                                for (var i = 0; i < tag.BasicMLTags.Labels.Length; i++)
+                                                {
+                                                    var percent_confidence = (tag.BasicMLTags.Confidences[i]).ToString("#0.0%");
+                                                    <h5>@tag.BasicMLTags.Labels[i] - @percent_confidence</h5>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (tag.TagPaths != null && tag.TagPaths.Count > 0)
+                                            {
+                                                <ol class="breadcrumb breadcrumb-timeline">
+                                                    @for (var i = 0; i < tag.TagPaths.Count; i++)
+                                                    {
+                                                        <li class="breadcrumb-item-timeline">
+                                                            @if (i == 0)
+                                                            {<i class="fa fa-home"></i> }
+                                                            else
+                                                            { <i class="fa fa-angle-right"></i>}
+                                                            <span class="tagTimelinePath">@tag.TagPaths[i]</span>
+                                                        </li>
+                                                    }
+                                                </ol>
+                                                <div class="clearfix"></div>
+                                            }
+
+                                            if (tag.BasicMLTags != null && tag.BasicMLTags.Labels != null)
+                                            {
+                                                for (var i = 0; i < tag.BasicMLTags.Labels.Length; i++)
+                                                {
+                                                    var percent_confidence = (tag.BasicMLTags.Confidences[i]).ToString("#0.0%");
+                                                    <h5>@tag.BasicMLTags.Labels[i] - @percent_confidence</h5>
+                                                }
+                                            }
+                                        }
+
+                                        @if (string.IsNullOrWhiteSpace(tag.MissionName?.ToString()))
+                                        {
+                                            <h5><a href="#" target="_blank">Mission: unknown</a></h5>
+                                        }
+                                        else
+                                        {
+                                            <h5><a href="#" target="_blank">Mission: @tag.MissionName</a></h5>
+                                        }
+
+                                        <h5 class="timeline-tagworkflowinfo"></h5>
+                                        <small>Time UTC @tag.DynamicData.RealWorldContentTimeUTC</small>
+
+                                        <div class="timeline-elements-container">
+
+                                            <ul class="timeline-tag-list" style="padding: 0">
+                                                @foreach (var el in tag.ElementLabels)
+                                                {
+                                                    <li>
+                                                        <a href="#">
+                                                            <i class="fa fa-industry"></i>
+                                                            <span>@el</span>
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+
+
+                                        <div class="timeline-short-btns">
+                                            <span><a title="Copy Tag Id"><i class="fa fa-copy"></i></a></span>
+                                            <span><a title="Asset Details" href="#" target="_blank"><i class="fa fa-info-circle"></i></a></span>
+                                            <span>
+                                                <a class="timeline-tag-elements-count-info" title="Tag Elements">
+                                                    <i class="fa fa-industry"></i>
+                                                    <span class="label label-info" id="alerts-count">@tag.Elements.Count</span>
+                                                </a>
+                                            </span>
+                                        </div>
+
+                                        <div class="clearfix"></div>
+
+                                        @if (tag.Children != null && tag.Children.Count > 0)
+                                        {
+                                            var maxTimeRange = tag.WallClockTime;
+                                            var minTimeRange = tag.WallClockTime;
+
+                                            foreach (var child in tag.Children)
+                                            {
+                                                maxTimeRange = child.WallClockTime > maxTimeRange ? child.WallClockTime : maxTimeRange;
+                                                minTimeRange = child.WallClockTime < minTimeRange ? child.WallClockTime : minTimeRange;
+                                            }
+
+                                            <h5 style="margin-top: 10px; margin-bottom: 0px;">Children</h5>
+                                            <hr style="margin-top: 3px; margin-bottom: 1px;" />
+
+                                            <ul class="tag-list" style="padding: 0">
+                                                @foreach (var child in tag.Children.OrderBy(it => it.WallClockTime))
+                                                {
+                                                    maxTimeRange = child.WallClockTime > maxTimeRange ? child.WallClockTime : maxTimeRange;
+                                                    minTimeRange = child.WallClockTime < minTimeRange ? child.WallClockTime : minTimeRange;
+
+                                                    if (string.IsNullOrWhiteSpace(child.TaggingTitle?.ToString()))
+                                                    {
+                                                        continue;
+                                                    }
+
+                                                    <li>
+                                                        <a href="" title="Position is @child.TimeLabel">
+                                                            @if (child.TagPaths != null && child.TagPaths.Count > 0)
+                                                            {
+                                                                <ol class="breadcrumb breadcrumb-timeline">
+                                                                    @for (var i = 0; i < child.TagPaths.Count; i++)
+                                                                    {
+                                                                        <li class="breadcrumb-item-timeline">
+                                                                            @if (i == 0)
+                                                                            {<i class="fa fa-home"></i> }
+                                                                            else
+                                                                            { <i class="fa fa-angle-right"></i>}
+                                                                            <span class="tagTimelinePath">@child.TagPaths[i]</span>
+                                                                        </li>
+                                                                    }
+                                                                </ol>
+                                                                <div class="clearfix"></div>
+                                                            }
+                                                        </a>
+                                                    </li>
+                                                }
+                                            </ul>
+
+                                        }
+
+                                    </div>
+                                </div>
+
+                                @if (!string.IsNullOrEmpty(tag.ParentTagId) && tag.Children != null && tag.Children.Count > 0)
+                                {
+                                    var maxTimeRange = tag.WallClockTime;
+                                    var minTimeRange = tag.WallClockTime;
+
+                                    if (tag.Children != null)
+                                    {
+                                        foreach (var child in tag.Children)
+                                        {
+                                            maxTimeRange = child.WallClockTime > maxTimeRange ? child.WallClockTime : maxTimeRange;
+                                            minTimeRange = child.WallClockTime < minTimeRange ? child.WallClockTime : minTimeRange;
+                                        }
+                                    }
+                                    <span class="vertical-date">
+                                        <b>@maxTimeRange</b>
+                                        <br />
+                                        <b>@minTimeRange</b>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <div class="vertical-date stream">
+                                        <span class="vertical-date-label">@tag.TimeLabel</span>
+                                    </div>
+                                }
+
+
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <div id="loading-panel" class="m-md">
+                <h4 id="timeline-loading">
+                    <span class="spinner"></span>
+                </h4>
+                <div class="clearfix m-b-md"></div>
+                <TelerikButton OnClick="@LoadMore" Primary="true"> Load More</TelerikButton>
+            </div>
+        </div>
+    </TabStripTab>
+    <TabStripTab Title="Json">
+        <h1>Json</h1>
+        <textarea class="form-control" style="position:absolute;height:calc(100% - 50px);width:100%;padding:0px;margin:0px;">@JsonTimeline</textarea>
+    </TabStripTab>
+
+</TelerikTabStrip>
+
+<div id="playerModal" style="padding:0px; background-color:black;">
+    <div id="player"></div>
+</div>
+
+
+@code
+{
+    public int ActiveTabIndex { get; set; } = 0;
+
+    public FilterViewModel Filter { get; set; } = new FilterViewModel();
+
+    public TimelineViewModel Timeline { get; set; } = new TimelineViewModel();
+
+    public string JsonTimeline { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+        if (vizRequest == null) vizRequest = GetDemoRequest();
+
+        DataContext.Instance.Request = vizRequest;
+
+        await LoadTimeline();
+
+        await base.OnInitializedAsync();
+    }
+
+    public async Task LoadTimeline()
+    {
+        Timeline = await DataContext.Instance.GetTimeline(Filter);
+
+        JsonTimeline += "[";
+        foreach (var tag in Timeline.Tags) {
+            var json = tag.ToSimpleJSON("");
+            JsonTimeline += json;
+        }
+
+        JsonTimeline += "]";
+    }
+
+    public async Task LoadJsonData() {
+        await DataContext.Instance.GetTimeline(Filter);
+    }
+
+    public void LoadMore(){ }
+
+    public void ApplyFilter() { }
+
+    public async Task<MarkupString> GetTagThumbnail(DynamicHyperTagViewModel tag)
+    {
+        if (tag == null) return new MarkupString("images/default.png");
+
+        ulong index = 0;
+        ulong.TryParse(tag.FragmentIndex, out index);
+        var data = await DataContext.Instance.GetThumbnail(tag.AssetGuid, 336, 188,  index, tag.SliceId);
+        var src = $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
+        var result = new MarkupString(src);
+
+        return result;
+    }
+
+    public void ThumbnailMouseOver()
+    {
+
+    }
+
+    public void ThumbnailMouseOut() { }
+
+    private CrossModuleVisualizationRequest GetDemoRequest()
+    {
+        return new CrossModuleVisualizationRequest
+        {
+            MissionIds = new[] { "e8d88c8a-b82d-4911-9639-3080ef877653" },
+            WorkflowInstanceIds = new[] { "3a3be967-533b-413e-8323-c079a81e1ff1" }
+        };
+    }
+}
