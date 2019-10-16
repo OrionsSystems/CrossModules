@@ -23,8 +23,6 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			base.ConfigureServices(services);
 
-			services.AddSingleton<DataContext>();
-
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
 
