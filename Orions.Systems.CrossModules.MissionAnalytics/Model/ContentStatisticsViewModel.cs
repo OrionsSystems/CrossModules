@@ -23,7 +23,6 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 		
 		public int TaskOutstanding { get; set; }
 		
-
 		public long Tags { get; set; }
 
 		public long Taggers { get; set; }
