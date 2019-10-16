@@ -61,7 +61,7 @@
 
 		_filterModel.MissionInstanceOptions = await _dataManager.GetMissionInstanceOptionsAsync();
 		_filterModel.SelectedMissionInstance = _dataManager.Request.MissionInstanceId;
-		
+
 		await PopulateData();
 
 		await base.OnInitializedAsync();
@@ -70,15 +70,15 @@
 	public async Task PopulateData()
 	{
 		_progressModel = await _dataManager.GetProgressData(
-			_filterModel.SelectedMissionInstance, 
-			_filterModel.TimeRangeValue, 
-			_filterModel.TimeStep, 
+			_filterModel.SelectedMissionInstance,
+			_filterModel.TimeRangeValue,
+			_filterModel.TimeStep,
 			_filterModel.DateTimeFormatString);
 
 		xAxisItems = _progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
 
 		_statsModel = await _dataManager.GetStatisticsData(
-			_filterModel.SelectedMissionInstance, 
+			_filterModel.SelectedMissionInstance,
 			_filterModel.TimeRangeValue);
 	}
 
