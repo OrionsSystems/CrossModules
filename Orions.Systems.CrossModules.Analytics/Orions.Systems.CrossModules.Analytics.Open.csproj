@@ -15,7 +15,7 @@
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
     <PackageReference Include="MatBlazor" Version="1.9.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
-    <PackageReference Include="Orions.Node" Version="2.39.210-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.39.241-alpha" />
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
   </ItemGroup>
   

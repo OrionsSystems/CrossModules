@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Orions.Node" Version="2.39.210-alpha" />
-    <PackageReference Include="Orions.Services.Contracts" Version="2.39.210-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.39.241-alpha" />
+    <PackageReference Include="Orions.Services.Contracts" Version="2.39.241-alpha" />
   </ItemGroup>
 
 </Project>

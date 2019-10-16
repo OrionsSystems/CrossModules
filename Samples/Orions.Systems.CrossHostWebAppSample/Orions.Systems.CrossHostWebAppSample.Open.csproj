@@ -8,7 +8,7 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.4" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Orions.Node" Version="2.39.210-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.39.241-alpha" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />

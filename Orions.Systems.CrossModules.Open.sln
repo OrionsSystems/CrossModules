@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MissionAnalytics.Open", "Orions.Systems.CrossModules.MissionAnalytics\Orions.Systems.CrossModules.MissionAnalytics.Open.csproj", "{27629BF2-917A-42E0-83F4-380FEC6D9BF6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Timeline.Legacy.Open", "Orions.Systems.CrossModules.Timeline.Legacy\Orions.Systems.CrossModules.Timeline.Legacy.Open.csproj", "{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +83,10 @@ Global
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
