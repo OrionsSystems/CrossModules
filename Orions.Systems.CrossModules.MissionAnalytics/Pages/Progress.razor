@@ -64,7 +64,7 @@
 		<TelerikChart Width="100%" Height="100%">
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
-							 Name="Completion"
+							 Name="Completion %"
 							 Data="@Model.CompletionPercent"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"
@@ -130,7 +130,7 @@
 		<TelerikChart Width="100%" Height="100%">
 			<ChartSeriesItems>
 				<ChartSeries Type="ChartSeriesType.Line"
-							 Name="Exploitation Saturation"
+							 Name="Exploitation Saturation %"
 							 Data="@Model.ExploitationSaturation"
 							 Field="@nameof(KeyValueModel.Value)"
 							 CategoryField="@nameof(KeyValueModel.Key)"

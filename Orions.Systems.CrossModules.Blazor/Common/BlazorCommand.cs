@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Orions.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.BlazorSample
+namespace Orions.Systems.CrossModules.Blazor
 {
 	/// <summary>
 	/// Provides conversion mechanism between the Blazor event system and the DefaultCommand pattern.

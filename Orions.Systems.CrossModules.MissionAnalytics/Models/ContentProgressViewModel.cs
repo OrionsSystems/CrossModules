@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Orions.Systems.CrossModules.MissionAnalytics.Model
+namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class ContentProgressViewModel
 	{
@@ -11,8 +11,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 		public List<KeyValueModel> TasksCompletedPerPeriod { get; set; }
 		
 		public List<KeyValueModel> CompletionPercent { get; set; }
-		public int CompletionPercentMinValue { get; set; }
-		public int CompletionPercentMaxValue { get; set; }
+		public double CompletionPercentMinValue { get; set; }
+		public double CompletionPercentMaxValue { get; set; }
 
 		public List<KeyValueModel> Sessions { get; set; }
 		public long SessionsMinValue { get; set; }
@@ -36,7 +36,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 
 			CompletionPercent = new List<KeyValueModel>();
 			CompletionPercentMinValue = 0;
-			CompletionPercentMaxValue = 100;
+			CompletionPercentMaxValue = 5;
 
 			Sessions = new List<KeyValueModel>();
 			SessionsMinValue = 0;
@@ -48,7 +48,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics.Model
 
 			ExploitationSaturation = new List<KeyValueModel>();
 			ExploitationSaturationMinValue = 0;
-			ExploitationSaturationMaxValue = 1;
+			ExploitationSaturationMaxValue = 5;
 		}
 	}
 

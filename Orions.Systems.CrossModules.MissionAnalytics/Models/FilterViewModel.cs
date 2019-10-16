@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
-namespace Orions.Systems.CrossModules.MissionAnalytics.Model
+namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class FilterViewModel
 	{

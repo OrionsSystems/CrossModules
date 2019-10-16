@@ -13,24 +13,18 @@
 		<div>
 			<TelerikDropDownList Data="@_filterModel.MissionInstanceOptions"
 								 @bind-Value=@_filterModel.SelectedMissionInstance
-								 Class="w-100"
-								 ValueField="Value" TextField="Text">
-			</TelerikDropDownList>
-		</div>
-
-		<div>
-			<TelerikDropDownList Data="@_filterModel.StageOptions"
-								 @bind-Value=@_filterModel.SelectedStage
-								 Class="w-100"
-								 ValueField="Value" TextField="Text">
+								 ValueField="Value"
+								 TextField="Text"
+								 Width="100%">
 			</TelerikDropDownList>
 		</div>
 
 		<div>
 			<TelerikDropDownList Data="@_filterModel.TimeRangeOptions"
 								 @bind-Value=@_filterModel.SelectedTimeRange
-								 Class="w-100"
-								 ValueField="Value" TextField="Text">
+								 ValueField="Value"
+								 TextField="Text"
+								 Width="100%">
 			</TelerikDropDownList>
 		</div>
 
@@ -67,7 +61,7 @@
 
 		_filterModel.MissionInstanceOptions = await _dataManager.GetMissionInstanceOptionsAsync();
 		_filterModel.SelectedMissionInstance = _dataManager.Request.MissionInstanceId;
-		
+
 		await PopulateData();
 
 		await base.OnInitializedAsync();
@@ -76,15 +70,15 @@
 	public async Task PopulateData()
 	{
 		_progressModel = await _dataManager.GetProgressData(
-			_filterModel.SelectedMissionInstance, 
-			_filterModel.TimeRangeValue, 
-			_filterModel.TimeStep, 
+			_filterModel.SelectedMissionInstance,
+			_filterModel.TimeRangeValue,
+			_filterModel.TimeStep,
 			_filterModel.DateTimeFormatString);
 
 		xAxisItems = _progressModel.ExploitedDuration.Select(it => it.Key).ToArray();
 
 		_statsModel = await _dataManager.GetStatisticsData(
-			_filterModel.SelectedMissionInstance, 
+			_filterModel.SelectedMissionInstance,
 			_filterModel.TimeRangeValue);
 	}
 

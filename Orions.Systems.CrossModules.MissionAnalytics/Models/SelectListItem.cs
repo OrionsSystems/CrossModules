@@ -1,4 +1,4 @@
-﻿namespace Orions.Systems.CrossModules.MissionAnalytics.Model
+﻿namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class SelectListItem
 	{
