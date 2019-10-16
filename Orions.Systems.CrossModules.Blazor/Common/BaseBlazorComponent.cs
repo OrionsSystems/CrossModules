@@ -25,11 +25,21 @@ namespace Orions.Systems.CrossModules.Blazor
 
 			set
 			{
+				if (_dataContext != null)
+				{
+					_dataContext.PropertyChanged -= DataContext_PropertyChanged;
+					if (_dataContext is BlazorVm blazorVmPrevious)
+						blazorVmPrevious.OwnerComponent = null;
+				}
+
 				_dataContext = value;
 				if (value != null)
 				{
 					value.PropertyChanged += DataContext_PropertyChanged;
 				}
+
+				if (value is BlazorVm blazorVm)
+					blazorVm.OwnerComponent = this;
 			}
 		}
 

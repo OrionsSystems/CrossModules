@@ -60,7 +60,7 @@ namespace Orions.Systems.CrossModules.Blazor
 			return Task.CompletedTask;
 		}
 
-		protected string GetQueryParameterString(string queryParameter)
+		public string GetQueryParameterString(string queryParameter)
 		{
 			var uri = new Uri(UriHelper.Uri);
 			var stringResult = QueryHelpers.ParseQuery(uri.Query).TryGetValue(queryParameter, out var paramValue) ? paramValue.First() : "";
@@ -68,7 +68,7 @@ namespace Orions.Systems.CrossModules.Blazor
 			return stringResult;
 		}
 
-		protected TType GetObjectFromQueryString<TType>(string queryParameter)
+		public TType GetObjectFromQueryString<TType>(string queryParameter)
 		{
 			TType objectType = default(TType);
 
