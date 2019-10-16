@@ -282,6 +282,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 					if (value > 0) model.ExploitationSaturationMaxValueProp.Value = value;
 				}
 
+				model.CategoriesProp.Value = model.ExploitedDurationProp.Value.Select(it => it.Key).ToArray();
+
 				return model;
 			}
 			catch (Exception ex)
