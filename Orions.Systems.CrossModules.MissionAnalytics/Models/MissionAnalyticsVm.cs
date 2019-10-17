@@ -25,7 +25,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public ViewModelProperty<ContentStatisticsViewModel> StatsVmProp { get; set; }
 
-		public ViewModelProperty<ContentProgressVm> ProgressVmProp { get; set; }
+		public ContentProgressVm ProgressVmProp { get; set; }
 
 		public BlazorCommand LoadCommand { get; set; }
 
@@ -33,7 +33,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			FilterVmProp = new ViewModelProperty<FilterViewModel>(new FilterViewModel());
 			StatsVmProp = new ViewModelProperty<ContentStatisticsViewModel>(new ContentStatisticsViewModel());
-			ProgressVmProp = new ViewModelProperty<ContentProgressVm>(new ContentProgressVm());
+			ProgressVmProp = new ContentProgressVm();
 
 			LoadCommand = new BlazorCommand();
 			LoadCommand.AsyncDelegate += OnLoadAsync;
@@ -60,7 +60,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			{
 				StatsVmProp.Value = await GetStatsVm();
 
-				ProgressVmProp.Value = await GetProgressVm();
+				ProgressVmProp = await GetProgressVm();
 			}
 			catch (Exception e)
 			{
