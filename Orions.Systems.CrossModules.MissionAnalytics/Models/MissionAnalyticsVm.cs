@@ -74,6 +74,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			object parameter)
 		{
 			await LoadDataAsync();
+
+			// TODO: Temp hack to force UI refresh. Remove once it's not needed
+			RaiseNotify("test");
 		}
 
 		private async Task<List<SelectListItem>> GetMissionInstanceOptionsAsync(
