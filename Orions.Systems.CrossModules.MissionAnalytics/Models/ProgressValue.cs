@@ -1,6 +1,6 @@
 ﻿namespace Orions.Systems.CrossModules.MissionAnalytics
 {
-	public class KeyValueModel 
+	public class ProgressValue 
 	{
 		public object Key { get; set; }
 		public object Value { get; set; }

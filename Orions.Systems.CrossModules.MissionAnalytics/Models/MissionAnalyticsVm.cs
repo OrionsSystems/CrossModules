@@ -79,13 +79,13 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			RaiseNotify("test");
 		}
 
-		private async Task<List<SelectListItem>> GetMissionInstanceOptionsAsync(
+		private async Task<List<Option>> GetMissionInstanceOptionsAsync(
 			string selectedOption = null)
 		{
-			var options = new List<SelectListItem>
+			var options = new List<Option>
 			{
-				new SelectListItem { Text = "All Instances", Value = "0" },
-				new SelectListItem { Text = "Active Instances", Value = "1"}
+				new Option { Text = "All Instances", Value = "0" },
+				new Option { Text = "Active Instances", Value = "1"}
 			};
 
 			var args = new FindHyperDocumentsArgs(true);
@@ -102,19 +102,19 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return options;
 		}
 
-		private static List<SelectListItem> GetMissionInstanceOptions(
+		private static List<Option> GetMissionInstanceOptions(
 			HyperDocument[] documents)
 		{
 			if (documents == null) throw new ArgumentException(nameof(documents));
 
-			var options = new List<SelectListItem>();
+			var options = new List<Option>();
 
 			foreach (var document in documents)
 			{
 				var instance = document.GetPayload<HyperMissionInstance>();
 				var missionConfiguration = instance.MissionConfiguration;
 
-				var option = new SelectListItem
+				var option = new Option
 				{
 					Value = document.Id.Id,
 					Text = GetMissionInstanceOptionText(missionConfiguration.Name, instance)
@@ -349,23 +349,23 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return instances.Select(it => it.Id).ToArray();
 		}
 
-		private static List<SelectListItem> GetTimeRangeOptions()
+		private static List<Option> GetTimeRangeOptions()
 		{
-			return new List<SelectListItem>
+			return new List<Option>
 			{
-				new SelectListItem { Text = "Last Hour", Value = TimeRange.LastHour.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 2 Hours", Value = TimeRange.Last2Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 Hours", Value = TimeRange.Last3Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 6 Hours", Value = TimeRange.Last6Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 12 Hours", Value = TimeRange.Last12Hours.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Day", Value = TimeRange.LastDay.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 days", Value = TimeRange.Last3Days.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Week", Value = TimeRange.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
-				new SelectListItem { Text = "Last Month", Value = TimeRange.LastMonth.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 3 Months", Value = TimeRange.Last3Months.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last 6 Months", Value = TimeRange.Last6Months.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "Last Year", Value = TimeRange.LastYear.ToString(CultureInfo.InvariantCulture)},
-				new SelectListItem { Text = "All Time", Value = TimeRange.Ever.ToString(CultureInfo.InvariantCulture) }
+				new Option { Text = "Last Hour", Value = TimeRange.LastHour.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 2 Hours", Value = TimeRange.Last2Hours.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 3 Hours", Value = TimeRange.Last3Hours.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 6 Hours", Value = TimeRange.Last6Hours.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 12 Hours", Value = TimeRange.Last12Hours.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last Day", Value = TimeRange.LastDay.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 3 days", Value = TimeRange.Last3Days.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last Week", Value = TimeRange.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
+				new Option { Text = "Last Month", Value = TimeRange.LastMonth.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 3 Months", Value = TimeRange.Last3Months.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last 6 Months", Value = TimeRange.Last6Months.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "Last Year", Value = TimeRange.LastYear.ToString(CultureInfo.InvariantCulture)},
+				new Option { Text = "All Time", Value = TimeRange.Ever.ToString(CultureInfo.InvariantCulture) }
 			};
 		}
 
@@ -463,17 +463,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		}
 
-		private static List<KeyValueModel> GetModel(
+		private static List<ProgressValue> GetModel(
 			KeyValuePair<DateTime, TimeSpan>[] resource,
 			string formatString)
 		{
-			if (resource == null) return new List<KeyValueModel>();
+			if (resource == null) return new List<ProgressValue>();
 
-			var model = new List<KeyValueModel>();
+			var model = new List<ProgressValue>();
 
 			foreach (var item in resource)
 			{
-				model.Add(new KeyValueModel
+				model.Add(new ProgressValue
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = GetRounded(item.Value.TotalHours)
@@ -483,17 +483,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return model;
 		}
 
-		private static List<KeyValueModel> GetModel(
+		private static List<ProgressValue> GetModel(
 			KeyValuePair<DateTime, int>[] resource,
 			string formatString)
 		{
-			if (resource == null) return new List<KeyValueModel>();
+			if (resource == null) return new List<ProgressValue>();
 
-			var model = new List<KeyValueModel>();
+			var model = new List<ProgressValue>();
 
 			foreach (var item in resource)
 			{
-				model.Add(new KeyValueModel
+				model.Add(new ProgressValue
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = item.Value
@@ -503,17 +503,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return model;
 		}
 
-		private static List<KeyValueModel> GetModel(
+		private static List<ProgressValue> GetModel(
 			KeyValuePair<DateTime, double>[] resource,
 			string formatString)
 		{
-			if (resource == null) return new List<KeyValueModel>();
+			if (resource == null) return new List<ProgressValue>();
 
-			var model = new List<KeyValueModel>();
+			var model = new List<ProgressValue>();
 
 			foreach (var item in resource)
 			{
-				model.Add(new KeyValueModel
+				model.Add(new ProgressValue
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = GetRounded(item.Value)
@@ -523,17 +523,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return model;
 		}
 
-		private static List<KeyValueModel> GetModel(
+		private static List<ProgressValue> GetModel(
 			KeyValuePair<DateTime, long>[] resource,
 			string formatString)
 		{
-			if (resource == null) return new List<KeyValueModel>();
+			if (resource == null) return new List<ProgressValue>();
 
-			var model = new List<KeyValueModel>();
+			var model = new List<ProgressValue>();
 
 			foreach (var item in resource)
 			{
-				model.Add(new KeyValueModel
+				model.Add(new ProgressValue
 				{
 					Key = item.Key.ToLocalTime().ToString(formatString),
 					Value = item.Value

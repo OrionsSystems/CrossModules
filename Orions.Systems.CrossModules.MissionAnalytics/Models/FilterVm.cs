@@ -7,7 +7,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 {
 	public class FilterVm : BlazorVm
 	{
-		public List<SelectListItem> MissionInstanceOptions { get; set; }
+		public List<Option> MissionInstanceOptions { get; set; }
 		
 		public string SelectedMissionInstance
 		{
@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			set => SetSelectedValue(MissionInstanceOptions, value);
 		}
 
-		public List<SelectListItem> TimeRangeOptions{ get; set; }
+		public List<Option> TimeRangeOptions{ get; set; }
 
 		public string SelectedTimeRange
 		{
@@ -25,18 +25,18 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public FilterVm()
 		{
-			MissionInstanceOptions= new List<SelectListItem>();
-			TimeRangeOptions = new List<SelectListItem>();
+			MissionInstanceOptions= new List<Option>();
+			TimeRangeOptions = new List<Option>();
 		}
 
 		private static string GetSelectedValue(
-			IEnumerable<SelectListItem> items)
+			IEnumerable<Option> items)
 		{
 			return items?.FirstOrDefault(it => it.Selected)?.Value ?? "";
 		}
 
 		private static void SetSelectedValue(
-			IEnumerable<SelectListItem> items, 
+			IEnumerable<Option> items, 
 			string value)
 		{
 			if (items == null) throw new ArgumentException(nameof(items));

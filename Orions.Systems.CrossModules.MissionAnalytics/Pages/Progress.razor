@@ -7,38 +7,38 @@
 			<ChartSeries Type="ChartSeriesType.Area"
 						 Name="Total Duration"
 						 Data="@DataContext.TotalDurationProp.Value"
-						 Field="@nameof(KeyValueModel.Value)"
-						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Field="@nameof(ProgressValue.Value)"
+						 CategoryField="@nameof(ProgressValue.Key)"
 						 Axis="hours"
 						 Color="#FFD21B">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Area"
 						 Name="Exploited Duration"
 						 Data="@DataContext.ExploitedDurationProp.Value"
-						 Field="@nameof(KeyValueModel.Value)"
-						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Field="@nameof(ProgressValue.Value)"
+						 CategoryField="@nameof(ProgressValue.Key)"
 						 Axis="hours"
 						 Color="#8B79E6">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Performed"
 						 Data="@DataContext.TasksPerformedProp.Value"
-						 Field="@nameof(KeyValueModel.Value)"
-						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Field="@nameof(ProgressValue.Value)"
+						 CategoryField="@nameof(ProgressValue.Key)"
 						 Color="#0785C8">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Outstanding"
 						 Data="@DataContext.TasksOutstandingProp.Value"
-						 Field="@nameof(KeyValueModel.Value)"
-						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Field="@nameof(ProgressValue.Value)"
+						 CategoryField="@nameof(ProgressValue.Key)"
 						 Color="#FC1B2B">
 			</ChartSeries>
 			<ChartSeries Type="ChartSeriesType.Line"
 						 Name="Tasks Completed Per Period"
 						 Data="@DataContext.TasksCompletedPerPeriodProp.Value"
-						 Field="@nameof(KeyValueModel.Value)"
-						 CategoryField="@nameof(KeyValueModel.Key)"
+						 Field="@nameof(ProgressValue.Value)"
+						 CategoryField="@nameof(ProgressValue.Key)"
 						 Color="#11B200">
 			</ChartSeries>
 		</ChartSeriesItems>
@@ -68,8 +68,8 @@
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Completion %"
 							 Data="@DataContext.CompletionPercentProp.Value"
-							 Field="@nameof(KeyValueModel.Value)"
-							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Field="@nameof(ProgressValue.Value)"
+							 CategoryField="@nameof(ProgressValue.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
@@ -92,8 +92,8 @@
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Sessions"
 							 Data="@DataContext.SessionsProp.Value"
-							 Field="@nameof(KeyValueModel.Value)"
-							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Field="@nameof(ProgressValue.Value)"
+							 CategoryField="@nameof(ProgressValue.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
@@ -116,8 +116,8 @@
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="New Taggers"
 							 Data="@DataContext.NewTaggersProp.Value"
-							 Field="@nameof(KeyValueModel.Value)"
-							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Field="@nameof(ProgressValue.Value)"
+							 CategoryField="@nameof(ProgressValue.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>
@@ -140,8 +140,8 @@
 				<ChartSeries Type="ChartSeriesType.Line"
 							 Name="Exploitation Saturation %"
 							 Data="@DataContext.ExploitationSaturationProp.Value"
-							 Field="@nameof(KeyValueModel.Value)"
-							 CategoryField="@nameof(KeyValueModel.Key)"
+							 Field="@nameof(ProgressValue.Value)"
+							 CategoryField="@nameof(ProgressValue.Key)"
 							 Color="#FC1B2B">
 				</ChartSeries>
 			</ChartSeriesItems>

@@ -1,6 +1,6 @@
 ﻿namespace Orions.Systems.CrossModules.MissionAnalytics
 {
-	public class SelectListItem
+	public class Option
 	{
 		public string Value { get; set; }
 
