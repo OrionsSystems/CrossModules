@@ -1,80 +1,73 @@
-﻿<div id="missionStatistic" data-template="_missionStatistic-side" class="orions-mission-stats-items">
+﻿@inherits BaseBlazorComponent<Orions.Systems.CrossModules.MissionAnalytics.ContentStatsVm>
+
+<div id="missionStatistic" data-template="_missionStatistic-side" class="orions-mission-stats-items">
 
 	<div class="item rounded shadow-sm">
 		<span class="label">Total Content Duration</span>
-		<span class="value">@ContentStatistics.TotalContentDurationLabel</span>
+		<span class="value">@DataContext.TotalContentDurationLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Content Duration</span>
-		<span class="value">@ContentStatistics.ContentDurationLabel</span>
+		<span class="value">@DataContext.ContentDurationLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Exploiting Content</span>
-		<span class="value">@ContentStatistics.ExploitedDurationLabel</span>
+		<span class="value">@DataContext.ExploitedDurationLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Total Exploited Content</span>
-		<span class="value">@ContentStatistics.TotalExploitingDurationLabel</span>
+		<span class="value">@DataContext.TotalExploitingDurationLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Exploited Content</span>
-		<span class="value">@ContentStatistics.ExploitedDurationLabel</span>
+		<span class="value">@DataContext.ExploitedDurationLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Tagger Exploitation Time</span>
-		<span class="value">@ContentStatistics.TaggerExploitationTimeLabel</span>
+		<span class="value">@DataContext.TaggerExploitationTimeLabelProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Completed Tasks</span>
-		<span class="value">@ContentStatistics.TaskDone</span>
+		<span class="value">@DataContext.TaskDoneProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Outstanding Tasks</span>
-		<span class="value">@ContentStatistics.TaskOutstanding</span>
+		<span class="value">@DataContext.TaskOutstandingProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Total Exploited %</span>
-		<span class="value">@ContentStatistics.TotalExploitedPercentageLabel %</span>
+		<span class="value">@DataContext.TotalExploitedPercentageLabelProp.Value %</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Exploited %</span>
-		<span class="value">@ContentStatistics.ExploitedPercentageLabel %</span>
+		<span class="value">@DataContext.ExploitedPercentageLabelProp.Value %</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Exploited Today %</span>
-		<span class="value">@ContentStatistics.TodayExploitedPercentageLabel %</span>
+		<span class="value">@DataContext.TodayExploitedPercentageLabelProp.Value %</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Total Tags</span>
-		<span class="value">@ContentStatistics.TotalTags</span>
+		<span class="value">@DataContext.TotalTagsProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Tags</span>
-		<span class="value">@ContentStatistics.Tags</span>
+		<span class="value">@DataContext.TagsProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Tags Today</span>
-		<span class="value">@ContentStatistics.TodayTags</span>
+		<span class="value">@DataContext.TodayTagsProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Total Taggers</span>
-		<span class="value">@ContentStatistics.TotalTaggers</span>
+		<span class="value">@DataContext.TotalTaggersProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Taggers</span>
-		<span class="value">@ContentStatistics.Taggers</span>
+		<span class="value">@DataContext.TaggersProp.Value</span>
 	</div>
 	<div class="item rounded shadow-sm">
 		<span class="label">Taggers Today</span>
-		<span class="value">@ContentStatistics.TodayTaggers</span>
+		<span class="value">@DataContext.TodayTaggersProp.Value</span>
 	</div>
 </div>
-
-@code {
-
-	[Parameter]
-	public string Title { get; set; }
-
-	[Parameter]
-	public ContentStatisticsViewModel ContentStatistics { get; set; }
-}

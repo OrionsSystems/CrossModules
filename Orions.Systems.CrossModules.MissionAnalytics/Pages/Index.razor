@@ -30,12 +30,11 @@
 	</div>
 
 	<div class="orions-mission-analytics-progress">
-		<Progress DataContext="@DataContext.ProgressVmProp"></Progress>
+		<Progress DataContext="@DataContext.ProgressVm"></Progress>
 	</div>
 
 	<div class="orions-mission-analytics-stats">
-		<Statistic ContentStatistics="@DataContext.StatsVmProp.Value">
-		</Statistic>
+		<Stats DataContext="@DataContext.StatsVm"></Stats>
 	</div>
 
 </dv>

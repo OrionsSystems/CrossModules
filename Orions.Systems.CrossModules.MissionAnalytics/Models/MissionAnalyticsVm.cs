@@ -23,17 +23,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public ViewModelProperty<FilterViewModel> FilterVmProp { get; set; }
 
-		public ViewModelProperty<ContentStatisticsViewModel> StatsVmProp { get; set; }
+		public ContentStatsVm StatsVm { get; set; }
 
-		public ContentProgressVm ProgressVmProp { get; set; }
+		public ContentProgressVm ProgressVm { get; set; }
 
 		public BlazorCommand LoadCommand { get; set; }
 
 		public MissionAnalyticsVm()
 		{
 			FilterVmProp = new ViewModelProperty<FilterViewModel>(new FilterViewModel());
-			StatsVmProp = new ViewModelProperty<ContentStatisticsViewModel>(new ContentStatisticsViewModel());
-			ProgressVmProp = new ContentProgressVm();
+			StatsVm = new ContentStatsVm();
+			ProgressVm = new ContentProgressVm();
 
 			LoadCommand = new BlazorCommand();
 			LoadCommand.AsyncDelegate += OnLoadAsync;
@@ -58,9 +58,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		{
 			try
 			{
-				StatsVmProp.Value = await GetStatsVm();
+				StatsVm = await GetStatsVm();
 
-				ProgressVmProp = await GetProgressVm();
+				ProgressVm = await GetProgressVm();
 			}
 			catch (Exception e)
 			{
@@ -68,7 +68,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			}
 		}
 
-		private async Task OnLoadAsync(DefaultCommand command, object parameter)
+		private async Task OnLoadAsync(
+			DefaultCommand command,
+			object parameter)
 		{
 			await LoadDataAsync();
 		}
@@ -144,13 +146,13 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			};
 		}
 
-		private async Task<ContentStatisticsViewModel> GetStatsVm()
+		private async Task<ContentStatsVm> GetStatsVm()
 		{
 			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedMissionInstance)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedMissionInstance));
 			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedTimeRange)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedTimeRange));
 
 			var workflowInstanceIds = await GetWorkflowInstanceIdsAsync(FilterVmProp.Value.SelectedMissionInstance);
-			if (workflowInstanceIds == null || workflowInstanceIds.Length == 0) return new ContentStatisticsViewModel();
+			if (workflowInstanceIds == null || workflowInstanceIds.Length == 0) return new ContentStatsVm();
 
 			// Get stats for the selected time range
 			try
@@ -162,17 +164,17 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				};
 				var data = await _netStore.ExecuteAsync(args);
 
-				var model = new ContentStatisticsViewModel
+				var model = new ContentStatsVm
 				{
-					ContentDuration = data.ContentDuration,
-					ExploitingDuration = data.ExploitingDuration,
-					ExploitedDuration = data.ExploitedDuration,
-					ExploitedPercentage = data.ExploitedPercentage,
-					TaggerExploitationTime = data.TaggerExploitationTime,
-					Taggers = data.Taggers,
-					Tags = data.Tags,
-					TaskDone = data.TaskDone,
-					TaskOutstanding = data.TaskOutstanding
+					ContentDurationProp = { Value = data.ContentDuration },
+					ExploitingDurationProp = { Value = data.ExploitingDuration },
+					ExploitedDurationProp = { Value = data.ExploitedDuration },
+					ExploitedPercentageProp = { Value = data.ExploitedPercentage },
+					TaggerExploitationTimeProp = { Value = data.TaggerExploitationTime },
+					TaggersProp = { Value = data.Taggers },
+					TagsProp = { Value = data.Tags },
+					TaskDoneProp = { Value = data.TaskDone },
+					TaskOutstandingProp = { Value = data.TaskOutstanding }
 				};
 
 				// Get stats for the last 24 hours
@@ -183,9 +185,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				};
 				data = await _netStore.ExecuteAsync(args);
 
-				model.TodayExploitedPercentage = data.ExploitedPercentage;
-				model.TodayTags = data.Tags;
-				model.TodayTaggers = data.Taggers;
+				model.TodayExploitedPercentageProp.Value = data.ExploitedPercentage;
+				model.TodayTagsProp.Value = data.Tags;
+				model.TodayTaggersProp.Value = data.Taggers;
 
 				// Get all time stats
 				args = new RetrieveContentGroupStatisticsArgs
@@ -194,23 +196,23 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				};
 				data = await _netStore.ExecuteAsync(args);
 
-				model.TotalContentDuration = data.ContentDuration;
+				model.TotalContentDurationProp.Value = data.ContentDuration;
 
-				model.TotalExploitingDuration = data.ExploitingDuration;
-				model.TotalExploitedPercentage = data.ExploitedPercentage;
-				model.TotalTags = data.Tags;
-				model.TotalTaggers = data.Taggers;
+				model.TotalExploitingDurationProp.Value = data.ExploitingDuration;
+				model.TotalExploitedPercentageProp.Value = data.ExploitedPercentage;
+				model.TotalTagsProp.Value = data.Tags;
+				model.TotalTaggersProp.Value = data.Taggers;
 
 				// Get labels
-				model.ContentDurationLabel = GetLabel(model.ContentDuration);
-				model.ExploitingDurationLabel = GetLabel(model.ExploitingDuration);
-				model.ExploitedDurationLabel = GetLabel(model.ExploitedDuration);
-				model.ExploitedPercentageLabel = GetLabel(GetRounded(model.ExploitedPercentage));
-				model.TaggerExploitationTimeLabel = GetLabel(model.TaggerExploitationTime);
-				model.TodayExploitedPercentageLabel = GetLabel(GetRounded(model.TodayExploitedPercentage));
-				model.TotalContentDurationLabel = GetLabel(model.TotalContentDuration);
-				model.TotalExploitingDurationLabel = GetLabel(model.TotalExploitingDuration);
-				model.TotalExploitedPercentageLabel = GetLabel(GetRounded(model.TotalExploitedPercentage));
+				model.ContentDurationLabelProp.Value = GetLabel(model.ContentDurationProp.Value);
+				model.ExploitingDurationLabelProp.Value = GetLabel(model.ExploitingDurationProp.Value);
+				model.ExploitedDurationLabelProp.Value = GetLabel(model.ExploitedDurationProp.Value);
+				model.ExploitedPercentageLabelProp.Value = GetLabel(GetRounded(model.ExploitedPercentageProp.Value));
+				model.TaggerExploitationTimeLabelProp.Value = GetLabel(model.TaggerExploitationTimeProp.Value);
+				model.TodayExploitedPercentageLabelProp.Value = GetLabel(GetRounded(model.TodayExploitedPercentageProp.Value));
+				model.TotalContentDurationLabelProp.Value = GetLabel(model.TotalContentDurationProp.Value);
+				model.TotalExploitingDurationLabelProp.Value = GetLabel(model.TotalExploitingDurationProp.Value);
+				model.TotalExploitedPercentageLabelProp.Value = GetLabel(GetRounded(model.TotalExploitedPercentageProp.Value));
 
 				return model;
 			}
