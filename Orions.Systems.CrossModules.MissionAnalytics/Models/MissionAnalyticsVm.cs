@@ -21,7 +21,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		private CrossModuleVisualizationRequest _request;
 
-		public ViewModelProperty<FilterViewModel> FilterVmProp { get; set; }
+		public FilterVm FilterVm { get; set; }
 
 		public ContentStatsVm StatsVm { get; set; }
 
@@ -31,7 +31,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public MissionAnalyticsVm()
 		{
-			FilterVmProp = new ViewModelProperty<FilterViewModel>(new FilterViewModel());
+			FilterVm = new FilterVm();
 			StatsVm = new ContentStatsVm();
 			ProgressVm = new ContentProgressVm();
 
@@ -50,8 +50,9 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			_request = OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 			if (_request == null) _request = GetDefaultRequest();
 
-			FilterVmProp.Value.MissionInstanceOptions = await GetMissionInstanceOptionsAsync();
-			FilterVmProp.Value.SelectedMissionInstance = _request.MissionInstanceId;
+			FilterVm.TimeRangeOptions = GetTimeRangeOptions();
+			FilterVm.MissionInstanceOptions = await GetMissionInstanceOptionsAsync();
+			FilterVm.SelectedMissionInstance = _request.MissionInstanceId;
 		}
 
 		public async Task LoadDataAsync()
@@ -75,7 +76,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			await LoadDataAsync();
 		}
 
-		private async Task<IEnumerable<SelectListItem>> GetMissionInstanceOptionsAsync(
+		private async Task<List<SelectListItem>> GetMissionInstanceOptionsAsync(
 			string selectedOption = null)
 		{
 			var options = new List<SelectListItem>
@@ -148,10 +149,10 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		private async Task<ContentStatsVm> GetStatsVm()
 		{
-			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedMissionInstance)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedMissionInstance));
-			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedTimeRange)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedTimeRange));
+			if (string.IsNullOrWhiteSpace(FilterVm.SelectedMissionInstance)) throw new ArgumentException(nameof(FilterVm.SelectedMissionInstance));
+			if (string.IsNullOrWhiteSpace(FilterVm.SelectedTimeRange)) throw new ArgumentException(nameof(FilterVm.SelectedTimeRange));
 
-			var workflowInstanceIds = await GetWorkflowInstanceIdsAsync(FilterVmProp.Value.SelectedMissionInstance);
+			var workflowInstanceIds = await GetWorkflowInstanceIdsAsync(FilterVm.SelectedMissionInstance);
 			if (workflowInstanceIds == null || workflowInstanceIds.Length == 0) return new ContentStatsVm();
 
 			// Get stats for the selected time range
@@ -160,7 +161,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				var args = new RetrieveContentGroupStatisticsArgs
 				{
 					WorkflowInstanceIds = workflowInstanceIds,
-					ReportDays = FilterVmProp.Value.TimeRangeValue
+					ReportDays = GetTimeRange(FilterVm.SelectedTimeRange)
 				};
 				var data = await _netStore.ExecuteAsync(args);
 
@@ -225,10 +226,10 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		private async Task<ContentProgressVm> GetProgressVm()
 		{
-			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedMissionInstance)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedMissionInstance));
-			if (string.IsNullOrWhiteSpace(FilterVmProp.Value.SelectedTimeRange)) throw new ArgumentException(nameof(FilterVmProp.Value.SelectedTimeRange));
+			if (string.IsNullOrWhiteSpace(FilterVm.SelectedMissionInstance)) throw new ArgumentException(nameof(FilterVm.SelectedMissionInstance));
+			if (string.IsNullOrWhiteSpace(FilterVm.SelectedTimeRange)) throw new ArgumentException(nameof(FilterVm.SelectedTimeRange));
 
-			var workflowInstanceIds = await GetWorkflowInstanceIdsAsync(FilterVmProp.Value.SelectedMissionInstance);
+			var workflowInstanceIds = await GetWorkflowInstanceIdsAsync(FilterVm.SelectedMissionInstance);
 			if (workflowInstanceIds == null || workflowInstanceIds.Length == 0) return new ContentProgressVm();
 
 			try
@@ -236,12 +237,12 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				var args = new RetrieveContentGroupProgressArgs
 				{
 					WorkflowInstanceIds = workflowInstanceIds,
-					ReportDays = FilterVmProp.Value.TimeRangeValue,
-					TimeStep = GetTimeStep(FilterVmProp.Value.TimeRangeValue)
+					ReportDays = GetTimeRange(FilterVm.SelectedTimeRange)
 				};
+				args.TimeStep = GetTimeStep(args.ReportDays);
 				var data = await _netStore.ExecuteAsync(args);
 
-				var dateFormatString = GetDateTimeFormatString(FilterVmProp.Value.TimeRangeValue);
+				var dateFormatString = GetDateTimeFormatString(args.ReportDays);
 
 				var model = new ContentProgressVm
 				{
@@ -343,6 +344,34 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			var instances = await FindHyperDocumentsArgs.FindAsync<HyperWorkflowInstance>(_netStore, args);
 
 			return instances.Select(it => it.Id).ToArray();
+		}
+
+		private static List<SelectListItem> GetTimeRangeOptions()
+		{
+			return new List<SelectListItem>
+			{
+				new SelectListItem { Text = "Last Hour", Value = TimeRange.LastHour.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 2 Hours", Value = TimeRange.Last2Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Hours", Value = TimeRange.Last3Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Hours", Value = TimeRange.Last6Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 12 Hours", Value = TimeRange.Last12Hours.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Day", Value = TimeRange.LastDay.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 days", Value = TimeRange.Last3Days.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Week", Value = TimeRange.LastWeek.ToString(CultureInfo.InvariantCulture), Selected = true },
+				new SelectListItem { Text = "Last Month", Value = TimeRange.LastMonth.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 3 Months", Value = TimeRange.Last3Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last 6 Months", Value = TimeRange.Last6Months.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "Last Year", Value = TimeRange.LastYear.ToString(CultureInfo.InvariantCulture)},
+				new SelectListItem { Text = "All Time", Value = TimeRange.Ever.ToString(CultureInfo.InvariantCulture) }
+			};
+		}
+
+		public static double GetTimeRange(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException(nameof(value));
+
+			double.TryParse(value, out var days);
+			return Math.Round(days, 4);
 		}
 
 		private static int GetTimeStep(
