@@ -7,18 +7,15 @@
 
 @if (Timeline == null)
 {
-    <div>Loading...</div>
+    <div class="loading-bar"></div>
 }
 else
 {
-
-
-
     <TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
         <TabStripTab Title="Timeline">
             <div class="timeline-container">
                 <div class="timeline-filter-container">
-                    <div class="row">
+                    <div class="row m-0">
                         <div class="col-md-1 p-1">
                             <TelerikDropDownList Data="@Filter.PageSizeOptions"
                                                  @bind-Value=@Filter.PageSize
@@ -47,7 +44,7 @@ else
                         </div>
                     </div>
                 </div>
-                <div class="dark-timeline center-orientation">
+                <div class="dark-timeline center-orientation p-2 mt-2">
                     @if (Timeline?.Tags != null)
                     {
                         @foreach (var tag in Timeline?.Tags)
@@ -117,11 +114,11 @@ else
 
                                             @if (string.IsNullOrWhiteSpace(tag.MissionName?.ToString()))
                                             {
-                                                <h5><a href="#" target="_blank">Mission: unknown</a></h5>
+                                                <h5><a href="#">Mission: unknown</a></h5>
                                             }
                                             else
                                             {
-                                                <h5><a href="#" target="_blank">Mission: @tag.MissionName</a></h5>
+                                                <h5><a href="#" title="Mission name">Mission: @tag.MissionName</a></h5>
                                             }
 
                                             <h5 class="timeline-tagworkflowinfo"></h5>
@@ -145,7 +142,7 @@ else
 
                                             <div class="timeline-short-btns">
                                                 <span><a title="Copy Tag Id"><i class="fa fa-copy"></i></a></span>
-                                                <span><a title="Asset Details" href="#" target="_blank"><i class="fa fa-info-circle"></i></a></span>
+                                                <span><a title="Asset Details" href="#"><i class="fa fa-info-circle"></i></a></span>
                                                 <span>
                                                     <a class="timeline-tag-elements-count-info" title="Tag Elements">
                                                         <i class="fa fa-industry"></i>
@@ -235,18 +232,24 @@ else
                                         </div>
                                     }
 
-
                                 </div>
                             </div>
                         }
                     }
                 </div>
-                <div id="loading-panel" class="m-md">
-                    <h4 id="timeline-loading">
+                <div class="loading-panel m-md">
+                    <h4 class="timeline-loading">
                         <span class="spinner"></span>
                     </h4>
                     <div class="clearfix m-b-md"></div>
                     <TelerikButton OnClick="@LoadMore" Primary="true"> Load More</TelerikButton>
+                    @if(@IsLoadingMode) { 
+                <div class="loader mt-2">
+                    <div class="loader-dot dot1"></div>
+                    <div class="loader-dot dot2"></div>
+                    <div class="loader-dot dot3"></div>
+                </div>
+                    }
                 </div>
             </div>
         </TabStripTab>
@@ -260,7 +263,6 @@ else
     <div id="playerModal" style="padding:0px; background-color:black;">
         <div id="player"></div>
     </div>
-
 }
 
 @code
@@ -272,6 +274,8 @@ else
     public TimelineViewModel Timeline { get; set; }
 
     public string JsonTimeline { get; set; }
+
+    public bool IsLoadingMode { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -289,7 +293,41 @@ else
     {
         Timeline = await DataContext.Instance.GetTimeline(Filter);
 
-        JsonTimeline += "[";
+        BuildJsonTimeline();
+
+        StateHasChanged();
+    }
+
+    public async Task LoadMore()
+    {
+        IsLoadingMode = true;
+        StateHasChanged();
+        Filter.PageNumber++;
+
+        var tl = await DataContext.Instance.GetTimeline(Filter);
+
+        Timeline.Tags.AddRange(tl.Tags);
+
+        BuildJsonTimeline();
+        IsLoadingMode = false;
+        StateHasChanged();
+    }
+
+    public async Task ApplyFilter()
+    {
+        Timeline = null;
+
+        Filter.PageNumber = 0;
+
+        StateHasChanged();
+
+        await LoadTimeline();
+    }
+
+    private void BuildJsonTimeline()
+    {
+
+        JsonTimeline = "[";
         foreach (var tag in Timeline.Tags)
         {
             var json = tag.ToSimpleJSON("");
@@ -297,15 +335,7 @@ else
         }
 
         JsonTimeline += "]";
-
-        StateHasChanged();
     }
-
-    public void LoadMore() { }
-
-    public void ApplyFilter() { }
-
-
 
 
     private CrossModuleVisualizationRequest GetDemoRequest()
