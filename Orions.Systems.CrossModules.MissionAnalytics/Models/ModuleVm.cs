@@ -11,7 +11,7 @@ using Orions.Systems.CrossModules.Blazor;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {
-	public class MissionAnalyticsVm : BlazorVm
+	public class ModuleVm : BlazorVm
 	{
 		private const int RoundingFactor = 2;
 		private const MidpointRounding RoundingMethod = MidpointRounding.AwayFromZero;
@@ -29,7 +29,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public BlazorCommand LoadCommand { get; set; }
 
-		public MissionAnalyticsVm()
+		public ModuleVm()
 		{
 			FilterVm = new FilterVm();
 			StatsVm = new ContentStatsVm();
