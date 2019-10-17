@@ -3,14 +3,12 @@
 
 @page "/"
 
-@using Telerik.Blazor.Components.DropDownList
-
 <dv class="orions-container">
 
 	<div id="missionProgressFilterId" class="orions-mission-analytics-header">
 		<div>
-			<TelerikDropDownList Data="@DataContext.FilterVmProp.Value.MissionInstanceOptions"
-								 @bind-Value=@DataContext.FilterVmProp.Value.SelectedMissionInstance
+			<TelerikDropDownList Data="@DataContext.FilterVm.MissionInstanceOptions"
+								 @bind-Value=@DataContext.FilterVm.SelectedMissionInstance
 								 ValueField="Value"
 								 TextField="Text"
 								 Width="100%">
@@ -18,8 +16,8 @@
 		</div>
 
 		<div>
-			<TelerikDropDownList Data="@DataContext.FilterVmProp.Value.TimeRangeOptions"
-								 @bind-Value=@DataContext.FilterVmProp.Value.SelectedTimeRange
+			<TelerikDropDownList Data="@DataContext.FilterVm.TimeRangeOptions"
+								 @bind-Value=@DataContext.FilterVm.SelectedTimeRange
 								 ValueField="Value"
 								 TextField="Text"
 								 Width="100%">
