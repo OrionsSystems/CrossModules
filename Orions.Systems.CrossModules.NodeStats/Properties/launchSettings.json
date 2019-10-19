@@ -8,13 +8,6 @@
     }
   },
   "profiles": {
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
-    },
     "Orions.Systems.CrossModules.NodeStats": {
       "commandName": "Project",
       "commandLineArgs": "--id=dd17dad2 --file=..\\..\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.NodeStats\\config.json",
