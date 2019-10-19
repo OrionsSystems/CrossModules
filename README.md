@@ -22,9 +22,13 @@
 * Samples -> Orions.Systems.CrossModules.WebAppSample - ?
 * Samples -> Orions.Systems.CrossModules.TestApp - ?
 * Orions.Systems.CrossModules.MetadataReview - ?
-* Orions.Systems.CrossModules.NodeLite - ?
+
 
 ### Legacy - will be removed soon
 
 * Orions.Systems.CrossModules.MissionAnalytics.Legacy - ASP version of mission analytics
 * Orions.Systems.CrossModules.Timeline.Legacy - asp version of timeline
+
+### Broken - fix or Joe will delete it
+
+* Orions.Systems.CrossModules.NodeLite - ?
