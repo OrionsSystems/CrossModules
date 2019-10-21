@@ -1,6 +1,7 @@
 ﻿@page "/"
 @namespace Orions.Systems.CrossModules.Timeline.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using EmbeddedBlazorContent;
 
 <!DOCTYPE html>
 <html lang="en">
@@ -14,7 +15,13 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
 
+    <script src="/EmbeddedBlazorFile/jwplayer.js"></script>
+    <script src="/EmbeddedBlazorFile/provider.hlsjs.js"></script>
+    <script src="/EmbeddedBlazorFile/provider.html5.js"></script>
+    <script src="/EmbeddedBlazorFile/common.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/@@progress/kendo-theme-default@@latest/dist/all.css" />
+
     <script src="https://kendo.cdn.telerik.com/blazor/2.1.1/telerik-blazor.min.js" defer></script>
 
 </head>
@@ -22,11 +29,8 @@
     <app>@(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))</app>
 
     <script src="_framework/blazor.server.js"></script>
-
-    <script src="~/js/jwplayer/8.4.2/jwplayer.js"></script>
-    <script src="~/js/jwplayer/8.4.2/provider.hlsjs.js"></script>
-    <script src="~/js/jwplayer/8.4.2/provider.html5.js"></script>
-    <script type="text/javascript">jwplayer.key = "0cEcLfyR+RBLPh2z3KkWfFzX1U/w/2AtglS1xoT4xl8=";</script>
+   
+    @*@Html.EmbeddedBlazorContent();*@
 
 </body>
 </html>

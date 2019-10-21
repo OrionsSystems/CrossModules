@@ -26,7 +26,7 @@ namespace Orions.Systems.CrossModules.Timeline
 			services.AddSingleton<DataContext>();
 
 			services.AddRazorPages();
-			services.AddServerSideBlazor();
+			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
 			services.AddTelerikBlazor();
 

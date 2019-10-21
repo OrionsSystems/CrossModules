@@ -1,5 +1,5 @@
 ﻿
-<img class="@Class" src="@Source" @onclick="OnThumbnailClick" @onmouseover="OnThumbnailOver" @onmouseout="OnThumbnailOut" />
+<img class="@Class" src="@Source" @onclick="@(() => OnThumbnailClick.InvokeAsync(Tag))" @onmouseover="OnThumbnailOver" @onmouseout="OnThumbnailOut" />
 
 @code {
 
@@ -18,11 +18,7 @@
     public string Class { get; set; }
 
     [Parameter]
-    public EventCallback OnClick { get; set; }
-    [Parameter]
-    public EventCallback OnMouseOver { get; set; }
-    [Parameter]
-    public EventCallback OnMouseOut { get; set; }
+    public EventCallback<DynamicHyperTagViewModel> OnThumbnailClick { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -39,9 +35,12 @@
         while (!_thumbnailStopPreview)
         {
             var innerDataSource = await GetTagThumbnail(Tag, fragmentIndex);
-            if (innerDataSource != null) Source = innerDataSource;
-            fragmentIndex++;
-            if (fragmentIndex > 100) fragmentIndex = firstFragment;
+            if (innerDataSource != null) { 
+                Source = innerDataSource;
+                 fragmentIndex++;
+            } else {
+                fragmentIndex = firstFragment;
+            }
             StateHasChanged();
 
             await Task.Delay(timeInternal);
@@ -54,11 +53,6 @@
     public void OnThumbnailOut()
     {
         _thumbnailStopPreview = true;
-    }
-
-    public void OnThumbnailClick()
-    {
-        // Set logic
     }
 
     private async Task<string> GetTagThumbnail(DynamicHyperTagViewModel tag, ulong? fragmentIndex = null)

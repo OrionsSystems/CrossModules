@@ -1,21 +1,19 @@
-﻿window.Orions = {}
+﻿window.Orions = {};
 
-
-Orions.JwPlayer = {
-
+window.Orions.JwPlayer = {
     init: function (config) {
-                
-        jwplayer.key = config.key;        
 
-        var player = jwplayer(config.id).setup({
-            file: config.file,            
+        jwplayer.key = config.key;
+
+        var playerSetup = {
+            file: config.file,
             image: config.image,
             title: config.title,
             description: config.description,
             sources: config.sources,
             logo: config.logoConfig,
             width: config.width,
-            //height: config.height,
+            height: config.height,
             displaytitle: config.displayTitle,
             stretching: config.stretching,
             aspectratio: config.aspectratio,
@@ -33,21 +31,23 @@ Orions.JwPlayer = {
             //    oncomplete: "autoplay"
             //}
 
-        });
+        };
+
+        var playerIsntance = jwplayer(config.id);
+        var player = playerIsntance.setup(playerSetup);
 
         player.on('ready', function () {
             player.play();
-        })
-    },   
+        });
+    },
 
-    remove: function (id)
-    {       
+    remove: function (id) {
         var player = jwplayer(id);
-        if (player != null) {
+        if (player !== null) {
             player.remove();
         }
     }
-}
+};
 
 window.Orions.KendoTreemap = {
 
@@ -98,7 +98,7 @@ window.Orions.KendoTreemap = {
         }
 
     }
-}
+};
 
 window.Orions.KendoMediaPlayer = {
 
@@ -136,4 +136,4 @@ window.Orions.KendoMediaPlayer = {
 
         return $(playerId).getKendoMediaPlayer();
     }
-}
+};

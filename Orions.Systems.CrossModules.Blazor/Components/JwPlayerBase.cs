@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
@@ -8,7 +9,6 @@ namespace Orions.Systems.CrossModules.Blazor.Components
 	public class JwPlayerBase : BaseOrionsComponent
 	{
 		protected JwPlayerConfig JwPlayerConfig { get; set; } = new JwPlayerConfig();
-
 
 		/// <summary>
 		/// Unique element ID
@@ -120,6 +120,23 @@ namespace Orions.Systems.CrossModules.Blazor.Components
 			set
 			{
 				JwPlayerConfig.Autostart = value;
+			}
+		}
+
+		/// <summary>
+		/// Whether the player will attempt to begin playback automatically when a page is loaded.
+		/// Set to 'viewable' to have player autostart if 50% is viewable.
+		/// </summary>
+		[Parameter]
+		public bool Autoplay
+		{
+			get
+			{
+				return JwPlayerConfig.Autoplay;
+			}
+			set
+			{
+				JwPlayerConfig.Autoplay = value;
 			}
 		}
 
@@ -260,19 +277,17 @@ namespace Orions.Systems.CrossModules.Blazor.Components
 		[Parameter]
 		public List<PlayerSource> Sources { get; set; } = new List<PlayerSource>();
 
-
+		
 		protected override async Task OnFirstAfterRenderAsync()
 		{
+			if (JwPlayerConfig == null || string.IsNullOrWhiteSpace(JwPlayerConfig.Id)) throw new ArgumentException(nameof(JwPlayerConfig));
 
-			if (JwPlayerConfig != null)
+			if (Sources != null)
 			{
-				if (Sources != null)
-				{
-					JwPlayerConfig.Sources = Sources;
-				}
-
-				await JsInterop.InvokeAsync<object>("Orions.JwPlayer.init", new object[] { JwPlayerConfig });
+				JwPlayerConfig.Sources = Sources;
 			}
+
+			await JsInterop.InvokeAsync<object>("Orions.JwPlayer.init", new object[] { JwPlayerConfig });
 		}
 
 		public async Task RemovePlayer(string id)
