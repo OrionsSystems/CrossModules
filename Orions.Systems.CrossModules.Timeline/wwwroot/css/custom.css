@@ -434,14 +434,14 @@ h3, h4, h5 {
 	min-height: 145px;
 }
 
-	.timeline .player-icon {
-		position: absolute;
-		top: 35%;
-		left: 45%;
-		color: white;
-		width: 47px;
-		height: 52px;
-	}
+    .timeline .player-icon {
+        position: absolute;
+        left: calc(50% - 47px) !important;
+        top: calc(50% - 26px) !important;
+        color: #9d9d9d !important;
+        width: 47px;
+        height: 52px;
+    }
 
 .timeline-contextmenu {
 	z-index: 10010 !important
@@ -1141,4 +1141,12 @@ body.mini-navbar .logo-element.large {
     40% {
         -webkit-transform: scale(1.0)
     }
+}
+
+.k-content.k-window-content.k-dialog-content {
+    padding: 0px;
+}
+
+ul.k-tabstrip-items.k-reset {
+    height: 53px;
 }

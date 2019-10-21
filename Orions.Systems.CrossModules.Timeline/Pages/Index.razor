@@ -44,6 +44,7 @@ else
                         </div>
                     </div>
                 </div>
+
                 <div class="dark-timeline center-orientation p-2 mt-2">
                     @if (Timeline?.Tags != null)
                     {
@@ -59,11 +60,12 @@ else
                                         <div class="col-md-5 timeline video-col-timeline">
                                             <Image Class="img-fluid timeline"
                                                    Tag="@tag"
+                                                   OnThumbnailClick="(()=> OnThumbnailClick(tag))"
                                                    Default="images/default.png">
                                             </Image>
-                                            <a class="player-icon">
+                                            <div class="player-icon">
                                                 <i class="fa fa-play-circle-o fa-4x"></i>
-                                            </a>
+                                            </div>
                                         </div>
 
                                         <div class="col details-col-timeline" style="padding-bottom: 5px;">
@@ -139,10 +141,7 @@ else
                                                 </ul>
                                             </div>
 
-
                                             <div class="timeline-short-btns">
-                                                <span><a title="Copy Tag Id"><i class="fa fa-copy"></i></a></span>
-                                                <span><a title="Asset Details" href="#"><i class="fa fa-info-circle"></i></a></span>
                                                 <span>
                                                     <a class="timeline-tag-elements-count-info" title="Tag Elements">
                                                         <i class="fa fa-industry"></i>
@@ -243,26 +242,45 @@ else
                     </h4>
                     <div class="clearfix m-b-md"></div>
                     <TelerikButton OnClick="@LoadMore" Primary="true"> Load More</TelerikButton>
-                    @if(@IsLoadingMode) { 
-                <div class="loader mt-2">
-                    <div class="loader-dot dot1"></div>
-                    <div class="loader-dot dot2"></div>
-                    <div class="loader-dot dot3"></div>
-                </div>
+                    @if (@IsLoadingMode)
+                    {
+                        <div class="loader mt-2">
+                            <div class="loader-dot dot1"></div>
+                            <div class="loader-dot dot2"></div>
+                            <div class="loader-dot dot3"></div>
+                        </div>
                     }
                 </div>
             </div>
         </TabStripTab>
         <TabStripTab Title="Json">
-            <h1>Json</h1>
             <textarea class="form-control" style="position:absolute;height:calc(100% - 50px);width:100%;padding:0px;margin:0px;">@JsonTimeline</textarea>
         </TabStripTab>
 
     </TelerikTabStrip>
 
-    <div id="playerModal" style="padding:0px; background-color:black;">
-        <div id="player"></div>
-    </div>
+    <TelerikWindow Visible="@IsPlaying" Centered="true" Class="modalPlayer" Width="900px" Height="510px">
+        <WindowTitle>
+            <strong>Player</strong>
+        </WindowTitle>
+        <WindowContent>
+            <div id="playerModal" style="padding:0px; background-color:black;">
+                <JwPlayer Autostart="true"
+                          AspectRatio="16:9"
+                          Width="100%"
+                          Autoplay="true"
+                          Id="playerId"
+                          File="@PlayerUri">
+                </JwPlayer>
+            </div>
+        </WindowContent>
+        <WindowActions>
+            <WindowAction Name="Minimize"></WindowAction>
+            <WindowAction Name="Maximize"></WindowAction>
+            <WindowAction Name="Close" OnClick="@OnClosePlayer"></WindowAction>
+        </WindowActions>
+    </TelerikWindow>
+   
 }
 
 @code
@@ -276,6 +294,10 @@ else
     public string JsonTimeline { get; set; }
 
     public bool IsLoadingMode { get; set; }
+
+    public bool IsPlaying { get; set; }
+
+    public string PlayerUri { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -324,6 +346,23 @@ else
         await LoadTimeline();
     }
 
+    public void OnThumbnailClick(DynamicHyperTagViewModel tag)
+    {
+        if (tag == null) throw new ArgumentException(nameof(tag));
+
+        IsPlaying = true;
+
+        PlayerUri = GetDashPlayerUri(tag);
+
+        StateHasChanged();
+    }
+
+    public void OnClosePlayer() {
+        IsPlaying = false;
+
+        StateHasChanged();
+    }
+
     private void BuildJsonTimeline()
     {
 
@@ -337,7 +376,6 @@ else
         JsonTimeline += "]";
     }
 
-
     private CrossModuleVisualizationRequest GetDemoRequest()
     {
         return new CrossModuleVisualizationRequest
@@ -345,5 +383,19 @@ else
             MissionIds = new[] { "e8d88c8a-b82d-4911-9639-3080ef877653" },
             WorkflowInstanceIds = new[] { "3a3be967-533b-413e-8323-c079a81e1ff1" }
         };
+    }
+
+     private string GetDashPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true) {
+        if(isHttps)
+            return $"https://{tag.ServerHost}:{tag.ServerPort+1}/dash/{tag.AssetGuid}/asset.mpd";
+
+        return $"http://{tag.ServerHost}:{tag.ServerPort}/dash/{tag.AssetGuid}/asset.mpd";
+    }
+
+    private string GetHlsPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true) {
+        if(isHttps)
+            return $"https://{tag.ServerHost}:{tag.ServerPort+1}/hls/{tag.AssetGuid}/asset.mpd";
+
+        return $"http://{tag.ServerHost}:{tag.ServerPort}/hls/{tag.AssetGuid}/asset.mpd";
     }
 }
