@@ -429,14 +429,19 @@ h3, h4, h5 {
 
 /* Custom Styles*/
 
+.image-timeline-container {
+    position: absolute;
+    display: contents;
+}
+
 .timeline {
 	padding: 0px !important;
 	min-height: 145px;
 }
 
     .timeline .player-icon {
-        position: absolute;
-        left: calc(50% - 47px) !important;
+        position: inherit;
+        left: calc(50% - 27px) !important;
         top: calc(50% - 26px) !important;
         color: #9d9d9d !important;
         width: 47px;
@@ -1149,4 +1154,16 @@ body.mini-navbar .logo-element.large {
 
 ul.k-tabstrip-items.k-reset {
     height: 53px;
+}
+
+.playerModal {
+    padding: 0px;
+    background-color: black;
+}
+.json-textarea {
+    position: absolute;
+    height: calc(100% - 50px);
+    width: 100%;
+    padding: 0px;
+    margin: 0px;
 }

@@ -58,13 +58,15 @@ else
                                 <div class="vertical-timeline-content timeline container-fluid">
                                     <div class="row box-timeline">
                                         <div class="col-md-5 timeline video-col-timeline">
-                                            <Image Class="img-fluid timeline"
-                                                   Tag="@tag"
-                                                   OnThumbnailClick="(()=> OnThumbnailClick(tag))"
-                                                   Default="images/default.png">
-                                            </Image>
-                                            <div class="player-icon">
-                                                <i class="fa fa-play-circle-o fa-4x"></i>
+                                            <div class="image-timeline-container">
+                                                <Image Class="img-fluid timeline"
+                                                       Tag="@tag"
+                                                       OnThumbnailClick="(()=> OnThumbnailClick(tag))"
+                                                       Default="images/default.png">
+                                                </Image>
+                                                <div class="player-icon">
+                                                    <i class="fa fa-play-circle-o fa-4x"></i>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -254,7 +256,7 @@ else
             </div>
         </TabStripTab>
         <TabStripTab Title="Json">
-            <textarea class="form-control" style="position:absolute;height:calc(100% - 50px);width:100%;padding:0px;margin:0px;">@JsonTimeline</textarea>
+            <textarea class="form-control json-textarea" style="position:absolute;height:calc(100% - 50px);width:100%;padding:0px;margin:0px;">@JsonTimeline</textarea>
         </TabStripTab>
 
     </TelerikTabStrip>
@@ -264,7 +266,7 @@ else
             <strong>Player</strong>
         </WindowTitle>
         <WindowContent>
-            <div id="playerModal" style="padding:0px; background-color:black;">
+            <div class="playerModal">
                 <JwPlayer Autostart="true"
                           AspectRatio="16:9"
                           Width="100%"
