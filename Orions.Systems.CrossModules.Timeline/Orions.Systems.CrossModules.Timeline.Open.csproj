@@ -28,8 +28,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Debug.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
 	</ItemGroup>
 
 </Project>
