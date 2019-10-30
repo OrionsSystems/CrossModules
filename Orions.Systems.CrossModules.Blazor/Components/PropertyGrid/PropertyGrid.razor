@@ -1,0 +1,204 @@
+﻿@inherits BaseBlazorComponent
+
+@using Orions.SDK;
+@using Orions.Common;
+
+<h3>PropertyGrid Test</h3>
+
+@if (Items.Any())
+{
+
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-primary" onclick="@HomeCommand">Home</button>
+            <button class="btn btn-default" onclick="@BackCommand">Back</button>
+        </div>
+    </div>
+
+    @foreach (var data in Items)
+    {
+        <div class="row">
+            <div class="col-md-4 @GetVisualiaseClass(data)">
+                @data.DataProp.Value.HeaderDisplay
+
+                <!--Help element-->
+
+            </div>
+            <div class="col-md-5">
+                @switch (data.DataProp.Value.EditableMode)
+                {
+                    case PropertyGridItemUtilityData.EditableModes.Undefined:
+                        <input type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.CheckBox:
+                        <input type="checkbox" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.TextBox:
+                        <input type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })"  />
+                        break;
+                    case PropertyGridItemUtilityData.EditableModes.MultiLineTextBox:
+                        <textarea type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.Color:
+                        @data.DataProp.Value.PrintValue()
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.Dropdown:
+
+                        <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+                            @foreach (var item in data.DataProp.Value.AvailableValueOptions) { 
+                                <option>@item</option>
+                            }
+                        </select>
+                        @data.DataProp.Value.PrintValue()
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.Custom:
+                        @data.DataProp.Value.PrintValue()
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.BrowseButton:
+                        @data.DataProp.Value.PrintValue()
+                        break;
+
+                    case PropertyGridItemUtilityData.EditableModes.EditableDropdown:
+                        @data.DataProp.Value.PrintValue()
+                        break;
+                    default:
+                        break;
+                }
+
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary">Delete</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+
+    private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue) {
+        data.Instance = (bool)data.Instance ? false : true;
+        Console.WriteLine($"Change bool instance to : {data.Instance}");
+    }
+
+    private void TextBoxChange(PropertyGridItemUtilityData data, object value) {
+        data.Instance = value;
+        Console.WriteLine($"Change text instance to : {data.Instance}");
+    }
+
+    private void DropdownChange(PropertyGridItemUtilityData data, object value) {
+        data.Instance = value;
+        Console.WriteLine($"Change dropdown instance to : {data.Instance}");
+    }
+
+    public PropertyGridItemUtilityData Test { get; set; }
+
+    public PropertyGridUtility Utility { get; private set; }
+
+    public AdvancedObservableCollection<PropertyGridAdvancedItemVm> Items { get; private set; } = new AdvancedObservableCollection<PropertyGridAdvancedItemVm>();
+
+    public ViewModelProperty<PropertyGridUtilityBase.CreatorItem> SelectedCreatorItemProp { get; set; } = new ViewModelProperty<PropertyGridUtilityBase.CreatorItem>();
+
+    public BlazorCommand HomeCommand { get; set; } = new BlazorCommand();
+
+    public BlazorCommand BackCommand { get; set; } = new BlazorCommand();
+
+    public BlazorCommand CreatorCreateCommand { get; set; } = new BlazorCommand();
+
+    public BlazorCommand CustomExpandAggregateCommand { get; set; } = new BlazorCommand();
+
+    public ViewModelProperty<bool> IsReadOnlyProp { get; set; } = new ViewModelProperty<bool>();
+
+    public ViewModelProperty<string> TrailProp { get; private set; } = new ViewModelProperty<string>();
+
+    [Parameter] public Func<Task<object>> Loader { get; set; }
+
+    public object Source { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public EventCallback<object> SettingSource { get; set; }
+
+    public string Name
+    {
+        get => Utility?.Name ?? "";
+        set => Utility.Name = value;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Source = await Loader();
+
+        if (Source != null)
+        {
+            await Utility.SetSourceAsync(Source, true);
+
+            Items.Link(Utility.Items, null, null, transformDelegate_Items);
+
+            TrailProp.TakesFrom(Utility.TrailProp);
+
+            StateHasChanged();
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Utility = new PropertyGridUtility();
+        Utility.PropertyChanged += Utility_PropertyChanged;
+
+
+        HomeCommand.AsyncDelegate = OnHome;
+        BackCommand.AsyncDelegate = OnBack;
+        CreatorCreateCommand.AsyncDelegate = OnCreatorCreate;
+
+        await base.OnInitializedAsync();
+    }
+
+    private void Utility_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if ((e.PropertyName == nameof(PropertyGridUtility.CreatorMode) && this.Utility.CreatorMode)
+            || (e.PropertyName == nameof(PropertyGridUtility.ListMode) && this.Utility.ListMode))
+        {
+            // Auto select for creator items.
+
+        }
+    }
+
+    private async Task OnHome(DefaultCommand command, object parameter)
+    {
+        await Utility.MoveBack(true);
+    }
+
+    private async Task OnBack(DefaultCommand command, object parameter)
+    {
+        await Utility.MoveBack();
+    }
+    private async Task OnCreatorCreate(DefaultCommand command, object parameter)
+    {
+        await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
+    }
+
+    private PropertyGridAdvancedItemVm transformDelegate_Items(AdvancedObservableCollection<PropertyGridAdvancedItemVm> collection, object entry)
+    {
+        var result = new PropertyGridAdvancedItemVm();
+        result.Utility = this.Utility;
+        result.DataProp.Value = (PropertyGridItemUtilityData)entry;
+        result.CustomExpandCommand.AddSink(this.CustomExpandAggregateCommand);
+        result.GroupName = result.DataProp.Value?.GroupName;
+        return result;
+    }
+
+    private string GetVisualiaseClass(PropertyGridAdvancedItemVm data)
+    {
+        if (data.DataProp.Value.IsImportant) return "danger";
+        if (data.DataProp.Value.IsMandatory) return "wanring";
+        return "";
+    }
+}
