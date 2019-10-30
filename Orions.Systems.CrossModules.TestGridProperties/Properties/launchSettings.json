@@ -1,0 +1,21 @@
+{
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:7092",
+      "sslPort": 0
+    }
+  },
+  "profiles": {
+    "Orions.Systems.CrossModules.TestGridProperties": {
+      "commandName": "Project",
+      "commandLineArgs": "--file=..\\..\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.Timeline\\config.json",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:5000"
+    }
+  }
+}

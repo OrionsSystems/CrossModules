@@ -1,0 +1,41 @@
+﻿@page "/"
+@inherits BaseOrionsComponent
+@using Orions.Systems.CrossModules.Blazor.Components.PropertyGrid;
+
+
+<h5>Property Grid Test Page using Hyper Mission Phase</h5>
+<p>Mission Id is : @MissionId</p>
+<p>Phase Id is : @PhaseId</p>
+
+<PropertyGrid Loader="GetMissionPhaseAsync"  >
+</PropertyGrid>
+
+@code{
+
+    public string MissionId { get; set; } = "e8d88c8a-b82d-4911-9639-3080ef877653";
+
+    public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
+
+    public object Source { get; set; }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    Source = await GetMissionAsync();
+
+    //    StateHasChanged();
+
+    //    await base.OnInitializedAsync();
+    //}
+
+    private async Task<object> GetMissionPhaseAsync()
+    {
+
+        // return VM
+        return await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
+    }
+
+    private async Task<object> GetMissionAsync()
+    {
+        return await DataContext.Instance.GetMissionAsync(MissionId);
+    }
+}
