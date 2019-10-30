@@ -19,11 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{3B8C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.BlazorSample.Open", "Samples\Orions.Systems.CrossModules.BlazorSample\Orions.Systems.CrossModules.BlazorSample.Open.csproj", "{81A65ED3-DC5C-4AA9-A01E-E8BB03AB465A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MissionAnalytics.Legacy.Open", "Orions.Systems.CrossModules.MissionAnalytics.Legacy\Orions.Systems.CrossModules.MissionAnalytics.Legacy.Open.csproj", "{5CF95B45-C4BE-48FF-B461-619388E8EF60}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.MissionAnalytics.Open", "Orions.Systems.CrossModules.MissionAnalytics\Orions.Systems.CrossModules.MissionAnalytics.Open.csproj", "{27629BF2-917A-42E0-83F4-380FEC6D9BF6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Timeline.Legacy.Open", "Orions.Systems.CrossModules.Timeline.Legacy\Orions.Systems.CrossModules.Timeline.Legacy.Open.csproj", "{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{65D18785-E4D5-4D54-8294-797DF3695F56}"
 EndProject
@@ -59,18 +55,10 @@ Global
 		{81A65ED3-DC5C-4AA9-A01E-E8BB03AB465A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81A65ED3-DC5C-4AA9-A01E-E8BB03AB465A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81A65ED3-DC5C-4AA9-A01E-E8BB03AB465A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5CF95B45-C4BE-48FF-B461-619388E8EF60}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{468D9D4E-FCD1-4C6F-92D0-EE40F5952798}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
