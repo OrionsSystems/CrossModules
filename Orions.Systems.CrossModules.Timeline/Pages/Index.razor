@@ -302,6 +302,8 @@ else
 
     public string PlayerUri { get; set; }
 
+    public int ServerStreamingPort { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
@@ -355,6 +357,8 @@ else
 
         await LoadTimeline();
 
+        ServerStreamingPort = await DataContext.Instance.GetServerPortAsync();
+
         await base.OnInitializedAsync();
     }
 
@@ -399,7 +403,7 @@ else
 
         IsPlaying = true;
 
-        PlayerUri = GetDashPlayerUri(tag);
+        PlayerUri = GetHlsPlayerUri(tag);
 
         StateHasChanged();
     }
@@ -433,19 +437,23 @@ else
         };
     }
 
-    private string GetDashPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true)
+    private string GetDashPlayerUri(DynamicHyperTagViewModel tag)
     {
-        if (isHttps)
-            return $"https://{tag.ServerHost}:{tag.ServerPort + 1}/dash/{tag.AssetGuid}/asset.mpd";
-
-        return $"http://{tag.ServerHost}:{tag.ServerPort}/dash/{tag.AssetGuid}/asset.mpd";
+        return $"http://{tag.ServerHost}:{ServerStreamingPort}/dash/{tag.AssetGuid}/asset.mpd";
     }
 
-    private string GetHlsPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true)
+    private string GetSecureDashPlayerUri(DynamicHyperTagViewModel tag)
     {
-        if (isHttps)
-            return $"https://{tag.ServerHost}:{tag.ServerPort + 1}/hls/{tag.AssetGuid}/asset.mpd";
+        return $"https://{tag.ServerHost}:{ServerStreamingPort + 1}/dash/{tag.AssetGuid}/asset.mpd";
+    }
 
-        return $"http://{tag.ServerHost}:{tag.ServerPort}/hls/{tag.AssetGuid}/asset.mpd";
+    private string GetHlsPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"http://{tag.ServerHost}:{ServerStreamingPort}/hls/{tag.AssetGuid}/asset.m3u8";
+    }
+
+    private string GetSecureHlsPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"https://{tag.ServerHost}:{ServerStreamingPort + 1}/hls/{tag.AssetGuid}/asset.m3u8";
     }
 }
