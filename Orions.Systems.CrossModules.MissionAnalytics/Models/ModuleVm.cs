@@ -48,6 +48,37 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			_netStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);
 
 			_request = OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
+			var mIds = _request?.MissionInstanceIds;
+			if (mIds != null && mIds.Any())
+			{
+				var mId = mIds.First();
+
+				if (!string.IsNullOrEmpty(mId))
+				{
+					var misionId = HyperDocumentId.TryParse(mId);
+					if (misionId != null)
+					{
+						_request.MissionIds = new[] { misionId.Value.Id };
+					}
+				}
+			}
+
+			//var mInstIds = _request?.MissionInstanceIds;
+			//if (mInstIds != null && mInstIds.Any())
+			//{
+			//	var mInstId = mInstIds.First();
+
+			//	if (!string.IsNullOrEmpty(mInstId))
+			//	{
+			//		var mId = HyperDocumentId.TryParse(mInstId);
+			//		if (mId != null)
+			//		{
+			//			_request.MissionInstanceIds = new[] { mId.Value.Id };
+			//		}
+			//	}
+			//}
+
 			if (_request == null) _request = GetDefaultRequest();
 
 			FilterVm.TimeRangeOptions = GetTimeRangeOptions();
