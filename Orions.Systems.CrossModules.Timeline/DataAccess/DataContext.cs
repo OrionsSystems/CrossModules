@@ -11,6 +11,8 @@ namespace Orions.Systems.CrossModules.Timeline
 {
 	public partial class DataContext
 	{
+		private static readonly int DefaultServerPort = 8585;
+
 		private NetStore _netStore;
 		private static readonly Lazy<DataContext> _instance = new Lazy<DataContext>();
 
@@ -43,6 +45,29 @@ namespace Orions.Systems.CrossModules.Timeline
 			{
 				Logger.Instance.Error("Cannot establish the specified connection", ex.Message);
 			}
+		}
+
+		public async Task<int> GetServerPortAsync()
+		{
+			if (_netStore == null) throw new ArgumentException(nameof(_netStore));
+
+			var hlsPort = DefaultServerPort;
+
+			var retrieveConfigurationArgs = new RetrieveConfigurationArgs();
+
+			var result = await _netStore.ExecuteAsync(retrieveConfigurationArgs);
+
+			foreach (var item in result)
+			{
+				if (item.ComponentConfigType == typeof(StandardsBasedNetStoreServerConfig))
+				{
+					var config = new StandardsBasedNetStoreServerConfig();
+					JsonHelper.Populate(item.Json, config);
+					if (config.HttpPort.HasValue) hlsPort = config.HttpPort.Value;
+				}
+			}
+
+			return hlsPort;
 		}
 	}
 }

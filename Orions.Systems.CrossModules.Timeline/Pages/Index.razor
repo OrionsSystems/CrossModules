@@ -4,6 +4,7 @@
 @page "/"
 
 @using Orions.Infrastructure.HyperMedia;
+@using Orions.Node.Common;
 
 @if (Timeline == null)
 {
@@ -282,7 +283,7 @@ else
             <WindowAction Name="Close" OnClick="@OnClosePlayer"></WindowAction>
         </WindowActions>
     </TelerikWindow>
-   
+
 }
 
 @code
@@ -301,14 +302,62 @@ else
 
     public string PlayerUri { get; set; }
 
+    public int ServerStreamingPort { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
-        if (vizRequest == null) vizRequest = GetDemoRequest();
+        if (vizRequest != null)
+        {
+            var wInstIds = vizRequest.WorkflowInstanceIds;
+
+            if (wInstIds != null && wInstIds.Any())
+            {
+                var wInstanceId = wInstIds.First();
+
+                if (!string.IsNullOrEmpty(wInstanceId))
+                {
+                    var wid = HyperDocumentId.TryParse(wInstanceId);
+                    if (wid != null)
+                    {
+                        vizRequest.WorkflowInstanceIds = new[] { wid.Value.Id };
+                    }
+                }
+            }
+
+            var mInstIds = vizRequest.MissionInstanceIds;
+            if (mInstIds != null && mInstIds.Any())
+            {
+                var mInstId = mInstIds.First();
+
+                if (!string.IsNullOrEmpty(mInstId))
+                {
+                    var mId = HyperDocumentId.TryParse(mInstId);
+                    if (mId != null)
+                    {
+                        vizRequest.MissionInstanceIds = new[] { mId.Value.Id };
+                    }
+                }
+            }
+
+            var assetIds = vizRequest.AssetIds;
+            if (assetIds != null && assetIds.Any())
+            {
+                var assetId = assetIds.First();
+
+                if (!string.IsNullOrEmpty(assetId))
+                {
+                    var aId = HyperAssetId.TryParse(assetId);
+                    if (aId != null) vizRequest.AssetIds = new[] {aId.Value.CoreIdString };
+                }
+            }
+        }
 
         DataContext.Instance.Request = vizRequest;
 
         await LoadTimeline();
+
+        ServerStreamingPort = await DataContext.Instance.GetServerPortAsync();
 
         await base.OnInitializedAsync();
     }
@@ -354,12 +403,13 @@ else
 
         IsPlaying = true;
 
-        PlayerUri = GetDashPlayerUri(tag);
+        PlayerUri = GetHlsPlayerUri(tag);
 
         StateHasChanged();
     }
 
-    public void OnClosePlayer() {
+    public void OnClosePlayer()
+    {
         IsPlaying = false;
 
         StateHasChanged();
@@ -387,17 +437,23 @@ else
         };
     }
 
-     private string GetDashPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true) {
-        if(isHttps)
-            return $"https://{tag.ServerHost}:{tag.ServerPort+1}/dash/{tag.AssetGuid}/asset.mpd";
-
-        return $"http://{tag.ServerHost}:{tag.ServerPort}/dash/{tag.AssetGuid}/asset.mpd";
+    private string GetDashPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"http://{tag.ServerHost}:{ServerStreamingPort}/dash/{tag.AssetGuid}/asset.mpd";
     }
 
-    private string GetHlsPlayerUri(DynamicHyperTagViewModel tag, bool isHttps = true) {
-        if(isHttps)
-            return $"https://{tag.ServerHost}:{tag.ServerPort+1}/hls/{tag.AssetGuid}/asset.mpd";
+    private string GetSecureDashPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"https://{tag.ServerHost}:{ServerStreamingPort + 1}/dash/{tag.AssetGuid}/asset.mpd";
+    }
 
-        return $"http://{tag.ServerHost}:{tag.ServerPort}/hls/{tag.AssetGuid}/asset.mpd";
+    private string GetHlsPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"http://{tag.ServerHost}:{ServerStreamingPort}/hls/{tag.AssetGuid}/asset.m3u8";
+    }
+
+    private string GetSecureHlsPlayerUri(DynamicHyperTagViewModel tag)
+    {
+        return $"https://{tag.ServerHost}:{ServerStreamingPort + 1}/hls/{tag.AssetGuid}/asset.m3u8";
     }
 }

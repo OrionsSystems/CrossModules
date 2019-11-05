@@ -22,14 +22,15 @@
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.76" />
-    <PackageReference Include="Orions.SDK" Version="2.39.241-alpha" />
+    
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Debug.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
+	  <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj" />
+	  <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
 	</ItemGroup>
+
 
 </Project>
