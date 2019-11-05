@@ -1,14 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AssemblyName>Orions.Systems.CrossModules.Common</AssemblyName>
     <RootNamespace>Orions.Systems.CrossModules.Common</RootNamespace>
   </PropertyGroup>
-
-	<ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Orions.Node" Version="2.40.88-alpha" />
+    <PackageReference Include="Orions.Common" Version="2.40.115-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.40.115-alpha" />
   </ItemGroup>
-
 </Project>
