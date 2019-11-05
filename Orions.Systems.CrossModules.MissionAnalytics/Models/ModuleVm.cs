@@ -49,7 +49,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			_request = OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
-			var mIds = _request?.MissionInstanceIds;
+			var mIds = _request?.MissionIds;
 			if (mIds != null && mIds.Any())
 			{
 				var mId = mIds.First();
@@ -64,20 +64,20 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				}
 			}
 
-			//var mInstIds = _request?.MissionInstanceIds;
-			//if (mInstIds != null && mInstIds.Any())
-			//{
-			//	var mInstId = mInstIds.First();
+			var mInstIds = _request?.MissionInstanceIds;
+			if (mInstIds != null && mInstIds.Any())
+			{
+				var mInstId = mInstIds.First();
 
-			//	if (!string.IsNullOrEmpty(mInstId))
-			//	{
-			//		var mId = HyperDocumentId.TryParse(mInstId);
-			//		if (mId != null)
-			//		{
-			//			_request.MissionInstanceIds = new[] { mId.Value.Id };
-			//		}
-			//	}
-			//}
+				if (!string.IsNullOrEmpty(mInstId))
+				{
+					var mId = HyperDocumentId.TryParse(mInstId);
+					if (mId != null)
+					{
+						_request.MissionInstanceIds = new[] { mId.Value.Id };
+					}
+				}
+			}
 
 			if (_request == null) _request = GetDefaultRequest();
 
