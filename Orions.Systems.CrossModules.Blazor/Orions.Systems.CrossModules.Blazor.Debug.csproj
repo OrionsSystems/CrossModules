@@ -202,7 +202,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
-    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Cloud.Common\Orions.Cloud.Common.NetStandard.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
   </ItemGroup>
