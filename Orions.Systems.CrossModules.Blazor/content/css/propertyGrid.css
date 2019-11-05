@@ -10,3 +10,12 @@
 .wanring {
     background-color: #eadc98;
 }
+
+.pgrid-row {
+    border: solid 1px rgba(167, 165, 165, 0.39);
+    padding: 3px 7px;
+}
+
+.pgrid-data>.input[type="text"] {
+    width: 100%;
+}

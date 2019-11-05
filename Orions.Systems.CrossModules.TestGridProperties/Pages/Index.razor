@@ -7,7 +7,7 @@
 <p>Mission Id is : @MissionId</p>
 <p>Phase Id is : @PhaseId</p>
 
-<PropertyGrid Loader="GetMissionPhaseAsync"  >
+<PropertyGrid Loader="LoadVM">
 </PropertyGrid>
 
 @code{
@@ -16,21 +16,24 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
-    public object Source { get; set; }
-
     //protected override async Task OnInitializedAsync()
     //{
-    //    Source = await GetMissionAsync();
-
-    //    StateHasChanged();
 
     //    await base.OnInitializedAsync();
     //}
 
+    private async Task<PropertyGridVm> LoadVM() {
+
+        var vm = new PropertyGridVm();
+        vm.HyperStore = DataContext.Instance.NetStore;
+        //vm.Source = await GetMissionPhaseAsync();
+        vm.Source = await GetMissionAsync();
+
+        return vm;
+    }
+
     private async Task<object> GetMissionPhaseAsync()
     {
-
-        // return VM
         return await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
     }
 

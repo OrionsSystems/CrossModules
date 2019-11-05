@@ -3,7 +3,7 @@ using Orions.SDK;
 
 namespace Orions.Systems.CrossModules.Blazor.Components.PropertyGrid
 {
-	public class PropertyGridAdvancedItemVm : BaseVm
+	public class PropertyGridItemVm : BlazorVm
 	{
 		public PropertyGridUtility Utility { get; set; }
 
@@ -11,7 +11,7 @@ namespace Orions.Systems.CrossModules.Blazor.Components.PropertyGrid
 
 		public DefaultCommand CustomExpandCommand { get; private set; } = new DefaultCommand();
 
-		public PropertyGridAdvancedItemVm()
+		public PropertyGridItemVm()
 		{
 			//CustomExpandCommand.Owner = this;
 		}

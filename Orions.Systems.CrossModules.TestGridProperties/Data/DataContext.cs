@@ -2,7 +2,6 @@
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,6 +16,8 @@ namespace Orions.Systems.CrossModules.TestGridProperties.Data
 		protected string ServerUri { get; private set; }
 
 		public static DataContext Instance => _instance.Value;
+
+		public NetStore NetStore { get { return _netStore; } }
 
 		public async Task InitStoreAsync(HyperConnectionSettings connection)
 		{

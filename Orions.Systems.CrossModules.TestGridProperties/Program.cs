@@ -11,6 +11,8 @@ namespace Orions.Systems.CrossModules.TestGridProperties
 
 		public static CrossModuleInstanceHost CrossModuleInstanceHost => _helper?.CrossModuleInstanceHost;
 
+		public static HyperConnectionSettings HyperConnectionSettings => _helper?.AppliedConfig?.NodeConnections.FirstOrDefault();
+
 		public static void Main(string[] args)
 		{
 			_helper = new AppHostHelper<ModuleStartup>();
