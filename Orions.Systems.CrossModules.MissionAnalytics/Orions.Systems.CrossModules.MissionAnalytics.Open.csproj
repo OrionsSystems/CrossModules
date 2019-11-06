@@ -19,9 +19,9 @@
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" Version="2.0.76" />
-    <PackageReference Include="Orions.Common" Version="2.40.115-alpha" />
-    <PackageReference Include="Orions.Node" Version="2.40.115-alpha" />
-    <PackageReference Include="Orions.Node.Common" Version="2.40.115-alpha" />
+    <PackageReference Include="Orions.Common" Version="2.40.183-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.40.183-alpha" />
+    <PackageReference Include="Orions.Node.Common" Version="2.40.183-alpha" />
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
   </ItemGroup>
