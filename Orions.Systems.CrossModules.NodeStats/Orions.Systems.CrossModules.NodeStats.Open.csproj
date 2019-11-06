@@ -1,24 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <LangVersion>7.3</LangVersion>
     <AssemblyName>Orions.Systems.CrossModules.NodeStats</AssemblyName>
     <RootNamespace>Orions.Systems.CrossModules.NodeStats</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="BlazorStrap" Version="1.0.105" />
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
     <PackageReference Include="MatBlazor" Version="1.9.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
-    <PackageReference Include="Orions.Node" Version="2.40.88-alpha" />
+    <PackageReference Include="Orions.Common" Version="2.40.115-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.40.115-alpha" />
+    <PackageReference Include="Orions.Node.Common" Version="2.40.115-alpha" />
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
   </ItemGroup>
-
 </Project>
