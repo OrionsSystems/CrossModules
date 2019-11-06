@@ -109,6 +109,7 @@ namespace Orions.CrossModules.Data
 			PopulateTagTreemapData();
 		}
 
+
 		
 		private void PopulateLabelsStatistics()
 		{

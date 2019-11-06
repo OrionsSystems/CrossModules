@@ -6,25 +6,52 @@
 @using Orions.Common
 
 @inherits BaseBlazorComponent
+@inject Microsoft.JSInterop.IJSRuntime JS
 
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
+<h1>Orions Cross Modules Sample & Diagnostics</h1>
 
 <br />
 
+<text>Forward Parameters URL (forward all parameters passed to this Cross Module to another one, on the given address)</text>
+<br />
+
+<textarea @bind="@ForwardURL" style="width:800px;">@ForwardURL</textarea>
+<br />
+
+<button class="btn btn-primary" @onclick="@OnForward">Forward</button>
+
+<br />
+<br />
+
 <textarea readonly="readonly" style="width:1400px;height:1800px">@PrintText</textarea>
+
 
 @code
 {
    [Parameter]
    public string PrintText { get; set; }
 
+   [Parameter]
+   public string ForwardURL { get; set; } = "http://localhost:5000";
+
+   CrossModuleVisualizationRequest VizRequest { get; set; }
+
+   protected void OnForward()
+   {
+      var stringResult = GetQueryParameterString("request");
+
+      string requestUrl = ForwardURL + "/?request=" + System.Web.HttpUtility.UrlEncode(stringResult);
+
+      var t = NavigateToUrlAsync(requestUrl, true);
+   }
+
    protected override Task OnInitializedAsync()
    {
       var sb = new System.Text.StringBuilder();
 
+
       var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+      VizRequest = vizRequest;
 
       sb.AppendLine("---- REQUEST RAW ---->>");
       sb.AppendLine("");

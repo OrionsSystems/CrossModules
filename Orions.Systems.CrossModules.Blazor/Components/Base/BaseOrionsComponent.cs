@@ -44,6 +44,18 @@ namespace Orions.Systems.CrossModules.Blazor
 		{
 		}
 
+		protected async Task NavigateToUrlAsync(string url, bool openInNewTab)
+		{
+			if (openInNewTab)
+			{
+				await JsInterop.InvokeAsync<object>("open", url, "_blank");
+			}
+			else
+			{
+				this.UriHelper.NavigateTo(url);
+			}
+		}
+
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
 			if (firstRender)
