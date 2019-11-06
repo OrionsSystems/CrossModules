@@ -307,50 +307,12 @@ else
     protected override async Task OnInitializedAsync()
     {
         var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+
         if (vizRequest != null)
         {
-            var wInstIds = vizRequest.WorkflowInstanceIds;
-
-            if (wInstIds != null && wInstIds.Any())
-            {
-                var wInstanceId = wInstIds.First();
-
-                if (!string.IsNullOrEmpty(wInstanceId))
-                {
-                    var wid = HyperDocumentId.TryParse(wInstanceId);
-                    if (wid != null)
-                    {
-                        vizRequest.WorkflowInstanceIds = new[] { wid.Value.Id };
-                    }
-                }
-            }
-
-            var mInstIds = vizRequest.MissionInstanceIds;
-            if (mInstIds != null && mInstIds.Any())
-            {
-                var mInstId = mInstIds.First();
-
-                if (!string.IsNullOrEmpty(mInstId))
-                {
-                    var mId = HyperDocumentId.TryParse(mInstId);
-                    if (mId != null)
-                    {
-                        vizRequest.MissionInstanceIds = new[] { mId.Value.Id };
-                    }
-                }
-            }
-
-            var assetIds = vizRequest.AssetIds;
-            if (assetIds != null && assetIds.Any())
-            {
-                var assetId = assetIds.First();
-
-                if (!string.IsNullOrEmpty(assetId))
-                {
-                    var aId = HyperAssetId.TryParse(assetId);
-                    if (aId != null) vizRequest.AssetIds = new[] {aId.Value.CoreIdString };
-                }
-            }
+            vizRequest.WorkflowInstanceIds = vizRequest.WorkflowInstanceDocIds?.Select(t => t.Id).ToArray();
+            vizRequest.MissionInstanceIds = vizRequest.MissionInstanceDocIds?.Select(t => t.Id).ToArray();
+            vizRequest.AssetIds = vizRequest.HyperAssetIds?.Select(t => t.CoreIdString).ToArray();
         }
 
         DataContext.Instance.Request = vizRequest;

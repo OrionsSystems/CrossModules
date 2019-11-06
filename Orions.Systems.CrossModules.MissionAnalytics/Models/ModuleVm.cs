@@ -49,41 +49,12 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			_request = OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
-			var mIds = _request?.MissionIds;
-			if (mIds != null && mIds.Any())
-			{
-				var mId = mIds.First();
-
-				if (!string.IsNullOrEmpty(mId))
-				{
-					var misionId = HyperDocumentId.TryParse(mId);
-					if (misionId != null)
-					{
-						_request.MissionIds = new[] { misionId.Value.Id };
-					}
-				}
-			}
-
-			var mInstIds = _request?.MissionInstanceIds;
-			if (mInstIds != null && mInstIds.Any())
-			{
-				var mInstId = mInstIds.First();
-
-				if (!string.IsNullOrEmpty(mInstId))
-				{
-					var mId = HyperDocumentId.TryParse(mInstId);
-					if (mId != null)
-					{
-						_request.MissionInstanceIds = new[] { mId.Value.Id };
-					}
-				}
-			}
-
-			if (_request == null) _request = GetDefaultRequest();
+			if (_request != null) 
+				_request.MissionIds = _request.MissionDocIds?.Select(t => t.Id).ToArray();
 
 			FilterVm.TimeRangeOptions = GetTimeRangeOptions();
 			FilterVm.MissionInstanceOptions = await GetMissionInstanceOptionsAsync();
-			FilterVm.SelectedMissionInstance = _request.MissionInstanceId;
+			FilterVm.SelectedMissionInstance = _request?.MissionInstanceDocIds?.FirstOrDefault().Id ?? "0";
 		}
 
 		public async Task LoadDataAsync()
@@ -118,6 +89,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				new Option { Text = "All Instances", Value = "0" },
 				new Option { Text = "Active Instances", Value = "1"}
 			};
+
+			if(_request == null || string.IsNullOrWhiteSpace(_request.MissionId)) return options;
 
 			var args = new FindHyperDocumentsArgs(true);
 			args.SetDocumentType(typeof(HyperMissionInstance));
@@ -172,14 +145,14 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 			return text;
 		}
 
-		private CrossModuleVisualizationRequest GetDefaultRequest()
-		{
-			return new CrossModuleVisualizationRequest
-			{
-				MissionIds = new[] { "e8d88c8a-b82d-4911-9539-3080ef877653" },
-				MissionInstanceIds = new[] { "0" }
-			};
-		}
+		//private CrossModuleVisualizationRequest GetDefaultRequest()
+		//{
+		//	return new CrossModuleVisualizationRequest
+		//	{
+		//		MissionIds = new[] { "e8d88c8a-b82d-4911-9539-3080ef877653" },
+		//		MissionInstanceIds = new[] { "0" }
+		//	};
+		//}
 
 		private async Task<ContentStatsVm> GetStatsVm()
 		{
@@ -344,6 +317,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 		private async Task<string[]> GetWorkflowInstanceIdsAsync(
 			bool activeOnly)
 		{
+			if (_request == null || string.IsNullOrWhiteSpace(_request.MissionId)) return new string[] { };
+
 			var args = new FindHyperDocumentsArgs(true);
 			args.SetDocumentType(typeof(HyperWorkflowInstance));
 			args.DescriptorConditions.AddCondition("MissionId", _request.MissionId);
