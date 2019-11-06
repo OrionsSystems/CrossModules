@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	/// <summary>
 	/// Introduction to Blazor components

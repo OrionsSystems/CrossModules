@@ -27,7 +27,7 @@
     <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
   </ItemGroup>
 </Project>

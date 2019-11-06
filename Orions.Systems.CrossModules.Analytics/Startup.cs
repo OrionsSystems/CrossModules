@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-using Orions.Systems.CrossModules.Blazor;
+using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Common;
 
 namespace Orions.Systems.CrossModules.Analytics

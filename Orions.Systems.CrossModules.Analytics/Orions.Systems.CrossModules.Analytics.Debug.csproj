@@ -22,8 +22,8 @@
     <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Debug.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Debug.csproj" />
   </ItemGroup>
 
 </Project>

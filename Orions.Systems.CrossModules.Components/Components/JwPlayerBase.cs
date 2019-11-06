@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
 
-namespace Orions.Systems.CrossModules.Blazor.Components
+namespace Orions.Systems.CrossModules.Components
 {
 	public class JwPlayerBase : BaseOrionsComponent
 	{

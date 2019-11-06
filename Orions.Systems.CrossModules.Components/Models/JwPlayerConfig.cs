@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	public class JwPlayerConfig
 	{

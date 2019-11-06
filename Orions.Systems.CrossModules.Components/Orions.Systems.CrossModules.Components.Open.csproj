@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <AssemblyName>Orions.Systems.CrossModules.Blazor</AssemblyName>
-    <RootNamespace>Orions.Systems.CrossModules.Blazor</RootNamespace>
+    <AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />

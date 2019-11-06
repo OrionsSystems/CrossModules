@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
-using Orions.Systems.CrossModules.Blazor;
+using Orions.Systems.CrossModules.Components;
 
 namespace Orions.Systems.CrossModules.BlazorSample
 {

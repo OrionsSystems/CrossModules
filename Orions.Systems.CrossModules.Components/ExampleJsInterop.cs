@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	public class ExampleJsInterop
 	{

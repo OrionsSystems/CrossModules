@@ -19,7 +19,7 @@
     <PackageReference Include="Telerik.UI.for.Blazor" Version="2.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
   </ItemGroup>
 </Project>

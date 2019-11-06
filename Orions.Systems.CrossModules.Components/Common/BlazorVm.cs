@@ -1,6 +1,6 @@
 ﻿using Orions.Common;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class BlazorVm : BaseVm
 	{

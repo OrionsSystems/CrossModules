@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29009.5
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Common.Open", "Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj", "{8E270352-76C5-4A7A-AFFB-3DB223214E12}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Blazor.Open", "Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Open.csproj", "{439D5E92-9216-4D10-82C4-93157E2DFCB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Components.Open", "Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj", "{439D5E92-9216-4D10-82C4-93157E2DFCB4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Analytics.Open", "Orions.Systems.CrossModules.Analytics\Orions.Systems.CrossModules.Analytics.Open.csproj", "{2DD6F3F1-E9AF-4FFB-8A52-AB80BE08DB21}"
 EndProject

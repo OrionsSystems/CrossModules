@@ -1,6 +1,6 @@
 ﻿using System;
 using Orions.Common;
-using Orions.Systems.CrossModules.Blazor;
+using Orions.Systems.CrossModules.Components;
 
 namespace Orions.Systems.CrossModules.MissionAnalytics
 {
