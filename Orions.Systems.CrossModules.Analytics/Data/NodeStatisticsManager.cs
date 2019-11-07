@@ -6,7 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Orions.Common;
 using Orions.Infrastructure.HyperSemantic;
-using Orions.Systems.CrossModules.Blazor;
+using Orions.Systems.CrossModules.Components;
+using Orions.Infrastructure.Common;
 
 namespace Orions.CrossModules.Data
 {
@@ -108,6 +109,7 @@ namespace Orions.CrossModules.Data
 
 			PopulateTagTreemapData();
 		}
+
 
 		
 		private void PopulateLabelsStatistics()

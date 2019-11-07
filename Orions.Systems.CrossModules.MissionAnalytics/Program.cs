@@ -1,4 +1,5 @@
-﻿using Orions.Infrastructure.HyperMedia;
+﻿using Orions.Infrastructure.Common;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.Common;
 using System.Linq;
 

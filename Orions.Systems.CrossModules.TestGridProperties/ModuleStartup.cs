@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Orions.Systems.CrossModules.Blazor;
 using Orions.Systems.CrossModules.Common;
+using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.TestGridProperties.Data;
 
 namespace Orions.Systems.CrossModules.TestGridProperties

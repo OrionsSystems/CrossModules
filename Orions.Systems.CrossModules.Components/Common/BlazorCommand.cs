@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Orions.Common;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	/// <summary>
 	/// Provides conversion mechanism between the Blazor event system and the DefaultCommand pattern.

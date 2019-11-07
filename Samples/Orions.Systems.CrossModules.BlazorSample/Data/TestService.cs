@@ -9,6 +9,7 @@ namespace Orions.Systems.CrossModules.BlazorSample.Data
 	{
 		public TestService()
 		{
+			
 		}
 
 		public string Get()

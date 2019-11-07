@@ -1,4 +1,4 @@
-﻿namespace Orions.Systems.CrossModules.Blazor
+﻿namespace Orions.Systems.CrossModules.Components
 {
 	public class MediaPlayerData
 	{

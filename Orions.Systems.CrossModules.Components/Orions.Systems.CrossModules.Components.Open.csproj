@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RazorLangVersion>3.0</RazorLangVersion>
-    <AssemblyName>Orions.Systems.CrossModules.Blazor</AssemblyName>
-    <RootNamespace>Orions.Systems.CrossModules.Blazor</RootNamespace>
+    <AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
@@ -193,9 +193,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Orions.Common" Version="2.40.115-alpha" />
-    <PackageReference Include="Orions.Node" Version="2.40.115-alpha" />
-    <PackageReference Include="Orions.Node.Common" Version="2.40.115-alpha" />
+    <PackageReference Include="Orions.Common" Version="2.40.183-alpha" />
+    <PackageReference Include="Orions.Node" Version="2.40.183-alpha" />
+    <PackageReference Include="Orions.Node.Common" Version="2.40.183-alpha" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
   </ItemGroup>
 </Project>

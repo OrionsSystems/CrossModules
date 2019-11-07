@@ -35,6 +35,7 @@
     <ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Blazor\Orions.Systems.CrossModules.Blazor.Debug.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Debug.csproj" />
   </ItemGroup>
 
 </Project>

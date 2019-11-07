@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.JSInterop;
 
-namespace Orions.Systems.CrossModules.Blazor
+namespace Orions.Systems.CrossModules.Components
 {
 	/// <summary>
 	/// Introduction to Blazor components
@@ -42,6 +42,18 @@ namespace Orions.Systems.CrossModules.Blazor
 
 		public BaseOrionsComponent()
 		{
+		}
+
+		protected async Task NavigateToUrlAsync(string url, bool openInNewTab)
+		{
+			if (openInNewTab)
+			{
+				await JsInterop.InvokeAsync<object>("open", url, "_blank");
+			}
+			else
+			{
+				this.UriHelper.NavigateTo(url);
+			}
 		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
