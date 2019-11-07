@@ -28,7 +28,3 @@
 
 * Orions.Systems.CrossModules.MissionAnalytics.Legacy - ASP version of mission analytics
 * Orions.Systems.CrossModules.Timeline.Legacy - asp version of timeline
-
-### Broken - fix or Joe will delete it
-
-* Orions.Systems.CrossModules.NodeLite - ?
