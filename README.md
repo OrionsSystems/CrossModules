@@ -17,7 +17,6 @@
 * Orions.Systems.CrossModules.NodeStats - Dashboard for node status.
 * Orions.Systems.CrossModules.Timeline - Timeline of a mission
 
-
 ### Need More Info
 
 * Samples -> Orions.Systems.CrossModules.WebAppSample - ?
