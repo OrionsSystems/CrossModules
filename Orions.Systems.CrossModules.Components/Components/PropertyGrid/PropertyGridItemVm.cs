@@ -9,10 +9,13 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ViewModelProperty<PropertyGridItemUtilityData> DataProp { get; private set; } = new ViewModelProperty<PropertyGridItemUtilityData>();
 
-		public DefaultCommand CustomExpandCommand { get; private set; } = new DefaultCommand();
+		public BlazorCommand CustomExpandCommand { get; private set; } = new BlazorCommand();
+
+		public BlazorCommand OpenImageCommand { get; private set; } = new BlazorCommand();
 
 		public PropertyGridItemVm()
 		{
+			OpenImageCommand.Delegate = OnOpenImage;
 			//CustomExpandCommand.Owner = this;
 		}
 
@@ -21,6 +24,11 @@ namespace Orions.Systems.CrossModules.Components
 		public override string ToString()
 		{
 			return DataProp?.Value.ToString();
+		}
+
+		private void OnOpenImage(DefaultCommand command, object parameter)
+		{
+			
 		}
 	}
 }
