@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using Orions.Common;
-using Orions.Infrastructure.HyperMedia;
+using Orions.Infrastructure.Common;
 
 namespace Orions.Systems.CrossModules.NodeStats
 {
