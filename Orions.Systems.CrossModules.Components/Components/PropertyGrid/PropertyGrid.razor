@@ -1,11 +1,10 @@
-﻿@inherits BaseBlazorComponent
-
+﻿@inherits BaseBlazorComponent<PropertyGridVm>
 @using Orions.SDK;
+@using Orions.Node.Common;
 
-
-@if (VModel.Items.Any())
+@if (DataContext.Items.Any())
 {
-    <div class="container">
+    <div class="prop-grid-container">
         <div class="row mb-2">
             <div class="col-md-12 prop-grid-header">
                 @*<div class="prop-grid-icon">
@@ -14,16 +13,16 @@
                             <path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
                         </svg>
                     </div>*@
-                @if (VModel.BackButtonVisibleProp.Value)
+                @if (DataContext.BackButtonVisibleProp.Value)
                 {
-                    <button class="btn btn-outline-dark nav-button" onclick="@VModel.HomeCommand">Home</button>
-                    <button class="btn btn-outline-dark nav-button" onclick="@VModel.BackCommand">Back</button>
+                    <button class="btn btn-outline-dark nav-button" onclick="@DataContext.HomeCommand">Home</button>
+                    <button class="btn btn-outline-dark nav-button" onclick="@DataContext.BackCommand">Back</button>
                 }
-                <h5 class="prop-grid-header-title">@VModel.TrailProp.Value</h5>
+                <h5 class="prop-grid-header-title">@DataContext.TrailProp.Value</h5>
             </div>
         </div>
 
-        @foreach (var data in VModel.Items)
+        @foreach (var data in DataContext.Items)
         {
             <div class="row pgrid-row">
                 <div class="col-md-4 @GetVisualiaseClass(data)">
@@ -53,8 +52,7 @@
                             break;
                         case PropertyGridItemUtilityData.EditableModes.CheckBox:
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="exampleCheck1" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
-                                <label class="form-check-label" for="exampleCheck1">@data.DataProp.Value.Name</label>
+                                <input type="checkbox" class="form-check-input position-static" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
                             </div>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.TextBox:
@@ -76,7 +74,7 @@
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Custom:
                             var btn_command = data.CustomExpandCommand;
-                            <button class="btn btn-outline-dark">@data.DataProp.Value.ValueDisplay</button>
+                            <button @onclick="btn_command" class="btn btn-outline-dark prop-grid-custom">@data.DataProp.Value.ValueDisplay</button>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.BrowseButton:
                             <button class="btn btn-outline-primary">Browse</button>
@@ -106,11 +104,11 @@
 
         <div class="row mt-2">
             <div class="col-md-12 k-right">
-                @if (VModel.OKVisible)
+                @if (DataContext.OKVisible)
                 {
                     <button class="btn btn-outline-primary float-right ml-1">OK</button>
                 }
-                @if (VModel.CancelVisible)
+                @if (DataContext.CancelVisible)
                 {
                     <button class="btn btn-outline-dark float-right">Cancel</button>
                 }
@@ -121,17 +119,31 @@
 
 @code {
 
-    public PropertyGridVm VModel { get; set; } = new PropertyGridVm();
+    //public PropertyGridVm VModel { get; set; } = new PropertyGridVm();
 
-    [Parameter] public Func<Task<PropertyGridVm>> Loader { get; set; }
+    //[Parameter] public Func<Task<object>> Loader { get; set; }
+
+    //[Parameter] public Func<Task<object>> Source { get; set; }
+
+    //[Parameter]
+    //public EventCallback<object> SettingSource { get; set; }
 
     [Parameter]
-    public EventCallback<object> SettingSource { get; set; }
+    public object Source { get { return DataContext.Source;  } set { DataContext.Source = value; } }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        VModel = await Loader();
-    }
+    [Parameter]
+    public IHyperArgsSink HyperStore { get { return DataContext.HyperStore;  } set { DataContext.HyperStore = value; } }
+
+    [Parameter]
+    public bool OKVisible { get { return DataContext.OKVisible; } set { DataContext.OKVisible = value; } }
+
+    [Parameter]
+    public bool CancelVisible { get { return DataContext.CancelVisible; } set { DataContext.CancelVisible = value; } }
+
+    //protected override async Task OnParametersSetAsync()
+    //{
+    //    //VModel = await Loader();
+    //}
 
     protected override async Task OnInitializedAsync()
     {

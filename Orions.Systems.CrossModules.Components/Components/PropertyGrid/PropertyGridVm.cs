@@ -46,14 +46,14 @@ namespace Orions.Systems.CrossModules.Components
 			set
 			{
 				SettingSource?.Invoke(this, value);
-				var t = this.Utility.SetSourceAsync(value, true);
+				var t = Utility.SetSourceAsync(value, true);
 			}
 		}
 
 		public string Name
 		{
-			get => this.Utility?.Name ?? "";
-			set => this.Utility.Name = value;
+			get => Utility?.Name ?? "";
+			set => Utility.Name = value;
 		}
 
 		public event Action<PropertyGridVm, object> SettingSource;
@@ -102,11 +102,13 @@ namespace Orions.Systems.CrossModules.Components
 		private async Task OnHome(DefaultCommand command, object parameter)
 		{
 			await Utility.MoveBack(true);
+			//RaiseNotify("MoveBack");
 		}
 
 		private async Task OnBack(DefaultCommand command, object parameter)
 		{
 			await Utility.MoveBack();
+			//RaiseNotify("MoveBack");
 		}
 		private async Task OnCreatorCreate(DefaultCommand command, object parameter)
 		{
@@ -121,8 +123,10 @@ namespace Orions.Systems.CrossModules.Components
 		private async Task OnCustomExpand_Aggregate(DefaultCommand command, object parameter)
 		{
 			var itemVm = parameter as PropertyGridItemVm;
-			if (itemVm != null)
+			if (itemVm != null) {
 				await Utility.SetMainDataAdvanced(itemVm.DataProp.Value, true);
+				//RaiseNotify(nameof(itemVm.DataProp.Value));
+			}
 		}
 
 		private PropertyGridItemVm transformDelegate_Items(AdvancedObservableCollection<PropertyGridItemVm> collection, object entry)

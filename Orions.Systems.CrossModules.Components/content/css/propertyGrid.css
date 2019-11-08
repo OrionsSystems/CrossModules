@@ -3,6 +3,10 @@
     used from a library project/package.
 */
 
+.prop-grid-container {
+
+}
+
 .danger {
     background-color: #e89393;
 }
@@ -22,6 +26,10 @@
 
 .prop-grid-header-display {
     line-height: 40px;
+}
+
+.prop-grid-custom {
+    width: 100%;
 }
 
 .prop-grid-icon svg {

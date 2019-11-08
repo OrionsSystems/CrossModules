@@ -3,10 +3,17 @@
 @using Orions.Systems.CrossModules.Components.Components.PropertyGrid;
 
 <h5>Property Grid Test Page using Hyper Mission Phase</h5>
+
 <p>Mission Id is : @MissionId</p>
 <p>Phase Id is : @PhaseId</p>
 
-<PropertyGrid Loader="LoadVM">
+<hr />
+
+<PropertyGrid 
+            Source="Data" 
+            HyperStore="DataContext.Instance.NetStore" 
+            OKVisible="true"
+            CancelVisible="true">
 </PropertyGrid>
 
 @code{
@@ -15,16 +22,15 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
-    private async Task<PropertyGridVm> LoadVM() {
+    public object Data { get; set; }
 
-        var propGrid = new PropertyGridVm();
-        propGrid.OKVisible = true;
-        propGrid.CancelVisible = true;
-        propGrid.HyperStore = DataContext.Instance.NetStore;
-        propGrid.Source = await GetMissionPhaseAsync();
-        //propGrid.Source = await GetMissionAsync();
+    protected override async Task OnInitializedAsync()
+    {
+        Data = await GetMissionPhaseAsync();
 
-        return propGrid;
+        StateHasChanged();
+
+        await base.OnInitializedAsync();
     }
 
     private async Task<object> GetMissionPhaseAsync()
