@@ -2,7 +2,6 @@
 @inherits BaseOrionsComponent
 @using Orions.Systems.CrossModules.Components.Components.PropertyGrid;
 
-
 <h5>Property Grid Test Page using Hyper Mission Phase</h5>
 <p>Mission Id is : @MissionId</p>
 <p>Phase Id is : @PhaseId</p>
@@ -16,20 +15,14 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
-    //protected override async Task OnInitializedAsync()
-    //{
-
-    //    await base.OnInitializedAsync();
-    //}
-
     private async Task<PropertyGridVm> LoadVM() {
 
-        var vm = new PropertyGridVm();
-        vm.HyperStore = DataContext.Instance.NetStore;
-        //vm.Source = await GetMissionPhaseAsync();
-        vm.Source = await GetMissionAsync();
+        var propGrid = new PropertyGridVm();
+        propGrid.HyperStore = DataContext.Instance.NetStore;
+        propGrid.Source = await GetMissionPhaseAsync();
+        //propGrid.Source = await GetMissionAsync();
 
-        return vm;
+        return propGrid;
     }
 
     private async Task<object> GetMissionPhaseAsync()

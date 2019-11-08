@@ -42,6 +42,12 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public string Name
+		{
+			get => this.Utility?.Name ?? "";
+			set => this.Utility.Name = value;
+		}
+
 		public event Action<PropertyGridVm, object> SettingSource;
 
 		public IHyperArgsSink HyperStore

@@ -19,3 +19,18 @@
 .pgrid-data>.input[type="text"] {
     width: 100%;
 }
+
+.prop-grid-header-display {
+    line-height: 40px;
+}
+
+.prop-grid-icon svg {
+    width: 24px;
+    height: 24px;
+    stroke: #69696b;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    fill: none;
+    color: #69696b;
+}

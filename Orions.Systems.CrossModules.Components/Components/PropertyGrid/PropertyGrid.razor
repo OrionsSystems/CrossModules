@@ -6,10 +6,20 @@
 @if (VModel.Items.Any())
 {
     <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <button class="btn nav-button" onclick="@VModel.HomeCommand">Home</button>
-                <button class="btn nav-button" onclick="@VModel.BackCommand">Back</button>
+        <div class="row mb-2">
+            <div class="col-md-12 prop-grid-header">
+                @*<div class="prop-grid-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
+                <title id="homeIconTitle">Home</title>
+                <path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
+            </svg>
+        </div>*@
+                @if (VModel.BackButtonVisibleProp.Value)
+                {
+                    <button class="btn btn-outline-dark nav-button" onclick="@VModel.HomeCommand">Home</button>
+                    <button class="btn btn-outline-dark nav-button" onclick="@VModel.BackCommand">Back</button>
+                }
+                <h5 class="prop-grid-header-title">@VModel.TrailProp.Value</h5>
             </div>
         </div>
 
@@ -17,51 +27,60 @@
         {
             <div class="row pgrid-row">
                 <div class="col-md-4 @GetVisualiaseClass(data)">
-                    <div title="@data.DataProp.Value.TooltipDisplay">
+                    <div class="prop-grid-header-display" title="@data.DataProp.Value.TooltipDisplay">
                         @data.DataProp.Value.HeaderDisplay
+
+                        @if (data.DataProp.Value.ShowHelp)
+                        {
+                            <a href="#" class="prop-grid-help-link">
+                                <div class="prop-grid-icon float-right">
+                                    <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="helpIconTitle">
+                                        <title id="helpIconTitle">@data.DataProp.Value.TooltipDisplay</title>
+                                        <path d="M12 14C12 12 13.576002 11.6652983 14.1186858 11.1239516 14.663127 10.5808518 15 9.82976635 15 9 15 7.34314575 13.6568542 6 12 6 11.1040834 6 10.2998929 6.39272604 9.75018919 7.01541737 9.49601109 7.30334431 9.29624369 7.64043912 9.16697781 8.01061095"></path>
+                                        <line x1="12" y1="17" x2="12" y2="17"></line>
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                </div>
+                            </a>
+                        }
                     </div>
                 </div>
-                <div class="col-md-5 pgrid-data">
+                <div class="col-md-7 pgrid-data">
                     @switch (data.DataProp.Value.EditableMode)
                     {
                         case PropertyGridItemUtilityData.EditableModes.Undefined:
-                            <input type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+                            <input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.CheckBox:
-                            <input type="checkbox" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="exampleCheck1" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+                                <label class="form-check-label" for="exampleCheck1">@data.DataProp.Value.Name</label>
+                            </div>
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.TextBox:
-                            <input type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+                            <input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
                             break;
                         case PropertyGridItemUtilityData.EditableModes.MultiLineTextBox:
-                            <textarea type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs=> { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+                            <textarea type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.Color:
                             @data.DataProp.Value.PrintValue()
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.Dropdown:
-
-                            <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+                            <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
                                 {
                                     <option>@item</option>
                                 }
                             </select>
-                            @data.DataProp.Value.PrintValue()
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.Custom:
-                            @data.DataProp.Value.PrintValue()
+                            var btn_command = data.CustomExpandCommand;
+                            <button class="btn btn-outline-dark">@data.DataProp.Value.ValueDisplay</button>
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.BrowseButton:
-                            <button class="btn btn-primary">Browse</button>
+                            <button class="btn btn-outline-primary">Browse</button>
                             break;
-
                         case PropertyGridItemUtilityData.EditableModes.EditableDropdown:
                             <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
@@ -75,19 +94,28 @@
                     }
 
                 </div>
-                <div class="col-md-3">
-                    <button class="btn">Delete</button>
-                </div>
+                @if (data.DataProp.Value.CanDelete)
+                {
+                    var deleteCmd = data.DataProp.Value.DeleteCommand;
+                    <div class="col-md-1">
+                        <button class="btn btn-outline-dark float-right">Delete</button>
+                    </div>
+                }
             </div>
         }
 
+        <div class="row mt-2">
+            <div class="col-md-12 k-right">
+                <button class="btn btn-outline-primary float-right ml-1">OK</button>
+                <button class="btn btn-outline-dark float-right">Cancel</button>
+            </div>
+        </div>
     </div>
 }
 
 @code {
 
     public PropertyGridVm VModel { get; set; } = new PropertyGridVm();
-
 
     [Parameter] public Func<Task<PropertyGridVm>> Loader { get; set; }
 
@@ -111,17 +139,20 @@
         return "";
     }
 
-    private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue) {
+    private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue)
+    {
         data.Instance = (bool)data.Instance ? false : true;
         Console.WriteLine($"Change bool instance to : {data.Instance}");
     }
 
-    private void TextBoxChange(PropertyGridItemUtilityData data, object value) {
+    private void TextBoxChange(PropertyGridItemUtilityData data, object value)
+    {
         data.Instance = value;
         Console.WriteLine($"Change text instance to : {data.Instance}");
     }
 
-    private void DropdownChange(PropertyGridItemUtilityData data, object value) {
+    private void DropdownChange(PropertyGridItemUtilityData data, object value)
+    {
         data.Instance = value;
         Console.WriteLine($"Change dropdown instance to : {data.Instance}");
     }
