@@ -28,6 +28,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 		public ContentProgressVm ProgressVm { get; set; }
 
+		public HyperMission Mission { get; set; }
+
 		public BlazorCommand LoadCommand { get; set; }
 
 		public ModuleVm()
@@ -50,7 +52,7 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			_request = OwnerComponent?.GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
-			if (_request != null) 
+			if (_request != null)
 				_request.MissionIds = _request.MissionDocIds?.Select(t => t.Id).ToArray();
 
 			FilterVm.TimeRangeOptions = GetTimeRangeOptions();
@@ -65,6 +67,8 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 				StatsVm = await GetStatsVm();
 
 				ProgressVm = await GetProgressVm();
+
+				await LoadHyperMissionAsync();
 			}
 			catch (Exception e)
 			{
@@ -80,6 +84,22 @@ namespace Orions.Systems.CrossModules.MissionAnalytics
 
 			// TODO: Temp hack to force UI refresh. Remove once it's not needed
 			RaiseNotify("test");
+		}
+
+		private async Task LoadHyperMissionAsync()
+		{
+			if (_request == null || string.IsNullOrEmpty(_request.MissionId)) return;
+
+			var retrieveHyperDocumentArgs = new RetrieveHyperDocumentArgs()
+			{
+				DocumentId = HyperDocumentId.Create<HyperMission>(_request.MissionId)
+			};
+
+			var hyperDocument = await _netStore.ExecuteAsync(retrieveHyperDocumentArgs);
+
+			var mission = hyperDocument.GetPayload<HyperMission>();
+
+			if(mission != null) Mission = mission;
 		}
 
 		private async Task<List<Option>> GetMissionInstanceOptionsAsync(

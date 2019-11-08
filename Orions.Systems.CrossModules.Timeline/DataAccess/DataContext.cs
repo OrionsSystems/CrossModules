@@ -70,5 +70,21 @@ namespace Orions.Systems.CrossModules.Timeline
 
 			return hlsPort;
 		}
+
+		public async Task<HyperMission> GetHyperMissionAsync()
+		{
+			if (string.IsNullOrEmpty(Request.MissionId)) throw new ArgumentException(nameof(Request.MissionId));
+
+			var retrieveHyperDocumentArgs = new RetrieveHyperDocumentArgs()
+			{
+				DocumentId = HyperDocumentId.Create<HyperMission>(Request.MissionId)
+			};
+
+			var hyperDocument = await _netStore.ExecuteAsync(retrieveHyperDocumentArgs);
+
+			var mission = hyperDocument.GetPayload<HyperMission>();
+
+			return mission;
+		}
 	}
 }
