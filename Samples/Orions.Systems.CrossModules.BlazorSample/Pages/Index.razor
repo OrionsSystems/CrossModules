@@ -25,6 +25,7 @@
 
 <textarea readonly="readonly" style="width:1400px;height:1800px">@PrintText</textarea>
 
+<ComponentTest @ref="myComponent" ></ComponentTest>
 
 @code
 {
@@ -35,6 +36,8 @@
    public string ForwardURL { get; set; } = "http://localhost:5000";
 
    CrossModuleVisualizationRequest VizRequest { get; set; }
+
+   public ComponentTest myComponent;
 
    protected void OnForward()
    {
@@ -47,8 +50,9 @@
 
    protected override Task OnInitializedAsync()
    {
-      var sb = new System.Text.StringBuilder();
+      //myComponent.Prop1.Value = "!23";
 
+      var sb = new System.Text.StringBuilder();
 
       var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
       VizRequest = vizRequest;
