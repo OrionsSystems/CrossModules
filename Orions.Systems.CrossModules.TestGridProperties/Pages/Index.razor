@@ -18,6 +18,8 @@
     private async Task<PropertyGridVm> LoadVM() {
 
         var propGrid = new PropertyGridVm();
+        propGrid.OKVisible = true;
+        propGrid.CancelVisible = true;
         propGrid.HyperStore = DataContext.Instance.NetStore;
         propGrid.Source = await GetMissionPhaseAsync();
         //propGrid.Source = await GetMissionAsync();
