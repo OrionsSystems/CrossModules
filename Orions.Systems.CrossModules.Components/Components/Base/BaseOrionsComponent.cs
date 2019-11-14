@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		ElementReference _ref;
 
+		private string _class;
+		private string _style;
+
 		/// <summary>
 		/// Returned ElementRef reference for DOM element.
 		/// </summary>
@@ -32,6 +36,36 @@ namespace Orions.Systems.CrossModules.Components
 
 		[Parameter]
 		public ForwardRef RefBack { get; set; }
+
+		[Parameter]
+		public string Id { get; set; } = IdGeneratorHelper.Generate("orions_id_");
+
+		[Parameter(CaptureUnmatchedValues = true)]
+		public Dictionary<string, object> Attributes { get; set; }
+
+		/// <summary>
+		/// Specifies one or more classnames for an DOM element.
+		/// </summary>
+		[Parameter]
+		public string Class
+		{
+			get => _class;
+			set { _class = value; }
+		}
+
+		/// <summary>
+		/// Specifies an inline style for an DOM element.
+		/// </summary>
+		[Parameter]
+		public string Style
+		{
+			get => _style;
+			set
+			{
+				_style = value;
+				this.StateHasChanged();
+			}
+		}
 
 		[Inject]
 		protected NavigationManager UriHelper { get; set; }
@@ -101,6 +135,22 @@ namespace Orions.Systems.CrossModules.Components
 			return objectType;
 		}
 
+		protected async Task<T> JsInvokeAsync<T>(string code, params object[] args)
+		{
+			try
+			{
+				return await JsInterop.InvokeAsync<T>(code, args);
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine(e);
+				throw;
+			}
+
+
+			return default(T);
+		}
+
 		#region JS interoperability
 		/// <summary>
 		/// Hack to fix https://github.com/aspnet/AspNetCore/issues/11159
@@ -133,6 +183,11 @@ namespace Orions.Systems.CrossModules.Components
 					value.Dispose();
 				}
 			}
+		}
+
+		protected virtual string GenerateStyle()
+		{
+			return Style;
 		}
 
 		#endregion
