@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 
 using Orions.Common;
 using Orions.Infrastructure.Common;
-using Orions.Infrastructure.HyperMedia;
 
 namespace Orions.Systems.CrossModules.NodeStats
 {

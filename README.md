@@ -23,7 +23,6 @@
 * Samples -> Orions.Systems.CrossModules.TestApp - ?
 * Orions.Systems.CrossModules.MetadataReview - ?
 
-
 ### Legacy - will be removed soon
 
 * Orions.Systems.CrossModules.MissionAnalytics.Legacy - ASP version of mission analytics

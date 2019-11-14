@@ -1,0 +1,23 @@
+@using Orions.Systems.CrossModules.Components
+@using Orions.Systems.CrossModules.BlazorSample.Data
+
+@inject TestService TestService
+
+@inherits BaseBlazorComponent<ComponentTestVm>
+
+<h1>Counter</h1>
+
+<textarea>@DataContext.BlazorBindProperty.Value</textarea>
+
+
+@code {
+
+   [Parameter]
+   public Orions.Common.ViewModelProperty<string> Prop1 { get; set; } = new Orions.Common.ViewModelProperty<string>();
+
+   protected override async Task OnInitializedAsync()
+   {
+      this.DataContext.BlazorBindProperty.TakesFrom(Prop1);
+   }
+
+}
