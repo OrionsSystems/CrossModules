@@ -53,7 +53,7 @@
                             break;
                         case PropertyGridItemUtilityData.EditableModes.CheckBox:
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input position-static" @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+                                <input type="checkbox" class="form-check-input " @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
                             </div>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.TextBox:
@@ -120,14 +120,7 @@
 
 @code {
 
-    //public PropertyGridVm VModel { get; set; } = new PropertyGridVm();
-
-    //[Parameter] public Func<Task<object>> Loader { get; set; }
-
-    //[Parameter] public Func<Task<object>> Source { get; set; }
-
-    //[Parameter]
-    //public EventCallback<object> SettingSource { get; set; }
+    [Parameter] public Func<Task<object>> Loader { get; set; }
 
     [Parameter]
     public object Source { get { return DataContext.Source; } set { DataContext.Source = value; } }
@@ -141,10 +134,10 @@
     [Parameter]
     public bool CancelVisible { get { return DataContext.CancelVisible; } set { DataContext.CancelVisible = value; } }
 
-    //protected override async Task OnParametersSetAsync()
-    //{
-    //    //VModel = await Loader();
-    //}
+    protected override async Task OnParametersSetAsync()
+    {
+        Source = await Loader();
+    }
 
     protected override async Task OnInitializedAsync()
     {

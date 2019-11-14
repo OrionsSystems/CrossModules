@@ -1,6 +1,5 @@
 ﻿@page "/"
 @inherits BaseOrionsComponent
-@using Orions.Systems.CrossModules.Components.Components.PropertyGrid;
 
 <h5>Property Grid Test Page using Hyper Mission Phase</h5>
 
@@ -10,7 +9,7 @@
 <hr />
 
 <PropertyGrid 
-            Source="Data" 
+            Loader="GetMissionPhaseAsync"
             HyperStore="DataContext.Instance.NetStore" 
             OKVisible="true"
             CancelVisible="true">
@@ -26,9 +25,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Data = await GetMissionPhaseAsync();
-
-        StateHasChanged();
+        //Data = await GetMissionPhaseAsync();
 
         await base.OnInitializedAsync();
     }
