@@ -1,4 +1,5 @@
-﻿@inject Microsoft.JSInterop.IJSRuntime JS
+﻿@namespace Orions.Systems.CrossModules.Components
+@inject Microsoft.JSInterop.IJSRuntime JS
 @using Microsoft.AspNetCore.Components
 @using Microsoft.JSInterop
 
@@ -10,32 +11,32 @@
 @functions
 {
 
-   [Parameter]
-   public MediaPlayerData MediaPlayerData { get; set; }
+    [Parameter]
+    public MediaPlayerData MediaPlayerData { get; set; }
 
-   protected override async Task OnAfterRenderAsync(bool firstRender)
-   {
-      await JS.InvokeAsync<object>("Orions.KendoMediaPlayer.init", MediaPlayerData);
-      await base.OnAfterRenderAsync(firstRender);
-   }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JS.InvokeAsync<object>("Orions.KendoMediaPlayer.init", MediaPlayerData);
+        await base.OnAfterRenderAsync(firstRender);
+    }
 
 
-   [JSInvokable]
-   public static Task OnPlayAsync()
-   {
-      return Task.CompletedTask;
-   }
+    [JSInvokable]
+    public static Task OnPlayAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-   [JSInvokable]
-   public static Task OnPauseAsync()
-   {
-      return Task.CompletedTask;
-   }
+    [JSInvokable]
+    public static Task OnPauseAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-   [JSInvokable]
-   public static Task OnTimeChangeAsync()
-   {
-      return Task.CompletedTask;
-   }
+    [JSInvokable]
+    public static Task OnTimeChangeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
 }

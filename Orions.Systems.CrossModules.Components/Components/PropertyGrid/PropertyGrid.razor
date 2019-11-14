@@ -1,4 +1,5 @@
-﻿@inherits BaseBlazorComponent<PropertyGridVm>
+﻿@namespace Orions.Systems.CrossModules.Components
+@inherits BaseBlazorComponent<PropertyGridVm>
 @using Orions.SDK;
 @using Orions.Node.Common;
 
@@ -129,10 +130,10 @@
     //public EventCallback<object> SettingSource { get; set; }
 
     [Parameter]
-    public object Source { get { return DataContext.Source;  } set { DataContext.Source = value; } }
+    public object Source { get { return DataContext.Source; } set { DataContext.Source = value; } }
 
     [Parameter]
-    public IHyperArgsSink HyperStore { get { return DataContext.HyperStore;  } set { DataContext.HyperStore = value; } }
+    public IHyperArgsSink HyperStore { get { return DataContext.HyperStore; } set { DataContext.HyperStore = value; } }
 
     [Parameter]
     public bool OKVisible { get { return DataContext.OKVisible; } set { DataContext.OKVisible = value; } }
