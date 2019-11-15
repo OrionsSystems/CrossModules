@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.TestGridProperties.Data
+namespace Orions.Systems.CrossModules.Sandbox.Data
 {
 	public class DataContext
 	{

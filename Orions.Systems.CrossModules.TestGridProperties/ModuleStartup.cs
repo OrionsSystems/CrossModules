@@ -9,9 +9,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Orions.Systems.CrossModules.Common;
 using Orions.Systems.CrossModules.Components;
-using Orions.Systems.CrossModules.TestGridProperties.Data;
+using Orions.Systems.CrossModules.Sandbox.Data;
 
-namespace Orions.Systems.CrossModules.TestGridProperties
+namespace Orions.Systems.CrossModules.Sandbox
 {
 	public class ModuleStartup : CrossModuleStartup
 	{

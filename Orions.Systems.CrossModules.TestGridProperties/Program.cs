@@ -2,9 +2,9 @@ using System.Linq;
 using Orions.Infrastructure.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Systems.CrossModules.Common;
-using Orions.Systems.CrossModules.TestGridProperties.Data;
+using Orions.Systems.CrossModules.Sandbox.Data;
 
-namespace Orions.Systems.CrossModules.TestGridProperties
+namespace Orions.Systems.CrossModules.Sandbox
 {
 	public class Program
 	{
