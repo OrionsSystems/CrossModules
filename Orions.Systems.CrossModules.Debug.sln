@@ -41,7 +41,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Services.Contracts.N
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2BA1B2FF-F03A-4C3F-9AFB-487CDF769826}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.TestGridProperties", "Orions.Systems.CrossModules.TestGridProperties\Orions.Systems.CrossModules.TestGridProperties.csproj", "{118D5A3F-A361-44F4-AAA9-F4D981396CF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Sandbox", "Orions.Systems.CrossModules.TestGridProperties\Orions.Systems.CrossModules.Sandbox.csproj", "{118D5A3F-A361-44F4-AAA9-F4D981396CF2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

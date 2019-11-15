@@ -7,14 +7,14 @@
     <Version>2.39</Version>
     <Authors>Orionswave LLC</Authors>
     <Company>Orionswave LLC</Company>
-    <Product>Orions.Systems.CrossModules.TestGridProperties</Product>
+    <Product>Orions.Systems.CrossModules.Sandbox</Product>
     <Description />
     <Copyright>Orionswave LLC 2019</Copyright>
     <AssemblyVersion>2.39</AssemblyVersion>
     <FileVersion>2.39</FileVersion>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
-    <AssemblyName>Orions.Systems.CrossModules.TestGridProperties</AssemblyName>
-    <RootNamespace>Orions.Systems.CrossModules.TestGridProperties</RootNamespace>
+    <AssemblyName>Orions.Systems.CrossModules.Sandbox</AssemblyName>
+    <RootNamespace>Orions.Systems.CrossModules.Sandbox</RootNamespace>
     <TypeScriptToolsVersion>3.3</TypeScriptToolsVersion>
     
   </PropertyGroup>
