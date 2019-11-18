@@ -4,11 +4,11 @@
     "anonymousAuthentication": true,
     "iisExpress": {
       "applicationUrl": "http://localhost:7092",
-      "sslPort": 0
+      "sslPort": 44340
     }
   },
   "profiles": {
-    "Orions.Systems.CrossModules.TestGridProperties": {
+    "Orions.Systems.CrossModules.Sandbox": {
       "commandName": "Project",
       "commandLineArgs": "--file=..\\..\\Orions.Systems.Open\\CrossModules\\Orions.Systems.CrossModules.Timeline\\config.json",
       "launchBrowser": true,

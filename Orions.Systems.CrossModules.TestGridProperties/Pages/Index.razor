@@ -6,6 +6,18 @@
 <p>Mission Id is : @MissionId</p>
 <p>Phase Id is : @PhaseId</p>
 
+<div class="form-group">
+    <label for="missionIdInput">Mission Id</label>
+    <input type="text" class="form-control" @bind-value="@MissionId" @bind-value:event="oninput" id="missionIdInput" />
+</div>
+
+<div class="form-group">
+    <label for="phaseIdInput">Phase Id</label>
+    <input type="text" class="form-control" @bind-value="@PhaseId" @bind-value:event="oninput" id="phaseIdInput" />
+</div>
+
+<button @onclick="UpdateData">Update Data</button>
+
 <hr />
 
 <PropertyGrid 
@@ -21,22 +33,29 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
-    public object Data { get; set; }
+    [Parameter] public EventCallback DataChanged { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        //Data = await GetMissionPhaseAsync();
+    //public object Data { get; set; }
 
-        await base.OnInitializedAsync();
-    }
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    Data = await GetMissionPhaseAsync();
+
+    //    await base.OnInitializedAsync();
+    //}
 
     private async Task<object> GetMissionPhaseAsync()
     {
         return await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
     }
 
-    private async Task<object> GetMissionAsync()
+    //private async Task<object> GetMissionAsync()
+    //{
+    //    return await DataContext.Instance.GetMissionAsync(MissionId);
+    //}
+
+    private async Task UpdateData() 
     {
-        return await DataContext.Instance.GetMissionAsync(MissionId);
+        
     }
 }
