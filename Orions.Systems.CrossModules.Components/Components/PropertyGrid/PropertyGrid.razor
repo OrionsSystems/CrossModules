@@ -66,10 +66,10 @@
                             @data.DataProp.Value.PrintValue()
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Dropdown:
-                            <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+                            <select class="form-control"  @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
                                 {
-                                    <option>@item</option>
+                                    <option value="@item">@item</option>
                                 }
                             </select>
                             break;
