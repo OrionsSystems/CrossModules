@@ -2,14 +2,14 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
-    <Version>2.39</Version>
+    <Version>2.41</Version>
     <Authors>Orionswave LLC</Authors>
     <Company>Orionswave LLC</Company>
     <Product>Orions CrossModules Timeline</Product>
     <Description />
     <Copyright>Orionswave LLC 2019</Copyright>
-    <AssemblyVersion>2.39</AssemblyVersion>
-    <FileVersion>2.39</FileVersion>
+    <AssemblyVersion>2.41</AssemblyVersion>
+    <FileVersion>2.41</FileVersion>
     <MvcRazorCompileOnPublish>false</MvcRazorCompileOnPublish>
     <AssemblyName>Orions.Systems.CrossModules.Timeline</AssemblyName>
     <RootNamespace>Orions.Systems.CrossModules.Timeline</RootNamespace>
