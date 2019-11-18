@@ -196,6 +196,7 @@
     <PackageReference Include="Orions.Common" Version="2.41.0-preview.*" />
     <PackageReference Include="Orions.Node" Version="2.41.0-preview.*" />
     <PackageReference Include="Orions.Node.Common" Version="2.41.0-preview.*" />
+    <PackageReference Include="Orions.SDK" Version="2.41.0-preview.*" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
   </ItemGroup>
 </Project>
