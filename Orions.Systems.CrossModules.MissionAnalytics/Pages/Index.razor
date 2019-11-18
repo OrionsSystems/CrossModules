@@ -3,39 +3,41 @@
 
 @page "/"
 
-<dv class="orions-container">
+    <dv class="orions-container">
 
-	<div id="missionProgressFilterId" class="orions-mission-analytics-header">
-		<div>
-			<TelerikDropDownList Data="@DataContext.FilterVm.MissionInstanceOptions"
-								 @bind-Value=@DataContext.FilterVm.SelectedMissionInstance
-								 ValueField="Value"
-								 TextField="Text"
-								 Width="100%">
-			</TelerikDropDownList>
-		</div>
+        <MissionTab Name="@DataContext.Mission?.Name"></MissionTab>
 
-		<div>
-			<TelerikDropDownList Data="@DataContext.FilterVm.TimeRangeOptions"
-								 @bind-Value=@DataContext.FilterVm.SelectedTimeRange
-								 ValueField="Value"
-								 TextField="Text"
-								 Width="100%">
-			</TelerikDropDownList>
-		</div>
+        <div id="missionProgressFilterId" class="orions-mission-analytics-header">
+            <div>
+                <TelerikDropDownList Data="@DataContext.FilterVm.MissionInstanceOptions"
+                                     @bind-Value=@DataContext.FilterVm.SelectedMissionInstance
+                                     ValueField="Value"
+                                     TextField="Text"
+                                     Width="100%">
+                </TelerikDropDownList>
+            </div>
 
-		<TelerikButton OnClick="@DataContext.LoadCommand" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
-	</div>
+            <div>
+                <TelerikDropDownList Data="@DataContext.FilterVm.TimeRangeOptions"
+                                     @bind-Value=@DataContext.FilterVm.SelectedTimeRange
+                                     ValueField="Value"
+                                     TextField="Text"
+                                     Width="100%">
+                </TelerikDropDownList>
+            </div>
 
-	<div class="orions-mission-analytics-progress">
-		<Progress DataContext="@DataContext.ProgressVm"></Progress>
-	</div>
+            <TelerikButton OnClick="@DataContext.LoadCommand" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
+        </div>
 
-	<div class="orions-mission-analytics-stats">
-		<Stats DataContext="@DataContext.StatsVm"></Stats>
-	</div>
+        <div class="orions-mission-analytics-progress">
+            <Progress DataContext="@DataContext.ProgressVm"></Progress>
+        </div>
 
-</dv>
+        <div class="orions-mission-analytics-stats">
+            <Stats DataContext="@DataContext.StatsVm"></Stats>
+        </div>
+
+    </dv>
 
 @code
 {

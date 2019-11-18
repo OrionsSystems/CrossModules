@@ -1,0 +1,14 @@
+﻿
+@if (!string.IsNullOrWhiteSpace(Name))
+{
+    <div class="mission-tab row">
+        <div class="col-12">
+            <h3>Misssion: @Name</h3>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string Name { get; set; }
+}

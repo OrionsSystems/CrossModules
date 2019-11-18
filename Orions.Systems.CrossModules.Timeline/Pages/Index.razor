@@ -4,7 +4,6 @@
 @page "/"
 
 @using Orions.Infrastructure.HyperMedia;
-@using Orions.Node.Common;
 
 @if (Timeline == null)
 {
@@ -12,6 +11,8 @@
 }
 else
 {
+    <MissionTab Name="@Mission?.Name"></MissionTab>
+
     <TelerikTabStrip @bind-ActiveTabIndex="@ActiveTabIndex">
         <TabStripTab Title="Timeline">
             <div class="timeline-container">
@@ -283,7 +284,6 @@ else
             <WindowAction Name="Close" OnClick="@OnClosePlayer"></WindowAction>
         </WindowActions>
     </TelerikWindow>
-
 }
 
 @code
@@ -304,12 +304,15 @@ else
 
     public int ServerStreamingPort { get; set; }
 
+    public HyperMission Mission { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
         if (vizRequest != null)
         {
+            vizRequest.MissionIds = vizRequest.MissionDocIds?.Select(t => t.Id).ToArray();
             vizRequest.WorkflowInstanceIds = vizRequest.WorkflowInstanceDocIds?.Select(t => t.Id).ToArray();
             vizRequest.MissionInstanceIds = vizRequest.MissionInstanceDocIds?.Select(t => t.Id).ToArray();
             vizRequest.AssetIds = vizRequest.HyperAssetIds?.Select(t => t.CoreIdString).ToArray();
@@ -318,6 +321,8 @@ else
         DataContext.Instance.Request = vizRequest;
 
         await LoadTimeline();
+
+        await LoadMissionAsync();
 
         ServerStreamingPort = await DataContext.Instance.GetServerPortAsync();
 
@@ -331,6 +336,16 @@ else
         BuildJsonTimeline();
 
         StateHasChanged();
+    }
+
+    public async Task LoadMissionAsync()
+    {
+        try
+        {
+            Mission = await DataContext.Instance.GetHyperMissionAsync();
+            StateHasChanged();
+        }
+        catch { }
     }
 
     public async Task LoadMore()
