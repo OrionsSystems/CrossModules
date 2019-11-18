@@ -39,8 +39,7 @@ namespace Orions.Systems.CrossModules.Components
 					value.PropertyChanged += DataContext_PropertyChanged;
 				}
 
-				if (value is BlazorVm blazorVm)
-					blazorVm.OwnerComponent = this;
+				OnDataContextAssigned(value);
 			}
 		}
 
@@ -50,6 +49,12 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			// Create a default Vm instance.
 			DataContext = new VmType();
+		}
+
+		protected virtual void OnDataContextAssigned(VmType dataContext)
+		{
+			if (dataContext is IBlazorVm blazorVm)
+				blazorVm.OwnerComponent = this;
 		}
 
 		void DataContext_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

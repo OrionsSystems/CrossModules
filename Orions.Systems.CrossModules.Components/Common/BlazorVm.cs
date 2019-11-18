@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class BlazorVm : BaseVm
+	public abstract class BlazorVm : BaseVm, IBlazorVm
 	{
 		BaseBlazorComponent _ownerComponent = null;
 
