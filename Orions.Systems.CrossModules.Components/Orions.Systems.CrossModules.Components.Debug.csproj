@@ -55,7 +55,7 @@
     <None Remove="content\kendo\kendo.material.mobile.min.css" />
     <None Remove="content\scripts\common.js" />
     <None Remove="content\scripts\kendoComponents.js" />
-    <None Remove="content\styles.css" />
+    <None Remove="content\css\styles.css" />
     <None Remove="content\css\propertyGrid.css" />
   </ItemGroup>
 
