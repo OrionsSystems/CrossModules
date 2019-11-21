@@ -102,13 +102,11 @@ namespace Orions.Systems.CrossModules.Components
 		private async Task OnHome(DefaultCommand command, object parameter)
 		{
 			await Utility.MoveBack(true);
-			//RaiseNotify("MoveBack");
 		}
 
 		private async Task OnBack(DefaultCommand command, object parameter)
 		{
 			await Utility.MoveBack();
-			//RaiseNotify("MoveBack");
 		}
 		private async Task OnCreatorCreate(DefaultCommand command, object parameter)
 		{
