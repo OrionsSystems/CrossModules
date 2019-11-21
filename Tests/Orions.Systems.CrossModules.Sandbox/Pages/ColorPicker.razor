@@ -1,0 +1,48 @@
+﻿@page "/color-picker"
+@inherits BaseOrionsComponent
+
+<h5>Color Picker</h5>
+
+<style>
+    
+    .popup-parent {
+        background: dodgerblue;
+        color: white;
+        padding: 10px 16px;
+        width: 100px;
+        font-family: sans-serif;
+        font-weight: 100;
+        font-size: 20px;
+        text-align: center;
+    }
+
+        .popup-parent:focus {
+            outline: 0.3em dashed rgba(255, 165, 0, 0.7);
+        }
+
+</style>
+
+
+@*<a @onclick="OnShowColorPicker" id="@colorParrentId" class="popup-parent" style="top:45%;left:1em;">
+    Click me!
+</a>*@
+
+<VanillaColorPicker ParentId="@colorParrentId" Label="Click me" Class="popup-parent" Style="top: 45%; left: 1em;"></VanillaColorPicker>
+
+@code{
+
+    string colorParrentId = "basic";
+
+    public string Color { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+    }
+
+    private void OnShowColorPicker() {
+        Console.WriteLine("Click on button color picker");
+    }
+
+ }
