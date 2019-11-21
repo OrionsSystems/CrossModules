@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using EmbeddedBlazorContent;
+using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,15 @@ namespace Orions.Systems.CrossModules.Sandbox
 
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
+
+
+			services.AddMatToaster(config =>
+			{
+				config.Position = MatToastPosition.TopRight;
+				config.PreventDuplicates = false;
+				config.NewestOnTop = true;
+				config.ShowCloseButton = true;
+			});
 
 			services.AddTelerikBlazor();
 
@@ -66,6 +76,8 @@ namespace Orions.Systems.CrossModules.Sandbox
 			});
 
 			app.UseEmbeddedBlazorContent(typeof(BaseOrionsComponent).Assembly);
+
+			app.UseEmbeddedBlazorContent(typeof(BaseMatComponent).Assembly);
 		}
 	}
 }
