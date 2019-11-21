@@ -1,0 +1,119 @@
+﻿@page "/workflows"
+
+@inherits BaseOrionsComponent
+
+<h3>Workflows</h3>
+
+@if (Data == null)
+{
+    <div class="loader mt-2">
+        <div class="loader-dot dot1"></div>
+        <div class="loader-dot dot2"></div>
+        <div class="loader-dot dot3"></div>
+    </div>
+}
+else
+{
+
+    <div style="display: flex; flex-direction: column; padding: 10px;" class="mat-elevation-z5">
+        <div style="padding: 5px; border: 1px solid white;">
+            <MatTable Items="@Data" class="mat-elevation-z5" PageSize="50">
+                <MatTableHeader>
+                    <th>Name</th>
+                    <th>NodeCount</th>
+                    <th>HasInstances</th>
+                    <th>Actions</th>
+                </MatTableHeader>
+                <MatTableRow>
+                    <td>@context.Name</td>
+                    <td>@context.Source.NodeCount</td>
+                    <td>@context.HasInstances</td>
+                    <td>
+                        <MatButton OnClick="@(args => ShowGridProperty(args, context))" Id="@context.WorkflowId" Label="Property"></MatButton>
+                    </td>
+                </MatTableRow>
+            </MatTable>
+        </div>
+    </div>
+
+
+    <MatDialog @bind-IsOpen="@IsPropertyGridVisible" Class="demo-window">
+        <MatDialogTitle>Property</MatDialogTitle>
+        <MatDialogContent>
+
+            @if (SelectedMission != null)
+            {
+                <PropertyGrid Loader="LoadPropertyGridData"
+                              HyperStore="DataContext.Instance.NetStore">
+                </PropertyGrid>
+            }
+
+        </MatDialogContent>
+        <MatDialogActions>
+            <MatButton OnClick="@(e => { IsPropertyGridVisible = false; })">Close</MatButton>
+            <MatButton OnClick="@OnClosePropertyGrid">OK</MatButton>
+        </MatDialogActions>
+    </MatDialog>
+
+}
+
+
+
+@code {
+
+    public IEnumerable<WorkflowViewModel> Data { get; set; }
+
+    public WorkflowViewModel SelectedMission { get; set; }
+
+    public bool IsPropertyGridVisible { get; set; }
+
+    private void ReadItems()
+    {
+        // TODO
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Data = await LoadData();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<IEnumerable<WorkflowViewModel>> LoadData()
+    {
+        return await DataContext.Instance.GetWorkflowsAsync();
+    }
+
+    private async Task<object> LoadPropertyGridData()
+    {
+        var workflowId = SelectedMission.WorkflowId;
+        return await DataContext.Instance.GetWorkflowAsync(workflowId);
+    }
+
+    public void OnClosePropertyGrid()
+    {
+        IsPropertyGridVisible = false;
+
+        StateHasChanged();
+    }
+
+    private void ShowGridProperty(MouseEventArgs e, WorkflowViewModel model)
+    {
+        SelectedMission = model;
+
+        IsPropertyGridVisible = true;
+        StateHasChanged();
+    }
+}
+
+<style type="text/css">
+
+    .demo-window {
+        z-index: 44444;
+        position: fixed;
+    }
+
+    .demo-window .mdc-dialog__surface {
+        min-width: 1200px !important;
+    }
+</style>

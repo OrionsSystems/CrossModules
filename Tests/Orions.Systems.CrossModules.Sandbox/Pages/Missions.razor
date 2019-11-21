@@ -1,0 +1,132 @@
+﻿@page "/missions"
+
+@inherits BaseOrionsComponent
+@inject IMatToaster Toaster
+
+<h3>Missions</h3>
+
+@if (Data == null)
+{
+    <div class="loader mt-2">
+        <div class="loader-dot dot1"></div>
+        <div class="loader-dot dot2"></div>
+        <div class="loader-dot dot3"></div>
+    </div>
+}
+else
+{
+    <TelerikGrid Data=@Data
+                 Height="@Height"
+                 Sortable=@Sortable
+                 OnRead=@ReadItems>
+        <GridColumns>
+            <GridColumn Field=@nameof(MissionViewModel.Name) Title="Mission Name" />
+            <GridColumn Field=@nameof(MissionViewModel.Status) Title="Status" />
+
+            <GridCommandColumn>
+                <GridCommandButton OnClick="ShowGridProperty" Icon="edit">Property</GridCommandButton>
+                @*<GridCommandButton Command="Edit" Icon="edit">Edit</GridCommandButton>
+                    <GridCommandButton Command="Save" Icon="save" ShowInEdit="true">Update</GridCommandButton>
+                    <GridCommandButton Command="Cancel" Icon="cancel" ShowInEdit="true">Cancel</GridCommandButton>*@
+            </GridCommandColumn>
+        </GridColumns>
+
+    </TelerikGrid>
+}
+
+
+<TelerikWindow Visible="@IsPropertyGridVisible" Class="demo-window" Centered="true" Width="1200px" Height="710px" Modal="true">
+    <WindowTitle>
+        <strong>Properties</strong>
+    </WindowTitle>
+    <WindowContent>
+
+        <PropertyGrid Loader="LoadPropertyGridData"
+                      HyperStore="DataContext.Instance.NetStore"
+                      OKVisible="true"
+                      CancelVisible="true">
+        </PropertyGrid>
+
+    </WindowContent>
+    <WindowActions>
+        <WindowAction Name="Minimize"></WindowAction>
+        <WindowAction Name="Maximize"></WindowAction>
+        <WindowAction Name="Close" OnClick="@OnClosePropertyGrid"></WindowAction>
+    </WindowActions>
+</TelerikWindow>
+
+
+@code {
+
+    public IEnumerable<MissionViewModel> Data { get; set; }
+    string Height = "1000px";
+
+    int PageSize = 10;
+    bool Pageable = false;
+    bool Sortable = false;
+
+    public MissionViewModel SelectedMission { get; set; }
+
+    public bool IsPropertyGridVisible { get; set; }
+
+    private void ReadItems()
+    {
+
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Data = await GetMissionsAsync();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task<IEnumerable<MissionViewModel>> GetMissionsAsync()
+    {
+        return await DataContext.Instance.GetMissionsAsync();
+    }
+
+    private async Task<object> LoadPropertyGridData()
+    {
+
+        var missionId = SelectedMission.MissionId;
+        return await DataContext.Instance.GetMissionAsync(missionId);
+    }
+
+    public void OnClosePropertyGrid()
+    {
+        IsPropertyGridVisible = false;
+
+        StateHasChanged();
+
+        ShowToaster("Close Grid Property");
+    }
+
+    private void ShowGridProperty(GridCommandEventArgs args)
+    {
+
+        SelectedMission = args.Item as MissionViewModel;
+
+        IsPropertyGridVisible = true;
+        StateHasChanged();
+        ShowToaster("Show Grid Property");
+    }
+
+    private void ShowToaster(string message)
+    {
+        Toaster.Add(message, MatToastType.Info, "Info", "", config =>
+        {
+            config.ShowCloseButton = false;
+            config.ShowProgressBar = false;
+            config.MaximumOpacity = 100;
+        });
+    }
+}
+
+<style type="text/css">
+
+    .demo-window {
+        z-index: 44444;
+        position: fixed;
+    }
+</style>
