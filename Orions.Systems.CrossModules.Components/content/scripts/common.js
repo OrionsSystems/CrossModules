@@ -137,3 +137,27 @@ window.Orions.KendoMediaPlayer = {
         return $(playerId).getKendoMediaPlayer();
     }
 };
+
+var _pickerIns;
+window.Orions.VanillaColorPicker = {
+
+    init: function (pickerId) {
+        debugger;
+
+        var parent = document.querySelector('#' + pickerId);
+
+        _pickerIns = new Picker(parent);
+        _pickerIns.onDone = function (color) {
+            parentBasic.style.background = color.rgbaString;
+        };
+
+        //Open the popup manually:
+        _pickerIns.openHandler();
+
+        _pickerIns.onOpen = function (color) { console.log('Opened', this.settings.parent.id, color.hex); };
+        _pickerIns.onClose = function (color) { console.log('Closed', this.settings.parent.id, color.hex); };
+    },
+    onChange: function (color) {
+        console.log('onChange', this.settings.parent.id, color.hex);
+    },
+};

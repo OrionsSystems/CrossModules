@@ -13,10 +13,13 @@
     <EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
     
     <EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
     
     <EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
     <EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
   </ItemGroup>
 
   <ItemGroup>
@@ -57,6 +60,7 @@
     <None Remove="content\scripts\kendoComponents.js" />
     <None Remove="content\css\styles.css" />
     <None Remove="content\css\propertyGrid.css" />
+    <None Remove="content\vanilla-picker\vanilla-picker.js" />
   </ItemGroup>
 
   <ItemGroup>

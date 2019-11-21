@@ -66,7 +66,7 @@
                             @data.DataProp.Value.PrintValue()
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Dropdown:
-                            <select class="form-control"  @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+                            <select class="form-control" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
                                 {
                                     <option value="@item">@item</option>
@@ -112,12 +112,27 @@
                 {
                     <button class="btn btn-outline-dark float-right" onclick="@DataContext.CancelCommand">Cancel</button>
                 }
+
+                <p>Is Dirty : @IsDirty</p>
             </div>
         </div>
     </div>
 }
 
 @code {
+
+    public bool IsDirty
+    {
+        get
+        {
+            if (DataContext.Items.Any()) {
+
+                return DataContext.Items.IsDirty();
+            }
+
+            return false;
+        }
+    }
 
     [Parameter] public Func<Task<object>> Loader { get; set; }
 
@@ -152,7 +167,7 @@
 
     private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue)
     {
-        data.Instance = (bool)data.Instance ? false : true;
+        data.Instance = (bool) checkedValue;
         Console.WriteLine($"Change bool instance to : {data.Instance}");
     }
 
