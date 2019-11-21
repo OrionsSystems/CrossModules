@@ -141,23 +141,31 @@ window.Orions.KendoMediaPlayer = {
 var _pickerIns;
 window.Orions.VanillaColorPicker = {
 
-    init: function (pickerId) {
-        debugger;
+    init: function (config) {
 
-        var parent = document.querySelector('#' + pickerId);
+        var parent = document.querySelector('#' + config.parentId);
 
-        _pickerIns = new Picker(parent);
-        _pickerIns.onDone = function (color) {
-            parentBasic.style.background = color.rgbaString;
+        var options = {
+            parent: parent,
+            popup: config.popup,
+            alpha: config.alpha,
+            editor: config.editor,
+            editorFormat: config.editorFormat,
+            cancelButton: config.cancelButton,
+            //color: '',
         };
+        
 
-        //Open the popup manually:
-        _pickerIns.openHandler();
+        _pickerIns = new Picker(options);
 
+        //_pickerIns.openHandler();
+
+        _pickerIns.onDone = function (color) { console.log('onDone', this.settings.parent.id, color.hex); };
         _pickerIns.onOpen = function (color) { console.log('Opened', this.settings.parent.id, color.hex); };
         _pickerIns.onClose = function (color) { console.log('Closed', this.settings.parent.id, color.hex); };
+        _pickerIns.onChange = function (color) { console.log('onChange', this.settings.parent.id, color.hex); };
     },
-    onChange: function (color) {
-        console.log('onChange', this.settings.parent.id, color.hex);
-    },
+    destroy: function () {  },
+    setColor: function (color) {  },
+
 };
