@@ -33,29 +33,13 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
-    [Parameter] public EventCallback DataChanged { get; set; }
-
-    //public object Data { get; set; }
-
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    Data = await GetMissionPhaseAsync();
-
-    //    await base.OnInitializedAsync();
-    //}
-
     private async Task<object> GetMissionPhaseAsync()
     {
         return await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
     }
 
-    //private async Task<object> GetMissionAsync()
-    //{
-    //    return await DataContext.Instance.GetMissionAsync(MissionId);
-    //}
-
     private async Task UpdateData() 
     {
-        
+         StateHasChanged();
     }
 }
