@@ -66,7 +66,7 @@
                             @data.DataProp.Value.PrintValue()
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Dropdown:
-                            <select class="form-control" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+                            <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
                                 {
                                     <option value="@item">@item</option>
@@ -84,7 +84,7 @@
                             <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
                                 @foreach (var item in data.DataProp.Value.AvailableValueOptions)
                                 {
-                                    <option>@item</option>
+                                    <option value="@item">@item</option>
                                 }
                             </select>
                             break;
@@ -113,7 +113,6 @@
                     <button class="btn btn-outline-dark float-right" onclick="@DataContext.CancelCommand">Cancel</button>
                 }
 
-                <p>Is Dirty : @IsDirty</p>
             </div>
         </div>
     </div>
@@ -125,7 +124,8 @@
     {
         get
         {
-            if (DataContext.Items.Any()) {
+            if (DataContext.Items.Any())
+            {
 
                 return DataContext.Items.IsDirty();
             }
@@ -173,12 +173,21 @@
     private void TextBoxChange(PropertyGridItemUtilityData data, object value)
     {
         data.Instance = value;
-        Console.WriteLine($"Change text instance to : {data.Instance}");
     }
 
     private void DropdownChange(PropertyGridItemUtilityData data, object value)
     {
-        data.Instance = value;
-        Console.WriteLine($"Change dropdown instance to : {data.Instance}");
+
+        PropertyGridItemUtilityData.HintOptionPair selectedOption = null;
+        foreach (var item in data.AvailableValueOptions)
+        {
+            if (object.Equals(item.Title, value)) // TODO Fix me to check for Value !!!
+            {
+                selectedOption = item;
+                break;
+            }
+        }
+
+        if (selectedOption != null) data.SelectedValueOption = selectedOption;
     }
 }
