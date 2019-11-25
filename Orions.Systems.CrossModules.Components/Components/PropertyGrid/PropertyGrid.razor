@@ -53,7 +53,7 @@
                             break;
                         case PropertyGridItemUtilityData.EditableModes.CheckBox:
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input " @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+                                <input type="checkbox" checked="@data.DataProp.Value.Instance" class="form-check-input " @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
                             </div>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.TextBox:
@@ -167,8 +167,7 @@
 
     private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue)
     {
-        data.Instance = (bool) checkedValue;
-        Console.WriteLine($"Change bool instance to : {data.Instance}");
+        data.Instance = (bool)checkedValue;
     }
 
     private void TextBoxChange(PropertyGridItemUtilityData data, object value)
