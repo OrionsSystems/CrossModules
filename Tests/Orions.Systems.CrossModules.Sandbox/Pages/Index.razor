@@ -20,11 +20,10 @@
 
 <hr />
 
-<PropertyGrid 
-            Loader="GetMissionPhaseAsync"
-            HyperStore="DataContext.Instance.NetStore" 
-            OKVisible="true"
-            CancelVisible="true">
+<PropertyGrid Loader="GetMissionPhaseAsync"
+              HyperStore="DataContext.Instance.NetStore"
+              OKVisible="true"
+              CancelVisible="true">
 </PropertyGrid>
 
 @code{
@@ -33,13 +32,19 @@
 
     public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
 
+    // Always return the same instance, so we can test to see if changes stick.
+    static object _cachedMissionPhase;
+
     private async Task<object> GetMissionPhaseAsync()
     {
-        return await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
+        if (_cachedMissionPhase == null)
+            _cachedMissionPhase = await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
+
+        return _cachedMissionPhase;
     }
 
-    private async Task UpdateData() 
+    private async Task UpdateData()
     {
-         StateHasChanged();
+        StateHasChanged();
     }
 }
