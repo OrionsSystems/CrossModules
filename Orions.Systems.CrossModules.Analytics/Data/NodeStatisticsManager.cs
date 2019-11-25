@@ -47,7 +47,6 @@ namespace Orions.CrossModules.Data
 					Logger.Instance.Error("Cannot establish the specified connection", ex.Message);
 				}
 			}			
-			
 		}
 
 		public void InitStore(NetStore netStore)
@@ -70,11 +69,14 @@ namespace Orions.CrossModules.Data
 				};
 
 				if (crossModuleVisualizationRequest != null
-					&& crossModuleVisualizationRequest.MetadataSetId != null
-					&& crossModuleVisualizationRequest.MetadataSetId.Any())
+					&& crossModuleVisualizationRequest.MetadataSetDocIds != null
+					&& crossModuleVisualizationRequest.MetadataSetDocIds.Any())
 				{
-					Logger.Instance.PriorityInfo($"Meta data set id retrieved: {crossModuleVisualizationRequest.MetadataSetId.FirstOrDefault()}");
-					await ApplyFilterConditions(findArgs, crossModuleVisualizationRequest.MetadataSetId.FirstOrDefault());
+					var metadataSetId = crossModuleVisualizationRequest.MetadataSetDocIds.FirstOrDefault();
+
+					Logger.Instance.PriorityInfo($"Meta data set id retrieved: {metadataSetId}");
+					var filterSet = await RetrieveHyperDocumentArgs.RetrieveAsync<HyperMetadataSet>(_netStore, metadataSetId);
+					await ApplyFilterConditions(findArgs, filterSet);
 				}
 
 				var docs = await _netStore.ExecuteAsync(findArgs) ?? new HyperDocument[0];
@@ -90,9 +92,9 @@ namespace Orions.CrossModules.Data
 			
 		}
 
-		private async Task ApplyFilterConditions(FindHyperDocumentsArgs mainArgs, string metaDataSetId)
+		private async Task ApplyFilterConditions(FindHyperDocumentsArgs mainArgs, HyperMetadataSet id)
 		{
-			var conditions = await MetaDataSetUtility.GenerateFilterFromMetaDataSetAsync(_netStore, metaDataSetId);
+			var conditions = await MetaDataSetUtility.GenerateFilterFromMetaDataSetAsync(_netStore, id);
 			if (conditions != null)
 			{
 				mainArgs.DescriptorConditions.AddCondition(conditions);
