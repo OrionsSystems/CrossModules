@@ -2,6 +2,7 @@
 @inherits BaseBlazorComponent<PropertyGridVm>
 @using Orions.SDK;
 @using Orions.Node.Common;
+@using  Orions.Common;
 
 @if (DataContext.Items.Any())
 {
@@ -32,7 +33,7 @@
 
                         @if (data.DataProp.Value.ShowHelp)
                         {
-                            <a href="#" class="prop-grid-help-link">
+                            <a class="prop-grid-help-link">
                                 <div class="prop-grid-icon float-right">
                                     <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="helpIconTitle">
                                         <title id="helpIconTitle">@data.DataProp.Value.HelpText</title>
@@ -63,7 +64,21 @@
                             <textarea type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Color:
-                            @data.DataProp.Value.PrintValue()
+                            <a>
+                                @{
+                                    var uniColor = (UniColor)data.DataProp.Value.Instance;
+                                    var rgbColor = $"rgba({uniColor.R},{uniColor.G},{uniColor.B},{uniColor.A})";
+                                    var styleColor = $"top: 45%; background: {rgbColor}";
+                                }
+
+                                <VanillaColorPicker ParentId="customId" Label="@rgbColor"
+                                                    Class="form-control popup-parent"
+                                                    Style="@styleColor"
+                                                    Color="@rgbColor"
+                                                    Popup="bottom"
+                                                    EditorFormat="rgb">
+                                </VanillaColorPicker>
+                            </a>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.Dropdown:
                             <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
@@ -191,3 +206,18 @@
         if (selectedOption != null) data.SelectedValueOption = selectedOption;
     }
 }
+
+
+<style>
+
+    .popup-parent {
+        color: white;
+        font-family: sans-serif;
+        font-weight: 100;
+        text-align: center;
+    }
+
+        .popup-parent:focus {
+            outline: 0.3em dashed rgba(255, 165, 0, 0.7);
+        }
+</style>

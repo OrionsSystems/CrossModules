@@ -61,7 +61,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected override async Task OnFirstAfterRenderAsync()
 		{
-			if (string.IsNullOrWhiteSpace(ParentId)) throw new ArgumentException();
+			if (string.IsNullOrWhiteSpace(ParentId)) ParentId = Id;
 
 			await JsInterop.InvokeAsync<object>("Orions.VanillaColorPicker.init", new object[] { Config });
 		}

@@ -152,7 +152,7 @@ window.Orions.VanillaColorPicker = {
             editor: config.editor,
             editorFormat: config.editorFormat,
             cancelButton: config.cancelButton,
-            //color: '',
+            color: config.color
         };
         
 
