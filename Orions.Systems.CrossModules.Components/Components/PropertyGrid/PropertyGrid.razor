@@ -68,14 +68,13 @@
                                 @{
                                     var uniColor = (UniColor)data.DataProp.Value.Instance;
                                     var rgbColor = $"rgba({uniColor.R},{uniColor.G},{uniColor.B},{uniColor.A})";
-                                    var styleColor = $"top: 45%; background: {rgbColor}";
                                 }
 
-                                <VanillaColorPicker ParentId="customId" Label="@rgbColor"
+                                <VanillaColorPicker ParentId="customId"
                                                     Class="form-control popup-parent"
-                                                    Style="@styleColor"
                                                     Color="@rgbColor"
                                                     Popup="bottom"
+                                                    Value="@rgbColor"
                                                     EditorFormat="rgb">
                                 </VanillaColorPicker>
                             </a>
@@ -204,6 +203,10 @@
         }
 
         if (selectedOption != null) data.SelectedValueOption = selectedOption;
+    }
+
+    private void ChangeColor(PropertyGridItemUtilityData data, object value) { 
+        var test = value;
     }
 }
 

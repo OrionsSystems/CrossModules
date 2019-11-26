@@ -138,7 +138,7 @@ window.Orions.KendoMediaPlayer = {
     }
 };
 
-var _pickerIns;
+var _pickerMap = {};
 window.Orions.VanillaColorPicker = {
 
     init: function (config) {
@@ -156,14 +156,40 @@ window.Orions.VanillaColorPicker = {
         };
         
 
-        _pickerIns = new Picker(options);
+        var picker = new Picker(options);
 
-        //_pickerIns.openHandler();
+        //picker.openHandler();
 
-        _pickerIns.onDone = function (color) { console.log('onDone', this.settings.parent.id, color.hex); };
-        _pickerIns.onOpen = function (color) { console.log('Opened', this.settings.parent.id, color.hex); };
-        _pickerIns.onClose = function (color) { console.log('Closed', this.settings.parent.id, color.hex); };
-        _pickerIns.onChange = function (color) { console.log('onChange', this.settings.parent.id, color.hex); };
+        picker.onDone = function (color) {
+            console.log('onDone', this.settings.parent.id, color.rgba);
+
+            if (this.settings.editorFormat === 'rgb') {
+                parent.style.background = this.color.rgbString;
+                parent.innerText = this.color.rgbString;
+            }
+
+            if (this.settings.editorFormat === 'hex') {
+                parent.style.background = this.color.hex;
+                parent.innerText = this.color.hex;
+            }
+
+            if (this.settings.editorFormat === 'hsl') {
+                parent.style.background = this.color.hslString;
+                parent.innerText = this.color.hslString;
+            }
+            
+
+            //var evt = document.createEvent("HTMLEvents");
+            //evt.initEvent("change", false, true);
+            //parent.dispatchEvent(evt);
+        };
+        picker.onOpen = function (color) { console.log('Opened', this.settings.parent.id, color.rgba); };
+        picker.onClose = function (color) { console.log('Closed', this.settings.parent.id, color.rgba); };
+        picker.onChange = function (color) {
+            //console.log('Change');
+        };
+
+        _pickerMap[config.parentId] = picker;
     },
     destroy: function () {  },
     setColor: function (color) {  },

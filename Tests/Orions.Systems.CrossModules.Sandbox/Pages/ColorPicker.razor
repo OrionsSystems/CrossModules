@@ -3,65 +3,55 @@
 
 <h3>Color Picker</h3>
 
-<div class="content">
-    @*<div class="form-check">
-            <input type="checkbox" class="form-check-input" @onchange="OnChangeAlpha" />
-            <label class="form-check-label" for="exampleCheck1">Is alpha</label>
-        </div>*@
+<hr>
+<h5>RGB Color</h5>
 
-    <div class="form-group">
-        <label>Color Format</label>
-        <select class="form-control" @onchange="(eventArgs => { OnChangeEditorFormat(eventArgs.Value); })">
-            @foreach (var item in EditorFormatOptions)
-            {
-                <option value="@item">@item</option>
-            }
-        </select>
-    </div>
-</div>
-
-<VanillaColorPicker ParentId="@colorParrentId" 
-                    Label="Click me" 
-                    Class="form-control popup-parent" 
-                    Style="top: 45%; left: 1em;" @bind="@SelectedFormat"
-                    EditorFormat="@SelectedFormat">
+<VanillaColorPicker ParentId="picker1"
+                    Value="@RgbColor"
+                    Color="@RgbColor"
+                    Class="btn popup-parent"
+                    EditorFormat="rgb">
 </VanillaColorPicker>
+
+<hr>
+<h5>Hex Color</h5>
+<VanillaColorPicker ParentId="picker2"
+                    Value="@HexColor"
+                    Color="@HexColor"
+                    Class="btn popup-parent"
+                    EditorFormat="hex">
+</VanillaColorPicker>
+
+<hr>
+<h5>Hsl Color</h5>
+<VanillaColorPicker ParentId="picker3"
+                    Value="@HlsColor"
+                    Color="@HlsColor"
+                    Class="btn popup-parent"
+                    EditorFormat="hsl">
+</VanillaColorPicker>
+
+<hr>
 
 @code{
 
-    string colorParrentId = "basic";
+    public string RgbColor { get; set; } = "rgb(11, 69, 84)";
 
-    //public string Color { get; set; }
-    //public List<string> PopupOpions { get; set; } = new List<string> { "top", "bottom", "left", "right", "false" };
-    //public bool IsAlpha { get; set; }
-    //public bool ShowEditor { get; set; }
+    public string HexColor { get; set; } = "#2c6737ff";
 
-    public string SelectedFormat { get; set; } = "hex";
+    public string HlsColor { get; set; } = "hsl(100, 100%, 50%)";
 
-    public List<string> EditorFormatOptions { get; set; } = new List<string> { "hex", "hsl", "rgb"};
-
-    public void OnChangeEditorFormat(object value) {
-
-        SelectedFormat = (string) value;
-        StateHasChanged();
-    }
- }
-
+}
 
 <style>
 
     .popup-parent {
-        background: dodgerblue;
         color: white;
         padding: 10px 16px;
-        width: 100px;
+        width: 300px;
         font-family: sans-serif;
         font-weight: 100;
         font-size: 20px;
         text-align: center;
     }
-
-        .popup-parent:focus {
-            outline: 0.3em dashed rgba(255, 165, 0, 0.7);
-        }
 </style>

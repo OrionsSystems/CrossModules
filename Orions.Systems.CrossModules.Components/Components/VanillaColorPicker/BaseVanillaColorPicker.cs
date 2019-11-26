@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -9,7 +9,7 @@ namespace Orions.Systems.CrossModules.Components
 		protected VanilaColorPickerConfig Config { get; set; } = new VanilaColorPickerConfig();
 
 		[Parameter]
-		public string Label { get; set; }
+		public string Value { get; set; }
 
 		/// <summary>
 		/// Which element the picker should be attached to.
@@ -58,6 +58,9 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		[Parameter]
 		public string Color { get { return Config.Color; } set { Config.Color = value; } }
+
+		[Parameter]
+		public EventCallback<MouseEventArgs> OnChange { get; set; }
 
 		protected override async Task OnFirstAfterRenderAsync()
 		{
