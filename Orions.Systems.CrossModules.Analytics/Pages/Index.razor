@@ -3,82 +3,109 @@
 
 @inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
 
-<h1>Analytics</h1>
+
+@if (!IsLoaded)
+{
+    <div class="loading-bar"></div>
+}
+else
+{
+
 
 <div class="container-fluid">
 
-	<div class="row">
-		<div class="col-md-5">
-			<TelerikChart>
-				<ChartSeriesItems>
-					<ChartSeries Type="ChartSeriesType.Pie"
-								 Data="@labelsChartData"
-								 VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
-								 Field="@nameof(TagLabelsPieChartData.Count)"
-								 CategoryField="@nameof(TagLabelsPieChartData.Label)">
-					</ChartSeries>
-				</ChartSeriesItems>
-				<ChartTitle Text="Items per Label">
-				</ChartTitle>
-				<ChartLegend Position="ChartLegendPosition.Right">
-				</ChartLegend>
-			</TelerikChart>
-		</div>
-		<div class="col-md-5">
-			<KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData">
-			</KendoTreemap>
-		</div>
-		<div class="col-md-2">
-		</div>
-	</div>
+    <h1>Analytics</h1>
 
-</div>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Items per Label</h5>
+                    <TelerikChart>
+                        <ChartSeriesItems>
+                            <ChartSeries Type="ChartSeriesType.Pie"
+                                         Data="@labelsChartData"
+                                         VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
+                                         Field="@nameof(TagLabelsPieChartData.Count)"
+                                         CategoryField="@nameof(TagLabelsPieChartData.Label)"
+                                         ExplodeField="@nameof(TagLabelsPieChartData.Explode)">
+                                <ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
+                            </ChartSeries>
+                        </ChartSeriesItems>
+                        <ChartTitle Visible="false" Text="Items per Label"></ChartTitle>
+                        <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                    </TelerikChart>
+                </div>
+            </div>
+        </div>
 
-<div>
-	<TelerikChart>
-		<ChartSeriesItems>
-			<ChartSeries Type="ChartSeriesType.Column"
-						 Data="@tagTimingData"
-						 Field="@nameof(TagStreamTimeChartData.Count)"
-						 CategoryField="@nameof(TagStreamTimeChartData.Time)">
-			</ChartSeries>
-		</ChartSeriesItems>
-		<ChartTitle Text="Items per Time">
-		</ChartTitle>
-		<ChartLegend Position="ChartLegendPosition.Right">
-		</ChartLegend>
-	</TelerikChart>
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Labels Map</h5>
+                    <KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData"></KendoTreemap>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-md-4">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Items per Time</h5>
+                    <TelerikChart>
+                        <ChartSeriesItems>
+                            <ChartSeries Type="ChartSeriesType.Column"
+                                         Data="@tagTimingData"
+                                         Field="@nameof(TagStreamTimeChartData.Count)"
+                                         CategoryField="@nameof(TagStreamTimeChartData.Time)">
+                            </ChartSeries>
+                        </ChartSeriesItems>
+
+                        <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
+                        <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                    </TelerikChart>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+}
 
 
 @functions
 {
+    private string treemapId = "tagsTreemap";
+    private bool showPieCharLabel = true;
 
-	private string treemapId = "tagsTreemap";
+    private List<TagLabelsPieChartData> labelsChartData = new List<TagLabelsPieChartData>();
 
-	private List<TagLabelsPieChartData> labelsChartData = new List<TagLabelsPieChartData>();
+    public List<TagStreamTimeChartData> tagTimingData = new List<TagStreamTimeChartData>();
 
-	public List<TagStreamTimeChartData> tagTimingData = new List<TagStreamTimeChartData>();
+    public TreeMapItem[] tagTreemapData { get; set; } = new TreeMapItem[0];
 
-	public TreeMapItem[] tagTreemapData { get; set; } = new TreeMapItem[0];
+    private string Request { get; set; }
 
-	private string Request { get; set; }
+    public bool IsLoaded { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
-	protected override async Task OnInitializedAsync()
-	{
-		var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
+        await NodeStatisticsManager.Instance.InitDataAsync(vizRequest);
 
-		await NodeStatisticsManager.Instance.InitDataAsync(vizRequest);
+        labelsChartData = NodeStatisticsManager.Instance.TagLabelsData;
 
-		labelsChartData = NodeStatisticsManager.Instance.TagLabelsData;
+        tagTimingData = NodeStatisticsManager.Instance.TagTimingData;
 
-		tagTimingData = NodeStatisticsManager.Instance.TagTimingData;
+        tagTreemapData = NodeStatisticsManager.Instance.TagTreemapData.ToArray();
 
-		tagTreemapData = NodeStatisticsManager.Instance.TagTreemapData.ToArray();
+        IsLoaded = NodeStatisticsManager.Instance.IsLoadedData;
 
-		await base.OnInitializedAsync();
+        await base.OnInitializedAsync();
 
-	}
+    }
 
 }
