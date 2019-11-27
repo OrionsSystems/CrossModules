@@ -13,13 +13,13 @@ namespace Orions.CrossModules.Data
 {
 	public class NodeStatisticsManager
 	{
-		NetStore _netStore;
+		private NetStore _netStore;
 		private List<HyperTag> _allTags;
 		private List<HyperTag> _filteredTags;
 
-		private CrossModuleVisualizationRequest _crossModuleVisualizationRequest;
+		//private CrossModuleVisualizationRequest _crossModuleVisualizationRequest;
 
-		private List<FixedCameraEnhancedData> _aois;
+		//private List<FixedCameraEnhancedData> _aois;
 
 		public static int TimingChartSteps = 25;
 
@@ -29,6 +29,7 @@ namespace Orions.CrossModules.Data
 
 		public List<TreeMapItem> TagTreemapData { get; set; } = new List<TreeMapItem>();
 
+		public bool IsLoadedData { get; set; }
 
 		static Lazy<NodeStatisticsManager> _instance = new Lazy<NodeStatisticsManager>();
 
@@ -40,7 +41,9 @@ namespace Orions.CrossModules.Data
 			{
 				try
 				{
-					_netStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);
+					//_netStore = await NetStore.ConnectAsyncThrows("http://root:staging2017!@usbellods01wan.orionscloud.com:6950/Execute"); // SAS node
+					_netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute"); // Embed node
+					//_netStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);
 				}
 				catch (Exception ex)
 				{
@@ -84,6 +87,8 @@ namespace Orions.CrossModules.Data
 				_allTags = docs.Select(x => x.GetPayload<HyperTag>()).ToList();
 
 				PopulateCharts();
+
+				IsLoadedData = true;
 			}
 			else
 			{
@@ -112,7 +117,6 @@ namespace Orions.CrossModules.Data
 			PopulateTagTreemapData();
 		}
 
-
 		
 		private void PopulateLabelsStatistics()
 		{
@@ -120,11 +124,25 @@ namespace Orions.CrossModules.Data
 
 			var tagsWithLabels = _filteredTags?.Where(x => x.Elements.Any(el => el is HyperTagLabel)).ToList();
 
-			var totalTags = tagsWithLabels.Count();
+			//var totalTags = tagsWithLabels.Count();
 
 			var labelGroups = tagsWithLabels.GroupBy(x => x.GetElement<HyperTagLabel>().Label).ToList();
 
 			foreach (var labelGroup in labelGroups)
+			{
+				TagLabelsData.Add(new TagLabelsPieChartData
+				{
+					Label = labelGroup.Key,
+					Count = labelGroup.Count()
+				});
+			}
+
+
+			var tagsWithTagonomyResult = _filteredTags?.Where(x => x.Elements.Any(el => el is TagonomyExecutionResultHyperTagElement)).ToList();
+
+			var tagonomyCombinedLabelGroups = tagsWithTagonomyResult.GroupBy(x => x.GetElement<TagonomyExecutionResultHyperTagElement>().GetCombinedLabel()).ToList();
+
+			foreach (var labelGroup in tagonomyCombinedLabelGroups)
 			{
 				TagLabelsData.Add(new TagLabelsPieChartData
 				{
@@ -191,6 +209,8 @@ namespace Orions.CrossModules.Data
 		public string Label { get; set; }
 
 		public bool ShouldShowInLegend { get; set; } = true;
+
+		public bool Explode { get; set; }
 
 		public string LabelInfo
 		{
