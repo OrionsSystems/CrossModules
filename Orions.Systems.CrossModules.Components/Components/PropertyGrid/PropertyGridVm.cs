@@ -111,6 +111,7 @@ namespace Orions.Systems.CrossModules.Components
 		private async Task OnCreatorCreate(DefaultCommand command, object parameter)
 		{
 			await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
+			RaisePropertyChanged("OnCreatorCreate");
 		}
 
 		private void TrailProp_ValueChanged(INotifyProperty<string> prop, string newValue)

@@ -4,26 +4,58 @@
 @using Orions.Node.Common;
 @using  Orions.Common;
 
-@if (DataContext.Items.Any())
-{
-    <div class="prop-grid-container">
-        <div class="row mb-2">
-            <div class="col-md-12 prop-grid-header">
-                @*<div class="prop-grid-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
-                            <title id="homeIconTitle">Home</title>
-                            <path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
-                        </svg>
-                    </div>*@
-                @if (DataContext.BackButtonVisibleProp.Value)
-                {
-                    <button class="btn btn-outline-dark nav-button" onclick="@DataContext.HomeCommand">Home</button>
-                    <button class="btn btn-outline-dark nav-button" onclick="@DataContext.BackCommand">Back</button>
-                }
-                <h5 class="prop-grid-header-title">@DataContext.TrailProp.Value</h5>
+
+
+<div class="prop-grid-container">
+    <div class="row mb-2">
+        <div class="col-md-12 prop-grid-header">
+            @*<div class="prop-grid-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
+                        <title id="homeIconTitle">Home</title>
+                        <path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
+                    </svg>
+                </div>*@
+            @if (DataContext.BackButtonVisibleProp.Value)
+            {
+                <button class="btn btn-outline-dark nav-button" onclick="@DataContext.HomeCommand">Home</button>
+                <button class="btn btn-outline-dark nav-button" onclick="@DataContext.BackCommand">Back</button>
+            }
+            <h5 class="prop-grid-header-title">@DataContext.TrailProp.Value</h5>
+        </div>
+    </div>
+
+    @if (DataContext.Utility.CreatorMode)
+    {
+        <h1>Creator Mode</h1>
+    }
+
+    @if (DataContext.Utility.ListMode)
+    {
+        <h1>List Mode</h1>
+        <div class="row">
+            <div class="col px-0">
+                <select class="form-control" value="@DataContext.SelectedCreatorItemProp.Value" @onchange="OnCreatorItemSelect">
+                    @foreach (var item in DataContext.Utility.CreatorItems)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
             </div>
         </div>
 
+        @if (!DataContext.Utility.ReadOnlyMode)
+        {
+            <div class="row">
+                <div class="col text-center my-2">
+                    <button class="btn btn-outline-dark center" onclick="@DataContext.CreatorCreateCommand"> Create</button>
+                </div>
+            </div>
+        }
+
+    }
+
+    @if (DataContext.Items.Any())
+    {
         @foreach (var data in DataContext.Items)
         {
             <div class="row pgrid-row">
@@ -47,6 +79,7 @@
                     </div>
                 </div>
                 <div class="col-md-7 pgrid-data">
+
                     @switch (data.DataProp.Value.EditableMode)
                     {
                         case PropertyGridItemUtilityData.EditableModes.Undefined:
@@ -115,22 +148,22 @@
                 }
             </div>
         }
+    }
 
-        <div class="row mt-2">
-            <div class="col-md-12 k-right">
-                @if (DataContext.OKVisible)
-                {
-                    <button class="btn btn-outline-primary float-right ml-1" onclick="@DataContext.OKCommand">OK</button>
-                }
-                @if (DataContext.CancelVisible)
-                {
-                    <button class="btn btn-outline-dark float-right" onclick="@DataContext.CancelCommand">Cancel</button>
-                }
+    <div class="row mt-2">
+        <div class="col-md-12 k-right">
+            @if (DataContext.OKVisible)
+            {
+                <button class="btn btn-outline-primary float-right ml-1" onclick="@DataContext.OKCommand">OK</button>
+            }
+            @if (DataContext.CancelVisible)
+            {
+                <button class="btn btn-outline-dark float-right" onclick="@DataContext.CancelCommand">Cancel</button>
+            }
 
-            </div>
         </div>
     </div>
-}
+</div>
 
 @code {
 
@@ -205,7 +238,25 @@
         if (selectedOption != null) data.SelectedValueOption = selectedOption;
     }
 
-    private void ChangeColor(PropertyGridItemUtilityData data, object value) { 
+    private void OnCreatorItemSelect(ChangeEventArgs e)
+    {
+        foreach (var item in DataContext.Utility.CreatorItems)
+        {
+            if (object.Equals(item.Type.FullName, e.Value))
+            {
+                DataContext.SelectedCreatorItemProp.Value = item;
+                return;
+            }
+        }
+    }
+
+    //private async Task OnCreatorCreateCommand()
+    //{
+    //     await DataContext.Utility.RunCreatorFor(DataContext.SelectedCreatorItemProp.Value);
+    //}
+
+    private void ChangeColor(PropertyGridItemUtilityData data, object value)
+    {
         var test = value;
     }
 }
