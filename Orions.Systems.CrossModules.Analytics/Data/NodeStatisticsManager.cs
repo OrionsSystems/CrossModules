@@ -41,9 +41,7 @@ namespace Orions.CrossModules.Data
 			{
 				try
 				{
-					//_netStore = await NetStore.ConnectAsyncThrows("http://root:staging2017!@usbellods01wan.orionscloud.com:6950/Execute"); // SAS node
-					_netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute"); // Embed node
-					//_netStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);
+					_netStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);
 				}
 				catch (Exception ex)
 				{
