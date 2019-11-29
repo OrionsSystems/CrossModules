@@ -20,6 +20,7 @@
     <script src="https://kendo.cdn.telerik.com/blazor/2.1.1/telerik-blazor.min.js" defer></script>
 
     <link href="/EmbeddedBlazorFile/propertyGrid.css" rel="stylesheet" />
+    <link rel="stylesheet" href="_content/ChartJs.Blazor/ChartJSBlazor.css" />
 
 </head>
 <body>
@@ -28,5 +29,15 @@
     </app>
 
     <script src="_framework/blazor.server.js"></script>
+
+    <!-- Reference the included moment.js javascript file. -->
+    <script src="_content/ChartJs.Blazor/moment-with-locales.min.js" type="text/javascript" language="javascript"></script>
+
+    <!-- Reference the included ChartJs javascript file. -->
+    <script src="_content/ChartJs.Blazor/Chart.min.js" type="text/javascript" language="javascript"></script>
+
+    <!-- This is the glue between the C# code and the ChartJs charts -->
+    <script src="_content/ChartJs.Blazor/ChartJsBlazorInterop.js" type="text/javascript" language="javascript"></script>
+    
 </body>
 </html>
