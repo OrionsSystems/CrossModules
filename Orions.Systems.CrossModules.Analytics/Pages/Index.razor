@@ -3,6 +3,16 @@
 
 @inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
 
+@using ChartJs.Blazor.Charts
+@using ChartJs.Blazor.ChartJS.PieChart
+@using ChartJs.Blazor.ChartJS.BarChart
+@using ChartJs.Blazor.ChartJS.BarChart.Axes
+@using ChartJs.Blazor.ChartJS.Common.Axes
+@using ChartJs.Blazor.ChartJS.Common.Axes.Ticks
+@using ChartJs.Blazor.ChartJS.Common.Time
+@using ChartJs.Blazor.ChartJS.Common.Enums
+@using ChartJs.Blazor.ChartJS.Common.Properties
+@using ChartJs.Blazor.Util
 
 @if (!IsLoaded)
 {
@@ -12,66 +22,73 @@ else
 {
 
 
-<div class="container-fluid">
+    <div class="container-fluid">
 
-    <h1>Analytics</h1>
+        <h1>Analytics</h1>
 
-    <div class="row">
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Items per Label</h5>
-                    <TelerikChart>
-                        <ChartSeriesItems>
-                            <ChartSeries Type="ChartSeriesType.Pie"
-                                         Data="@labelsChartData"
-                                         VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
-                                         Field="@nameof(TagLabelsPieChartData.Count)"
-                                         CategoryField="@nameof(TagLabelsPieChartData.Label)"
-                                         ExplodeField="@nameof(TagLabelsPieChartData.Explode)">
-                                <ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
-                            </ChartSeries>
-                        </ChartSeriesItems>
-                        <ChartTitle Visible="false" Text="Items per Label"></ChartTitle>
-                        <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
-                    </TelerikChart>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Items per Label</h5>
+
+
+                        <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" />
+
+                        @*<TelerikChart>
+                                <ChartSeriesItems>
+                                    <ChartSeries Type="ChartSeriesType.Pie"
+                                                 Data="@labelsChartData"
+                                                 VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
+                                                 Field="@nameof(TagLabelsPieChartData.Count)"
+                                                 CategoryField="@nameof(TagLabelsPieChartData.Label)"
+                                                 ExplodeField="@nameof(TagLabelsPieChartData.Explode)">
+                                        <ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
+                                    </ChartSeries>
+                                </ChartSeriesItems>
+                                <ChartTitle Visible="false" Text="Items per Label"></ChartTitle>
+                                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                            </TelerikChart>*@
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Labels Map</h5>
+                        <KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData"></KendoTreemap>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row mt-md-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Items per Time</h5>
+
+                        @*<ChartJsBarChart @ref="_barChartJs" Config="@_barConfig" Height="600" />*@
+
+                        <TelerikChart>
+                                <ChartSeriesItems>
+                                    <ChartSeries Type="ChartSeriesType.Column"
+                                                 Data="@tagTimingData"
+                                                 Field="@nameof(TagStreamTimeChartData.Count)"
+                                                 CategoryField="@nameof(TagStreamTimeChartData.Time)">
+                                    </ChartSeries>
+                                </ChartSeriesItems>
+
+                                <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
+                                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                            </TelerikChart>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Labels Map</h5>
-                    <KendoTreemap TreeMapId="@treemapId" TreeMapData="@tagTreemapData"></KendoTreemap>
-                </div>
-            </div>
-        </div>
-
     </div>
-
-    <div class="row mt-md-4">
-        <div class="col">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Items per Time</h5>
-                    <TelerikChart>
-                        <ChartSeriesItems>
-                            <ChartSeries Type="ChartSeriesType.Column"
-                                         Data="@tagTimingData"
-                                         Field="@nameof(TagStreamTimeChartData.Count)"
-                                         CategoryField="@nameof(TagStreamTimeChartData.Time)">
-                            </ChartSeries>
-                        </ChartSeriesItems>
-
-                        <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
-                        <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
-                    </TelerikChart>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 }
 
 
@@ -79,6 +96,12 @@ else
 {
     private string treemapId = "tagsTreemap";
     private bool showPieCharLabel = true;
+
+    private PieConfig _pieConfig;
+    private ChartJsPieChart _pieChartJs;
+
+    private BarConfig _barConfig;
+    private ChartJsBarChart _barChartJs;
 
     private List<TagLabelsPieChartData> labelsChartData = new List<TagLabelsPieChartData>();
 
@@ -92,6 +115,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
         var vizRequest = GetObjectFromQueryString<CrossModuleVisualizationRequest>("request");
 
         await NodeStatisticsManager.Instance.InitDataAsync(vizRequest);
@@ -104,8 +128,128 @@ else
 
         IsLoaded = NodeStatisticsManager.Instance.IsLoadedData;
 
+        SetPieConfiguration();
+
+        SetBarConfiguration();
+
+        StateHasChanged();
+
         await base.OnInitializedAsync();
 
     }
 
+    private void SetBarConfiguration()
+    {
+        _barConfig = new BarConfig
+        {
+            Options = new BarOptions
+            {
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                    Text = "Items per Time"
+                },
+                Scales = new BarScales
+                {
+                    XAxes = new List<CartesianAxis> {
+                        new BarTimeAxis {
+                            BarPercentage = 0.75,
+                            Time = new TimeOptions {
+                                Unit = TimeMeasurement.Minute,
+                            },
+                            Offset = true,
+                            Ticks = new TimeTicks{
+                                Source= TickSource.Data
+                            },
+                            
+                        }
+                    },
+                    YAxes = new List<CartesianAxis> {
+                        new BarLinearCartesianAxis {
+                            Ticks = new LinearCartesianTicks {
+                                BeginAtZero = true
+                            }
+                        }
+                    }
+                },
+                Responsive = true
+            }
+        };
+
+        _barConfig.Options.Legend.Display = false;
+
+        var barSet = new BarDataset<TimeTuple<double>>
+        {
+            Label = "",
+            BackgroundColor = "#1a33f2",
+            BorderWidth = 1,
+            //HoverBackgroundColor = ColorUtil.ColorString(0, 0, 0, 0.1),
+            //HoverBorderColor = "#020202",
+            //HoverBorderWidth = 1,
+            BorderColor = "#ffffff"
+        };
+
+        var d = tagTimingData.Select(t => new TimeTuple<double>((Moment)DateTime.Parse(t.Time), (double)t.Count));
+
+        barSet.AddRange(d);
+        _barConfig.Data.Datasets.Add(barSet);
+    }
+
+    private void SetPieConfiguration()
+    {
+        _pieConfig = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                    Text = "Items pe Label"
+                },
+                Responsive = true,
+                Animation = new ArcAnimation
+                {
+                    AnimateRotate = true,
+                    AnimateScale = true
+                }
+            }
+        };
+
+        _pieConfig.Options.Legend.Position = Position.Bottom;
+
+        _pieConfig.Data.Labels.AddRange(labelsChartData.Select(t => t.Label).ToList());
+
+        var pieSet = new PieDataset
+        {
+            BorderWidth = 0,
+            //HoverBackgroundColor = ColorUtil.RandomColorString(),
+            //HoverBorderColor = ColorUtil.RandomColorString(),
+            //HoverBorderWidth = 1,
+            BorderColor = "#ffffff",
+        };
+        pieSet.BackgroundColor = RandomBackgroudColors(labelsChartData.Count);
+
+
+        pieSet.Data.AddRange(labelsChartData.Select(t => (double)t.Count).ToList());
+        _pieConfig.Data.Datasets.Add(pieSet);
+
+    }
+
+    private string[] RandomBackgroudColors(int count)
+    {
+        var backgroudColors = new List<string>();
+        for (var i = 0; i < count; i++)
+        {
+            backgroudColors.Add(ColorUtil.RandomColorString());
+        }
+
+        return backgroudColors.ToArray();
+    }
+
 }
+
+<style>
+    .chart-container canvas {
+        min-height: 300px;
+    }
+</style>
