@@ -2,8 +2,8 @@
 @inherits BaseBlazorComponent<PropertyGridVm>
 @using Orions.SDK;
 @using Orions.Node.Common;
-@using  Orions.Common;
-
+@using Orions.Common;
+@using System.IO
 
 
 <div class="prop-grid-container">
@@ -119,7 +119,8 @@
                             <button @onclick="btn_command" class="btn btn-outline-dark prop-grid-custom">@data.DataProp.Value.ValueDisplay</button>
                             break;
                         case PropertyGridItemUtilityData.EditableModes.BrowseButton:
-                            <button class="btn btn-outline-primary">Browse</button>
+                            <img class="img-fluid" src="@GetImageSrc(data.DataProp.Value.Instance)" />
+                            <BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(data.DataProp.Value, arg); })" />
                             break;
                         case PropertyGridItemUtilityData.EditableModes.EditableDropdown:
                             <select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
@@ -244,6 +245,20 @@
         }
     }
 
+    private async Task HandleInputFileSelection(PropertyGridItemUtilityData data, IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        if (file != null)
+        {
+            using (var ms = new MemoryStream()) {
+                //file.Data.CopyTo(ms);
+                await file.Data.CopyToAsync(ms);
+
+                data.Instance = ms.ToArray();
+            }
+        }
+    }
+
     //private async Task OnCreatorCreateCommand()
     //{
     //     await DataContext.Utility.RunCreatorFor(DataContext.SelectedCreatorItemProp.Value);
@@ -252,6 +267,15 @@
     private void ChangeColor(PropertyGridItemUtilityData data, object value)
     {
         var test = value;
+    }
+
+    private string GetImageSrc(object input)
+    {
+        if (input == null) return string.Empty;
+
+        var data = (byte[])input;
+
+        return $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
     }
 }
 
