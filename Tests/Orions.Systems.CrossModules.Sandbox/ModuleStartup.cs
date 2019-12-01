@@ -4,6 +4,7 @@ using System.Net.Http;
 using EmbeddedBlazorContent;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -73,6 +74,13 @@ namespace Orions.Systems.CrossModules.Sandbox
 			{
 				endpoints.MapBlazorHub();
 				endpoints.MapFallbackToPage("/_Host");
+			});
+
+			// Workaround for https://github.com/aspnet/AspNetCore/issues/13470
+			app.Use((context, next) =>
+			{
+				context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null;
+				return next.Invoke();
 			});
 
 			app.UseEmbeddedBlazorContent(typeof(BaseOrionsComponent).Assembly);
