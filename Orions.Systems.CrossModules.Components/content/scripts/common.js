@@ -70,11 +70,11 @@ window.Orions.KendoTreemap = {
                     }
                 },
                 valueField: "value",
-                textField: "name",
+                textField: "name"
 
             }).on("click", ".k-leaf, .k-treemap-title", function (e) {
                 var item = $(id).data("kendoTreeMap").dataItem($(this).closest(".k-treemap-tile"));
-                console.log(item.name + ": " + item.value);
+                //console.log(item.name + ": " + item.value);
             });
         }
 
