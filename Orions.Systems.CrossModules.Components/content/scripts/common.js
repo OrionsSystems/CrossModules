@@ -86,7 +86,8 @@ window.Orions.KendoTreemap = {
                 content: function (e) {
                     var treemap = $(id).data("kendoTreeMap");
                     var item = treemap.dataItem(e.target.closest(".k-treemap-tile"));
-                    return item.name + ": " + item.value;
+                    //return item.name + ": " + item.value;
+                    return item.value;
                 }
             });
         }
