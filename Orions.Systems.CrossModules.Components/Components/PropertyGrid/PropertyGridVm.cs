@@ -2,6 +2,7 @@
 using Orions.Node.Common;
 using Orions.SDK;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -95,7 +96,7 @@ namespace Orions.Systems.CrossModules.Components
 				|| (e.PropertyName == nameof(PropertyGridUtility.ListMode) && Utility.ListMode))
 			{
 				// Auto select for creator items.
-
+				SelectedCreatorItemProp.Value = Utility.CreatorItems.FirstOrDefault();
 			}
 		}
 
@@ -108,7 +109,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			await Utility.MoveBack();
 		}
-		private async Task OnCreatorCreate(DefaultCommand command, object parameter)
+		public async Task OnCreatorCreate(DefaultCommand command, object parameter)
 		{
 			await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
 			RaisePropertyChanged("OnCreatorCreate");

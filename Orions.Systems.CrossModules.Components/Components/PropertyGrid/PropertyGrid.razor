@@ -24,7 +24,8 @@
         </div>
     </div>
 
-    @if (DataContext.Utility.ListMode)
+
+    @if (DataContext.Utility.ListMode || DataContext.Utility.CreatorMode)
     {
         <div class="row">
             <div class="col px-0">
@@ -245,6 +246,11 @@
         }
     }
 
+    private async Task OnCreatorCreate(object parameter)
+	{
+		await DataContext.OnCreatorCreate(DataContext.CreatorCreateCommand, parameter);
+	}
+
     private async Task HandleInputFileSelection(PropertyGridItemUtilityData data, IFileListEntry[] files)
     {
         var file = files.FirstOrDefault();
@@ -277,6 +283,12 @@
 
         return $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
     }
+
+    private async Task CreatorCreateCommand() { 
+        
+    }
+
+
 }
 
 
