@@ -1,11 +1,42 @@
 ﻿<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Sandbox</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+    @*<button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
-    </button>
+    </button>*@
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+<MatNavMenu Class="mat-nav">
+    <MatNavSubMenu>
+        <MatNavSubMenuHeader>
+            <MatNavItem AllowSelection="false">
+                <MatIcon Icon="group"></MatIcon>&nbsp; Property Grid
+            </MatNavItem>
+        </MatNavSubMenuHeader>
+        <MatNavSubMenuList>
+            <MatNavItem Href="/"> On Page</MatNavItem>
+            <MatNavItem Href="missions"> Missions - TelericGrid</MatNavItem>
+            <MatNavItem Href="workflows"> Workflows - MatBlazorGrid</MatNavItem>
+            <MatNavItem Href="metadata-render"> Metadata Render</MatNavItem>
+        </MatNavSubMenuList>
+    </MatNavSubMenu>
+    <MatNavItem Href="color-picker"> <MatIcon Icon="invert_colors"></MatIcon> Color Picker</MatNavItem>
+    <MatNavSubMenu>
+        <MatNavSubMenuHeader>
+            <MatNavItem AllowSelection="false">
+                <MatIcon Icon="cloud_upload"></MatIcon>&nbsp; Upload File
+            </MatNavItem>
+        </MatNavSubMenuHeader>
+        <MatNavSubMenuList>
+            <MatNavItem Href="upload"> Upload Signle File</MatNavItem>
+            <MatNavItem Href="upload/multi"> Upload Multu File</MatNavItem>
+            <MatNavItem Href="upload/dragdrop-viewer"> Upload Drag & Drop</MatNavItem>
+            <MatNavItem Href="upload/native"> Native Upload</MatNavItem>
+        </MatNavSubMenuList>
+    </MatNavSubMenu>
+
+</MatNavMenu>
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
             <NavLink class="nav-link" href="missions" Match="NavLinkMatch.All">
@@ -50,24 +81,14 @@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Upload Drag & Drop
             </NavLink>
         </li>
-        @*<li class="nav-item px-3">
+        <li class="nav-item px-3">
             <NavLink class="nav-link" href="upload/native">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Native Upload
             </NavLink>
-        </li>*@
-
-        @*<li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
-            </NavLink>
         </li>
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
-            </NavLink>
-        </li>*@
+
     </ul>
-</div>
+</div>*@
 
 @code {
     bool collapseNavMenu = true;
@@ -79,3 +100,14 @@
         collapseNavMenu = !collapseNavMenu;
     }
 }
+
+
+<style>
+    .mat-nav, .mat-nav a {
+        color: #d7d7d7;
+    }
+        .mat-nav .mdc-list-item--selected {
+             background-color: #04173d;
+        }
+
+</style>
