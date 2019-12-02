@@ -1,50 +1,118 @@
 ﻿@page "/"
+
+@using Orions.Infrastructure.HyperMedia;
+@using Orions.Infrastructure.HyperSemantic;
+@using ReactNOW.ML;
+
 @inherits BaseOrionsComponent
 
-<h5>Property Grid Test Page using Hyper Mission Phase</h5>
+<h5>Property Grid Test On Page</h5>
 
-<p>Mission Id is : @MissionId</p>
-<p>Phase Id is : @PhaseId</p>
-
-<div class="form-group">
-    <label for="missionIdInput">Mission Id</label>
-    <input type="text" class="form-control" @bind-value="@MissionId" @bind-value:event="oninput" id="missionIdInput" />
-</div>
-
-<div class="form-group">
-    <label for="phaseIdInput">Phase Id</label>
-    <input type="text" class="form-control" @bind-value="@PhaseId" @bind-value:event="oninput" id="phaseIdInput" />
-</div>
-
-<button @onclick="UpdateData">Update Data</button>
+<select class="form-control" value="@SelectedObject.Value" @onchange="(eventArgs => { OnChangeTestPropObject(SelectedObject, eventArgs.Value); })">
+    @foreach (var item in OptionObjects)
+    {
+        <option value="@item.Value">@item.Label</option>
+    }
+</select>
+<p>Change the property grid object.</p>
 
 <hr />
 
-<PropertyGrid Loader="GetMissionPhaseAsync"
-              HyperStore="DataContext.Instance.NetStore"
-              OKVisible="true"
-              CancelVisible="true">
-</PropertyGrid>
+<div class="card box-shadow">
+    <div class="card-body">
+        <PropertyGrid Loader="GetDataAsync"
+                      HyperStore="DataContext.Instance.NetStore"
+                      OKVisible="true"
+                      CancelVisible="true">
+        </PropertyGrid>
+    </div>
+</div>
+
 
 @code{
 
-    public string MissionId { get; set; } = "e8d88c8a-b82d-4911-9639-3080ef877653";
+    public TestPropObject SelectedObject { get; set; } = OptionObjects.FirstOrDefault();
 
-    public string PhaseId { get; set; } = "701544ad-e73b-4854-86ab-b0f8e3e91376";
+    private static List<TestPropObject> OptionObjects = new List<TestPropObject> {
+        new TestPropObject{ Value=1, Label="HyperMissionPhase"},
+        new TestPropObject{ Value=2, Label="GUINodeElement"},
+        new TestPropObject{ Value=3, Label="MetadataSetSourceHyperWorkflowNodeData"},
+        new TestPropObject{ Value=4, Label="OOITaggingHyperWorkflowNodeData"},
+        new TestPropObject{ Value=5, Label="MetadataRendererComponentConfig"},
+        //new TestPropObject{ Value=1, Label=""},
+    };
 
     // Always return the same instance, so we can test to see if changes stick.
-    static object _cachedMissionPhase;
+    static object _cachedObject;
 
-    private async Task<object> GetMissionPhaseAsync()
+    private async Task<object> GetDataAsync()
     {
-        if (_cachedMissionPhase == null)
-            _cachedMissionPhase = await DataContext.Instance.GetMissionPhaseAsync(MissionId, PhaseId);
+        if (_cachedObject == null)
+            _cachedObject = await LoadData(SelectedObject?.Value ?? 0);
 
-        return _cachedMissionPhase;
+        return _cachedObject;
     }
 
-    private async Task UpdateData()
+    private async Task<object> LoadData(int selectedObjectValue = 1)
     {
-        StateHasChanged();
+
+        switch (selectedObjectValue)
+        {
+            case 1:
+                var missionId = "e8d88c8a-b82d-4911-9639-3080ef877653";
+                var phaseId = "701544ad-e73b-4854-86ab-b0f8e3e91376";
+                var missionPhase = await DataContext.Instance.GetMissionPhaseAsync(missionId, phaseId);
+
+                if (missionPhase != null) return missionPhase;
+
+                return new HyperMissionPhase();
+
+            case 2:
+                return new GUINodeElement();
+            case 3:
+                return new MetadataSetSourceHyperWorkflowNodeData();
+            case 4:
+                return new OOITaggingHyperWorkflowNodeData();
+            case 5:
+                return new MetadataRendererComponentConfig()
+                {
+                    Id = "1edf89ad-948c-4821-aabb-85cabcb42cbe",
+                    Name = "Metadata Renderer",
+                };
+            default:
+                break;
+        }
+
+        return new NotImplementedException("Missing object");
+
     }
+
+    private void OnChangeTestPropObject(TestPropObject data, object value)
+    {
+        _cachedObject = null;
+
+        int option = int.Parse(string.Format("{0}", value));
+
+        SelectedObject = OptionObjects.FirstOrDefault(it => it.Value == option);
+    }
+
+
+    public class TestPropObject
+    {
+        public int Value { get; set; }
+
+        public string Label { get; set; }
+    }
+
+
+
 }
+
+<style>
+
+    .box-shadow {
+        -webkit-box-shadow: 7px 10px 18px -8px rgba(0,0,0,0.66);
+        -moz-box-shadow: 7px 10px 18px -8px rgba(0,0,0,0.66);
+        box-shadow: 7px 10px 18px -8px rgba(0,0,0,0.66);
+    }
+</style>
