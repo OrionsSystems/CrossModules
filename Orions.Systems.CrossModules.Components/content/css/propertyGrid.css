@@ -9,10 +9,12 @@
 
 .danger {
     background-color: #e89393;
+    border-radius: 5px;
 }
 
 .warning {
     background-color: #eadc98;
+    border-radius: 5px;
 }
 
 .pgrid-row {
@@ -41,4 +43,30 @@
     stroke-linejoin: round;
     fill: none;
     color: #69696b;
+}
+
+.prop-nav-btn {
+    cursor: pointer;
+    padding: 5px 4px;
+}
+
+.popup-parent {
+    color: white;
+    font-family: sans-serif;
+    font-weight: 100;
+    text-align: center;
+}
+
+    .popup-parent:focus {
+        outline: 0.3em dashed rgba(255, 165, 0, 0.7);
+    }
+
+.prop-grid-group-title {
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+.prop-grid-multuline {
+    width: 100%;
+    min-height: 60px;
 }
