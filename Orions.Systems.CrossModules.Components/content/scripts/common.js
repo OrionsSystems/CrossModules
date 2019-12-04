@@ -142,7 +142,7 @@ window.Orions.KendoMediaPlayer = {
 var _pickerMap = {};
 window.Orions.VanillaColorPicker = {
 
-    init: function (config) {
+    init: function (config, componentInstance) {
 
         var parent = document.querySelector('#' + config.parentId);
 
@@ -164,25 +164,28 @@ window.Orions.VanillaColorPicker = {
         picker.onDone = function (color) {
             console.log('onDone', this.settings.parent.id, color.rgba);
 
+            var selectedColor = '';
             if (this.settings.editorFormat === 'rgb') {
                 parent.style.background = this.color.rgbString;
-                parent.innerText = this.color.rgbString;
+                selectedColor = this.color.rgbString;
             }
 
             if (this.settings.editorFormat === 'hex') {
                 parent.style.background = this.color.hex;
-                parent.innerText = this.color.hex;
+                selectedColor = this.color.hex;
             }
 
             if (this.settings.editorFormat === 'hsl') {
                 parent.style.background = this.color.hslString;
-                parent.innerText = this.color.hslString;
+                selectedColor = this.color.hslString;
             }
-            
 
-            //var evt = document.createEvent("HTMLEvents");
-            //evt.initEvent("change", false, true);
-            //parent.dispatchEvent(evt);
+            parent.innerText = selectedColor;
+            
+            componentInstance.invokeMethodAsync('NotifyChange', selectedColor).then(null, function (err) {
+                throw new Error(err);
+            });
+
         };
         picker.onOpen = function (color) { console.log('Opened', this.settings.parent.id, color.rgba); };
         picker.onClose = function (color) { console.log('Closed', this.settings.parent.id, color.rgba); };

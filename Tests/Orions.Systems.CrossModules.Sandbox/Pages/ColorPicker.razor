@@ -10,6 +10,7 @@
                     Value="@RgbColor"
                     Color="@RgbColor"
                     Class="btn popup-parent"
+                    OnDone="HandleColor"
                     EditorFormat="rgb">
 </VanillaColorPicker>
 
@@ -19,6 +20,7 @@
                     Value="@HexColor"
                     Color="@HexColor"
                     Class="btn popup-parent"
+                    OnDone="HandleColor"
                     EditorFormat="hex">
 </VanillaColorPicker>
 
@@ -28,18 +30,34 @@
                     Value="@HlsColor"
                     Color="@HlsColor"
                     Class="btn popup-parent"
+                    OnDone="HandleColor"
                     EditorFormat="hsl">
 </VanillaColorPicker>
 
 <hr>
 
+@if (string.IsNullOrWhiteSpace(SelectedColor))
+{
+    <div>
+        Last selected Color is: @SelectedColor
+    </div>
+
+}
+
 @code{
+
+    public string SelectedColor { get; set; }
 
     public string RgbColor { get; set; } = "rgb(11, 69, 84)";
 
     public string HexColor { get; set; } = "#2c6737ff";
 
     public string HlsColor { get; set; } = "hsl(100, 100%, 50%)";
+
+    public void HandleColor(string color)
+    {
+        SelectedColor = color;
+    }
 
 }
 

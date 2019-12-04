@@ -1,11 +1,15 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class BaseVanillaColorPicker : BaseOrionsComponent
+	public class BaseVanillaColorPicker : BaseOrionsComponent, IDisposable
 	{
+		IDisposable thisReference;
+
 		protected VanilaColorPickerConfig Config { get; set; } = new VanilaColorPickerConfig();
 
 		[Parameter]
@@ -60,13 +64,27 @@ namespace Orions.Systems.CrossModules.Components
 		public string Color { get { return Config.Color; } set { Config.Color = value; } }
 
 		[Parameter]
-		public EventCallback<MouseEventArgs> OnChange { get; set; }
+		public EventCallback<string> OnDone { get; set; }
+
+
+		[JSInvokable]
+		public Task NotifyChange(string color)
+		{
+			return OnDone.InvokeAsync(color);
+		}
 
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			if (string.IsNullOrWhiteSpace(ParentId)) ParentId = Id;
 
-			await JsInterop.InvokeAsync<object>("Orions.VanillaColorPicker.init", new object[] { Config });
+			thisReference = DotNetObjectReference.Create(this);
+
+			await JsInterop.InvokeAsync<object>("Orions.VanillaColorPicker.init", new object[] { Config, thisReference });
+		}
+
+		void IDisposable.Dispose()
+		{
+			thisReference?.Dispose();
 		}
 	}
 }
