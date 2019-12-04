@@ -44,6 +44,8 @@ namespace Orions.Systems.CrossModules.Sandbox
 
 			services.AddTelerikBlazor();
 
+			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
 			if (services.All(x => x.ServiceType != typeof(HttpClient)))
 			{
@@ -77,11 +79,11 @@ namespace Orions.Systems.CrossModules.Sandbox
 			});
 
 			// Workaround for https://github.com/aspnet/AspNetCore/issues/13470
-			app.Use((context, next) =>
-			{
-				context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null;
-				return next.Invoke();
-			});
+			//app.Use((context, next) =>
+			//{
+			//	context.Features.Get<IHttpMaxRequestBodySizeFeature>().MaxRequestBodySize = null;
+			//	return next.Invoke();
+			//});
 
 			app.UseEmbeddedBlazorContent(typeof(BaseOrionsComponent).Assembly);
 

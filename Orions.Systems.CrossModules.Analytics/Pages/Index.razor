@@ -26,15 +26,17 @@ else
 
         <h1>Analytics</h1>
 
+        <InfoTab MissionName="@Mission?.Name" MetadataSetName="@MetadataSet?.Name"></InfoTab>
+
         <div class="row">
             <div class="col-md-5">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">Items per Label</h5>
 
-
-                        <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" />
-
+                        <div class="chart-pie-custom-container">
+                            <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="400" Width="400" />
+                        </div>
                         @*<TelerikChart>
                                 <ChartSeriesItems>
                                     <ChartSeries Type="ChartSeriesType.Pie"
@@ -70,22 +72,24 @@ else
                     <div class="card-body">
                         <h5 class="card-title">Items per Time</h5>
 
-                        @*<ChartJsBarChart @ref="_barChartJs" Config="@_barConfig" Height="600" />*@
+                        @*<div class="chart-bar-custom-container">
+                            <ChartJsBarChart @ref="_barChartJs" Config="@_barConfig" />
+                        </div>*@
 
                         <TelerikChart>
-                                <ChartSeriesItems>
-                                    <ChartSeries Type="ChartSeriesType.Column"
-                                                 Data="@tagTimingData"
-                                                 Field="@nameof(TagStreamTimeChartData.Count)"
-                                                 CategoryField="@nameof(TagStreamTimeChartData.Time)">
-                                    </ChartSeries>
-                                </ChartSeriesItems>
+                            <ChartSeriesItems>
+                                <ChartSeries Type="ChartSeriesType.Column"
+                                             Data="@tagTimingData"
+                                             Field="@nameof(TagStreamTimeChartData.Count)"
+                                             CategoryField="@nameof(TagStreamTimeChartData.Time)">
+                                </ChartSeries>
+                            </ChartSeriesItems>
 
-                                <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
-                                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
-                            </TelerikChart>
+                            <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
+                            <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                        </TelerikChart>
                     </div>
-                </div>
+                    </div>
             </div>
         </div>
     </div>
@@ -113,6 +117,11 @@ else
 
     public bool IsLoaded { get; set; }
 
+    public HyperMission Mission { get; set; }
+
+    public HyperMetadataSet MetadataSet { get; set; }
+
+
     protected override async Task OnInitializedAsync()
     {
 
@@ -125,6 +134,9 @@ else
         tagTimingData = NodeStatisticsManager.Instance.TagTimingData;
 
         tagTreemapData = NodeStatisticsManager.Instance.TagTreemapData.ToArray();
+
+        MetadataSet = NodeStatisticsManager.Instance.MetadataSet;
+        Mission = NodeStatisticsManager.Instance.Mission;
 
         IsLoaded = NodeStatisticsManager.Instance.IsLoadedData;
 
@@ -161,7 +173,7 @@ else
                             Ticks = new TimeTicks{
                                 Source= TickSource.Data
                             },
-                            
+
                         }
                     },
                     YAxes = new List<CartesianAxis> {
@@ -249,7 +261,19 @@ else
 }
 
 <style>
-    .chart-container canvas {
-        min-height: 300px;
+    .chart-pie-custom-container .chart-container > canvas {
+        width: 400px !important;
+        height: 400px !important;
+        display: block !important;
+    }
+
+    .chart-pie-custom-container .chart-container {
+        width: auto !important;
+    }
+
+    .chart-bar-custom-container .chart-container > canvas {
+        /*width: 400px !important;*/
+        height: 600px !important;
+        display: block !important;
     }
 </style>

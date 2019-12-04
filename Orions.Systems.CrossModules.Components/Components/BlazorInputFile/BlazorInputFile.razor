@@ -42,7 +42,7 @@
         if (firstRender)
         {
             thisReference = DotNetObjectReference.Create(this);
-            await JSRuntime.InvokeAsync<object>("Orions.BlazorInputFile.init", inputFileElement, thisReference);
+            await JSRuntime.InvokeAsync<object>("BlazorInputFile.init", inputFileElement, thisReference);
         }
     }
 

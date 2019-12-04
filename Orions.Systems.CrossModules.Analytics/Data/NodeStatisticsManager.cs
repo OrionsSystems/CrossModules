@@ -31,6 +31,10 @@ namespace Orions.CrossModules.Data
 
 		public bool IsLoadedData { get; set; }
 
+		public HyperMetadataSet MetadataSet { get; private set; }
+
+		public HyperMission Mission { get; private set; }
+
 		static Lazy<NodeStatisticsManager> _instance = new Lazy<NodeStatisticsManager>();
 
 		public static NodeStatisticsManager Instance => _instance.Value;
@@ -76,8 +80,10 @@ namespace Orions.CrossModules.Data
 					var metadataSetId = crossModuleVisualizationRequest.MetadataSetDocIds.FirstOrDefault();
 
 					Logger.Instance.PriorityInfo($"Meta data set id retrieved: {metadataSetId}");
-					var filterSet = await RetrieveHyperDocumentArgs.RetrieveAsync<HyperMetadataSet>(_netStore, metadataSetId);
-					await ApplyFilterConditions(findArgs, filterSet);
+					MetadataSet = await RetrieveHyperDocumentArgs.RetrieveAsync<HyperMetadataSet>(_netStore, metadataSetId);
+					await ApplyFilterConditions(findArgs, MetadataSet);
+
+					Mission = await LoadMission(MetadataSet);
 				}
 
 				var docs = await _netStore.ExecuteAsync(findArgs) ?? new HyperDocument[0];
@@ -92,7 +98,26 @@ namespace Orions.CrossModules.Data
 			{
 				Logger.Instance.Error("NetStore is null");
 			}
-			
+		}
+
+
+		public async Task<HyperMission> LoadMission(HyperMetadataSet metadataset)
+		{
+
+			var missionId = metadataset?.MissionIds?.FirstOrDefault().Id;
+
+			if (string.IsNullOrWhiteSpace(missionId)) return null;
+
+			var retrieveHyperDocumentArgs = new RetrieveHyperDocumentArgs()
+			{
+				DocumentId = HyperDocumentId.Create<HyperMission>(missionId)
+			};
+
+			var hyperDocument = await _netStore.ExecuteAsync(retrieveHyperDocumentArgs);
+
+			var mission = hyperDocument.GetPayload<HyperMission>();
+
+			return mission;
 		}
 
 		private async Task ApplyFilterConditions(FindHyperDocumentsArgs mainArgs, HyperMetadataSet id)

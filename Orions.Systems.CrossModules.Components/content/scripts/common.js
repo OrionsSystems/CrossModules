@@ -200,9 +200,10 @@ window.Orions.VanillaColorPicker = {
 
 
 (function () {
-    window.Orions.BlazorInputFile = {
+    window.BlazorInputFile = {
 
         init: function init(elem, componentInstance) {
+
             var nextFileId = 0;
 
             elem.addEventListener('change', function handleInputFileChange(event) {

@@ -1,0 +1,25 @@
+﻿
+@if (!string.IsNullOrWhiteSpace(MissionName) || !string.IsNullOrWhiteSpace(MetadataSetName))
+{
+    <div class="info-tab row">
+        <div class="col-12">
+            @if (!string.IsNullOrWhiteSpace(MissionName))
+            {
+                <h5 class="info-tabl-title">Misssion: @MissionName</h5>
+            }
+            @if (!string.IsNullOrWhiteSpace(MetadataSetName))
+            {
+                <h5 class="info-tabl-title">MetadataSet: @MetadataSetName</h5>
+            }
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public string MissionName { get; set; }
+
+    [Parameter]
+    public string MetadataSetName { get; set; }
+}
