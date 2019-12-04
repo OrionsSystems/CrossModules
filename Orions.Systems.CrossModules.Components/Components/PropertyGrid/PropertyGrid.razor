@@ -4,6 +4,7 @@
 @using Orions.Node.Common;
 @using Orions.Common;
 @using System.IO
+@using System.Text.RegularExpressions;
 
 
 <div class="prop-grid-container">
@@ -130,6 +131,7 @@
                                                         Color="@rgbColor"
                                                         Popup="bottom"
                                                         Value="@rgbColor"
+                                                        OnDone="(color => ChangeColor(data.DataProp.Value, color))"
                                                         EditorFormat="rgb">
                                     </VanillaColorPicker>
                                 </a>
@@ -300,9 +302,20 @@
     //     await DataContext.Utility.RunCreatorFor(DataContext.SelectedCreatorItemProp.Value);
     //}
 
-    private void ChangeColor(PropertyGridItemUtilityData data, object value)
+
+    private void ChangeColor(PropertyGridItemUtilityData data, string color)
     {
-        var test = value;
+        if (string.IsNullOrEmpty(color)) return;
+
+        var regex = new Regex("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
+        var m = regex.Match(color);
+
+        if (m.Success) {
+            var uniColor = UniColor.FromArgb(byte.Parse(m.Groups[1].Value), byte.Parse(m.Groups[2].Value), byte.Parse(m.Groups[3].Value));
+
+            data.Instance = uniColor;
+        }
+
     }
 
     private string GetImageSrc(object input)
