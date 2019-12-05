@@ -91,10 +91,12 @@
             return;
         }
 
+        var n = row.Columns.Find(column);
+        var prevColumn = n.Previous;
+
         row.Columns.Remove(column);
 
-        var firstColumn = row.Columns.FirstOrDefault(); // TODO fix it to use parent colum!
-        firstColumn.Size += columnSize;
+        prevColumn.Value.Size += columnSize;
     }
 
 
