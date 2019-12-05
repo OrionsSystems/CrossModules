@@ -11,6 +11,11 @@
         @foreach (var row in Data.Rows)
         {
             <div class="row mb-4">
+
+                @{
+                    var lastCoumnId = row.Columns.Last.Value.Id;
+                }
+
                 @foreach (var column in row.Columns)
                 {
                     <div class="col-sm-@column.Size">
@@ -23,7 +28,17 @@
                         </div>
                         <div class="clearfix"></div>
                         <div class="dashboard-element-container">
+
                             Content
+
+                            @if (lastCoumnId != column.Id)
+                            {
+                                <div id="@column.Id" 
+                                     class="dashboard-dragbar" 
+                                     @onmousedown="OnMouseDownDraging" 
+                                     @onmousemove="OnMouseMoveDraging"
+                                     @onmouseup="OnMouseUpDraging"></div>
+                            }
                         </div>
                     </div>
                 }
@@ -87,13 +102,26 @@
 
         row.Columns.Remove(column);
 
-        if (prevColumn == null) {
-            var firstCol =  row.Columns.FirstOrDefault();
+        if (prevColumn == null)
+        {
+            var firstCol = row.Columns.FirstOrDefault();
             firstCol.Size += columnSize;
             return;
         }
 
         prevColumn.Value.Size += columnSize;
+    }
+
+    private void OnMouseDownDraging() {
+        //TODO
+    }
+
+    private void OnMouseMoveDraging() { 
+        //TODO
+    }
+
+    private void OnMouseUpDraging() { 
+        //TODO
     }
 }
 
@@ -117,4 +145,24 @@
         .dashboard-element-commands > a:hover {
             color: white
         }
+
+    .dashboard-dragbar {
+        position: absolute;
+        background-color: #999494;
+        height: 30px;
+        float: right;
+        width: 6px;
+        cursor: col-resize;
+        top: calc(50%);
+        right: -2px;
+    }
+
+    #ghostbar {
+        width: 3px;
+        background-color: #000;
+        opacity: 0.5;
+        position: absolute;
+        cursor: col-resize;
+        z-index: 999;
+    }
 </style>
