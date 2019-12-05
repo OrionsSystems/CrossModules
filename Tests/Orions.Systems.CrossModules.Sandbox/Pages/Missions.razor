@@ -41,10 +41,13 @@ else
     </WindowTitle>
     <WindowContent>
 
-        <PropertyGrid Loader="LoadPropertyGridData"
+        <PropertyGrid @ref="propGrid" 
+                      Loader="LoadPropertyGridData"
                       HyperStore="DataContext.Instance.NetStore"
                       OKVisible="true"
-                      CancelVisible="true">
+                      CancelVisible="true"
+                      OkCommand="OnOkCommand"
+                      CancelCommand="OnCancelCommand">
         </PropertyGrid>
 
     </WindowContent>
@@ -57,6 +60,8 @@ else
 
 
 @code {
+
+    PropertyGrid propGrid;
 
     public IEnumerable<MissionViewModel> Data { get; set; }
     string Height = "1000px";
@@ -95,6 +100,8 @@ else
 
     public void OnClosePropertyGrid()
     {
+        if(propGrid != null) propGrid.CleanSourceCache();
+
         IsPropertyGridVisible = false;
 
         StateHasChanged();
@@ -109,7 +116,20 @@ else
 
         IsPropertyGridVisible = true;
         StateHasChanged();
-        ShowToaster("Show Grid Property");
+    }
+
+    private async Task OnOkCommand()
+    {
+        OnClosePropertyGrid();
+
+        ShowToaster("Save changes");
+    }
+
+    private async Task OnCancelCommand()
+    {
+        OnClosePropertyGrid();
+
+        ShowToaster("Cancel changes");
     }
 
     private void ShowToaster(string message)

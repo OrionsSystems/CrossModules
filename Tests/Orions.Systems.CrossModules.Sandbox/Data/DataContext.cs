@@ -25,7 +25,8 @@ namespace Orions.Systems.CrossModules.Sandbox.Data
 			ServerUri = connection.ConnectionUri;
 			try
 			{
-				_netStore = await NetStore.ConnectAsyncThrows(ServerUri);
+				_netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute"); // Embed node
+				//_netStore = await NetStore.ConnectAsyncThrows(ServerUri);
 			}
 			catch (Exception ex)
 			{

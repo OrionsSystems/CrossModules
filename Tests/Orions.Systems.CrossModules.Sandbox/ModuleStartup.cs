@@ -37,9 +37,11 @@ namespace Orions.Systems.CrossModules.Sandbox
 			services.AddMatToaster(config =>
 			{
 				config.Position = MatToastPosition.TopRight;
-				config.PreventDuplicates = false;
+				config.PreventDuplicates = true;
 				config.NewestOnTop = true;
 				config.ShowCloseButton = true;
+				config.MaximumOpacity = 95;
+				config.VisibleStateDuration = 3000;
 			});
 
 			services.AddTelerikBlazor();

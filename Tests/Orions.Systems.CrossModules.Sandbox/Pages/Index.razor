@@ -6,6 +6,8 @@
 
 @inherits BaseOrionsComponent
 
+@inject IMatToaster Toaster
+
 <h5>Property Grid Test On Page</h5>
 
 <select class="form-control" value="@SelectedObject.Value" @onchange="(eventArgs => { OnChangeTestPropObject(SelectedObject, eventArgs.Value); })">
@@ -20,16 +22,19 @@
 
 <div class="card box-shadow">
     <div class="card-body">
-        <PropertyGrid Loader="GetDataAsync"
+        <PropertyGrid @ref="propGrid" Loader="GetDataAsync"
                       HyperStore="DataContext.Instance.NetStore"
                       OKVisible="true"
-                      CancelVisible="true">
+                      CancelVisible="true"
+                      OkCommand="OnOkCommand"
+                      CancelCommand="OnCancelCommand">
         </PropertyGrid>
     </div>
 </div>
 
-
 @code{
+
+    PropertyGrid propGrid;
 
     public TestPropObject SelectedObject { get; set; } = OptionObjects.FirstOrDefault();
 
@@ -59,8 +64,8 @@
         switch (selectedObjectValue)
         {
             case 1:
-                var missionId = "e8d88c8a-b82d-4911-9639-3080ef877653";
-                var phaseId = "701544ad-e73b-4854-86ab-b0f8e3e91376";
+                var missionId = "8b1851f3-fc25-425d-8998-3667adf0ba39";
+                var phaseId = "737dab8c-8dbb-4b15-9e9f-910094ba8ff8";
                 var missionPhase = await DataContext.Instance.GetMissionPhaseAsync(missionId, phaseId);
 
                 if (missionPhase != null) return missionPhase;
@@ -91,11 +96,34 @@
     {
         _cachedObject = null;
 
+        propGrid.CleanSourceCache();
+
         int option = int.Parse(string.Format("{0}", value));
 
         SelectedObject = OptionObjects.FirstOrDefault(it => it.Value == option);
     }
 
+    private async Task OnOkCommand()
+    {
+        await Task.Delay(500);
+        ShowToaster(MatToastType.Success, "" ,"Save changes");
+    }
+
+    private async Task OnCancelCommand()
+    {
+        await Task.Delay(500);
+        ShowToaster(MatToastType.Info , "", "Cancel changes");
+    }
+
+    private void ShowToaster(MatToastType type, string title, string message)
+    {
+        Toaster.Add(message, type, title, "", config =>
+        {
+            config.ShowCloseButton = false;
+            config.ShowProgressBar = false;
+            config.MaximumOpacity = 100;
+        });
+    }
 
     public class TestPropObject
     {
@@ -103,8 +131,6 @@
 
         public string Label { get; set; }
     }
-
-
 
 }
 

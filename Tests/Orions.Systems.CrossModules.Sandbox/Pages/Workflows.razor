@@ -38,28 +38,28 @@ else
 
 
     <MatDialog @bind-IsOpen="@IsPropertyGridVisible" Class="demo-window">
-        <MatDialogTitle>Property</MatDialogTitle>
         <MatDialogContent>
 
             @if (SelectedMission != null)
             {
-                <PropertyGrid Loader="LoadPropertyGridData"
-                              HyperStore="DataContext.Instance.NetStore">
+                <PropertyGrid @ref="propGrid"
+                              Loader="LoadPropertyGridData"
+                              HyperStore="DataContext.Instance.NetStore"
+                              OKVisible="true"
+                              CancelVisible="true"
+                              OkCommand="OnOkCommand"
+                              CancelCommand="OnCancelCommand">
                 </PropertyGrid>
             }
 
         </MatDialogContent>
-        <MatDialogActions>
-            <MatButton OnClick="@(e => { IsPropertyGridVisible = false; })">Close</MatButton>
-            <MatButton OnClick="@OnClosePropertyGrid">OK</MatButton>
-        </MatDialogActions>
     </MatDialog>
 
 }
 
-
-
 @code {
+
+    PropertyGrid propGrid;
 
     public IEnumerable<WorkflowViewModel> Data { get; set; }
 
@@ -92,9 +92,24 @@ else
 
     public void OnClosePropertyGrid()
     {
+
+        if (propGrid != null) propGrid.CleanSourceCache();
+
         IsPropertyGridVisible = false;
 
         StateHasChanged();
+    }
+
+    private async Task OnOkCommand()
+    {
+        OnClosePropertyGrid();
+        await Task.Delay(1000);
+    }
+
+    private async Task OnCancelCommand()
+    {
+        OnClosePropertyGrid();
+        await Task.Delay(1000);
     }
 
     private void ShowGridProperty(MouseEventArgs e, WorkflowViewModel model)
@@ -113,7 +128,7 @@ else
         position: fixed;
     }
 
-    .demo-window .mdc-dialog__surface {
-        min-width: 1200px !important;
-    }
+        .demo-window .mdc-dialog__surface {
+            min-width: 1200px !important;
+        }
 </style>
