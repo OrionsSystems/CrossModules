@@ -5,52 +5,13 @@
 
 @inject IMatToaster Toaster
 
-
-<div class="container-fluid">
-
-
+<DashboardLayout Data="Data">
     <h5>Dashboard Prototype</h5>
-
-
-    @if (Data.Rows.Any())
-    {
-
-        @foreach (var row in Data.Rows)
-        {
-            <div class="row mb-4">
-
-                @foreach (var column in row.Columns)
-                {
-                    <div class="col-sm-@column.Size">
-
-                        <div class="dashboard-element-commands float-right">
-                            @if (column.Size > 1)
-                            {
-                                <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { SplitColumn(el, row, column); })">Split</a>
-                            }
-                            <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DeleteColumn(el, row, column); })">Delete</a>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="dashboard-element-container">
-                            Content
-                        </div>
-                    </div>
-                }
-            </div>
-        }
-    }
-
-    <div class="row">
-        <div class="col text-center">
-            <button class="btn btn-dark" @onclick="OnAddRow"> Add Row</button>
-        </div>
-    </div>
-</div>
-
+</DashboardLayout>
 
 @code{
 
-    public DashboardData Data { get; set; }
+    private DashboardData Data { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,47 +19,6 @@
 
         await base.OnInitializedAsync();
     }
-
-
-    private void OnAddRow()
-    {
-        var row = new DashboardRow();
-        row.Columns.AddLast(new DashboardColumn { Size = 12 });
-        Data.Rows.Add(row);
-    }
-
-    private void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-    {
-
-        var size = column.Size % 2;
-        var sizeF = column.Size / 2;
-
-        column.Size = sizeF;
-        var newColumn = new DashboardColumn { Size = sizeF + size };
-
-        var n = row.Columns.Find(column);
-        row.Columns.AddAfter(n, newColumn);
-
-    }
-
-    private void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-    {
-        var columnSize = column.Size;
-
-        if (row.Columns.Count == 1)
-        {
-            Data.Rows.RemoveAll(it => it.Id == row.Id);
-            return;
-        }
-
-        var n = row.Columns.Find(column);
-        var prevColumn = n.Previous;
-
-        row.Columns.Remove(column);
-
-        prevColumn.Value.Size += columnSize;
-    }
-
 
     private void InitDashboard()
     {
@@ -115,55 +35,4 @@
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         Data.Rows.Add(row_2);
     }
-
-    public class DashboardData
-    {
-        public List<DashboardRow> Rows { get; set; }
-
-        public DashboardData()
-        {
-            Rows = new List<DashboardRow>();
-        }
-    }
-
-    public class DashboardRow
-    {
-        public string Id { get; set; } = $"db-row-{Guid.NewGuid()}";
-        public LinkedList<DashboardColumn> Columns { get; set; }
-
-        public DashboardRow()
-        {
-            Columns = new LinkedList<DashboardColumn>();
-        }
-    }
-
-    public class DashboardColumn
-    {
-        public string Id { get; set; } = $"db-col-{Guid.NewGuid()}";
-        public int Size { get; set; }
-        public int Order { get; set; }
-    }
-
 }
-
-<style>
-    .dashboard-element-container {
-        height: 200px;
-        width: 100%;
-        border-style: dashed;
-        border-color: darkgrey;
-        border-width: 1px;
-        text-align: center;
-        line-height: 200px;
-    }
-
-    .dashboard-element-commands > a {
-        cursor: pointer;
-        margin-bottom: 3px;
-        padding: 2px 2px !important;
-    }
-    .dashboard-element-commands > a:hover {
-        color:white
-    }
-
-</style>
