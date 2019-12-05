@@ -1,4 +1,5 @@
-﻿@page "/missions"
+﻿@namespace Orions.Systems.CrossModules.Pages
+@page "/property-grid/missions"
 
 @inherits BaseOrionsComponent
 @inject IMatToaster Toaster
@@ -41,7 +42,7 @@ else
     </WindowTitle>
     <WindowContent>
 
-        <PropertyGrid @ref="propGrid" 
+        <PropertyGrid @ref="propGrid"
                       Loader="LoadPropertyGridData"
                       HyperStore="DataContext.Instance.NetStore"
                       OKVisible="true"
@@ -100,7 +101,7 @@ else
 
     public void OnClosePropertyGrid()
     {
-        if(propGrid != null) propGrid.CleanSourceCache();
+        if (propGrid != null) propGrid.CleanSourceCache();
 
         IsPropertyGridVisible = false;
 

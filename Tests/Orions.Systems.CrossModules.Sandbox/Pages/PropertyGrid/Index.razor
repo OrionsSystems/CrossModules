@@ -1,4 +1,7 @@
-﻿@page "/"
+﻿@namespace Orions.Systems.CrossModules.Pages
+
+@page "/property-grid/"
+
 
 @using Orions.Infrastructure.HyperMedia;
 @using Orions.Infrastructure.HyperSemantic;
@@ -106,13 +109,13 @@
     private async Task OnOkCommand()
     {
         await Task.Delay(500);
-        ShowToaster(MatToastType.Success, "" ,"Save changes");
+        ShowToaster(MatToastType.Success, "", "Save changes");
     }
 
     private async Task OnCancelCommand()
     {
         await Task.Delay(500);
-        ShowToaster(MatToastType.Info , "", "Cancel changes");
+        ShowToaster(MatToastType.Info, "", "Cancel changes");
     }
 
     private void ShowToaster(MatToastType type, string title, string message)
