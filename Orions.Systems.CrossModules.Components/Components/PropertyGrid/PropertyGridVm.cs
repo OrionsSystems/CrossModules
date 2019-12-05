@@ -29,10 +29,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ViewModelProperty<PropertyGridUtilityBase.CreatorItem> SelectedCreatorItemProp { get; set; } = new ViewModelProperty<PropertyGridUtilityBase.CreatorItem>();
 
-		public BlazorCommand OKCommand { get; set; } = new BlazorCommand();
-
-		public BlazorCommand CancelCommand { get; set; } = new BlazorCommand();
-
 		public bool OKVisible { get; set; }
 
 		public bool CancelVisible { get; set; }

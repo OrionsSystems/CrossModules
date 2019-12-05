@@ -30,9 +30,6 @@
                         </svg>
                     </div>
                 </a>
-
-                @*<button class="btn btn-outline-dark nav-button" onclick="@DataContext.HomeCommand">Home</button>
-                    <button class="btn btn-outline-dark nav-button" onclick="@DataContext.BackCommand">Back</button>*@
             }
 
             <h5 class="prop-grid-header-title">@DataContext.TrailProp.Value</h5>
@@ -168,7 +165,7 @@
                     @if (data.DataProp.Value.CanDelete)
                     {
                         <div class="col-md-1">
-                            <button class="btn btn-outline-dark float-right" onclick="@data.DataProp.Value.DeleteCommand">Delete</button>
+                            <button class="btn btn-outline-dark float-right" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
                         </div>
                     }
                 </div>
@@ -181,11 +178,11 @@
         <div class="col-md-12 k-right">
             @if (DataContext.OKVisible)
             {
-                <button class="btn btn-outline-primary float-right ml-1" onclick="@DataContext.OKCommand">OK</button>
+                <button class="btn btn-outline-primary float-right ml-1" @onclick="OnOkCmd">OK</button>
             }
             @if (DataContext.CancelVisible)
             {
-                <button class="btn btn-outline-dark float-right" onclick="@DataContext.CancelCommand">Cancel</button>
+                <button class="btn btn-outline-dark float-right" @onclick="OnCancelCmd">Cancel</button>
             }
 
         </div>
@@ -194,19 +191,6 @@
 
 @code {
 
-    public bool IsDirty
-    {
-        get
-        {
-            if (DataContext.Items.Any())
-            {
-
-                return DataContext.Items.IsDirty();
-            }
-
-            return false;
-        }
-    }
 
     [Parameter] public Func<Task<object>> Loader { get; set; }
 
@@ -222,9 +206,26 @@
     [Parameter]
     public bool CancelVisible { get { return DataContext.CancelVisible; } set { DataContext.CancelVisible = value; } }
 
+    [Parameter]
+    public EventCallback OkCommand { get; set; }
+
+    [Parameter]
+    public EventCallback CancelCommand { get; set; }
+
+    private object _sourceCache; // init source data once
+
+    public void CleanSourceCache() {
+        _sourceCache = null;
+        //StateHasChanged();
+    }
+
     protected override async Task OnParametersSetAsync()
     {
-        Source = await Loader();
+
+        if (_sourceCache == null) {
+            _sourceCache = await Loader();
+            Source = _sourceCache;
+        }
     }
 
     protected override async Task OnInitializedAsync()
@@ -236,7 +237,7 @@
     {
         if (data.DataProp.Value.IsImportant) return "danger";
         if (data.DataProp.Value.IsMandatory) return "warning";
-        return "";
+        return String.Empty;
     }
 
     private void CheckboxChange(PropertyGridItemUtilityData data, object checkedValue)
@@ -255,6 +256,11 @@
         HintOptionPair selectedOption = null;
         foreach (var item in data.AvailableValueOptions)
         {
+            //if (object.Equals(item.Value, data.GetInstance())) { 
+            //    selectedOption = item;
+            //    break;
+            //}
+
             if (object.Equals(item.Title, value)) // TODO Fix me to check for Value !!!
             {
                 selectedOption = item;
@@ -289,19 +295,11 @@
         {
             using (var ms = new MemoryStream())
             {
-                //file.Data.CopyTo(ms);
                 await file.Data.CopyToAsync(ms);
-
                 data.Instance = ms.ToArray();
             }
         }
     }
-
-    //private async Task OnCreatorCreateCommand()
-    //{
-    //     await DataContext.Utility.RunCreatorFor(DataContext.SelectedCreatorItemProp.Value);
-    //}
-
 
     private void ChangeColor(PropertyGridItemUtilityData data, string color)
     {
@@ -315,7 +313,23 @@
 
             data.Instance = uniColor;
         }
+    }
 
+    private void OnDeleteCmd(PropertyGridItemUtilityData data, MouseEventArgs ev)
+    {
+        data.DeleteCommand.Execute(data);
+    }
+
+    private async Task OnCancelCmd(MouseEventArgs ev)
+    {
+        await DataContext.Utility.MoveBack(true);
+        await CancelCommand.InvokeAsync(ev);
+    }
+
+    private async Task OnOkCmd(MouseEventArgs ev)
+    {
+        await DataContext.Utility.MoveBack(true);
+        await OkCommand.InvokeAsync(ev);
     }
 
     private string GetImageSrc(object input)
@@ -326,13 +340,6 @@
 
         return $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
     }
-
-    private async Task CreatorCreateCommand()
-    {
-
-    }
-
-
 }
 
 <style>
