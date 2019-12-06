@@ -5,7 +5,10 @@
 
 @inject IMatToaster Toaster
 
-<DashboardLayout Data="Data">
+<DashboardLayout 
+                 Data="Data" 
+                 EnableSplitter="true" 
+                 OnSave="SaveChanges">
     <h5>Dashboard Prototype</h5>
 </DashboardLayout>
 
@@ -15,9 +18,15 @@
 
     protected override async Task OnInitializedAsync()
     {
-        InitDashboard();
+        InitDashboard(); // load init data
 
         await base.OnInitializedAsync();
+    }
+
+    private void SaveChanges() {
+        // Save dashboard data here
+
+        ShowToaster(MatToastType.Success, "", "Save changes");
     }
 
     private void InitDashboard()
@@ -34,5 +43,15 @@
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         Data.Rows.Add(row_2);
+    }
+
+    private void ShowToaster(MatToastType type, string title, string message)
+    {
+        Toaster.Add(message, type, title, "", config =>
+        {
+            config.ShowCloseButton = false;
+            config.ShowProgressBar = false;
+            config.MaximumOpacity = 100;
+        });
     }
 }

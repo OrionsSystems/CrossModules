@@ -30,5 +30,6 @@ namespace Orions.Systems.CrossModules.Components
         public string Id { get; set; } = IdGeneratorHelper.Generate("db-col-");
         public int Size { get; set; }
         public int Order { get; set; }
+        public bool ShowCommands { get; set; }
     }
 }

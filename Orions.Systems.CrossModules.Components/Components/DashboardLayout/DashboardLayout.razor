@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseOrionsComponent
+@inherits BaseBlazorComponent<DashboardVm>
 
 <div class="container-fluid">
 
@@ -8,36 +8,37 @@
 
     @if (Data.Rows.Any())
     {
-        @foreach (var row in Data.Rows)
+        @foreach (var row in DataContext.Source.Rows)
         {
             <div class="row mb-4">
 
-                @{
-                    var lastCoumnId = row.Columns.Last.Value.Id;
-                }
-
                 @foreach (var column in row.Columns)
                 {
-                    <div class="col-sm-@column.Size">
-                        <div class="dashboard-element-commands float-right">
-                            @if (column.Size > 1)
+                    <div @key="column" class="col-sm-@column.Size">
+
+                        <div class="dashboard-element-container" @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e=>DataContext.HideCommands(e, column))">
+
+                            @if (column.ShowCommands)
                             {
-                                <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { SplitColumn(el, row, column); })">Split</a>
+                                <div class="dashboard-element-commands">
+                                    @if (column.Size > 1)
+                                    {
+                                        <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DataContext.SplitColumn(el, row, column); })">||</a>
+                                    }
+                                    <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DataContext.DeleteColumn(el, row, column); })">X</a>
+                                </div>
                             }
-                            <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DeleteColumn(el, row, column); })">Delete</a>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="dashboard-element-container">
 
-                            Content
+                            <div class="dashboard-content">Content</div>
 
-                            @if (lastCoumnId != column.Id)
+                            @if (EnableSplitter || row.Columns.Last.Value.Id != column.Id)
                             {
-                                <div id="@column.Id" 
-                                     class="dashboard-dragbar" 
-                                     @onmousedown="OnMouseDownDraging" 
-                                     @onmousemove="OnMouseMoveDraging"
-                                     @onmouseup="OnMouseUpDraging"></div>
+                                <div id="@column.Id"
+                                     class="dashboard-dragbar"
+                                     @onmousedown="DataContext.OnMouseDownDraging"
+                                     @onmousemove="DataContext.OnMouseMoveDraging"
+                                     @onmouseup="DataContext.OnMouseUpDraging">
+                                </div>
                             }
                         </div>
                     </div>
@@ -47,7 +48,7 @@
     }
     <div class="row">
         <div class="col text-center">
-            <button class="btn btn-dark" @onclick="OnAddRow"> Add Row</button>
+            <button class="btn btn-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
         </div>
     </div>
 </div>
@@ -56,73 +57,24 @@
 @code{
 
     [Parameter]
-    public DashboardData Data { get; set; } = new DashboardData();
+    public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
+
+    [Parameter]
+    public bool EnableSplitter { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback OnSave { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
     }
 
-    private void OnAddRow()
-    {
-        var row = new DashboardRow();
-        row.Columns.AddLast(new DashboardColumn { Size = 12 });
-        Data.Rows.Add(row);
-    }
+    
 
-    private void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-    {
-
-        var size = column.Size % 2;
-        var sizeF = column.Size / 2;
-
-        column.Size = sizeF;
-        var newColumn = new DashboardColumn { Size = sizeF + size };
-
-        var n = row.Columns.Find(column);
-        row.Columns.AddAfter(n, newColumn);
-
-    }
-
-    private void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-    {
-        var columnSize = column.Size;
-
-        if (row.Columns.Count == 1)
-        {
-            Data.Rows.RemoveAll(it => it.Id == row.Id);
-            return;
-        }
-
-        var n = row.Columns.Find(column);
-        var prevColumn = n.Previous;
-
-        row.Columns.Remove(column);
-
-        if (prevColumn == null)
-        {
-            var firstCol = row.Columns.FirstOrDefault();
-            firstCol.Size += columnSize;
-            return;
-        }
-
-        prevColumn.Value.Size += columnSize;
-    }
-
-    private void OnMouseDownDraging() {
-        //TODO
-    }
-
-    private void OnMouseMoveDraging() { 
-        //TODO
-    }
-
-    private void OnMouseUpDraging() { 
-        //TODO
-    }
 }
 
 <style>
@@ -133,18 +85,32 @@
         border-color: darkgrey;
         border-width: 1px;
         text-align: center;
+    }
+
+    .dashboard-content {
+        background-color: #ecf8f4;
         line-height: 200px;
     }
 
-    .dashboard-element-commands > a {
-        cursor: pointer;
-        margin-bottom: 3px;
-        padding: 2px 2px !important;
+    .dashboard-element-commands {
+        position: absolute;
+        right: 23px;
+        top: 7px;
     }
 
-        .dashboard-element-commands > a:hover {
-            color: white
+        .dashboard-element-commands > a {
+            cursor: pointer;
+            margin-bottom: 3px;
+            padding: 2px 2px !important;
+            height: 20px;
+            width: 20px;
+            line-height: 14px;
+            font-size: 12px;
         }
+
+            .dashboard-element-commands > a:hover {
+                color: white !important;
+            }
 
     .dashboard-dragbar {
         position: absolute;
@@ -155,14 +121,5 @@
         cursor: col-resize;
         top: calc(50%);
         right: -2px;
-    }
-
-    #ghostbar {
-        width: 3px;
-        background-color: #000;
-        opacity: 0.5;
-        position: absolute;
-        cursor: col-resize;
-        z-index: 999;
     }
 </style>
