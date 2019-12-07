@@ -4,6 +4,17 @@
 
 <div class="container-fluid">
 
+    <div class="row">
+        <div class="col">
+            @if (!string.IsNullOrEmpty(Title))
+            {
+                <h3 class="dashboard-title">@Title</h3>
+            }
+
+            <button class="btn btn-outline-dark float-right mb-3" @onclick="OnSave">Publish</button>
+        </div>
+    </div>
+
     @ChildContent
 
     @if (Data.Rows.Any())
@@ -11,6 +22,10 @@
         @foreach (var row in DataContext.Source.Rows)
         {
             <div class="row mb-4">
+
+                @{
+                    var lastCoumnId = row.Columns.Last.Value.Id;
+                }
 
                 @foreach (var column in row.Columns)
                 {
@@ -31,7 +46,7 @@
 
                             <div class="dashboard-content">Content</div>
 
-                            @if (EnableSplitter || row.Columns.Last.Value.Id != column.Id)
+                            @if (EnableSplitter && lastCoumnId != column.Id)
                             {
                                 <div id="@column.Id"
                                      class="dashboard-dragbar"
@@ -60,6 +75,9 @@
     public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
 
     [Parameter]
+    public string Title { get; set; } = "Dashboard";
+
+    [Parameter]
     public bool EnableSplitter { get; set; }
 
     [Parameter]
@@ -73,11 +91,16 @@
         await base.OnInitializedAsync();
     }
 
-    
-
 }
 
 <style>
+    .dashboard-title {
+        display: inline-block;
+        border-left: solid 13px #c6c6c6;
+        padding-left: 15px;
+        line-height: 39px;
+    }
+
     .dashboard-element-container {
         height: 200px;
         width: 100%;
