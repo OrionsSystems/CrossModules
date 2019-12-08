@@ -7,6 +7,7 @@
 
 <DashboardLayout 
                  Data="Data" 
+                 AvailabelWidgets="AvailabaleWidgets"
                  EnableSplitter="false" 
                  Title="Dashboard Prototype"
                  OnSave="SaveChanges">
@@ -16,6 +17,8 @@
 @code{
 
     private DashboardData Data { get; set; }
+
+    private List<IDashboardWidget> AvailabaleWidgets { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -35,15 +38,22 @@
         Data = new DashboardData();
 
         var row_1 = new DashboardRow();
-        row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
+        row_1.Columns.AddLast(new DashboardColumn { Size = 6, Widget = new SmartChartWidget() });
         row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
         Data.Rows.Add(row_1);
 
         var row_2 = new DashboardRow();
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
-        row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
+        row_2.Columns.AddLast(new DashboardColumn { Size = 4, Widget = new TagAnalyticChartWidget() });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         Data.Rows.Add(row_2);
+
+        AvailabaleWidgets = new List<IDashboardWidget> {
+            new SmartChartWidget(),
+            new TagAnalyticChartWidget(),
+            new TagTreeMapWidget()
+        };
+
     }
 
     private void ShowToaster(MatToastType type, string title, string message)
@@ -55,6 +65,23 @@
             config.MaximumOpacity = 100;
         });
     }
+
+
+    public class SmartChartWidget : DashboardWidgetBase, IDashboardWidget
+    {
+        public override string Label { get; set; } = "Smart Chart";
+    }
+
+    public class TagAnalyticChartWidget : DashboardWidgetBase, IDashboardWidget
+    {
+        public override string Label { get; set; } = "Tag Analytic Chart";
+    }
+
+    public class TagTreeMapWidget : DashboardWidgetBase, IDashboardWidget
+    {
+        public override string Label { get; set; } = "Tag Tree Map";
+    }
+
 }
 
 <style>

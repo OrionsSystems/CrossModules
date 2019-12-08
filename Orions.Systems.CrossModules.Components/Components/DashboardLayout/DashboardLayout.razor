@@ -31,20 +31,41 @@
                 {
                     <div @key="column" class="col-sm-@column.Size">
 
-                        <div class="dashboard-element-container" @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e=>DataContext.HideCommands(e, column))">
+                        <div class="dashboard-element-container dashboard-shadow " @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e=>DataContext.HideCommands(e, column))">
 
                             @if (column.ShowCommands)
                             {
                                 <div class="dashboard-element-commands">
+
+                                    @if (column.Widget != null)
+                                    {
+                                        <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Cl</a>
+                                    }
+
                                     @if (column.Size > 1)
                                     {
-                                        <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DataContext.SplitColumn(el, row, column); })">||</a>
+                                        <a class="btn btn-sm btn-outline-dark" title=" Split column" @onclick="@(el => { DataContext.SplitColumn(el, row, column); })">||</a>
                                     }
-                                    <a class="btn btn-sm btn-outline-dark" @onclick="@(el => { DataContext.DeleteColumn(el, row, column); })">X</a>
+                                    <a class="btn btn-sm btn-outline-dark" title="Delete element" @onclick="@(el => { DataContext.DeleteColumn(el, row, column); })">X</a>
                                 </div>
                             }
 
-                            <div class="dashboard-content">Content</div>
+                            <div class="dashboard-content">
+
+                                @if (column.Widget == null)
+                                {
+                                    <div class="dashboard-widget-add">
+                                        <a class="btn" title="Add Widget" @onclick="(e =>OpenWidgetModal(e, column))">&#43;</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="dashboard-widget-label">
+                                        @column.Widget.Label
+                                    </div>
+                                }
+
+                            </div>
 
                             @if (EnableSplitter && lastCoumnId != column.Id)
                             {
@@ -71,8 +92,13 @@
 
 @code{
 
+    private IDashboardWidget SelectedWidget { get; set; }
+
     [Parameter]
     public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
+
+    [Parameter]
+    public List<IDashboardWidget> AvailabelWidgets { get; set; } = new List<IDashboardWidget>();
 
     [Parameter]
     public string Title { get; set; } = "Dashboard";
@@ -89,6 +115,25 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+    }
+
+    private void CleanWidget(MouseEventArgs e, DashboardColumn column)
+    {
+        column.Widget = null;
+    }
+
+    private void OpenWidgetModal(MouseEventArgs e, DashboardColumn column)
+    {
+        Console.WriteLine("OpenWidgetModal");
+
+        if (AvailabelWidgets != null && AvailabelWidgets.Any()) {
+
+            //TODO
+
+            SelectedWidget = AvailabelWidgets.FirstOrDefault();
+
+            column.Widget = SelectedWidget;
+        }
     }
 
 }
@@ -108,10 +153,10 @@
         border-color: darkgrey;
         border-width: 1px;
         text-align: center;
+        background-color: #f8f8f8;
     }
 
     .dashboard-content {
-        background-color: #ecf8f4;
         line-height: 200px;
     }
 
@@ -144,5 +189,30 @@
         cursor: col-resize;
         top: calc(50% - 12px);
         right: -2px;
+    }
+
+    .dashboard-widget-add > a {
+        cursor: pointer;
+        border: solid;
+        display: inline-block;
+        height: 50px;
+        width: 50px;
+        line-height: 38px;
+        font-size: 40px;
+        border-radius: 50px;
+        border-width: 1px;
+        border-color: #656565;
+    }
+
+        .dashboard-widget-add > a:hover {
+            -webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+            -moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+            box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+        }
+
+    .dashboard-shadow {
+        -webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+        -moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+        box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
     }
 </style>
