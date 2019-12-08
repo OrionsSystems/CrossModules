@@ -39,7 +39,7 @@
 
                                     @if (column.Widget != null)
                                     {
-                                        <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Cl</a>
+                                        <a class="btn btn-sm btn-outline-danger" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Cl</a>
                                     }
 
                                     @if (column.Size > 1)
@@ -84,15 +84,51 @@
     }
     <div class="row">
         <div class="col text-center">
-            <button class="btn btn-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
+            <button class="btn btn-outline-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
         </div>
     </div>
 </div>
 
 
+@if (isShowModalWidget)
+{
+    <div class="modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header dashboard-modal-widget-header">
+                    <h5 class="modal-title">Available Widgets</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowModalWidget = false; } )">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body dashboard-modal-widget-body">
+                    <div class="container-fluid">
+                        @foreach (var widget in AvailabelWidgets)
+                        {
+                            <div class="row dashboard-modal-widget-element dashboard-shadow">
+                                <div class="col-md-9">
+                                    <span>@widget.Label</span>
+                                </div>
+                                <div class="col-sm-1">
+                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>AddSelectedWidget(e, widget))">Add</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+}
+
+
 @code{
 
-    private IDashboardWidget SelectedWidget { get; set; }
+    private bool isShowModalWidget;
+
+    private DashboardColumn SelectedColumn { get; set; }
 
     [Parameter]
     public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
@@ -124,16 +160,18 @@
 
     private void OpenWidgetModal(MouseEventArgs e, DashboardColumn column)
     {
-        Console.WriteLine("OpenWidgetModal");
-
-        if (AvailabelWidgets != null && AvailabelWidgets.Any()) {
-
-            //TODO
-
-            SelectedWidget = AvailabelWidgets.FirstOrDefault();
-
-            column.Widget = SelectedWidget;
+        if (AvailabelWidgets != null && AvailabelWidgets.Any())
+        {
+            isShowModalWidget = true;
+            SelectedColumn = column;
         }
+    }
+
+    private void AddSelectedWidget(MouseEventArgs e, IDashboardWidget widget)
+    {
+        if (widget != null && SelectedColumn != null) SelectedColumn.Widget = widget;
+
+        isShowModalWidget = false;
     }
 
 }
@@ -209,6 +247,24 @@
             -moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
             box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
         }
+
+    .dashboard-modal-widget-header {
+        padding: 4px 15px !important;
+    }
+
+    .dashboard-modal-widget-body {
+        padding: 0px !important;
+    }
+
+    .dashboard-modal-widget-element {
+        margin: 10px auto !important;
+        padding: 7px 0px;
+    }
+
+    .dashboard-widget-label {
+        font-size: 22px;
+        /* font-weight: bold; */
+    }
 
     .dashboard-shadow {
         -webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
