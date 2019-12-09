@@ -39,7 +39,7 @@
 
                                     @if (column.Widget != null)
                                     {
-                                        <a class="btn btn-sm btn-outline-danger" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Cl</a>
+                                        <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Clean</a>
                                     }
 
                                     @if (column.Size > 1)
@@ -105,7 +105,7 @@
                     <div class="container-fluid">
                         @foreach (var widget in AvailabelWidgets)
                         {
-                            <div class="row dashboard-modal-widget-element dashboard-shadow">
+                            <div class="row dashboard-modal-widget-element">
                                 <div class="col-md-9">
                                     <span>@widget.Label</span>
                                 </div>
@@ -206,16 +206,17 @@
 
         .dashboard-element-commands > a {
             cursor: pointer;
-            margin-bottom: 3px;
-            padding: 2px 2px !important;
+            padding: 2px 6px !important;
             height: 20px;
-            width: 20px;
             line-height: 14px;
             font-size: 12px;
         }
 
             .dashboard-element-commands > a:hover {
-                color: white !important;
+                background-color: transparent !important;
+                -webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+                -moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+                box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
             }
 
     .dashboard-dragbar {
@@ -259,6 +260,9 @@
     .dashboard-modal-widget-element {
         margin: 10px auto !important;
         padding: 7px 0px;
+        -webkit-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+        -moz-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+        box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
     }
 
     .dashboard-widget-label {
