@@ -29,6 +29,9 @@ namespace Orions.Systems.CrossModules.Components
         public int Size { get; set; }
         public int Order { get; set; }
         public bool ShowCommands { get; set; }
+
+        public bool ShowBetweenCommands { get; set; }
+
         public IDashboardWidget Widget { get; set; }
     }
 }

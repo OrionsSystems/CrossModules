@@ -70,6 +70,54 @@ namespace Orions.Systems.CrossModules.Components
 
 			row.Columns.Remove(nextColumn);
 			row.Columns.AddBefore(n, nextColumn);
+
+			column.ShowBetweenCommands = false;
+		}
+
+		public void IncreaseSizeLeft(MouseEventArgs e, DashboardRow row, DashboardColumn column) 
+		{
+			var n = row.Columns.Find(column);
+			var prevColumn = n.Previous;
+
+			if (prevColumn == null || prevColumn.Value.Size == 1) return;
+
+			prevColumn.Value.Size--;
+			column.Size++;
+
+			column.ShowBetweenCommands = false;
+		}
+
+		public void IncreaseSizeRight(MouseEventArgs e, DashboardRow row, DashboardColumn column)
+		{
+			var n = row.Columns.Find(column);
+			var nextColumn = n.Next;
+
+			if (nextColumn == null || nextColumn.Value.Size == 1) return;
+
+			nextColumn.Value.Size--;
+			column.Size++;
+
+			column.ShowBetweenCommands = false;
+		}
+
+		public bool HasPreviousColumn(DashboardRow row, DashboardColumn column) 
+		{
+			var n = row.Columns.Find(column);
+			var prevColumn = n.Previous;
+
+			if (prevColumn == null || prevColumn.Value.Size == 1) return false;
+
+			return true;
+		}
+
+		public bool HasNextColumn(DashboardRow row, DashboardColumn column)
+		{
+			var n = row.Columns.Find(column);
+			var nextColumn = n.Next;
+
+			if (nextColumn == null || nextColumn.Value.Size == 1) return false;
+
+			return true;
 		}
 
 		public void ShowCommands(MouseEventArgs e, DashboardColumn column)
