@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,78 +11,121 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public DashboardData Source { get; set; } = new DashboardData();
 
-		public DashboardVm() { 
-		
+		public DashboardVm()
+		{
+
 		}
 
-        public void OnAddRow()
-        {
-            var row = new DashboardRow();
-            row.Columns.AddLast(new DashboardColumn { Size = 12 });
-            Source.Rows.Add(row);
-        }
+		public void OnAddRow()
+		{
+			var row = new DashboardRow();
+			row.Columns.AddLast(new DashboardColumn { Size = 12 });
+			Source.Rows.Add(row);
+		}
 
-        public void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-        {
-            var size = column.Size % 2;
-            var sizeF = column.Size / 2;
+		public void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
+		{
+			var size = column.Size % 2;
+			var sizeF = column.Size / 2;
 
-            column.Size = sizeF;
-            column.ShowCommands = false;
-            var newColumn = new DashboardColumn { Size = sizeF + size };
+			column.Size = sizeF;
+			column.ShowCommands = false;
+			var newColumn = new DashboardColumn { Size = sizeF + size };
 
-            var n = row.Columns.Find(column);
-            row.Columns.AddAfter(n, newColumn);
-        }
+			var n = row.Columns.Find(column);
+			row.Columns.AddAfter(n, newColumn);
+		}
 
-        public void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
-        {
-            var columnSize = column.Size;
+		public void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
+		{
+			var columnSize = column.Size;
 
-            if (row.Columns.Count == 1)
-            {
-                Source.Rows.RemoveAll(it => it.Id == row.Id);
-                return;
-            }
+			if (row.Columns.Count == 1)
+			{
+				Source.Rows.RemoveAll(it => it.Id == row.Id);
+				return;
+			}
 
-            var n = row.Columns.Find(column);
-            var prevColumn = n.Previous;
+			var n = row.Columns.Find(column);
+			var prevColumn = n.Previous;
 
-            row.Columns.Remove(column);
+			row.Columns.Remove(column);
 
-            if (prevColumn == null)
-            {
-                var firstCol = row.Columns.FirstOrDefault();
-                firstCol.Size += columnSize;
-                return;
-            }
+			if (prevColumn == null)
+			{
+				var firstCol = row.Columns.FirstOrDefault();
+				firstCol.Size += columnSize;
+				return;
+			}
 
-            prevColumn.Value.Size += columnSize;
-        }
+			prevColumn.Value.Size += columnSize;
+		}
 
-        public void ShowCommands(MouseEventArgs e, DashboardColumn column)
-        {
-            column.ShowCommands = true;
-        }
+		public void OnSwapColumns(MouseEventArgs e, DashboardRow row, DashboardColumn column) {
 
-        public void HideCommands(MouseEventArgs e, DashboardColumn column)
-        {
-            column.ShowCommands = false;
-        }
+			var n = row.Columns.Find(column);
+			var nextColumn = n.Next;
 
-        public void OnMouseDownDraging()
-        {
-            //TODO
-        }
+			if (nextColumn == null) return;
 
-        public void OnMouseMoveDraging()
-        {
-            //TODO
-        }
+			row.Columns.Remove(nextColumn);
+			row.Columns.AddBefore(n, nextColumn);
+		}
 
-        public void OnMouseUpDraging()
-        {
-            //TODO
-        }
-    }
+		public void ShowCommands(MouseEventArgs e, DashboardColumn column)
+		{
+			column.ShowCommands = true;
+		}
+
+		public void HideCommands(MouseEventArgs e, DashboardColumn column)
+		{
+			column.ShowCommands = false;
+		}
+
+		private bool _isStartDraging;
+		private double _startClientX;
+
+		public void OnMouseDownDraging(MouseEventArgs e)
+		{
+			_isStartDraging = true;
+			_startClientX = e.ClientX;
+		}
+
+		public void OnMouseMoveDraging(
+			MouseEventArgs e,
+			DashboardRow row,
+			DashboardColumn column)
+		{
+
+			var x = e.ClientX;
+			var dif = x - _startClientX;
+
+			if (_isStartDraging && (dif > 3 || dif < -3) )
+			{
+
+				var n = row.Columns.Find(column);
+				var prevColumn = n.Next;
+
+				if (prevColumn == null) return;
+
+				if (dif < -3)
+				{
+					if (column.Size == 1 || prevColumn.Value.Size == 12) return;
+
+					prevColumn.Value.Size++;
+					column.Size--;
+				}
+
+				if (dif > 3)
+				{
+					if (prevColumn.Value.Size == 1 || column.Size == 12) return;
+
+					prevColumn.Value.Size--;
+					column.Size++;
+				}
+
+				_isStartDraging = false;
+			}
+		}
+	}
 }
