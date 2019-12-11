@@ -98,7 +98,7 @@
                             }
                         </div>
                     </div>
-                    <div class="col-md-7 pgrid-data">
+                    <div class="col-md-6 pgrid-data">
 
                         @switch (data.DataProp.Value.EditableMode)
                         {
@@ -165,7 +165,7 @@
                     @if (data.DataProp.Value.CanDelete)
                     {
                         <div class="col-md-1">
-                            <button class="btn btn-outline-dark float-right" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
+                            <button class="btn btn-outline-dark" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
                         </div>
                     }
                 </div>
