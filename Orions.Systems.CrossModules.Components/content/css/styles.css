@@ -9,3 +9,176 @@
     margin: 1em 0;
     background-image: url('background.png');
 }
+
+
+/* 
+    START DASHBOARD LAYOUT COMPONENT
+*/
+.dashboard-title {
+    display: inline-block;
+}
+
+    .dashboard-title rect {
+        fill: #898888 !important;
+    }
+
+.dashboard-element-container {
+    height: 200px;
+    width: 100%;
+    border-style: dashed;
+    border-color: darkgrey;
+    border-width: 1px;
+    text-align: center;
+    background-color: #f8f8f8;
+}
+
+.dashboard-content {
+    line-height: 200px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.dashboard-element-commands {
+    position: absolute;
+    right: 23px;
+    top: 7px;
+    line-height: initial;
+    z-index: 99998;
+}
+
+    .dashboard-element-commands > a {
+        cursor: pointer;
+        padding: 2px 6px !important;
+        height: 20px;
+        line-height: 14px;
+        font-size: 12px;
+        z-index: 99999;
+    }
+
+        .dashboard-element-commands > a:hover {
+            background-color: transparent !important;
+            -webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+            -moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+            box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+        }
+
+
+.dashboard-between-content {
+    position: absolute;
+    top: 0px;
+    right: -15px;
+    width: 30px;
+    height: 200px;
+    z-index: 88888;
+}
+
+.dashboard-dragbar {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    cursor: col-resize;
+    top: calc(50% - 12px);
+    right: 1px;
+    z-index: 99999;
+}
+
+    .dashboard-dragbar rect, .dashboard-dragbar polygon {
+        fill: #888888 !important;
+    }
+
+.dashboard-swap {
+    position: absolute;
+    cursor: pointer;
+    height: 25px;
+    width: 25px;
+    top: 5px;
+    right: 1px;
+    z-index: 99999;
+}
+
+    .dashboard-swap path, .dashboard-swap line {
+        fill: none;
+        stroke: #888888;
+        stroke-width: 2px;
+    }
+
+.dashboard-content-prev {
+    left: 12px;
+}
+
+.dashboard-content-next {
+    right: 12px;
+}
+
+.dashboard-content-next, .dashboard-content-prev {
+    height: 30px;
+    width: 30px;
+    cursor: pointer;
+    position: absolute;
+    top: 3px;
+    z-index: 99999;
+}
+
+    .dashboard-content-next polygon, .dashboard-content-prev polygon {
+        stroke: #888888;
+        stroke-width: 2px;
+        fill: none;
+    }
+
+.dashboard-widget-add > a {
+    cursor: pointer;
+    border: solid;
+    display: inline-block;
+    height: 50px;
+    width: 50px;
+    line-height: 38px;
+    font-size: 40px;
+    border-radius: 50px;
+    border-width: 1px;
+    border-color: #888888;
+}
+
+    .dashboard-widget-add > a:hover {
+        -webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+        -moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+        box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+    }
+
+.dashboard-modal-widget-header {
+    padding: 4px 15px !important;
+}
+
+.dashboard-modal-widget-body {
+    padding: 0px !important;
+}
+
+.dashboard-modal-widget-element {
+    margin: 10px auto !important;
+    padding: 7px 0px;
+    -webkit-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+    -moz-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+    box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+}
+
+.dashboard-widget-label {
+    font-size: 22px;
+}
+
+.dashboard-shadow {
+    -webkit-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+    -moz-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+    box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+}
+
+@@media only screen and (max-width: 992px) {
+    .dashboard-swap, .dashboard-dragbar {
+        display: none;
+    }
+
+    .dashboard-element-container {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/*    END DASHBOARD LAYOUT COMPONENT */
+
