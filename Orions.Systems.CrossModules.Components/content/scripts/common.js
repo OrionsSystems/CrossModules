@@ -200,7 +200,13 @@ window.Orions.VanillaColorPicker = {
 
 };
 
-
+(function () {
+    window.SlideToggle = {
+        init: function (componentInstance){
+            //TODO
+        },
+    };
+})();
 
 (function () {
     window.BlazorInputFile = {
