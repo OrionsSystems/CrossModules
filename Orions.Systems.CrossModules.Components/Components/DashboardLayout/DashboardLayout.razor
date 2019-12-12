@@ -23,7 +23,13 @@
                 </h3>
             }
 
-            <button class="btn btn-outline-dark float-right mb-3" @onclick="OnSave">Publish</button>
+            <div class="float-right">
+                <div class="mr-4 d-inline-block">
+                    <SlideToggle @bind-Value="@IsPreviewMode" Label="Live Mode"></SlideToggle>
+                </div>
+                <button class="btn btn-outline-dark" @onclick="OnSave">Publish</button>
+            </div>
+
         </div>
     </div>
 
@@ -252,6 +258,8 @@
 
     private bool isShowModalWidget;
     private bool isShowProperty;
+
+    private bool IsPreviewMode { get; set; } = false;
 
     private DashboardColumn SelectedColumn { get; set; }
 
