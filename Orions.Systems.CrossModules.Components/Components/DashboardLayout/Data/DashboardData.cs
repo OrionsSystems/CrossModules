@@ -4,11 +4,11 @@ namespace Orions.Systems.CrossModules.Components
 {
     public class DashboardData
     {
-        public List<DashboardRow> Rows { get; set; }
+        public LinkedList<DashboardRow> Rows { get; set; }
 
         public DashboardData()
         {
-            Rows = new List<DashboardRow>();
+            Rows = new LinkedList<DashboardRow>();
         }
     }
 

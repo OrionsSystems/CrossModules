@@ -40,13 +40,13 @@
         var row_1 = new DashboardRow();
         row_1.Columns.AddLast(new DashboardColumn { Size = 6, Widget = new SmartChartWidget() });
         row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
-        Data.Rows.Add(row_1);
+        Data.Rows.AddLast(row_1);
 
         var row_2 = new DashboardRow();
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4, Widget = new TagAnalyticChartWidget() });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
-        Data.Rows.Add(row_2);
+        Data.Rows.AddLast(row_2);
 
         AvailabaleWidgets = new List<IDashboardWidget> {
             new SmartChartWidget(),

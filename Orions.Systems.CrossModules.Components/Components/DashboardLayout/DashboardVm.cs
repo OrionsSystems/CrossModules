@@ -20,7 +20,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var row = new DashboardRow();
 			row.Columns.AddLast(new DashboardColumn { Size = 12 });
-			Source.Rows.Add(row);
+			Source.Rows.AddLast(row);
 		}
 
 		public void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
@@ -42,7 +42,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (row.Columns.Count == 1)
 			{
-				Source.Rows.RemoveAll(it => it.Id == row.Id);
+				Source.Rows.Remove(row);
 				return;
 			}
 
@@ -72,6 +72,17 @@ namespace Orions.Systems.CrossModules.Components
 			row.Columns.AddBefore(n, nextColumn);
 
 			column.ShowBetweenCommands = false;
+		}
+
+		public void OnSwapRows(MouseEventArgs e, DashboardRow row) 
+		{
+			var r = Source.Rows.Find(row);
+			var prevRow = r.Previous;
+
+			if (prevRow == null) return;
+
+			Source.Rows.Remove(prevRow);
+			Source.Rows.AddAfter(r, prevRow);
 		}
 
 		public void IncreaseSizeLeft(MouseEventArgs e, DashboardRow row, DashboardColumn column) 
