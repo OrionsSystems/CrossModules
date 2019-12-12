@@ -25,9 +25,17 @@
 
             <div class="float-right">
                 <div class="mr-4 d-inline-block">
-                    <SlideToggle @bind-Value="@IsPreviewMode" Label="Live Mode"></SlideToggle>
+                    <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
                 </div>
-                <button class="btn btn-outline-dark" @onclick="OnSave">Publish</button>
+                @if (IsEditMode)
+                {
+                    <button class="btn btn-outline-dark" @onclick="OnSave">Publish</button>
+                }
+                else
+                {
+                    <button class="btn btn-primary">Render</button>
+                }
+
             </div>
 
         </div>
@@ -55,7 +63,7 @@
 
                             <div class="dashboard-content" @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e=>DataContext.HideCommands(e, column))">
 
-                                @if (column.ShowCommands)
+                                @if (IsEditMode && column.ShowCommands)
                                 {
                                     <div class="dashboard-element-commands">
 
@@ -74,7 +82,7 @@
                                     </div>
                                 }
 
-                                @if (column.ShowCommands && DataContext.HasPreviousColumn(row, column))
+                                @if (IsEditMode && column.ShowCommands && DataContext.HasPreviousColumn(row, column))
                                 {
                                     <div class="dashboard-content-prev" title="Increase size into left">
                                         <a @onclick="(e => DataContext.IncreaseSizeLeft(e, row, column))">
@@ -89,9 +97,12 @@
 
                                 @if (column.Widget == null)
                                 {
-                                    <div class="dashboard-widget-add">
-                                        <a class="btn" title="Add Widget" @onclick="(e =>OpenWidgetModal(e, column))">&#43;</a>
-                                    </div>
+                                    @if (IsEditMode)
+                                    {
+                                        <div class="dashboard-widget-add">
+                                            <a class="btn" title="Add Widget" @onclick="(e =>OpenWidgetModal(e, column))">&#43;</a>
+                                        </div>
+                                    }
                                 }
                                 else
                                 {
@@ -100,7 +111,7 @@
                                     </div>
                                 }
 
-                                @if (column.ShowCommands && DataContext.HasNextColumn(row, column))
+                                @if (IsEditMode && column.ShowCommands && DataContext.HasNextColumn(row, column))
                                 {
                                     <div class="dashboard-content-next" title="Increase size into right">
                                         <a @onclick="(e=>DataContext.IncreaseSizeRight(e, row, column))">
@@ -115,7 +126,7 @@
 
                             </div>
 
-                            @if (EnableBetweenBox && lastCoumnId != column.Id)
+                            @if (IsEditMode && EnableBetweenBox && lastCoumnId != column.Id)
                             {
                                 <div class="dashboard-between-content" @onmouseover="(e=> { column.ShowBetweenCommands = true; })" @onmouseout="(e=> { column.ShowBetweenCommands = false; })">
 
@@ -161,7 +172,7 @@
                     </div>
                 }
 
-                @if (firstRowId != row.Id)
+                @if (IsEditMode && firstRowId != row.Id)
                 {
                     <div class="dashboard-between-row">
                         <div class="dashboard-swap-row" @onclick="(e=>DataContext.OnSwapRows(e, row))">
@@ -188,11 +199,16 @@
             </div>
         }
     }
-    <div class="row">
-        <div class="col text-center">
-            <button class="btn btn-outline-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
+
+    @if (IsEditMode)
+    {
+        <div class="row">
+            <div class="col text-center">
+                <button class="btn btn-outline-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
+            </div>
         </div>
-    </div>
+    }
+
 </div>
 
 
@@ -259,9 +275,15 @@
     private bool isShowModalWidget;
     private bool isShowProperty;
 
-    private bool IsPreviewMode { get; set; } = false;
-
     private DashboardColumn SelectedColumn { get; set; }
+
+    private bool IsEditMode { get { return !IsPreviewMode; } }
+
+    [Parameter]
+    public bool IsPreviewMode { get; set; } = false;
+
+    [Parameter]
+    public bool DisableModeOption { get; set; }
 
     [Parameter]
     public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
@@ -284,6 +306,11 @@
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+    }
+
+    private void ChangeMode(bool value)
+    {
+        IsPreviewMode = value;
     }
 
     private void CleanWidget(MouseEventArgs e, DashboardColumn column)
