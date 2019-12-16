@@ -181,13 +181,13 @@ namespace Orions.CrossModules.Data
 
 			var timeElements = _filteredTags
 				.SelectMany(x => x.GetElements<HyperTagTime>())
-				.Where(x => x != null && x.TimeType == HyperTagTime.TimeTypes.StreamTime && x.StreamTime.HasValue).ToList();
+				.Where(x => x != null && x.TimeType == HyperTagTime.TimeTypes.StreamTime && x.StreamTime_TimeSpan.HasValue).ToList();
 
 			if (!timeElements.Any())
 				return;
 
-			var lowestTime = timeElements.Min(x => x.StreamTime.Value);
-			var highestTime = timeElements.Max(x => x.StreamTime.Value);
+			var lowestTime = timeElements.Min(x => x.StreamTime_TimeSpan.Value);
+			var highestTime = timeElements.Max(x => x.StreamTime_TimeSpan.Value);
 
 			var timeSpan = highestTime - lowestTime;
 
@@ -201,7 +201,7 @@ namespace Orions.CrossModules.Data
 				TagTimingData.Add(new TagStreamTimeChartData
 				{
 					Time = $"{currentTime.Hours:D2}:{currentTime.Minutes:D2}:{currentTime.Seconds:D2}",
-					Count = timeElements.Where(x => x.StreamTime.Value > previousTime && x.StreamTime.Value <= currentTime).Count()
+					Count = timeElements.Where(x => x.StreamTime_TimeSpan.Value > previousTime && x.StreamTime_TimeSpan.Value <= currentTime).Count()
 				});
 
 				previousTime = currentTime;
