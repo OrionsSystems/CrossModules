@@ -17,6 +17,8 @@ namespace Orions.Systems.CrossModules.Components
         public string Id { get; set; } = IdGeneratorHelper.Generate("db-row-");
         public LinkedList<DashboardColumn> Columns { get; set; }
 
+        public bool ShowCommands { get; set; }
+
         public DashboardRow()
         {
             Columns = new LinkedList<DashboardColumn>();

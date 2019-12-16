@@ -145,14 +145,20 @@
     }
 
 .dashboard-between-row {
-    position:absolute;
+    position: absolute;
+    width: calc(100% - 335px);
+    height: 25px;
+    margin-top: -24px;
+    margin-left: 14px;
+    margin-right: -118px;
 }
+
 .dashboard-swap-row {
     position: absolute;
     width: 20px;
     height: 20px;
-    top: -23px;
-    left: 21px;
+    top: 0px;
+    left: 12px;
 }
 
     .dashboard-swap-row path, .dashboard-swap-row line {
