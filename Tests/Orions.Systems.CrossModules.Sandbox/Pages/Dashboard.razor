@@ -39,7 +39,7 @@
         Data = new DashboardData();
 
         var row_1 = new DashboardRow();
-        row_1.Columns.AddLast(new DashboardColumn { Size = 6, Widget = new DemoSmartChartWidget() });
+        row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
         row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
         Data.Rows.AddLast(row_1);
 
@@ -59,9 +59,7 @@
         Data.Rows.AddLast(row_2);
 
         AvailabaleWidgets = new List<IDashboardWidget> {
-            new DemoSmartChartWidget(),
             new SimpleHtmlWidget(),
-            new DemoTagTreeMapWidget(),
             new ReportGridWidget(),
             new ReportPieChartWidget()
         };
