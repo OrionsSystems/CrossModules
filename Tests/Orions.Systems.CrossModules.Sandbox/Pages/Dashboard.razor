@@ -1,6 +1,10 @@
 ﻿@namespace Orions.Systems.CrossModules.Pages
 @page "/"
 
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Infrastructure.Reporting
+@using Orions.Node.Common
+
 @inherits BaseOrionsComponent
 
 @inject IMatToaster Toaster
@@ -10,6 +14,7 @@
                  IsPreviewMode="false"
                  DisableModeOption="false"
                  Title="Dashboard Prototype"
+                 HyperStore="@HyperStore"
                  OnSave="SaveChanges">
 </DashboardLayout>
 
@@ -17,10 +22,13 @@
 
     private DashboardData Data { get; set; }
 
+    public IHyperArgsSink HyperStore { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         InitDashboard(); // load init data
+
+        HyperStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute"); 
 
         await base.OnInitializedAsync();
     }

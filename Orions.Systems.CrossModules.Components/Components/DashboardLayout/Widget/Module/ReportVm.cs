@@ -40,7 +40,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public void InitStore(NetStore netStore)
+		public void InitStore(IHyperArgsSink netStore)
 		{
 			if (netStore != null)
 			{
@@ -48,65 +48,22 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public async Task LoadReportResultData(
-			string reportResultId = null,
-			string metadatasetId = null)
+		public async Task LoadReportResultData(HyperDocumentId reportResultId)
 		{
-			var results = await FetchReportResultList(reportResultId, metadatasetId);
-
-			var lastResult = results.OrderByDescending(it => it.CreatedAtUTC).FirstOrDefault();
-
-			if (lastResult == null) return;
-
-			var data = await LoadResult(lastResult);
-
-			IsLoadedReportResult = true;
-
-			Report = data;
-		}
-
-		private async Task<List<HyperMetadataReportResult>> FetchReportResultList(
-			string reportResultId = null,
-			string metadatasetId = null)
-		{
-			var results = new List<HyperMetadataReportResult>();
-
-			var args = new FindHyperDocumentsArgs(typeof(HyperMetadataReportResult)) { RetrievePayload = false };
-			if (!string.IsNullOrWhiteSpace(reportResultId))
-				args.DescriptorConditions.AddCondition(nameof(HyperMetadataReportResult.Id), reportResultId);
-
-			if (!string.IsNullOrWhiteSpace(metadatasetId))
-				args.DescriptorConditions.AddCondition(nameof(HyperMetadataReportResult.MetadataSetId), metadatasetId);
-
-			var docs = await HyperStore.ExecuteAsync(args);
-
-			if (docs == null)
-				return results;
-
-			foreach (var result in docs.Select(it => it.GetPayload<HyperMetadataReportResult>(true)))
-			{
-				results.Add(result);
-			}
-
-			return results;
-		}
-
-		private async Task<HyperMetadataReportResult> LoadResult(HyperMetadataReportResult result)
-		{
-			var args = new RetrieveHyperDocumentArgs(result.GetDocumentId());
+			var args = new RetrieveHyperDocumentArgs(reportResultId);
 			var doc = await HyperStore.ExecuteAsync(args);
 
 			if (args.ExecutionResult.IsNotSuccess)
 			{
 				Logger.Instance.Error("Cannot load report result");
-				return null;
+				IsLoadedReportResult = true;
+				return;
 			}
 
-			result = doc?.GetPayload<HyperMetadataReportResult>();
+			Report = doc?.GetPayload<HyperMetadataReportResult>();
 
-			return result;
+			IsLoadedReportResult = true;
+
 		}
-
-
 	}
 }

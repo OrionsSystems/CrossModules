@@ -1,5 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
+@using Orions.Node.Common
+
 @inherits BaseBlazorComponent<DashboardVm>
 
 <div class="container-fluid">
@@ -214,7 +216,7 @@
     }
     else
     {
-        <DashboardLiveModeRender Data="@Data"></DashboardLiveModeRender>
+        <DashboardLiveModeRender Data="@Data" HyperStore="@HyperStore"></DashboardLiveModeRender>
     }
 
 </div>
@@ -264,6 +266,7 @@
                             <PropertyGrid @ref="DataContext.PropGrid"
                                           Loader="DataContext.GetSelectedColumnWidget"
                                           CancelVisible="true"
+                                          HyperStore="DataContext.HyperStore"
                                           OKVisible="true"
                                           CancelCommand="DataContext.OnCancelProperty"
                                           OkCommand="DataContext.OnCancelProperty">
@@ -303,6 +306,9 @@
 
     [Parameter]
     public EventCallback OnSave { get; set; }
+
+    [Parameter]
+    public IHyperArgsSink HyperStore { get { return DataContext.HyperStore;  } set { DataContext.HyperStore = value; } }
 
     protected override async Task OnInitializedAsync()
     {

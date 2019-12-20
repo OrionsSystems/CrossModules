@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
-
+using Orions.Node.Common;
 using System;
 using System.Threading.Tasks;
 
@@ -13,6 +13,9 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		[Parameter]
 		public IDashboardWidget Widget { get; set; }
+
+		[Parameter]
+		public IHyperArgsSink HyperStore { get; set; }
 
 		protected override Task OnInitializedAsync()
 		{
@@ -32,6 +35,8 @@ namespace Orions.Systems.CrossModules.Components
 			builder.OpenComponent(0, componentType);
 			// set the `Widget` attribute of the component
 			builder.AddAttribute(1, "Widget", Widget);
+			// set the `HyperStore` attribute of the component
+			builder.AddAttribute(1, "HyperStore", HyperStore);
 			// close
 			builder.CloseComponent();
 		}

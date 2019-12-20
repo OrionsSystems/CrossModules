@@ -1,8 +1,9 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseBlazorComponent<ReportVm>
-
 @using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+
+@inherits BaseBlazorComponent<ReportVm>
 
 <div class="widget-content-report-grid">
 
@@ -37,11 +38,19 @@
             </table>
         </div>
 
-        @if(Widget.ShowFooter){
+        @if (Widget.ShowFooter)
+        {
             <div class="widget-content-report-grid-footer">
                 <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
             </div>
         }
+    }
+
+    @if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+    {
+        <div class="widget-missing-report-data">
+            Missing report data!
+        </div>
     }
 
     @if (!DataContext.IsLoadedReportResult)
@@ -58,12 +67,15 @@
     [Parameter]
     public ReportGridWidget Widget { get; set; }
 
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         var netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
         DataContext.InitStore(netStore);
 
-        await DataContext.LoadReportResultData(Widget.ReportResultId, Widget.MetadatasetId);
+        await DataContext.LoadReportResultData(Widget.ReportResultId);
 
         await base.OnInitializedAsync();
     }
@@ -80,7 +92,7 @@
         }
 
     .widget-content-report-grid-footer {
-        font-size:12px;
-        font-style:italic;
+        font-size: 12px;
+        font-style: italic;
     }
 </style>

@@ -1,5 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
+@using Orions.Node.Common
+
 <div class="widget-content-demo-simple">
     @if (Widget.ShowTitle)
     {
@@ -14,6 +16,9 @@
 @code {
     [Parameter]
     public SimpleHtmlWidget Widget { get; set; }
+
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
 }
 
 <style>

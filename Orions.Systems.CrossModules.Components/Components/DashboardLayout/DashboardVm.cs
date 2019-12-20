@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components.Web;
 
 using Orions.Common;
-
+using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +19,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			LoadAvailableWidget();
 		}
+
+		public IHyperArgsSink HyperStore { get; set; }
 
 		public void OnAddRow()
 		{

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Orions.Node.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -7,6 +8,10 @@ namespace Orions.Systems.CrossModules.Components
 		public string Id { get; set; } = IdGeneratorHelper.Generate("widget-");
 
 		public abstract string Label { get; set; }
+
+		public bool ShowTitle { get; set; } = true;
+
+		public bool ShowFooter { get; set; } = true;
 
 		protected virtual string PrintLabel() {
 			return $"Widget : {Label}";

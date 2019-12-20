@@ -3,6 +3,7 @@
 @inherits BaseBlazorComponent<ReportVm>
 
 @using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
 @using ChartJs.Blazor.Charts
 @using ChartJs.Blazor.ChartJS.PieChart
 @using ChartJs.Blazor.ChartJS.Common.Enums
@@ -20,7 +21,7 @@
         }
 
         <div class="widget-content-report-piechart-view">
-            <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="400" Width="400" />
+            <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
         </div>
 
         @if (Widget.ShowFooter)
@@ -31,13 +32,19 @@
         }
     }
 
+    @if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+    {
+        <div class="widget-missing-report-data">
+            Missing report data!
+        </div>
+    }
+
     @if (!DataContext.IsLoadedReportResult)
     {
         <div style="position:relative;">
             <div class="loading-bar"></div>
         </div>
     }
-
 </div>
 
 @code {
@@ -47,12 +54,14 @@
     [Parameter]
     public ReportPieChartWidget Widget { get; set; }
 
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        var netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
-        DataContext.InitStore(netStore);
+        DataContext.InitStore(HyperStore);
 
-        await DataContext.LoadReportResultData(Widget.ReportResultId, Widget.MetadatasetId);
+        await DataContext.LoadReportResultData(Widget.ReportResultId);
 
         SetPieConfiguration();
 
@@ -61,6 +70,9 @@
 
     private void SetPieConfiguration()
     {
+
+        if (DataContext.Report == null) return;
+
         _pieConfig = new PieConfig
         {
             Options = new PieOptions
@@ -145,8 +157,8 @@
     }
 
     .widget-content-report-piechart-view .chart-container > canvas {
-        max-width: 400px !important;
-        max-height: 400px !important;
+        max-width: @($"{Widget.Width}px") !important;
+        max-height: @($"{Widget.Height}px") !important;
         display: block !important;
     }
 
@@ -156,7 +168,7 @@
 
         .widget-content-report-piechart-view .chart-container > canvas {
             /*width: 400px !important;*/
-            max-height: 600px !important;
+            max-height: @($"{Widget.Height}px") !important;
             display: block !important;
         }
 </style>

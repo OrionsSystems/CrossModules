@@ -1,5 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
+@using Orions.Node.Common
+
 @inherits BaseBlazorComponent
 
 @if (Data.Rows.Any())
@@ -17,7 +19,7 @@
                         <div class="dashboard-content-live">
                             @if (column.Widget != null)
                             {
-                                <WidgetDynamicComponent @key="column.Widget.Id" Widget="column.Widget" />
+                                <WidgetDynamicComponent @key="column.Widget.Id" Widget="column.Widget" HyperStore="HyperStore" />
                             }
                         </div>
                     </div>
@@ -31,6 +33,9 @@
 
     [Parameter]
     public DashboardData Data { get; set; }
+
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
 
 }
 

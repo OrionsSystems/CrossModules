@@ -6,8 +6,6 @@ namespace Orions.Systems.CrossModules.Components
     {
         public override string Label { get; set; } = "Simple Html Widget";
 
-        public bool ShowTitle { get; set; } = true;
-
         [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
         public string RawHtml { get; set; }
 

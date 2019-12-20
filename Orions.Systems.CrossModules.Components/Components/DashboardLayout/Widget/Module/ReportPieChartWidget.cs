@@ -2,17 +2,13 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class ReportPieChartWidget : DashboardWidgetBase, IDashboardWidget
+    public class ReportPieChartWidget : ReportBaseWidget, IDashboardWidget
     {
         public override string Label { get; set; } = "Report Pie Chart";
 
-        public string MetadatasetId { get; set; }
+        public int Height { get; set; } = 400;
 
-        public string ReportResultId { get; set; }
-
-        public bool ShowTitle { get; set; } = true;
-
-        public bool ShowFooter { get; set; } = true;
+        public int Width { get; set; } = 400;
 
         public override Type GetViewComponent()
         {
