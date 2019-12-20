@@ -3,7 +3,7 @@ using Orions.Infrastructure.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.Reporting;
 using Orions.Node.Common;
-using Orions.SDK;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +19,19 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsLoadedReportResult { get; set; }
 
+		public ReportVm()
+		{
+
+		}
+
 		public async Task InitStoreAsync(HyperConnectionSettings connection)
 		{
 			if (connection != null)
 			{
 				try
 				{
-					HyperStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
-					//HyperStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);   
+					//HyperStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
+					HyperStore = await NetStore.ConnectAsyncThrows(connection.ConnectionUri);   
 				}
 				catch (Exception ex)
 				{
@@ -43,13 +48,8 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public ReportVm()
-		{
-			
-		}
-
 		public async Task LoadReportResultData(
-			string reportResultId = null, 
+			string reportResultId = null,
 			string metadatasetId = null)
 		{
 			var results = await FetchReportResultList(reportResultId, metadatasetId);
@@ -66,7 +66,7 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		private async Task<List<HyperMetadataReportResult>> FetchReportResultList(
-			string reportResultId = null, 
+			string reportResultId = null,
 			string metadatasetId = null)
 		{
 			var results = new List<HyperMetadataReportResult>();
@@ -98,7 +98,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (args.ExecutionResult.IsNotSuccess)
 			{
-				// TODO: show error
+				Logger.Instance.Error("Cannot load report result");
 				return null;
 			}
 

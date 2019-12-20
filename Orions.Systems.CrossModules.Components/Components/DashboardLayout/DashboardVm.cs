@@ -188,7 +188,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task<object> GetSelectedColumnWidget()
 		{
-			//PropGrid.CleanSourceCache();
 			return SelectedColumn.Widget;
 		}
 
@@ -206,13 +205,11 @@ namespace Orions.Systems.CrossModules.Components
 			DashboardRow row,
 			DashboardColumn column)
 		{
-
 			var x = e.ClientX;
 			var dif = x - _startClientX;
 
 			if (_isStartDraging && (dif > 3 || dif < -3))
 			{
-
 				var n = row.Columns.Find(column);
 				var prevColumn = n.Next;
 
@@ -238,12 +235,10 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-
-
 		private void LoadAvailableWidget()
 		{
 			var availableTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(IDashboardWidget));
-			
+
 			foreach (var t in availableTypes.Where(it => it.IsAbstract == false))
 			{
 				var widget = Activator.CreateInstance(t);
@@ -251,7 +246,8 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		private IDashboardWidget LoadWidget(Type t) {
+		private IDashboardWidget LoadWidget(Type t)
+		{
 			var widget = Activator.CreateInstance(t);
 			return widget as IDashboardWidget;
 		}

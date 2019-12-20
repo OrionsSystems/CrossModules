@@ -4,7 +4,6 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class DashboardWidgetBase : IDashboardWidget
 	{
-
 		public string Id { get; set; } = IdGeneratorHelper.Generate("widget-");
 
 		public abstract string Label { get; set; }
