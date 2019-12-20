@@ -1,0 +1,42 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent
+
+@if (Data.Rows.Any())
+{
+    var firstRowId = Data.Rows.FirstOrDefault()?.Id;
+
+    @foreach (var row in Data.Rows)
+    {
+        <div class="row mb-4">
+            @foreach (var column in row.Columns)
+            {
+                <div @key="column.Id" class="col-lg-@column.Size">
+
+                    <div class="dashboard-element-container-live">
+                        <div class="dashboard-content-live">
+                            @if (column.Widget != null)
+                            {
+                                <WidgetDynamicComponent @key="column.Widget.Id" Widget="column.Widget" />
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@code{
+
+    [Parameter]
+    public DashboardData Data { get; set; }
+
+}
+
+<style>
+
+    .dashboard-element-container-live {
+        width: 100%;
+    }
+</style>

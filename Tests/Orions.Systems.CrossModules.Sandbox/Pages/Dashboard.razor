@@ -5,15 +5,13 @@
 
 @inject IMatToaster Toaster
 
-<DashboardLayout 
-                 Data="Data" 
+<DashboardLayout Data="Data"
                  AvailabelWidgets="AvailabaleWidgets"
-                 EnableBetweenBox="true" 
+                 EnableBetweenBox="true"
                  IsPreviewMode="false"
                  DisableModeOption="false"
                  Title="Dashboard Prototype"
                  OnSave="SaveChanges">
-    
 </DashboardLayout>
 
 @code{
@@ -29,7 +27,8 @@
         await base.OnInitializedAsync();
     }
 
-    private void SaveChanges() {
+    private void SaveChanges()
+    {
         // Save dashboard data here
 
         ShowToaster(MatToastType.Success, "", "Save changes");
@@ -40,20 +39,31 @@
         Data = new DashboardData();
 
         var row_1 = new DashboardRow();
-        row_1.Columns.AddLast(new DashboardColumn { Size = 6, Widget = new SmartChartWidget() });
+        row_1.Columns.AddLast(new DashboardColumn { Size = 6, Widget = new DemoSmartChartWidget() });
         row_1.Columns.AddLast(new DashboardColumn { Size = 6 });
         Data.Rows.AddLast(row_1);
 
         var row_2 = new DashboardRow();
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
-        row_2.Columns.AddLast(new DashboardColumn { Size = 4, Widget = new TagAnalyticChartWidget() });
+        row_2.Columns.AddLast(new DashboardColumn
+        {
+            Size = 4,
+            Widget = new SimpleHtmlWidget
+            {
+                Label = "Demo Analytics Description",
+                RawHtml = @"<p>The Demo Analytics Chart / List widget is a colorful graphic presentation of key metrics from the website's Demo Analytics account, including integration with Ads campaigns. Data can be filtered by a variety of traffic metrics, dimensions, conversions, segments and events.</p>
+<p>This widget can be added to White Label Client Dashboards and PDF Reports. In marketing dashboards you can set it to display at half or full page width. You can view a marketing dashboard sample that contains this and additional widgets (password is demo).</p>",
+            }
+        });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         Data.Rows.AddLast(row_2);
 
         AvailabaleWidgets = new List<IDashboardWidget> {
-            new SmartChartWidget(),
-            new TagAnalyticChartWidget(),
-            new TagTreeMapWidget()
+            new DemoSmartChartWidget(),
+            new SimpleHtmlWidget(),
+            new DemoTagTreeMapWidget(),
+            new ReportGridWidget(),
+            new ReportPieChartWidget()
         };
 
     }
@@ -67,26 +77,10 @@
             config.MaximumOpacity = 100;
         });
     }
-
-
-    public class SmartChartWidget : DashboardWidgetBase, IDashboardWidget
-    {
-        public override string Label { get; set; } = "Smart Chart";
-    }
-
-    public class TagAnalyticChartWidget : DashboardWidgetBase, IDashboardWidget
-    {
-        public override string Label { get; set; } = "Tag Analytic Chart";
-    }
-
-    public class TagTreeMapWidget : DashboardWidgetBase, IDashboardWidget
-    {
-        public override string Label { get; set; } = "Tag Tree Map";
-    }
-
 }
 
 <style>
-    
-
+    .top-row {
+        display: none;
+    }
 </style>

@@ -1,0 +1,41 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+<div class="widget-content-demo-simple">
+    @if (Widget.ShowTitle)
+    {
+        <h3>@Widget.Label</h3>
+    }
+
+    <section>
+
+        @((MarkupString)Widget.RawHtml)
+
+    </section>
+
+</div>
+
+@code {
+    [Parameter]
+    public SimpleHtmlWidget Widget { get; set; }
+}
+
+<style>
+    .widget-content-demo-simple {
+        /*background-color: rgba(255, 0, 0, 0.2);*/
+        padding: 20px;
+        overflow: hidden;
+    }
+
+        .widget-content-demo-simple h3 {
+            text-align: center;
+        }
+
+        .widget-content-demo-simple section {
+            color: #018786;
+            font-size: 12px;
+        }
+
+        .widget-content-demo-simple p {
+            text-align: justify;
+        }
+</style>

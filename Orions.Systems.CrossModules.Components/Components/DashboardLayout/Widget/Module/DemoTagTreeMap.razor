@@ -1,0 +1,36 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+    <div class="widget-content-demo-tree-map">
+        <h3>@Widget.Label</h3>
+
+        <section>
+            <p>Simple fake content for smart chart</p>
+        </section>
+       
+    </div>
+
+@code {
+
+    [Parameter]
+    public DemoTagTreeMapWidget Widget { get; set; }
+}
+
+<style>
+    .widget-content-demo-tree-map {
+        padding: 10px
+    }
+
+        .widget-content-demo-tree-map h3 {
+            height: 50px;
+            text-align:center;
+        }
+
+        .widget-content-demo-smart section {
+            color: #0094ff;
+            font-size:14px;
+        }
+
+        .widget-content-demo-tree-map p {
+            text-align: justify;
+        }
+</style>

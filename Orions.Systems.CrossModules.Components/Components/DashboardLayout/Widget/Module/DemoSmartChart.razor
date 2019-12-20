@@ -1,0 +1,31 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+<div class="widget-content-demo-smart">
+    <h3>@Widget.Label</h3>
+
+    <section>
+        <div>Simple fake content for smart chart</div>
+    </section>
+</div>
+@code {
+
+    [Parameter]
+    public DemoSmartChartWidget Widget { get; set; }
+}
+
+<style>
+    .widget-content-demo-smart {
+        padding: 10px
+    }
+
+        .widget-content-demo-smart h3 {
+            text-align: center;
+        }
+
+        .widget-content-demo-smart section {
+            color: #018786;
+            font-size:14px;
+        }
+        .widget-content-demo-smart p {
+             text-align:justify;
+        }
+</style>

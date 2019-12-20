@@ -1,0 +1,162 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent<ReportVm>
+
+@using Orions.Infrastructure.HyperMedia
+@using ChartJs.Blazor.Charts
+@using ChartJs.Blazor.ChartJS.PieChart
+@using ChartJs.Blazor.ChartJS.Common.Enums
+@using ChartJs.Blazor.ChartJS.Common.Properties
+@using ChartJs.Blazor.Util
+
+<div class="widget-content-report-piechart">
+
+    @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+    {
+
+        @if (Widget.ShowTitle)
+        {
+            <h3>@DataContext.Report.Report.Name</h3>
+        }
+
+        <div class="widget-content-report-piechart-view">
+            <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="400" Width="400" />
+        </div>
+
+        @if (Widget.ShowFooter)
+        {
+            <div class="widget-content-report-piechart-footer">
+                <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+            </div>
+        }
+    }
+
+    @if (!DataContext.IsLoadedReportResult)
+    {
+        <div style="position:relative;">
+            <div class="loading-bar"></div>
+        </div>
+    }
+
+</div>
+
+@code {
+    private PieConfig _pieConfig;
+    private ChartJsPieChart _pieChartJs;
+
+    [Parameter]
+    public ReportPieChartWidget Widget { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
+        DataContext.InitStore(netStore);
+
+        await DataContext.LoadReportResultData(Widget.ReportResultId, Widget.MetadatasetId);
+
+        SetPieConfiguration();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void SetPieConfiguration()
+    {
+        _pieConfig = new PieConfig
+        {
+            Options = new PieOptions
+            {
+                Title = new OptionsTitle
+                {
+                    Display = false,
+                    Text = DataContext.Report.Report.Name
+                },
+                Responsive = true,
+                Animation = new ArcAnimation
+                {
+                    AnimateRotate = true,
+                    AnimateScale = true
+                }
+            }
+        };
+
+        _pieConfig.Options.Legend.Position = Position.Bottom;
+
+        var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+        _pieConfig.Data.Labels.AddRange(labels);
+
+        var pieSet = new PieDataset
+        {
+            BorderWidth = 0,
+            //HoverBackgroundColor = ColorUtil.RandomColorString(),
+            //HoverBorderColor = ColorUtil.RandomColorString(),
+            //HoverBorderWidth = 1,
+            BorderColor = "#ffffff",
+        };
+        pieSet.BackgroundColor = RandomBackgroudColors(labels.Count);
+
+        var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
+        pieSet.Data.AddRange(rowData);
+        _pieConfig.Data.Datasets.Add(pieSet);
+    }
+
+    private string[] RandomBackgroudColors(int count)
+    {
+        var backgroudColors = new List<string>();
+
+        backgroudColors.Add("#52D726");
+        backgroudColors.Add("#FFEC00");
+        backgroudColors.Add("#003f5c");
+        backgroudColors.Add("#FF7300");
+        backgroudColors.Add("#FF0000");
+        backgroudColors.Add("#007ED6");
+        backgroudColors.Add("#7CDDDD");
+
+        backgroudColors.Add("#003f5c");
+        backgroudColors.Add("#2f4b7c");
+        backgroudColors.Add("#665191");
+        backgroudColors.Add("#a05195");
+        backgroudColors.Add("#d45087");
+        backgroudColors.Add("#f95d6a");
+        backgroudColors.Add("#ff7c43");
+        backgroudColors.Add("#ffa600");
+
+        //for (var i = 0; i < count; i++)
+        //{
+        //    backgroudColors.Add(ColorUtil.RandomColorString());
+        //}
+
+        return backgroudColors.ToArray();
+    }
+}
+
+<style>
+    .widget-content-report-piechart {
+        padding: 15px;
+        overflow: hidden;
+    }
+
+        .widget-content-report-piechart h3 {
+            text-align: center;
+        }
+
+    .widget-content-report-piechart-footer {
+        font-size: 12px;
+        font-style: italic;
+    }
+
+    .widget-content-report-piechart-view .chart-container > canvas {
+        max-width: 400px !important;
+        max-height: 400px !important;
+        display: block !important;
+    }
+
+    .widget-content-report-piechart-view .chart-container {
+        width: auto !important;
+    }
+
+        .widget-content-report-piechart-view .chart-container > canvas {
+            /*width: 400px !important;*/
+            max-height: 600px !important;
+            display: block !important;
+        }
+</style>
