@@ -5,6 +5,22 @@
     <AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
     <RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+
+    <EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+
+    <EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+
+    <EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+  </ItemGroup>
+  
   <ItemGroup>
     <None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
     <None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
@@ -43,25 +59,18 @@
     <None Remove="content\scripts\kendoComponents.js" />
     <None Remove="content\css\styles.css" />
     <None Remove="content\css\propertyGrid.css" />
+    <None Remove="content\vanilla-picker\vanilla-picker.js" />
   </ItemGroup>
 
   <ItemGroup>
-
-    <EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-
-    <EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-
-    <EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
-  
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.0.0" />
+    <PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+  </ItemGroup>
+    
+  <ItemGroup>
     <PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
     <PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
     <PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
