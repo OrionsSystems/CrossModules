@@ -13,7 +13,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public DashboardData Source { get; set; } = new DashboardData();
 
-		public List<IDashboardWidget> AvailableWidgets { get; private set; } = new List<IDashboardWidget>();
+		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
 		public DashboardVm()
 		{
@@ -173,9 +173,9 @@ namespace Orions.Systems.CrossModules.Components
 			SelectedColumn = column;
 		}
 
-		public void AddSelectedWidget(MouseEventArgs e, IDashboardWidget widget)
+		public void AddSelectedWidget(MouseEventArgs e, Type widgetType)
 		{
-			if (widget != null && SelectedColumn != null) SelectedColumn.Widget = widget;
+			if (widgetType != null && SelectedColumn != null) SelectedColumn.Widget = LoadWidget(widgetType);
 
 			IsShowModalWidget = false;
 		}
@@ -238,16 +238,22 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+
+
 		private void LoadAvailableWidget()
 		{
 			var availableTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(IDashboardWidget));
-
-			AvailableWidgets = new List<IDashboardWidget>();
+			
 			foreach (var t in availableTypes.Where(it => it.IsAbstract == false))
 			{
 				var widget = Activator.CreateInstance(t);
-				AvailableWidgets.Add(widget as IDashboardWidget);
+				AvailableWidgets.Add(t);
 			}
+		}
+
+		private IDashboardWidget LoadWidget(Type t) {
+			var widget = Activator.CreateInstance(t);
+			return widget as IDashboardWidget;
 		}
 	}
 }

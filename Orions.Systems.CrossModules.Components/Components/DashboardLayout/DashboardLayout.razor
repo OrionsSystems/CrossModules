@@ -233,14 +233,14 @@
                 </div>
                 <div class="modal-body dashboard-modal-widget-body">
                     <div class="container-fluid">
-                        @foreach (var widget in DataContext.AvailableWidgets)
+                        @foreach (var widgetType in DataContext.AvailableWidgets)
                         {
-                            <div @key="widget.Id" class="row dashboard-modal-widget-element">
+                            <div class="row dashboard-modal-widget-element">
                                 <div class="col-md-9">
-                                    <span>@widget.Label</span>
+                                    <span>@widgetType.Name</span>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>DataContext.AddSelectedWidget(e, widget))">Add</button>
+                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>DataContext.AddSelectedWidget(e, widgetType))">Add</button>
                                 </div>
                             </div>
                         }
