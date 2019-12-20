@@ -6,7 +6,6 @@
 @inject IMatToaster Toaster
 
 <DashboardLayout Data="Data"
-                 AvailabelWidgets="AvailabaleWidgets"
                  EnableBetweenBox="true"
                  IsPreviewMode="false"
                  DisableModeOption="false"
@@ -18,7 +17,6 @@
 
     private DashboardData Data { get; set; }
 
-    private List<IDashboardWidget> AvailabaleWidgets { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,12 +55,6 @@
         });
         row_2.Columns.AddLast(new DashboardColumn { Size = 4 });
         Data.Rows.AddLast(row_2);
-
-        AvailabaleWidgets = new List<IDashboardWidget> {
-            new SimpleHtmlWidget(),
-            new ReportGridWidget(),
-            new ReportPieChartWidget()
-        };
 
     }
 

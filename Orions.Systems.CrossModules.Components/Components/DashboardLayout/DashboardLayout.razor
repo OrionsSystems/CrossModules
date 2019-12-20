@@ -23,16 +23,16 @@
                 </h3>
             }
 
-        <div class="float-right">
-            @if (IsEditMode)
-            {
-                <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Publish</button>
-            }
-            <div class="d-inline-block">
-                <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-            </div>
+            <div class="float-right">
+                @if (IsEditMode)
+                {
+                    <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Publish</button>
+                }
+                <div class="d-inline-block">
+                    <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
+                </div>
 
-        </div>
+            </div>
 
         </div>
     </div>
@@ -67,9 +67,9 @@
 
                                             @if (column.Widget != null)
                                             {
-                                                <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => CleanWidget(e, column))">Clean</a>
+                                                <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => DataContext.CleanWidget(e, column))">Clean</a>
 
-                                                <a class="btn btn-sm btn-outline-dark" title="Properties" @onclick="(e => OpenWidgetProperty(e, column))">P</a>
+                                                <a class="btn btn-sm btn-outline-dark" title="Properties" @onclick="(e => DataContext.OpenWidgetProperty(e, column))">P</a>
                                             }
 
                                             @if (column.Size > 1)
@@ -98,7 +98,7 @@
                                         @if (IsEditMode)
                                         {
                                             <div class="dashboard-widget-add">
-                                                <a class="btn" title="Add Widget" @onclick="(e => OpenWidgetModal(e, column))">&#43;</a>
+                                                <a class="btn" title="Add Widget" @onclick="(e => DataContext.OpenWidgetModal(e, column))">&#43;</a>
                                             </div>
                                         }
                                     }
@@ -220,27 +220,27 @@
 </div>
 
 
-@if (isShowModalWidget)
+@if (DataContext.IsShowModalWidget)
 {
     <div class="modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header dashboard-modal-widget-header">
                     <h5 class="modal-title">Available Widgets</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowModalWidget = false; } )">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { DataContext.IsShowModalWidget = false; } )">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body dashboard-modal-widget-body">
                     <div class="container-fluid">
-                        @foreach (var widget in AvailabelWidgets)
+                        @foreach (var widget in DataContext.AvailableWidgets)
                         {
-                            <div class="row dashboard-modal-widget-element">
+                            <div @key="widget.Id" class="row dashboard-modal-widget-element">
                                 <div class="col-md-9">
                                     <span>@widget.Label</span>
                                 </div>
                                 <div class="col-sm-1">
-                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>AddSelectedWidget(e, widget))">Add</button>
+                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>DataContext.AddSelectedWidget(e, widget))">Add</button>
                                 </div>
                             </div>
                         }
@@ -253,7 +253,7 @@
     <div class="modal-backdrop fade show"></div>
 }
 
-@if (isShowProperty)
+@if (DataContext.IsShowProperty)
 {
     <div class="modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -261,11 +261,12 @@
                 <div class="modal-body">
                     <div class="card">
                         <div class="card-body">
-                            <PropertyGrid Loader="GetSelectedColumnWidget"
+                            <PropertyGrid @ref="DataContext.PropGrid"
+                                          Loader="DataContext.GetSelectedColumnWidget"
                                           CancelVisible="true"
                                           OKVisible="true"
-                                          CancelCommand="OnCancelProperty"
-                                          OkCommand="OnCancelProperty">
+                                          CancelCommand="DataContext.OnCancelProperty"
+                                          OkCommand="DataContext.OnCancelProperty">
                             </PropertyGrid>
                         </div>
                     </div>
@@ -280,11 +281,6 @@
 
 @code{
 
-    private bool isShowModalWidget;
-    private bool isShowProperty;
-
-    private DashboardColumn SelectedColumn { get; set; }
-
     private bool IsEditMode { get { return !IsPreviewMode; } }
 
     [Parameter]
@@ -295,9 +291,6 @@
 
     [Parameter]
     public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
-
-    [Parameter]
-    public List<IDashboardWidget> AvailabelWidgets { get; set; } = new List<IDashboardWidget>();
 
     [Parameter]
     public string Title { get; set; } = "Dashboard";
@@ -319,44 +312,6 @@
     private void ChangeMode(bool value)
     {
         IsPreviewMode = value;
-    }
-
-    private void CleanWidget(MouseEventArgs e, DashboardColumn column)
-    {
-        column.Widget = null;
-    }
-
-    private async Task<object> GetSelectedColumnWidget()
-    {
-        await Task.Delay(200);
-        return SelectedColumn.Widget;
-    }
-
-    private void OpenWidgetModal(MouseEventArgs e, DashboardColumn column)
-    {
-        if (AvailabelWidgets != null && AvailabelWidgets.Any())
-        {
-            isShowModalWidget = true;
-            SelectedColumn = column;
-        }
-    }
-
-    private void OpenWidgetProperty(MouseEventArgs e, DashboardColumn column)
-    {
-        isShowProperty = true;
-        SelectedColumn = column;
-    }
-
-    private void AddSelectedWidget(MouseEventArgs e, IDashboardWidget widget)
-    {
-        if (widget != null && SelectedColumn != null) SelectedColumn.Widget = widget;
-
-        isShowModalWidget = false;
-    }
-
-    private void OnCancelProperty()
-    {
-        isShowProperty = false;
     }
 
 }
