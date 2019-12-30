@@ -2,7 +2,6 @@
 
 @inherits BaseBlazorComponent<ReportVm>
 
-@using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
 
 @using Telerik.Blazor;
@@ -22,10 +21,10 @@
                 <ChartSeriesItems>
                     <ChartSeries Type="ChartSeriesType.Pie"
                                  Data="@TagData"
-                                 VisibleInLegendField="@nameof(TagLabelsPieChartData.ShouldShowInLegend)"
-                                 Field="@nameof(TagLabelsPieChartData.Count)"
-                                 CategoryField="@nameof(TagLabelsPieChartData.Label)"
-                                 ExplodeField="@nameof(TagLabelsPieChartData.Explode)">
+                                 VisibleInLegendField="@nameof(ReportPieChartData.ShouldShowInLegend)"
+                                 Field="@nameof(ReportPieChartData.Count)"
+                                 CategoryField="@nameof(ReportPieChartData.Label)"
+                                 ExplodeField="@nameof(ReportPieChartData.Explode)">
                         <ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
                     </ChartSeries>
                 </ChartSeriesItems>
@@ -62,7 +61,7 @@
 
     private bool showPieCharLabel = true;
 
-    private List<TagLabelsPieChartData> TagData = new List<TagLabelsPieChartData>();
+    private List<ReportPieChartData> TagData = new List<ReportPieChartData>();
 
     [Parameter]
     public ReportTelericPieChartWidget Widget { get; set; }
@@ -90,29 +89,11 @@
 
         for (var i = 0; i < labels.Count; i++)
         {
-            TagData.Add(new TagLabelsPieChartData
+            TagData.Add(new ReportPieChartData
             {
                 Label = labels[i],
                 Count = rowData[i]
             });
-        }
-    }
-
-    public class TagLabelsPieChartData
-    {
-        public int Count { get; set; }
-        public string Label { get; set; }
-
-        public bool ShouldShowInLegend { get; set; } = true;
-
-        public bool Explode { get; set; }
-
-        public string LabelInfo
-        {
-            get
-            {
-                return $"{Label}: {Count}";
-            }
         }
     }
 

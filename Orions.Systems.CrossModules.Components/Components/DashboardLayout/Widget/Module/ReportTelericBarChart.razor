@@ -1,0 +1,136 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent<ReportVm>
+
+@using Orions.Node.Common
+
+@using Telerik.Blazor;
+@using Telerik.Blazor.Components;
+
+<div class="widget-content-report-barchart">
+
+    @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+    {
+        @if (Widget.ShowTitle)
+        {
+            <h3>@DataContext.Report.Report.Name</h3>
+        }
+
+        <div class="widget-content-report-barchart-view">
+
+            <TelerikChart>
+
+                <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
+                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+
+                <ChartSeriesItems>
+                    @foreach (var ser in ChartData.Series)
+                    {
+                        <ChartSeries Type="ChartSeriesType.Column"
+                                     Data="@ser.Data"
+                                     CategoryField="@nameof(ReportSeriesChartDataItem.Time)"
+                                     Field="@nameof(ReportSeriesChartDataItem.Count)">
+                        </ChartSeries>
+                    }
+                </ChartSeriesItems>
+
+            </TelerikChart>
+        </div>
+
+        @if (Widget.ShowFooter)
+        {
+            <div class="widget-content-report-barchart-footer">
+                <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+            </div>
+        }
+    }
+
+    @if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+    {
+        <div class="widget-missing-report-data">
+            Missing report data!
+        </div>
+    }
+
+    @if (!DataContext.IsLoadedReportResult)
+    {
+        <div style="position:relative;">
+            <div class="loading-bar"></div>
+        </div>
+    }
+
+</div>
+
+@code {
+
+    public ReportLineChartData ChartData { get; set; } = new ReportLineChartData();
+
+    [Parameter]
+    public ReportTelericBarChartWidget Widget { get; set; }
+
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        DataContext.InitStore(HyperStore);
+
+        await DataContext.LoadReportResultData(Widget.ReportResultId);
+
+        LoadData();
+
+        await base.OnInitializedAsync();
+    }
+
+    private void LoadData()
+    {
+        if (DataContext.Report == null) return;
+
+        var categories = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+        var rowsDef = DataContext.Report.Data.RowsDefinitions.Select(it => it.Title).ToList();
+
+        ChartData.Clean();
+
+        ChartData.Categories.AddRange(categories);
+
+        var rowData = DataContext.Report.Data.RowsCells;
+
+
+        for (var i = 0; i < categories.Count; i++)
+        {
+            var chartSeries = new ReportSeriesChartData();
+            chartSeries.Name = categories[i];
+
+            for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
+            {
+
+                var rowEl = rowData[rowIndex];
+                var timeEl = rowsDef[rowIndex];
+
+                var data = rowEl[i].Values.FirstOrDefault();
+                
+                var chartItem = new ReportSeriesChartDataItem { Count =  Convert.ToUInt16(data.ToString()), Time = timeEl };
+                chartSeries.Data.Add(chartItem);
+            }
+
+            ChartData.Series.Add(chartSeries);
+        }
+    }
+
+}
+
+<style>
+    .widget-content-report-barchart {
+        padding: 15px;
+        overflow: hidden;
+    }
+
+        .widget-content-report-barchart h3 {
+            text-align: center;
+        }
+
+    .widget-content-report-barchart-footer {
+        font-size: 12px;
+        font-style: italic;
+    }
+</style>
