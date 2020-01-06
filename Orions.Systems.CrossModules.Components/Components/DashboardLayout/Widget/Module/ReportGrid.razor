@@ -72,8 +72,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
-        DataContext.InitStore(netStore);
+        DataContext.InitStore(HyperStore);
 
         await DataContext.LoadReportResultData(Widget.ReportResultId);
 
