@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
-
     public class ReportPieChartData
     {
         public int Count { get; set; }
@@ -20,7 +18,7 @@ namespace Orions.Systems.CrossModules.Components
         }
     }
 
-    public class ReportLineChartData
+    public class ReportChartData
     {
         public List<string> Categories { get; private set; } = new List<string>();
         public List<ReportSeriesChartData> Series { get; private set; } = new List<ReportSeriesChartData>();
@@ -43,5 +41,8 @@ namespace Orions.Systems.CrossModules.Components
     {
         public int Count { get; set; }
         public string Time { get; set; }
+
+        public DateTime DatePosition { get; set; }
+        public string StreamPosition { get; set; }
     }
 }

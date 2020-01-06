@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Orions.Node.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
