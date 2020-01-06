@@ -99,22 +99,8 @@ namespace Orions.Systems.CrossModules.Components
 						Time = timeEl
 					};
 
-					//parse date 00:00:00 (11/17/2019 9:30:00 AM)
-					try
-					{
-						if (!string.IsNullOrWhiteSpace(timeEl) && timeEl.Contains("(") && timeEl.Contains(")"))
-						{
-							var timeStr = timeEl.Substring(timeEl.LastIndexOf("(") + 1, timeEl.LastIndexOf(")") - timeEl.LastIndexOf("(") - 1);
-
-							chartItem.DatePosition = DateTime.ParseExact(
-								timeStr,
-								"MM/dd/yyyy h:mm:ss tt",
-								System.Globalization.CultureInfo.InvariantCulture);
-
-							chartItem.StreamPosition = timeEl.Substring(0, timeEl.LastIndexOf("("));
-						}
-					}
-					catch (Exception ex) { Console.WriteLine(ex.Message); }
+					chartItem.DatePosition = ParseTimePosition(timeEl);
+					chartItem.StreamPosition = ParseStreamPosition(timeEl);
 					chartSeries.Data.Add(chartItem);
 				}
 
@@ -122,6 +108,41 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			return result;
+		}
+
+		public string ParseStreamPosition(string timeEl)
+		{
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(timeEl) && timeEl.Contains("(") && timeEl.Contains(")"))
+				{
+					var timeStr = timeEl.Substring(timeEl.LastIndexOf("(") + 1, timeEl.LastIndexOf(")") - timeEl.LastIndexOf("(") - 1);
+
+					return timeEl.Substring(0, timeEl.LastIndexOf("("));
+				}
+			}
+			catch (Exception ex) { Console.WriteLine(ex.Message); }
+
+			throw new Exception("Cannot parse row defenition title");
+		}
+
+		public DateTime ParseTimePosition(string timeEl)
+		{
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(timeEl) && timeEl.Contains("(") && timeEl.Contains(")"))
+				{
+					var timeStr = timeEl.Substring(timeEl.LastIndexOf("(") + 1, timeEl.LastIndexOf(")") - timeEl.LastIndexOf("(") - 1);
+
+					return DateTime.ParseExact(
+						timeStr,
+						"MM/dd/yyyy h:mm:ss tt",
+						System.Globalization.CultureInfo.InvariantCulture);
+				}
+			}
+			catch (Exception ex) { Console.WriteLine(ex.Message); }
+
+			throw new Exception("Cannot parse row defenition title");
 		}
 	}
 }
