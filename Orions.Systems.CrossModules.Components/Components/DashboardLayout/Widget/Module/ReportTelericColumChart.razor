@@ -41,7 +41,6 @@
                 <ChartCategoryAxes>
                     <ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
                         <ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
-                            @*<ChartCategoryAxisLabelsRotation Angle="-90"></ChartCategoryAxisLabelsRotation>*@
                         </ChartCategoryAxisLabels>
                     </ChartCategoryAxis>
                 </ChartCategoryAxes>
@@ -80,7 +79,7 @@
     public ReportChartData ChartData { get; set; } = new ReportChartData();
 
     [Parameter]
-    public ReportTelericLineChartWidget Widget { get; set; }
+    public ReportTelericColumChartWidget Widget { get; set; }
 
     [Parameter]
     public IHyperArgsSink HyperStore { get; set; }

@@ -7,7 +7,7 @@
 @using Telerik.Blazor;
 @using Telerik.Blazor.Components;
 
-<div class="widget-content-report-barchart">
+<div class="widget-content-report-linechart">
 
     @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
     {
@@ -16,30 +16,42 @@
             <h3>@DataContext.Report.Report.Name</h3>
         }
 
-        <div class="widget-content-report-barchart-view">
+        <div class="widget-content-report-linechart-view">
 
             <TelerikChart>
 
-                <ChartTitle Visible="false" Position="ChartTitlePosition.Bottom" Text="Items per Time"></ChartTitle>
-                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+                <ChartTitle Visible="@Widget.IsShowChartTitle" Position="@Widget.ChartTitlePosition" Text="@Widget.ChartTitle"></ChartTitle>
+                <ChartLegend Position="@Widget.ChartLegendPosition"></ChartLegend>
 
                 <ChartSeriesItems>
                     @foreach (var ser in ChartData.Series)
                     {
-                        <ChartSeries Type="ChartSeriesType.Column"
+                        <ChartSeries Type="@Widget.ChartSeriesType"
                                      Data="@ser.Data"
-                                     CategoryField="@nameof(ReportSeriesChartDataItem.Time)"
+                                     Name="@ser.Name"
+                                     Style="@Widget.ChartSeriesStyle"
+                                     CategoryField="@nameof(ReportSeriesChartDataItem.DatePosition)"
                                      Field="@nameof(ReportSeriesChartDataItem.Count)">
+                            <ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
+                            <ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
                         </ChartSeries>
                     }
                 </ChartSeriesItems>
+
+                <ChartCategoryAxes>
+                    <ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
+                        <ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
+                            @*<ChartCategoryAxisLabelsRotation Angle="-90"></ChartCategoryAxisLabelsRotation>*@
+                        </ChartCategoryAxisLabels>
+                    </ChartCategoryAxis>
+                </ChartCategoryAxes>
 
             </TelerikChart>
         </div>
 
         @if (Widget.ShowFooter)
         {
-            <div class="widget-content-report-barchart-footer">
+            <div class="widget-content-report-linechart-footer">
                 <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
             </div>
         }
@@ -63,7 +75,9 @@
 
 @code {
 
-    public ReportLineChartData ChartData { get; set; } = new ReportLineChartData();
+    public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
+
+    public ReportChartData ChartData { get; set; } = new ReportChartData();
 
     [Parameter]
     public ReportTelericBarChartWidget Widget { get; set; }
@@ -77,59 +91,23 @@
 
         await DataContext.LoadReportResultData(Widget.ReportResultId);
 
-        LoadData();
+        ChartData = DataContext.LoadReportLineChartData();
 
         await base.OnInitializedAsync();
     }
-
-    private void LoadData()
-    {
-        if (DataContext.Report == null) return;
-
-        var categories = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-        var rowsDef = DataContext.Report.Data.RowsDefinitions.Select(it => it.Title).ToList();
-
-        ChartData.Clean();
-
-        ChartData.Categories.AddRange(categories);
-
-        var rowData = DataContext.Report.Data.RowsCells;
-
-
-        for (var i = 0; i < categories.Count; i++)
-        {
-            var chartSeries = new ReportSeriesChartData();
-            chartSeries.Name = categories[i];
-
-            for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
-            {
-
-                var rowEl = rowData[rowIndex];
-                var timeEl = rowsDef[rowIndex];
-
-                var data = rowEl[i].Values.FirstOrDefault();
-                
-                var chartItem = new ReportSeriesChartDataItem { Count =  Convert.ToUInt16(data.ToString()), Time = timeEl };
-                chartSeries.Data.Add(chartItem);
-            }
-
-            ChartData.Series.Add(chartSeries);
-        }
-    }
-
 }
 
 <style>
-    .widget-content-report-barchart {
+    .widget-content-report-linechart {
         padding: 15px;
         overflow: hidden;
     }
 
-        .widget-content-report-barchart h3 {
+        .widget-content-report-linechart h3 {
             text-align: center;
         }
 
-    .widget-content-report-barchart-footer {
+    .widget-content-report-linechart-footer {
         font-size: 12px;
         font-style: italic;
     }

@@ -9,6 +9,8 @@
 
     @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
     {
+        var rowIndex = 0;
+
         @if (Widget.ShowTitle)
         {
             <h3>@DataContext.Report.Report.Name</h3>
@@ -18,6 +20,7 @@
             <table class="table table-striped table-bordered table-hover">
                 <thead>
                     <tr>
+                        <th scope="col"></th>
                         @foreach (var column in DataContext.Report.Data.ColumnsDefinitions)
                         {
                             <th scope="col">@column.Title</th>
@@ -27,7 +30,13 @@
                 <tbody>
                     @foreach (var rows in DataContext.Report.Data.RowsCells)
                     {
+                        var rowDef = DataContext.Report.Data.RowsDefinitions[rowIndex];
+                        var rowTitle = rowDef.Title;
+                        var rowDate = DataContext.ParseTimePosition(rowTitle);
+                        rowIndex++;
+
                         <tr>
+                            <td>@rowDate.ToString("dd MMM HH:mm")</td>
                             @foreach (var row in rows)
                             {
                                 <td>@row.ToString()</td>
@@ -72,8 +81,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var netStore = await NetStore.ConnectAsyncThrows("http://localhost:5580/Execute");
-        DataContext.InitStore(netStore);
+        DataContext.InitStore(HyperStore);
 
         await DataContext.LoadReportResultData(Widget.ReportResultId);
 
