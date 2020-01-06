@@ -28,11 +28,21 @@
                     {
                         <ChartSeries Type="ChartSeriesType.Line"
                                      Data="@ser.Data"
-                                     CategoryField="@nameof(ReportSeriesChartDataItem.Time)" 
+                                     Name="@ser.Name"
+                                     Style="ChartSeriesStyle.Smooth"
+                                     CategoryField="@nameof(ReportSeriesChartDataItem.Time)"
                                      Field="@nameof(ReportSeriesChartDataItem.Count)">
+                            <ChartSeriesLabels Visible="false" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
+                            <ChartSeriesStack Enabled="false"></ChartSeriesStack>
                         </ChartSeries>
                     }
                 </ChartSeriesItems>
+
+                <ChartCategoryAxes>
+                    <ChartCategoryAxis StartAngle="90" Categories="@ChartData.Categories.ToArray()">
+                        <ChartCategoryAxisLabels Format="{0}"></ChartCategoryAxisLabels>
+                    </ChartCategoryAxis>
+                </ChartCategoryAxes>
 
             </TelerikChart>
         </div>
@@ -63,6 +73,8 @@
 
 @code {
 
+    public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
+
     public ReportLineChartData ChartData { get; set; } = new ReportLineChartData();
 
     [Parameter]
@@ -87,7 +99,7 @@
         if (DataContext.Report == null) return;
 
         var categories = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-        var rowsDef = DataContext.Report.Data.RowsDefinitions.Select(it => it.Title).ToList();
+        var rowsDef = DataContext.Report.Data.RowsDefinitions.ToList();
 
         ChartData.Clean();
 
@@ -105,11 +117,13 @@
             {
 
                 var rowEl = rowData[rowIndex];
-                var timeEl = rowsDef[rowIndex];
+
+                var reportRowEl = rowsDef[rowIndex];
+                var timeEl = reportRowEl.Title;
 
                 var data = rowEl[i].Values.FirstOrDefault();
-                
-                var chartItem = new ReportSeriesChartDataItem { Count =  Convert.ToUInt16(data.ToString()), Time = timeEl };
+
+                var chartItem = new ReportSeriesChartDataItem { Count = Convert.ToUInt16(data.ToString()), Time = timeEl };
                 chartSeries.Data.Add(chartItem);
             }
 
@@ -117,7 +131,7 @@
         }
     }
 
-    
+
 }
 
 <style>

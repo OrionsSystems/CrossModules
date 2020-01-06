@@ -8,10 +8,5 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataReportResult))]
 		public HyperDocumentId ReportResultId { get; set; }
-
-		public override Type GetViewComponent()
-		{
-			return typeof(ReportGrid);
-		}
 	}
 }
