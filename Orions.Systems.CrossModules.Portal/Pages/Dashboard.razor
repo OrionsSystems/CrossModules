@@ -35,7 +35,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        HyperStore = await NetStore.ConnectAsyncThrows("http://gabe:g203040@usnbods01wan.orionscloud.com:8600/Execute");
+        HyperStore = await NetStore.ConnectAsyncThrows("http://service:serv12@usnbods01wan.orionscloud.com:8600/Execute");
 
         await base.OnInitializedAsync();
     }
