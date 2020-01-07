@@ -1,0 +1,92 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@using Orions.Node.Common
+
+@inherits BaseBlazorComponent
+
+<div class="container-fluid">
+
+    @if (DataList.Any() && isLoadedDataResult)
+    {
+        var rowIndex = 0;
+        
+        <h5> Dashboard List</h5>
+
+        <button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col-md-1"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in DataList)
+                    {
+                        rowIndex++;
+
+                        <tr>
+                            <td>@rowIndex</td>
+                            <td>@item.Name</td>
+                            <td><button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Select</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (!isLoadedDataResult)
+    {
+        <div style="position:relative;">
+            <div class="loading-bar"></div>
+        </div>
+    }
+
+</div>
+
+@code{
+
+    private bool isLoadedDataResult;
+
+    private List<DashboardData> DataList = new List<DashboardData>();
+
+    [Parameter]
+    public IHyperArgsSink HyperStore { get; set; }
+
+    [Parameter]
+    public EventCallback<DashboardData> OnSelect { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (HyperStore != null) {
+            await LoadDashboarList();
+        }
+    }
+
+    private async Task LoadDashboarList()
+    {
+        var datas = await HyperStore.FindAllAsync<DashboardData>();
+
+        DataList = datas.ToList();
+
+        isLoadedDataResult = true;
+
+        StateHasChanged();
+    }
+
+    private void SelectDashboard(DashboardData data)
+    {
+        OnSelect.InvokeAsync(data);
+    }
+}
+
+<style>
+</style>

@@ -9,25 +9,32 @@
 
 @inject IMatToaster Toaster
 
-<DashboardLayout Data="Data"
-                 EnableBetweenBox="true"
-                 IsPreviewMode="false"
-                 DisableModeOption="false"
-                 Title="@Data.Name"
-                 HyperStore="@HyperStore"
-                 OnSave="SaveChanges">
-</DashboardLayout>
+@if (isDashboardSelected)
+{
+    <DashboardLayout Data="Data"
+                     EnableBetweenBox="true"
+                     IsPreviewMode="false"
+                     DisableModeOption="false"
+                     Title="@Data.Name"
+                     HyperStore="@HyperStore"
+                     OnSave="SaveChanges"
+                     OnBackToList="ShowDashboardList">
+    </DashboardLayout>
+}
+else
+{
+    <DashboardList HyperStore="@HyperStore" OnSelect="OnSelectDashboard"></DashboardList>
+}
 
 @code{
 
+    private bool isDashboardSelected;
     private DashboardData Data { get; set; }
 
     public IHyperArgsSink HyperStore { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        InitDashboard(); // load init data
-
         HyperStore = await NetStore.ConnectAsyncThrows("http://gabe:g203040@usnbods01wan.orionscloud.com:8600/Execute");
 
         await base.OnInitializedAsync();
@@ -42,45 +49,19 @@
         var args = new StoreHyperDocumentArgs(doc);
         var res = await HyperStore.ExecuteAsync(args);
 
-        var datas = await HyperStore.FindAllAsync<DashboardData>();
-
         ShowToaster(MatToastType.Success, "", "Save changes");
     }
 
-    private void InitDashboard()
+    private void ShowDashboardList()
     {
-        Data = new DashboardData();
+        Data = null;
+        isDashboardSelected = false;
+    }
 
-        var row_1 = new DashboardRow();
-        row_1.Columns.AddLast(new DashboardColumn
-        {
-            Size = 12,
-            Widget = new ReportTelericLineChartWidget()
-        });
-        Data.Rows.AddLast(row_1);
-
-        var row_2 = new DashboardRow();
-        row_2.Columns.AddLast(new DashboardColumn
-        {
-            Size = 4,
-            Widget = new SimpleHtmlWidget
-            {
-                Label = "About",
-                RawHtml = @"<p>Some quick example text to build on the card title and make up the bulk of the card's content.</p>",
-            }
-        });
-        row_2.Columns.AddLast(new DashboardColumn
-        {
-            Size = 8,
-            Widget = new SimpleHtmlWidget
-            {
-                Label = "Demo Description",
-                RawHtml = @"<p>The Demo Chart / List widget is a colorful graphic presentation of key metrics from the website's Demo Analytics account, including integration with Ads campaigns. Data can be filtered by a variety of traffic metrics, dimensions, conversions, segments and events.</p>
-<p>This widget can be added to White Label Client Dashboards and PDF Reports. In marketing dashboards you can set it to display at half or full page width. You can view a marketing dashboard sample that contains this and additional widgets (password is demo).</p>",
-            }
-        });
-        Data.Rows.AddLast(row_2);
-
+    private void OnSelectDashboard(DashboardData data)
+    {
+        Data = data;
+        isDashboardSelected = true;
     }
 
     private void ShowToaster(MatToastType type, string title, string message)
