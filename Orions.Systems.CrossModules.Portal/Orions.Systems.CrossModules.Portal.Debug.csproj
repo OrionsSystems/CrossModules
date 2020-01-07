@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Orions.Systems.CrossModules.Portal</RootNamespace>
+    <AssemblyName>Orions.Systems.CrossModules.Portal</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
