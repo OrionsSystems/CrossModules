@@ -25,16 +25,17 @@
                 </h3>
             }
 
-            <div class="float-right">
-                @if (IsEditMode)
-                {
-                    <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Publish</button>
-                }
-                <div class="d-inline-block">
-                    <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-                </div>
-
+        <div class="float-right">
+            <button class="btn btn-outline-dark mr-2" @onclick="OnBackToList">List</button>
+            @if (IsEditMode)
+            {
+                <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Save</button>
+            }
+            <div class="d-inline-block">
+                <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
             </div>
+
+        </div>
 
         </div>
     </div>
@@ -224,7 +225,7 @@
 
 @if (DataContext.IsShowModalWidget)
 {
-    <div class="modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+    <div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header dashboard-modal-widget-header">
@@ -257,7 +258,7 @@
 
 @if (DataContext.IsShowProperty)
 {
-    <div class="modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+    <div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-body">
@@ -306,6 +307,9 @@
 
     [Parameter]
     public EventCallback OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnBackToList { get; set; }
 
     [Parameter]
     public IHyperArgsSink HyperStore { get { return DataContext.HyperStore;  } set { DataContext.HyperStore = value; } }

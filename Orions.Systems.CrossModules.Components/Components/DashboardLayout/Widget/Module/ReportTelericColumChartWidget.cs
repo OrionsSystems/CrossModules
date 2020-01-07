@@ -11,7 +11,7 @@ namespace Orions.Systems.CrossModules.Components
 
         public override Type GetViewComponent()
         {
-            return typeof(ReportTelericAreaChart);
+            return typeof(ReportTelericColumChart);
         }
     }
 }

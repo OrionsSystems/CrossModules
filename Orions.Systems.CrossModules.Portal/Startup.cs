@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Net.Http;
+using EmbeddedBlazorContent;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orions.Systems.CrossModules.Components;
-using Orions.Systems.CrossModules.Portal.Data;
-using EmbeddedBlazorContent;
-using System.Net.Http;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -31,9 +27,6 @@ namespace Orions.Systems.CrossModules.Portal
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddRazorPages();
-			services.AddSingleton<WeatherForecastService>();
-
-			//services.AddSingleton<DataContext>();
 
 			services.AddMatToaster(config =>
 			{

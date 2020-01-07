@@ -21,6 +21,6 @@ namespace Orions.Systems.CrossModules.Components
 
         public bool IsChartSeriesLabelsVisible { get; set; } = false;
 
-        public bool IsChartSeriesStackEnabled { get; set; } = false;
+        public virtual bool IsChartSeriesStackEnabled { get; set; } = false;
     }
 }
