@@ -203,5 +203,9 @@
     }
 }
 
+.dashboard-modal {
+    z-index: 999999 !important;
+}
+
 /*    END DASHBOARD LAYOUT COMPONENT */
 
