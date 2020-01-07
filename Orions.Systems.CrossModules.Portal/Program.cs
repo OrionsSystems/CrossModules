@@ -14,14 +14,16 @@ namespace Orions.Systems.CrossModules.Portal
 {
 	public class Program
 	{
-		NetStore _netStore = null;
-
-		// Fix
-		public static NetStore NetStore { get; set; }
-
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
-			CreateHostBuilder(args).Build().Run();
+			try
+			{
+				CreateHostBuilder(args).Build().Run();
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Failed to start: " + Assist.PrintException(ex));
+			}
 		}
 
 		public static IHostBuilder CreateHostBuilder(string[] args) =>
