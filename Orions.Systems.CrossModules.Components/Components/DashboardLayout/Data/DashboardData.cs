@@ -1,39 +1,49 @@
-﻿using System.Collections.Generic;
+﻿using Orions.Common;
+using System.Collections.Generic;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class DashboardData
-    {
-        public LinkedList<DashboardRow> Rows { get; set; }
+   public class DashboardData : IdUnifiedBlob, IName
+   {
+      [DocumentDescriptor]
+      public string Name { get; set; } = "New Dashboard";
 
-        public DashboardData()
-        {
-            Rows = new LinkedList<DashboardRow>();
-        }
-    }
+      public LinkedList<DashboardRow> Rows { get; set; }
 
-    public class DashboardRow
-    {
-        public string Id { get; set; } = IdGeneratorHelper.Generate("db-row-");
-        public LinkedList<DashboardColumn> Columns { get; set; }
+      public DashboardData()
+      {
+         Rows = new LinkedList<DashboardRow>();
+      }
 
-        public bool ShowCommands { get; set; }
+      public override string ToString()
+      {
+         return this.Name;
+      }
+   }
 
-        public DashboardRow()
-        {
-            Columns = new LinkedList<DashboardColumn>();
-        }
-    }
+   public class DashboardRow : IId
+   {
+      public string Id { get; set; } = IdGeneratorHelper.Generate("db-row-");
 
-    public class DashboardColumn
-    {
-        public string Id { get; set; } = IdGeneratorHelper.Generate("db-col-");
-        public int Size { get; set; }
-        public int Order { get; set; }
-        public bool ShowCommands { get; set; }
+      public LinkedList<DashboardColumn> Columns { get; set; }
 
-        public bool ShowBetweenCommands { get; set; }
+      public bool ShowCommands { get; set; }
 
-        public IDashboardWidget Widget { get; set; }
-    }
+      public DashboardRow()
+      {
+         Columns = new LinkedList<DashboardColumn>();
+      }
+   }
+
+   public class DashboardColumn : IId
+   {
+      public string Id { get; set; } = IdGeneratorHelper.Generate("db-col-");
+      public int Size { get; set; }
+      public int Order { get; set; }
+      public bool ShowCommands { get; set; }
+
+      public bool ShowBetweenCommands { get; set; }
+
+      public IDashboardWidget Widget { get; set; }
+   }
 }
