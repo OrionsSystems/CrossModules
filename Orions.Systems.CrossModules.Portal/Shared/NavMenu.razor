@@ -6,7 +6,17 @@
     </button>
 </div>
 
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+
+<MatNavMenu Class="mat-nav">
+    <MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon> Home</MatNavItem>
+    <MatNavItem Href="/dashboard"> <MatIcon Icon="view_module"></MatIcon> Dashboard</MatNavItem>
+    <MatNavItem Href="/content"> <MatIcon Icon="list_alt"></MatIcon> Content</MatNavItem>
+    <MatNavItem Href="/bookmarks"> <MatIcon Icon="bookmarks"></MatIcon> Bookmarks</MatNavItem>
+    <MatNavItem Href="/reports"> <MatIcon Icon="list"></MatIcon> Reports</MatNavItem>
+
+</MatNavMenu>
+
+@*<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
    <ul class="nav flex-column">
       <li class="nav-item px-3">
          <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -34,7 +44,7 @@
          </NavLink>
       </li>
    </ul>
-</div>
+</div>*@
 
 @code {
     bool collapseNavMenu = true;
@@ -46,3 +56,12 @@
         collapseNavMenu = !collapseNavMenu;
     }
 }
+
+<style>
+    .mat-nav, .mat-nav a {
+        
+    }
+        .mat-nav .mdc-list-item--selected {
+            background-color: #bab9b9;
+        }
+</style>
