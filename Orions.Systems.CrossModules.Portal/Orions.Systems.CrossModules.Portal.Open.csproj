@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+    <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
+    <PackageReference Include="MatBlazor" Version="1.10.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+    <PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
+    <PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
+    <PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\" />
+  </ItemGroup>
+
+</Project>

@@ -37,7 +37,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{2BA1B2FF-F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Sandbox", "Tests\Orions.Systems.CrossModules.Sandbox\Orions.Systems.CrossModules.Sandbox.csproj", "{4D794F35-6FF3-4A5D-8817-777F0717082D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orions.Systems.CrossModules.Portal", "Orions.Systems.CrossModules.Portal\Orions.Systems.CrossModules.Portal.csproj", "{586DE77C-CC37-436A-A523-79B2B0EC6556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Portal.Debug", "Orions.Systems.CrossModules.Portal\Orions.Systems.CrossModules.Portal.Debug.csproj", "{586DE77C-CC37-436A-A523-79B2B0EC6556}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
