@@ -28,7 +28,7 @@
             <div class="float-right">
                 @if (IsEditMode)
                 {
-                    <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Publish</button>
+                    <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Save</button>
                 }
                 <div class="d-inline-block">
                     <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>

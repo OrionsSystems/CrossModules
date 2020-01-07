@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <RootNamespace>Orions.Systems.CrossModules.Portal</RootNamespace>
+    <AssemblyName>Orions.Systems.CrossModules.Portal</AssemblyName>	
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 
 </Project>
