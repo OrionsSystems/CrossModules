@@ -9,7 +9,7 @@
 
     @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
     {
-        var rowIndex = 0;
+       var rowIndex = 0;
 
         @if (Widget.ShowTitle)
         {
@@ -30,10 +30,10 @@
                 <tbody>
                     @foreach (var rows in DataContext.Report.Data.RowsCells)
                     {
-                        var rowDef = DataContext.Report.Data.RowsDefinitions[rowIndex];
-                        var rowTitle = rowDef.Title;
-                        var rowDate = DataContext.ParseTimePosition(rowTitle);
-                        rowIndex++;
+                       var rowDef = DataContext.Report.Data.RowsDefinitions[rowIndex];
+                       var rowTitle = rowDef.Title;
+                       var rowDate = DataContext.ParseTimePosition(rowTitle);
+                       rowIndex++;
 
                         <tr>
                             <td>@rowDate.ToString("dd MMM HH:mm")</td>
@@ -73,20 +73,23 @@
 
 @code {
 
-    [Parameter]
-    public ReportGridWidget Widget { get; set; }
+   [Parameter]
+   public ReportGridWidget Widget { get; set; }
 
-    [Parameter]
-    public IHyperArgsSink HyperStore { get; set; }
+   [Parameter]
+   public IHyperArgsSink HyperStore { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        DataContext.InitStore(HyperStore);
+   protected override async Task OnInitializedAsync()
+   {
+      DataContext.InitStore(HyperStore);
 
-        await DataContext.LoadReportResultData(Widget.ReportResultId);
+      if (Widget.DataSource is ReportResultWidgetDataSource ds)
+      {
+         await DataContext.LoadReportResultData(ds.ReportResultId);
+      }
 
-        await base.OnInitializedAsync();
-    }
+      await base.OnInitializedAsync();
+   }
 }
 
 <style>

@@ -13,132 +13,132 @@
 <div class="widget-content-report-piechart">
 
     @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
-    {
+	 {
 
         @if (Widget.ShowTitle)
-        {
+		  {
             <h3>@DataContext.Report.Report.Name</h3>
-        }
+		  }
 
         <div class="widget-content-report-piechart-view">
             <ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
         </div>
 
         @if (Widget.ShowFooter)
-        {
+		  {
             <div class="widget-content-report-piechart-footer">
                 <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
             </div>
-        }
-    }
+		  }
+	 }
 
     @if (DataContext.Report == null && DataContext.IsLoadedReportResult)
-    {
+	 {
         <div class="widget-missing-report-data">
             Missing report data!
         </div>
-    }
+	 }
 
     @if (!DataContext.IsLoadedReportResult)
-    {
+	 {
         <div style="position:relative;">
             <div class="loading-bar"></div>
         </div>
-    }
+	 }
 </div>
 
 @code {
-    private PieConfig _pieConfig;
-    private ChartJsPieChart _pieChartJs;
+	private PieConfig _pieConfig;
+	private ChartJsPieChart _pieChartJs;
 
-    [Parameter]
-    public ReportPieChartWidget Widget { get; set; }
+	[Parameter]
+	public ReportPieChartWidget Widget { get; set; }
 
-    [Parameter]
-    public IHyperArgsSink HyperStore { get; set; }
+	[Parameter]
+	public IHyperArgsSink HyperStore { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        DataContext.InitStore(HyperStore);
+	protected override async Task OnInitializedAsync()
+	{
+		DataContext.InitStore(HyperStore);
 
-        await DataContext.LoadReportResultData(Widget.ReportResultId);
+		await DataContext.LoadReportResultData(Widget.DataSource);
 
-        SetPieConfiguration();
+		SetPieConfiguration();
 
-        await base.OnInitializedAsync();
-    }
+		await base.OnInitializedAsync();
+	}
 
-    private void SetPieConfiguration()
-    {
+	private void SetPieConfiguration()
+	{
 
-        if (DataContext.Report == null) return;
+		if (DataContext.Report == null) return;
 
-        _pieConfig = new PieConfig
-        {
-            Options = new PieOptions
-            {
-                Title = new OptionsTitle
-                {
-                    Display = false,
-                    Text = DataContext.Report.Report.Name
-                },
-                Responsive = true,
-                Animation = new ArcAnimation
-                {
-                    AnimateRotate = true,
-                    AnimateScale = true
-                }
-            }
-        };
+		_pieConfig = new PieConfig
+		{
+			Options = new PieOptions
+			{
+				Title = new OptionsTitle
+				{
+					Display = false,
+					Text = DataContext.Report.Report.Name
+				},
+				Responsive = true,
+				Animation = new ArcAnimation
+				{
+					AnimateRotate = true,
+					AnimateScale = true
+				}
+			}
+		};
 
-        _pieConfig.Options.Legend.Position = Position.Bottom;
+		_pieConfig.Options.Legend.Position = Position.Bottom;
 
-        var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-        _pieConfig.Data.Labels.AddRange(labels);
+		var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+		_pieConfig.Data.Labels.AddRange(labels);
 
-        var pieSet = new PieDataset
-        {
-            BorderWidth = 0,
-            //HoverBackgroundColor = ColorUtil.RandomColorString(),
-            //HoverBorderColor = ColorUtil.RandomColorString(),
-            //HoverBorderWidth = 1,
-            BorderColor = "#ffffff",
-        };
-        pieSet.BackgroundColor = RandomBackgroudColors(labels.Count);
+		var pieSet = new PieDataset
+		{
+			BorderWidth = 0,
+			//HoverBackgroundColor = ColorUtil.RandomColorString(),
+			//HoverBorderColor = ColorUtil.RandomColorString(),
+			//HoverBorderWidth = 1,
+			BorderColor = "#ffffff",
+		};
+		pieSet.BackgroundColor = RandomBackgroudColors(labels.Count);
 
-        var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
-        pieSet.Data.AddRange(rowData);
-        _pieConfig.Data.Datasets.Add(pieSet);
-    }
+		var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
+		pieSet.Data.AddRange(rowData);
+		_pieConfig.Data.Datasets.Add(pieSet);
+	}
 
-    private string[] RandomBackgroudColors(int count)
-    {
-        var backgroudColors = new List<string>();
+	private string[] RandomBackgroudColors(int count)
+	{
+		var backgroudColors = new List<string>();
 
-        backgroudColors.Add("#52D726");
-        backgroudColors.Add("#FFEC00");
-        backgroudColors.Add("#003f5c");
-        backgroudColors.Add("#FF7300");
-        backgroudColors.Add("#FF0000");
-        backgroudColors.Add("#007ED6");
-        backgroudColors.Add("#7CDDDD");
+		backgroudColors.Add("#52D726");
+		backgroudColors.Add("#FFEC00");
+		backgroudColors.Add("#003f5c");
+		backgroudColors.Add("#FF7300");
+		backgroudColors.Add("#FF0000");
+		backgroudColors.Add("#007ED6");
+		backgroudColors.Add("#7CDDDD");
 
-        backgroudColors.Add("#003f5c");
-        backgroudColors.Add("#2f4b7c");
-        backgroudColors.Add("#665191");
-        backgroudColors.Add("#a05195");
-        backgroudColors.Add("#d45087");
-        backgroudColors.Add("#f95d6a");
-        backgroudColors.Add("#ff7c43");
-        backgroudColors.Add("#ffa600");
+		backgroudColors.Add("#003f5c");
+		backgroudColors.Add("#2f4b7c");
+		backgroudColors.Add("#665191");
+		backgroudColors.Add("#a05195");
+		backgroudColors.Add("#d45087");
+		backgroudColors.Add("#f95d6a");
+		backgroudColors.Add("#ff7c43");
+		backgroudColors.Add("#ffa600");
 
-        //for (var i = 0; i < count; i++)
-        //{
-        //    backgroudColors.Add(ColorUtil.RandomColorString());
-        //}
+		//for (var i = 0; i < count; i++)
+		//{
+		//    backgroudColors.Add(ColorUtil.RandomColorString());
+		//}
 
-        return backgroudColors.ToArray();
-    }
+		return backgroudColors.ToArray();
+	}
 }
 
 <style>

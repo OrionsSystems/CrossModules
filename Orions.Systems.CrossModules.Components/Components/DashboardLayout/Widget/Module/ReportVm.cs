@@ -48,6 +48,21 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public async Task LoadReportResultData(WidgetDataSource dataSource)
+		{
+			if (dataSource is CSVWidgetDataSource csvSource)
+			{
+			}
+			else if (dataSource is ReportResultWidgetDataSource reportResultSource)
+			{
+				await this.LoadReportResultData(reportResultSource.ReportResultId);
+			}
+			else
+			{
+				throw new NotImplementedException("Data source not recognized");
+			}
+		}
+
 		public async Task LoadReportResultData(HyperDocumentId reportResultId)
 		{
 			var args = new RetrieveHyperDocumentArgs(reportResultId);
