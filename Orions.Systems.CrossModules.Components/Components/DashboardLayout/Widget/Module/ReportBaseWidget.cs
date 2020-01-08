@@ -14,6 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 
 	public class CSVWidgetDataSource : WidgetDataSource
 	{
+		[UniBrowsable(UniBrowsableAttribute.EditTypes.TextFile)]
 		[HelpText("Add report result document", HelpTextAttribute.Priorities.Important)]
 		public byte[] Data { get; set; }
 
