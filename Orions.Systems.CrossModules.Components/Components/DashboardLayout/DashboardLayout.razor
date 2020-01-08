@@ -1,327 +1,374 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 @using Orions.Node.Common
+@using Orions.Infrastructure.HyperMedia
 
 @inherits BaseBlazorComponent<DashboardVm>
 
 <div class="container-fluid">
 
-    <div class="row">
-        <div class="col">
-            @if (!string.IsNullOrEmpty(Title))
-            {
-                <h3 class="dashboard-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                         width="35px" height="35px" viewBox="0 0 35 35">
-                        <g>
-                            <rect width="15.909" height="35" />
-                            <rect x="19.091" y="12.727" width="15.909" height="9.546" />
-                            <rect x="19.091" width="15.909" height="9.545" />
-                            <rect x="19.091" y="25.455" width="15.909" height="9.545" />
-                        </g>
-                    </svg>
+	<div class="row">
+		<div class="col">
+			@if (!string.IsNullOrEmpty(Data.Name) || !IsHideTitle)
+			{
+				<h3 class="dashboard-title dashboard-list-name"  @onclick="OpenRenameDialog">
+					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  width="35px" height="35px" viewBox="0 0 35 35">
+						<g>
+							<rect width="15.909" height="35" />
+							<rect x="19.091" y="12.727" width="15.909" height="9.546" />
+							<rect x="19.091" width="15.909" height="9.545" />
+							<rect x="19.091" y="25.455" width="15.909" height="9.545" />
+						</g>
+					</svg>
 
-                    @Title
-                </h3>
-            }
+					@Data.Name
+				</h3>
+			}
 
-        <div class="float-right">
-            <button class="btn btn-outline-dark mr-2" @onclick="OnBackToList">List</button>
-            @if (IsEditMode)
-            {
-                <button class="btn btn-outline-dark mr-4" @onclick="OnSave">Save</button>
-            }
-            <div class="d-inline-block">
-                <SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-            </div>
+			<div class="float-right">
+				<button class="btn btn-outline-dark mr-2" @onclick="OnBackToList">List</button>
+				@if (IsEditMode)
+				{
+					<button class="btn btn-outline-dark mr-4" @onclick="OnSave">Save</button>
+				}
+				<div class="d-inline-block">
+					<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
+				</div>
 
-        </div>
+			</div>
 
-        </div>
-    </div>
+		</div>
+	</div>
 
-    @ChildContent
+	@ChildContent
 
-    @if (IsEditMode)
-    {
-        @if (Data.Rows.Any())
-        {
-            var firstRowId = Data.Rows.FirstOrDefault()?.Id;
+	@if (IsEditMode)
+	{
+		@if (Data.Rows.Any())
+		{
+			var firstRowId = Data.Rows.FirstOrDefault()?.Id;
 
-            @foreach (var row in Data.Rows)
-            {
-                <div class="row mb-4">
+			@foreach (var row in Data.Rows)
+			{
+				<div class="row mb-4">
 
-                    @{
-                        var lastCoumnId = row.Columns.Last.Value.Id;
-                    }
+					@{
+						var lastCoumnId = row.Columns.Last.Value.Id;
+					}
 
-                    @foreach (var column in row.Columns)
-                    {
-                        <div @key="column.Id" class="col-lg-@column.Size">
+					@foreach (var column in row.Columns)
+					{
+						<div @key="column.Id" class="col-lg-@column.Size">
 
-                            <div class="dashboard-element-container dashboard-shadow">
+							<div class="dashboard-element-container dashboard-shadow">
 
-                                <div class="dashboard-content" @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e => DataContext.HideCommands(e, column))">
+								<div class="dashboard-content" @onmouseover="(e => DataContext.ShowCommands(e, column))" @onmouseout="(e => DataContext.HideCommands(e, column))">
 
-                                    @if (IsEditMode && column.ShowCommands)
-                                    {
-                                        <div class="dashboard-element-commands">
+									@if (IsEditMode && column.ShowCommands)
+									{
+										<div class="dashboard-element-commands">
 
-                                            @if (column.Widget != null)
-                                            {
-                                                <a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => DataContext.CleanWidget(e, column))">Clean</a>
+											@if (column.Widget != null)
+											{
+												<a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => DataContext.CleanWidget(e, column))">Clean</a>
 
-                                                <a class="btn btn-sm btn-outline-dark" title="Properties" @onclick="(e => DataContext.OpenWidgetProperty(e, column))">P</a>
-                                            }
+												<a class="btn btn-sm btn-outline-dark" title="Properties" @onclick="(e => DataContext.OpenWidgetProperty(e, column))">P</a>
+											}
 
-                                            @if (column.Size > 1)
-                                            {
-                                                <a class="btn btn-sm btn-outline-dark" title=" Split column" @onclick="@(el => { DataContext.SplitColumn(el, row, column); })">||</a>
-                                            }
-                                            <a class="btn btn-sm btn-outline-dark" title="Delete element" @onclick="@(el => { DataContext.DeleteColumn(el, row, column); })">X</a>
-                                        </div>
-                                    }
+											@if (column.Size > 1)
+											{
+												<a class="btn btn-sm btn-outline-dark" title=" Split column" @onclick="@(el => { DataContext.SplitColumn(el, row, column); })">||</a>
+											}
+											<a class="btn btn-sm btn-outline-dark" title="Delete element" @onclick="@(el => { DataContext.DeleteColumn(el, row, column); })">X</a>
+										</div>
+									}
 
-                                    @if (IsEditMode && column.ShowCommands && DataContext.HasPreviousColumn(row, column))
-                                    {
-                                        <div class="dashboard-content-prev" title="Increase size into left">
-                                            <a @onclick="(e => DataContext.IncreaseSizeLeft(e, row, column))">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                                     viewBox="0 0 30 30">
-                                                    <polygon points="2.72,15 13.24,27.62 13.24,20.18 26.75,20.18 26.75,9.74 13.24,9.74 13.24,2.38 " />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    }
-
-
-                                    @if (column.Widget == null)
-                                    {
-                                        @if (IsEditMode)
-                                        {
-                                            <div class="dashboard-widget-add">
-                                                <a class="btn" title="Add Widget" @onclick="(e => DataContext.OpenWidgetModal(e, column))">&#43;</a>
-                                            </div>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <div class="dashboard-widget-label">
-                                            @column.Widget.Label
-                                        </div>
-                                    }
-
-                                    @if (IsEditMode && column.ShowCommands && DataContext.HasNextColumn(row, column))
-                                    {
-                                        <div class="dashboard-content-next" title="Increase size into right">
-                                            <a @onclick="(e => DataContext.IncreaseSizeRight(e, row, column))">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                                     viewBox="0 0 30 30">
-                                                    <polygon points="26.75,15 16.23,2.38 16.23,9.82 2.72,9.82 2.72,20.26 16.23,20.26 16.23,27.62 " />
-                                                </svg>
-                                            </a>
-                                        </div>
-                                    }
+									@if (IsEditMode && column.ShowCommands && DataContext.HasPreviousColumn(row, column))
+									{
+										<div class="dashboard-content-prev" title="Increase size into left">
+											<a @onclick="(e => DataContext.IncreaseSizeLeft(e, row, column))">
+												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													  viewBox="0 0 30 30">
+													<polygon points="2.72,15 13.24,27.62 13.24,20.18 26.75,20.18 26.75,9.74 13.24,9.74 13.24,2.38 " />
+												</svg>
+											</a>
+										</div>
+									}
 
 
-                                </div>
+									@if (column.Widget == null)
+									{
+										@if (IsEditMode)
+										{
+											<div class="dashboard-widget-add">
+												<a class="btn" title="Add Widget" @onclick="(e => DataContext.OpenWidgetModal(e, column))">&#43;</a>
+											</div>
+										}
+									}
+									else
+									{
+										<div class="dashboard-widget-label">
+											@column.Widget.Label
+										</div>
+									}
 
-                                @if (IsEditMode && EnableBetweenBox && lastCoumnId != column.Id)
-                                {
-                                    <div class="dashboard-between-content" @onmouseover="(e => { column.ShowBetweenCommands = true; })" @onmouseout="(e => { column.ShowBetweenCommands = false; })">
+									@if (IsEditMode && column.ShowCommands && DataContext.HasNextColumn(row, column))
+									{
+										<div class="dashboard-content-next" title="Increase size into right">
+											<a @onclick="(e => DataContext.IncreaseSizeRight(e, row, column))">
+												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													  viewBox="0 0 30 30">
+													<polygon points="26.75,15 16.23,2.38 16.23,9.82 2.72,9.82 2.72,20.26 16.23,20.26 16.23,27.62 " />
+												</svg>
+											</a>
+										</div>
+									}
 
-                                        @if (column.ShowBetweenCommands)
-                                        {
-                                            <div class="dashboard-swap-column" @onclick="(e => DataContext.OnSwapColumns(e, row, column))">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                                     viewBox="0 0 30 30">
-                                                    <path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
-                                                    <path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
+
+								</div>
+
+								@if (IsEditMode && EnableBetweenBox && lastCoumnId != column.Id)
+								{
+									<div class="dashboard-between-content" @onmouseover="(e => { column.ShowBetweenCommands = true; })" @onmouseout="(e => { column.ShowBetweenCommands = false; })">
+
+										@if (column.ShowBetweenCommands)
+										{
+											<div class="dashboard-swap-column" @onclick="(e => DataContext.OnSwapColumns(e, row, column))">
+												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													  viewBox="0 0 30 30">
+													<path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
+													<path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
 	                                c1,0,1.82,0.82,1.82,1.82v0.93v5.2v6.12C25.59,27.02,24.77,27.84,23.77,27.84z" />
-                                                    <g>
-                                                        <line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
-                                                        <line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
-                                                        <line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
-                                                    </g>
-                                                    <g>
-                                                        <line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
-                                                        <line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
-                                                        <line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
-                                                    </g>
-                                                </svg>
-                                            </div>
-                                            <div id="@column.Id"
-                                                 class="dashboard-dragbar"
-                                                 @onmousedown="DataContext.OnMouseDownDraging"
-                                                 @onmousemove="(e => DataContext.OnMouseMoveDraging(e, row, column))">
-                                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                                     viewBox="0 0 30 30">
-                                                    <g>
-                                                        <rect x="13.54" y="0.81" width="2.91" height="28.38" />
-                                                        <polygon points="12.04,20.72 12.04,9.39 6.16,15" />
-                                                        <polygon points="17.96,20.96 17.96,9.63 23.84,15.24" />
-                                                    </g>
-                                                </svg>
-                                            </div>
-                                        }
+													<g>
+														<line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
+														<line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
+														<line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
+													</g>
+													<g>
+														<line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
+														<line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
+														<line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
+													</g>
+												</svg>
+											</div>
+											<div id="@column.Id"
+												  class="dashboard-dragbar"
+												  @onmousedown="DataContext.OnMouseDownDraging"
+												  @onmousemove="(e => DataContext.OnMouseMoveDraging(e, row, column))">
+												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+													  viewBox="0 0 30 30">
+													<g>
+														<rect x="13.54" y="0.81" width="2.91" height="28.38" />
+														<polygon points="12.04,20.72 12.04,9.39 6.16,15" />
+														<polygon points="17.96,20.96 17.96,9.63 23.84,15.24" />
+													</g>
+												</svg>
+											</div>
+										}
 
 
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
+									</div>
+								}
+							</div>
+						</div>
+					}
 
-                    @if (IsEditMode && firstRowId != row.Id)
-                    {
-                        <div class="dashboard-between-row" @onmouseover="(e => { row.ShowCommands = true; })" @onmouseout="(e => { row.ShowCommands = false; })">
+					@if (IsEditMode && firstRowId != row.Id)
+					{
+						<div class="dashboard-between-row" @onmouseover="(e => { row.ShowCommands = true; })" @onmouseout="(e => { row.ShowCommands = false; })">
 
-                            @if (row.ShowCommands)
-                            {
-                                <div class="dashboard-swap-row" @onclick="(e => DataContext.OnSwapRows(e, row))">
-                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                                         viewBox="0 0 30 30">
-                                        <path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
-                                        <path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
+							@if (row.ShowCommands)
+							{
+								<div class="dashboard-swap-row" @onclick="(e => DataContext.OnSwapRows(e, row))">
+									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										  viewBox="0 0 30 30">
+										<path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
+										<path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
 	                                c1,0,1.82,0.82,1.82,1.82v0.93v5.2v6.12C25.59,27.02,24.77,27.84,23.77,27.84z" />
-                                        <g>
-                                            <line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
-                                            <line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
-                                            <line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
-                                        </g>
-                                        <g>
-                                            <line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
-                                            <line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
-                                            <line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
-                                        </g>
-                                    </svg>
-                                </div>
-                            }
+										<g>
+											<line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
+											<line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
+											<line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
+										</g>
+										<g>
+											<line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
+											<line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
+											<line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
+										</g>
+									</svg>
+								</div>
+							}
 
-                        </div>
-                    }
+						</div>
+					}
 
-                </div>
-            }
-        }
+				</div>
+			}
+		}
 
-        @if (IsEditMode)
-        {
-            <div class="row">
-                <div class="col text-center">
-                    <button class="btn btn-outline-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
-                </div>
-            </div>
-        }
-    }
-    else
-    {
-        <DashboardLiveModeRender Data="@Data" HyperStore="@HyperStore"></DashboardLiveModeRender>
-    }
+		@if (IsEditMode)
+		{
+			<div class="row">
+				<div class="col text-center">
+					<button class="btn btn-outline-dark" @onclick="DataContext.OnAddRow"> Add Row</button>
+				</div>
+			</div>
+		}
+	}
+	else
+	{
+		<DashboardLiveModeRender Data="@Data" HyperStore="@HyperStore"></DashboardLiveModeRender>
+	}
 
 </div>
 
 
 @if (DataContext.IsShowModalWidget)
 {
-    <div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header dashboard-modal-widget-header">
-                    <h5 class="modal-title">Available Widgets</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { DataContext.IsShowModalWidget = false; } )">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body dashboard-modal-widget-body">
-                    <div class="container-fluid">
-                        @foreach (var widgetType in DataContext.AvailableWidgets)
-                        {
-                            <div class="row dashboard-modal-widget-element">
-                                <div class="col-md-9">
-                                    <span>@widgetType.Name</span>
-                                </div>
-                                <div class="col-sm-1">
-                                    <button class="btn btn-sm btn-outline-dark" @onclick="(e=>DataContext.AddSelectedWidget(e, widgetType))">Add</button>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Available Widgets</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { DataContext.IsShowModalWidget = false; } )">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body dashboard-modal-widget-body">
+					<div class="container-fluid">
+						@foreach (var widgetType in DataContext.AvailableWidgets)
+						{
+							<div class="row dashboard-modal-widget-element">
+								<div class="col-md-9">
+									<span>@widgetType.Name</span>
+								</div>
+								<div class="col-sm-1">
+									<button class="btn btn-sm btn-outline-dark" @onclick="(e=>DataContext.AddSelectedWidget(e, widgetType))">Add</button>
+								</div>
+							</div>
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal-backdrop fade show"></div>
+	<div class="modal-backdrop fade show"></div>
 }
 
 @if (DataContext.IsShowProperty)
 {
-    <div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <PropertyGrid @ref="DataContext.PropGrid"
-                                          Loader="DataContext.GetSelectedColumnWidget"
-                                          CancelVisible="true"
-                                          HyperStore="DataContext.HyperStore"
-                                          OKVisible="true"
-                                          CancelCommand="DataContext.OnCancelProperty"
-                                          OkCommand="DataContext.OnCancelProperty">
-                            </PropertyGrid>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<PropertyGrid @ref="DataContext.PropGrid"
+											  Loader="DataContext.GetSelectedColumnWidget"
+											  CancelVisible="true"
+											  HyperStore="DataContext.HyperStore"
+											  OKVisible="true"
+											  CancelCommand="DataContext.OnCancelProperty"
+											  OkCommand="DataContext.OnCancelProperty">
+							</PropertyGrid>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal-backdrop fade show"></div>
+	<div class="modal-backdrop fade show"></div>
 }
 
+@if (isShowRenameDashboardModal)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Rename Dashboard Name</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowRenameDashboardModal = false; } )">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<div class="form-group">
+								<label for="dashboardName">Name</label>
+								<input type="text" class="form-control" id="dashboardName" @bind="@Data.Name">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { isShowRenameDashboardModal = false; } )">Close</button>
+					<button type="button" class="btn btn-primary" @onclick="(async e => { await SaveDashboardChanges(); } )">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
 
 @code{
 
-    private bool IsEditMode { get { return !IsPreviewMode; } }
+	private bool isShowRenameDashboardModal;
+	private bool IsEditMode { get { return !IsPreviewMode; } }
 
-    [Parameter]
-    public bool IsPreviewMode { get; set; } = false;
+	[Parameter]
+	public bool IsPreviewMode { get; set; } = false;
 
-    [Parameter]
-    public bool DisableModeOption { get; set; }
+	[Parameter]
+	public bool DisableModeOption { get; set; }
 
-    [Parameter]
-    public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
+	[Parameter]
+	public DashboardData Data { get { return DataContext.Source; } set { DataContext.Source = value; } }
 
-    [Parameter]
-    public string Title { get; set; } = "Dashboard";
+	[Parameter]
+	public bool IsHideTitle { get; set; } = false;
 
-    [Parameter]
-    public bool EnableBetweenBox { get; set; }
+	[Parameter]
+	public bool EnableBetweenBox { get; set; }
 
-    [Parameter]
-    public RenderFragment ChildContent { get; set; }
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
 
-    [Parameter]
-    public EventCallback OnSave { get; set; }
+	[Parameter]
+	public EventCallback OnSave { get; set; }
 
-    [Parameter]
-    public EventCallback OnBackToList { get; set; }
+	[Parameter]
+	public EventCallback OnBackToList { get; set; }
 
-    [Parameter]
-    public IHyperArgsSink HyperStore { get { return DataContext.HyperStore;  } set { DataContext.HyperStore = value; } }
+	[Parameter]
+	public IHyperArgsSink HyperStore { get { return DataContext.HyperStore; } set { DataContext.HyperStore = value; } }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
 
-    private void ChangeMode(bool value)
-    {
-        IsPreviewMode = value;
-    }
+	private void ChangeMode(bool value)
+	{
+		IsPreviewMode = value;
+	}
+
+	private async Task SaveDashboardChanges()
+	{
+		var doc = new HyperDocument(Data);
+
+		var args = new StoreHyperDocumentArgs(doc);
+		var res = await HyperStore.ExecuteAsync(args);
+
+		isShowRenameDashboardModal = false;
+	}
+
+	private async Task OpenRenameDialog() { 
+		isShowRenameDashboardModal = true;
+	}
 
 }
