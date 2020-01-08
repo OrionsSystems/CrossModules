@@ -7,142 +7,162 @@
 
 <div class="container-fluid">
 
-    @if (DataList.Any() && isLoadedDataResult)
-    {
-        var rowIndex = 0;
+	@if (DataList.Any() && isLoadedDataResult)
+	{
+		var rowIndex = 0;
 
-        <h5> Dashboard List</h5>
+		<button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th scope="col-md-1"></th>
+						<th scope="col">Name</th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in DataList)
+					{
+						rowIndex++;
 
-        <button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col-md-1"></th>
-                        <th scope="col">Name</th>
-                        <th scope="col"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in DataList)
-                    {
-                        rowIndex++;
+						<tr>
+							<td>@rowIndex</td>
+							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Name</td>
+							<td>
+								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
+								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
+								<button class="btn btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
 
-                        <tr>
-                            <td>@rowIndex</td>
-                            <td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Name</td>
-                            <td><button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Select</button></td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
 
-    @if (!isLoadedDataResult)
-    {
-        <div style="position:relative;">
-            <div class="loading-bar"></div>
-        </div>
-    }
+	@if (!isLoadedDataResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
 
 </div>
 
 
 @if (isShowRenameDashboardModal)
 {
-    <div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header dashboard-modal-widget-header">
-                    <h5 class="modal-title">Rename Dashboard Name</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowRenameDashboardModal = false; } )">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label for="dashboardName">Name</label>
-                                <input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Name">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { isShowRenameDashboardModal = false; } )">Close</button>
-                    <button type="button" class="btn btn-primary" @onclick="(async e => { await SaveChanges(); } )">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Rename Dashboard Name</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowRenameDashboardModal = false; } )">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<div class="form-group">
+								<label for="dashboardName">Name</label>
+								<input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Name">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { isShowRenameDashboardModal = false; } )">Close</button>
+					<button type="button" class="btn btn-primary" @onclick="(async e => { await SaveChanges(); } )">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <div class="modal-backdrop fade show"></div>
+	<div class="modal-backdrop fade show"></div>
 }
 
 @code{
 
-    private bool isShowRenameDashboardModal;
-    private bool isLoadedDataResult;
-    private DashboardData SelectedDashboard;
+	private bool isShowRenameDashboardModal;
+	private bool isLoadedDataResult;
+	private DashboardData SelectedDashboard;
 
-    private List<DashboardData> DataList = new List<DashboardData>();
+	private List<DashboardData> DataList = new List<DashboardData>();
 
-    [Parameter]
-    public IHyperArgsSink HyperStore { get; set; }
+	[Parameter]
+	public IHyperArgsSink HyperStore { get; set; }
 
-    [Parameter]
-    public EventCallback<DashboardData> OnSelect { get; set; }
+	[Parameter]
+	public EventCallback<DashboardData> OnSelectDesign { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+	[Parameter]
+	public EventCallback<DashboardData> OnSelectView { get; set; }
 
-    protected override async Task OnParametersSetAsync()
-    {
-        if (HyperStore != null)
-        {
-            await LoadDashboarList();
-        }
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
 
-    private async Task LoadDashboarList()
-    {
-        var datas = await HyperStore.FindAllAsync<DashboardData>();
+	protected override async Task OnParametersSetAsync()
+	{
+		if (HyperStore != null)
+		{
+			await LoadDashboarList();
+		}
+	}
 
-        DataList = datas.ToList();
+	private async Task LoadDashboarList()
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-        isLoadedDataResult = true;
+		DataList = datas.ToList();
 
-        StateHasChanged();
-    }
+		isLoadedDataResult = true;
 
-    private void SelectDashboard(DashboardData data)
-    {
-        OnSelect.InvokeAsync(data);
-    }
+		StateHasChanged();
+	}
 
-    private async Task SaveChanges()
-    {
-        var doc = new HyperDocument(SelectedDashboard);
+	private void SelectDashboard(DashboardData data, bool showView = false)
+	{
+		if (showView) { 
+			OnSelectView.InvokeAsync(data);
+			return;
+		}
 
-        var args = new StoreHyperDocumentArgs(doc);
-        var res = await HyperStore.ExecuteAsync(args);
+		OnSelectDesign.InvokeAsync(data);
+	}
 
-        isShowRenameDashboardModal = false;
-    }
+	private async Task SaveChanges()
+	{
+		var doc = new HyperDocument(SelectedDashboard);
 
-    private void EditName(DashboardData data)
-    {
-        isShowRenameDashboardModal = true;
-        SelectedDashboard = data;
-    }
+		var args = new StoreHyperDocumentArgs(doc);
+		var res = await HyperStore.ExecuteAsync(args);
+
+		isShowRenameDashboardModal = false;
+	}
+
+	private async Task DeleteDashboard(DashboardData data)
+	{
+		var doc = new HyperDocument(data);
+		var args = new DeleteHyperDocumentArgs(doc.Id);
+		var res = await HyperStore.ExecuteAsync(args);
+
+		DataList.RemoveAll(it => it.Id == data.Id);
+	}
+
+	private void EditName(DashboardData data)
+	{
+		isShowRenameDashboardModal = true;
+		SelectedDashboard = data;
+	}
 }
 
 <style>
-    .dashboard-list-name {
-        cursor: pointer;
-    }
+	.dashboard-list-name {
+		cursor: pointer;
+	}
 </style>
