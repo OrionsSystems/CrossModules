@@ -1,6 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 @using Orions.Node.Common
+@using Orions.Infrastructure.HyperMedia
 
 @inherits BaseBlazorComponent
 
@@ -9,7 +10,7 @@
     @if (DataList.Any() && isLoadedDataResult)
     {
         var rowIndex = 0;
-        
+
         <h5> Dashboard List</h5>
 
         <button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
@@ -29,7 +30,7 @@
 
                         <tr>
                             <td>@rowIndex</td>
-                            <td>@item.Name</td>
+                            <td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Name</td>
                             <td><button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Select</button></td>
                         </tr>
                     }
@@ -47,9 +48,44 @@
 
 </div>
 
+
+@if (isShowRenameDashboardModal)
+{
+    <div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header dashboard-modal-widget-header">
+                    <h5 class="modal-title">Rename Dashboard Name</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowRenameDashboardModal = false; } )">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="dashboardName">Name</label>
+                                <input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { isShowRenameDashboardModal = false; } )">Close</button>
+                    <button type="button" class="btn btn-primary" @onclick="(async e => { await SaveChanges(); } )">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop fade show"></div>
+}
+
 @code{
 
+    private bool isShowRenameDashboardModal;
     private bool isLoadedDataResult;
+    private DashboardData SelectedDashboard;
 
     private List<DashboardData> DataList = new List<DashboardData>();
 
@@ -66,7 +102,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (HyperStore != null) {
+        if (HyperStore != null)
+        {
             await LoadDashboarList();
         }
     }
@@ -86,7 +123,26 @@
     {
         OnSelect.InvokeAsync(data);
     }
+
+    private async Task SaveChanges()
+    {
+        var doc = new HyperDocument(SelectedDashboard);
+
+        var args = new StoreHyperDocumentArgs(doc);
+        var res = await HyperStore.ExecuteAsync(args);
+
+        isShowRenameDashboardModal = false;
+    }
+
+    private void EditName(DashboardData data)
+    {
+        isShowRenameDashboardModal = true;
+        SelectedDashboard = data;
+    }
 }
 
 <style>
+    .dashboard-list-name {
+        cursor: pointer;
+    }
 </style>
