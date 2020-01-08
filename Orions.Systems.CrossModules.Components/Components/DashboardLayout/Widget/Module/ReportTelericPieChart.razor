@@ -9,108 +9,108 @@
 
 <div class="widget-content-report-piechart">
 
-    @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
-    {
-        @if (Widget.ShowTitle)
-        {
-            <h3>@DataContext.Report.Report.Name</h3>
-        }
+	@if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+	{
+		@if (Widget.ShowTitle && DataContext.ReportHasName)
+		{
+			<h3>@DataContext.ReportName</h3>
+		}
 
-        <div class="widget-content-report-piechart-view">
-            <TelerikChart>
-                <ChartSeriesItems>
-                    <ChartSeries Type="ChartSeriesType.Pie"
-                                 Data="@TagData"
-                                 VisibleInLegendField="@nameof(ReportPieChartData.ShouldShowInLegend)"
-                                 Field="@nameof(ReportPieChartData.Count)"
-                                 CategoryField="@nameof(ReportPieChartData.Label)"
-                                 ExplodeField="@nameof(ReportPieChartData.Explode)">
-                        <ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
-                    </ChartSeries>
-                </ChartSeriesItems>
-                <ChartTitle Visible="false" Text="Items per Label"></ChartTitle>
-                <ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
-            </TelerikChart>
-        </div>
+		<div class="widget-content-report-piechart-view">
+			<TelerikChart>
+				<ChartSeriesItems>
+					<ChartSeries Type="ChartSeriesType.Pie"
+									 Data="@TagData"
+									 VisibleInLegendField="@nameof(ReportPieChartData.ShouldShowInLegend)"
+									 Field="@nameof(ReportPieChartData.Count)"
+									 CategoryField="@nameof(ReportPieChartData.Label)"
+									 ExplodeField="@nameof(ReportPieChartData.Explode)">
+						<ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
+					</ChartSeries>
+				</ChartSeriesItems>
+				<ChartTitle Visible="false" Text="Items per Label"></ChartTitle>
+				<ChartLegend Position="ChartLegendPosition.Right"></ChartLegend>
+			</TelerikChart>
+		</div>
 
-        @if (Widget.ShowFooter)
-        {
-            <div class="widget-content-report-piechart-footer">
-                <div class="">Created at @DataContext.Report.CreatedAtUTC</div>
-            </div>
-        }
-    }
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-piechart-footer">
+				<div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
 
-    @if (DataContext.Report == null && DataContext.IsLoadedReportResult)
-    {
-        <div class="widget-missing-report-data">
-            Missing report data!
-        </div>
-    }
+	@if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report-data">
+			Missing report data!
+		</div>
+	}
 
-    @if (!DataContext.IsLoadedReportResult)
-    {
-        <div style="position:relative;">
-            <div class="loading-bar"></div>
-        </div>
-    }
+	@if (!DataContext.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
 
 </div>
 
 @code {
 
-    private bool showPieCharLabel = true;
+	private bool showPieCharLabel = true;
 
-    private List<ReportPieChartData> TagData = new List<ReportPieChartData>();
+	private List<ReportPieChartData> TagData = new List<ReportPieChartData>();
 
-    [Parameter]
-    public ReportTelericPieChartWidget Widget { get; set; }
+	[Parameter]
+	public ReportTelericPieChartWidget Widget { get; set; }
 
-    [Parameter]
-    public IHyperArgsSink HyperStore { get; set; }
+	[Parameter]
+	public IHyperArgsSink HyperStore { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        DataContext.InitStore(HyperStore);
+	protected override async Task OnInitializedAsync()
+	{
+		DataContext.InitStore(HyperStore);
 
-        await DataContext.LoadReportResultData(Widget.DataSource);
+		await DataContext.LoadReportResultData(Widget.DataSource);
 
-        LoadTagData();
+		LoadTagData();
 
-        await base.OnInitializedAsync();
-    }
+		await base.OnInitializedAsync();
+	}
 
-    private void LoadTagData()
-    {
-        if (DataContext.Report == null) return;
+	private void LoadTagData()
+	{
+		if (DataContext.Report == null) return;
 
-        var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-        var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToUInt16(it.ToString())).ToList();
+		var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+		var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToUInt16(it.ToString())).ToList();
 
-        for (var i = 0; i < labels.Count; i++)
-        {
-            TagData.Add(new ReportPieChartData
-            {
-                Label = labels[i],
-                Count = rowData[i]
-            });
-        }
-    }
+		for (var i = 0; i < labels.Count; i++)
+		{
+			TagData.Add(new ReportPieChartData
+			{
+				Label = labels[i],
+				Count = rowData[i]
+			});
+		}
+	}
 
 }
 
 <style>
-    .widget-content-report-piechart {
-        padding: 15px;
-        overflow: hidden;
-    }
+	.widget-content-report-piechart {
+		padding: 15px;
+		overflow: hidden;
+	}
 
-        .widget-content-report-piechart h3 {
-            text-align: center;
-        }
+		.widget-content-report-piechart h3 {
+			text-align: center;
+		}
 
-    .widget-content-report-piechart-footer {
-        font-size: 12px;
-        font-style: italic;
-    }
+	.widget-content-report-piechart-footer {
+		font-size: 12px;
+		font-style: italic;
+	}
 </style>

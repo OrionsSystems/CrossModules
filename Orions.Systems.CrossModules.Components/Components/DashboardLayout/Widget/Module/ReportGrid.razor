@@ -8,12 +8,12 @@
 <div class="widget-content-report-grid">
 
     @if (DataContext.Report != null && DataContext.IsLoadedReportResult)
-    {
-       var rowIndex = 0;
+	 {
+		 var rowIndex = 0;
 
-        @if (Widget.ShowTitle)
+        @if (Widget.ShowTitle && DataContext.ReportHasName)
         {
-            <h3>@DataContext.Report.Report.Name</h3>
+            <h3>@DataContext.ReportName</h3>
         }
 
         <div class="table-responsive">
@@ -83,10 +83,7 @@
    {
       DataContext.InitStore(HyperStore);
 
-      if (Widget.DataSource is ReportResultWidgetDataSource ds)
-      {
-         await DataContext.LoadReportResultData(ds.ReportResultId);
-      }
+      await DataContext.LoadReportResultData(Widget.DataSource);
 
       await base.OnInitializedAsync();
    }
