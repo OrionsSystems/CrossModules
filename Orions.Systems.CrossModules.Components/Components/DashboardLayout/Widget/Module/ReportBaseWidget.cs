@@ -39,7 +39,7 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Add the data for this widget to use")]
 		public WidgetDataSource DataSource { get; set; } = new ReportResultWidgetDataSource();
 
-		[HelpText("Add category filter")]
+		[HelpText("Add category filters separated by comma")]
 		public string CategoryFilter { get; set; }
 
 		public ReportBaseWidget()
