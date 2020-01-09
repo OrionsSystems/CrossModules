@@ -1,80 +1,81 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <RazorLangVersion>3.0</RazorLangVersion>
-    <AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
-    <RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<RazorLangVersion>3.0</RazorLangVersion>
+		<AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
+		<RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
+	</PropertyGroup>
 
-  <ItemGroup>
+	<ItemGroup>
 
-    <EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
-    <EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+		<EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
-    <EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
-    <EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-    <!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
-  </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.html5.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.core.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.flash.swf" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.js" />
-    <None Remove="content\jwplayer\8.4.2\jwplayer.vr.js" />
-    <None Remove="content\jwplayer\8.4.2\polyfills.intersection-observer.js" />
-    <None Remove="content\jwplayer\8.4.2\polyfills.webvtt.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.airplay.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.cast.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.flash.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.hlsjs.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.html5.js" />
-    <None Remove="content\jwplayer\8.4.2\provider.shaka.js" />
-    <None Remove="content\jwplayer\8.4.2\skins\beelden.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\bekle.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\five.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\glow.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\roundster.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\seven.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\six.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\stormtrooper.css" />
-    <None Remove="content\jwplayer\8.4.2\skins\vapor.css" />
-    <None Remove="content\jwplayer\8.4.2\vttparser.js" />
-    <None Remove="content\kendo\jquery.min.js" />
-    <None Remove="content\kendo\kendo.all.min.js" />
-    <None Remove="content\kendo\kendo.common-material.min.css" />
-    <None Remove="content\kendo\kendo.material.min.css" />
-    <None Remove="content\kendo\kendo.material.mobile.min.css" />
-    <None Remove="content\scripts\common.js" />
-    <None Remove="content\scripts\kendoComponents.js" />
-    <None Remove="content\css\styles.css" />
-    <None Remove="content\css\propertyGrid.css" />
-    <None Remove="content\vanilla-picker\vanilla-picker.js" />
-  </ItemGroup>
+		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
-    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
-  </ItemGroup>
-    
-  <ItemGroup>
-    <PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
-    <PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
-    <PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
-    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.*" />
-    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.html5.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.core.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.flash.swf" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.js" />
+		<None Remove="content\jwplayer\8.4.2\jwplayer.vr.js" />
+		<None Remove="content\jwplayer\8.4.2\polyfills.intersection-observer.js" />
+		<None Remove="content\jwplayer\8.4.2\polyfills.webvtt.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.airplay.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.cast.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.flash.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.hlsjs.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.html5.js" />
+		<None Remove="content\jwplayer\8.4.2\provider.shaka.js" />
+		<None Remove="content\jwplayer\8.4.2\skins\beelden.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\bekle.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\five.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\glow.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\roundster.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\seven.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\six.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\stormtrooper.css" />
+		<None Remove="content\jwplayer\8.4.2\skins\vapor.css" />
+		<None Remove="content\jwplayer\8.4.2\vttparser.js" />
+		<None Remove="content\kendo\jquery.min.js" />
+		<None Remove="content\kendo\kendo.all.min.js" />
+		<None Remove="content\kendo\kendo.common-material.min.css" />
+		<None Remove="content\kendo\kendo.material.min.css" />
+		<None Remove="content\kendo\kendo.material.mobile.min.css" />
+		<None Remove="content\scripts\common.js" />
+		<None Remove="content\scripts\kendoComponents.js" />
+		<None Remove="content\css\styles.css" />
+		<None Remove="content\css\propertyGrid.css" />
+		<None Remove="content\vanilla-picker\vanilla-picker.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
+		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+		<PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
+		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
+		<PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
+		<PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
+		<PackageReference Include="Orions.SDK" Version="2.42.0-preview.*" />
+		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+	</ItemGroup>
 </Project>
