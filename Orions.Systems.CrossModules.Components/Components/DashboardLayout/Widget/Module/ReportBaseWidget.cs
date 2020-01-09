@@ -39,6 +39,9 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Add the data for this widget to use")]
 		public WidgetDataSource DataSource { get; set; } = new ReportResultWidgetDataSource();
 
+		[HelpText("Add category filter")]
+		public string CategoryFilter { get; set; }
+
 		public ReportBaseWidget()
 		{
 		}

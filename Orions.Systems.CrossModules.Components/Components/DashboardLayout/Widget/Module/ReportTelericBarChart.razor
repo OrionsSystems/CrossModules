@@ -91,7 +91,7 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData();
+		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
 
 		await base.OnInitializedAsync();
 	}
