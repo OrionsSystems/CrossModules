@@ -6,7 +6,6 @@ namespace Orions.Systems.CrossModules.Components
    public class DashboardData : IdUnifiedBlob, IName
    {
       [DocumentDescriptor]
-      //public string Name { get; set; }
       public string Name { get { return Option.Name; } set { value = Option.Name; } } 
 
       public DashboardOption Option { get; set; } = new DashboardOption();

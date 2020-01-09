@@ -9,9 +9,9 @@
 
 	<div class="row">
 		<div class="col">
-			@if (!string.IsNullOrEmpty(Data.Name) || !IsHideTitle)
+			@if (!string.IsNullOrEmpty(Data.Option?.Name) || !IsHideTitle)
 			{
-				<h3 class="dashboard-title dashboard-list-name"  @onclick="OpenRenameDialog">
+				<h4 class="dashboard-title dashboard-list-name"  @onclick="OpenRenameDialog">
 					<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 						  width="35px" height="35px" viewBox="0 0 35 35">
 						<g>
@@ -22,8 +22,8 @@
 						</g>
 					</svg>
 
-					@Data.Name
-				</h3>
+					@Data.Option?.Name
+				</h4>
 			}
 
 			<div class="float-right">
@@ -299,7 +299,7 @@
 						<div class="card-body">
 							<div class="form-group">
 								<label for="dashboardName">Name</label>
-								<input type="text" class="form-control" id="dashboardName" @bind="@Data.Name">
+								<input type="text" class="form-control" id="dashboardName" @bind="@Data.Option.Name">
 							</div>
 						</div>
 					</div>
