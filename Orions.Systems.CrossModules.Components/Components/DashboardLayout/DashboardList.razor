@@ -33,7 +33,7 @@
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
 								<button class="btn btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-
+								<button class="btn btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
 							</td>
 						</tr>
 					}
@@ -50,6 +50,32 @@
 	}
 
 </div>
+
+@if (isShowProperty)
+{
+	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<PropertyGrid @ref="propGrid"
+											  Loader="LoadDashboardOption"
+											  CancelVisible="true"
+											  HyperStore="HyperStore"
+											  OKVisible="true"
+											  CancelCommand="OnCancelProperty"
+											  OkCommand="OnOkProperty">
+							</PropertyGrid>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
 
 
 @if (isShowRenameDashboardModal)
@@ -86,7 +112,10 @@
 
 @code{
 
+	PropertyGrid propGrid;
+
 	private bool isShowRenameDashboardModal;
+	private bool isShowProperty;
 	private bool isLoadedDataResult;
 	private DashboardData SelectedDashboard;
 
@@ -114,6 +143,11 @@
 		}
 	}
 
+	public async Task<object> LoadDashboardOption()
+	{
+		return SelectedDashboard.Option;
+	}
+
 	private async Task LoadDashboarList()
 	{
 		var datas = await HyperStore.FindAllAsync<DashboardData>();
@@ -127,7 +161,8 @@
 
 	private void SelectDashboard(DashboardData data, bool showView = false)
 	{
-		if (showView) { 
+		if (showView)
+		{
 			OnSelectView.InvokeAsync(data);
 			return;
 		}
@@ -158,5 +193,25 @@
 	{
 		isShowRenameDashboardModal = true;
 		SelectedDashboard = data;
+	}
+
+	private void OpenPropertyGrid(DashboardData data)
+	{
+		isShowProperty = true;
+		SelectedDashboard = data;
+	}
+
+	public void OnCancelProperty()
+	{
+		propGrid.CleanSourceCache();
+		isShowProperty = false;
+	}
+
+	public async Task OnOkProperty() 
+	{ 
+		propGrid.CleanSourceCache();
+		isShowProperty = false;
+
+		await SaveChanges();
 	}
 }
