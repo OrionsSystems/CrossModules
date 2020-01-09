@@ -16,7 +16,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public abstract Task<HyperMetadataReportResult> GenerateReprotDataAsync(IHyperArgsSink store);
+		public abstract Task<HyperMetadataReportResult> GenerateReportDataAsync(IHyperArgsSink store);
 	}
 
 	public class CSVWidgetDataSource : WidgetDataSource
@@ -29,7 +29,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<HyperMetadataReportResult> GenerateReprotDataAsync(IHyperArgsSink store)
+		public override async Task<HyperMetadataReportResult> GenerateReportDataAsync(IHyperArgsSink store)
 		{
 			var byteArray = this.Data;
 
@@ -125,7 +125,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<HyperMetadataReportResult> GenerateReprotDataAsync(IHyperArgsSink store)
+		public override async Task<HyperMetadataReportResult> GenerateReportDataAsync(IHyperArgsSink store)
 		{
 			var args = new RetrieveHyperDocumentArgs(this.ReportResultId);
 			var doc = await store.ExecuteAsync(args);

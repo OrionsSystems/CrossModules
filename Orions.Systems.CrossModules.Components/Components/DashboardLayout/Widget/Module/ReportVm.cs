@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task LoadReportResultData(WidgetDataSource dataSource)
 		{
-			var reportResult = await dataSource.GenerateReprotDataAsync(this.HyperStore);
+			var reportResult = await dataSource.GenerateReportDataAsync(this.HyperStore);
 			if (reportResult == null)
 			{
 				Logger.Instance.Error("Cannot load report result");
