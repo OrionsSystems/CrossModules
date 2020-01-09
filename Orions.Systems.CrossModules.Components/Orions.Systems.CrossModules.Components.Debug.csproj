@@ -68,6 +68,7 @@
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
+		<PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 	</ItemGroup>
 
