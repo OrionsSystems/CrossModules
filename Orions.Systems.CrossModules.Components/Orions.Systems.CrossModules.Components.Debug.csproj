@@ -17,7 +17,6 @@
 
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 	</ItemGroup>
@@ -65,6 +64,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+		<PackageReference Include="MatBlazor" Version="1.10.1" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
