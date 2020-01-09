@@ -17,15 +17,35 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<EjsChart>
-				<ChartPrimaryXAxis IsIndexed="true" 
-										 LabelPlacement="LabelPlacement.OnTicks" 
-										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category">
+			<EjsChart Title=""
+						 Background="@Widget.ChartBackground"
+						 SelectionMode="SelectionMode.Series">
+
+				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
+
+				<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+										 LabelPlacement="@Widget.LabelPlacement"
+										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+										 IntervalType="@Widget.IntervalType"
+										 LabelFormat="@Widget.LabelFormat"
+										 Skeleton="@Widget.Skeleton"
+										 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
 				</ChartPrimaryXAxis>
 
-				<ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+				<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
 
-				<ChartLegendSettings Visible="true"></ChartLegendSettings>
+				<ChartLegendSettings Visible="@Widget.IsEnableLegend"
+											Position="LegendPosition.Bottom">
+				</ChartLegendSettings>
+
+				<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+										 EnablePinchZooming="@Widget.EnablePinchZooming"
+										 EnableSelectionZooming="@Widget.EnableSelectionZooming"
+										 EnablePan="@Widget.EnablePan"
+										 EnableScrollbar="true">
+				</ChartZoomSettings>
+
+				<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
 
 				<ChartSeriesCollection>
 					@foreach (var ser in ChartData.Series)
@@ -34,9 +54,9 @@
 										 Name="@ser.Name"
 										 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
 										 YName="@nameof(ReportSeriesChartDataItem.Count)"
-										 Type="ChartSeriesType.Column">
+										 Type="@Widget.ChartSeriesType">
 							<ChartMarker>
-								<ChartDataLabel Visible="true"></ChartDataLabel>
+								<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
 							</ChartMarker>
 						</ChartSeries>
 					}
@@ -68,9 +88,13 @@
 		</div>
 	}
 
+	<div class="dashboard=onchart-click">@ChartClickHandlerMessage</div>
+
 </div>
 
 @code {
+
+	public string ChartClickHandlerMessage { get; set; }
 
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
 
@@ -90,6 +114,14 @@
 
 		await base.OnInitializedAsync();
 	}
+
+	public void ChartMouseClickHandler(IMouseEventArgs args)
+	{
+		// Here you can customize your code
+
+		ChartClickHandlerMessage = $"Clicked point is X:{args.X} Y:{args.Y}";
+	}
+
 }
 
 <style>
