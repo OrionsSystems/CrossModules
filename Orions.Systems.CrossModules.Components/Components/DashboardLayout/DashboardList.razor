@@ -16,9 +16,9 @@
 			<table class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
-						<th scope="col-md-1"></th>
-						<th scope="col">Name</th>
 						<th scope="col"></th>
+						<th class="w-75" scope="col">Name</th>
+						<th class="w-25" scope="col"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -29,7 +29,7 @@
 						<tr>
 							<td>@rowIndex</td>
 							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Name</td>
-							<td>
+							<td class="text-center">
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
 								<button class="btn btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
