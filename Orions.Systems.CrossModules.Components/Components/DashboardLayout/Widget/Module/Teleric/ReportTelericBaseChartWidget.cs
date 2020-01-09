@@ -9,7 +9,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ChartTitlePosition ChartTitlePosition { get; set; } = ChartTitlePosition.Top;
 
-		public virtual ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Line;
+		public virtual ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Column;
 
 		public ChartSeriesStyle ChartSeriesStyle { get; set; } = ChartSeriesStyle.Normal;
 
