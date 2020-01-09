@@ -1,1 +1,64 @@
-﻿@page "/"
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/"
+
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+
+@inherits BaseOrionsComponent
+
+@inject IMatToaster Toaster
+
+<div class="container-fluid">
+
+	@if (DataList.Any() && isLoadedDataResult)
+	{
+		@foreach (var data in DataList)
+		{
+			<DashboardLayout Data="data"
+								  EnableBetweenBox="true"
+								  IsPreviewMode="true"
+								  HideModeOption="true"
+								  IsHideTitle="data.Option.IsHideTitle"
+								  HyperStore="@HyperStore">
+			</DashboardLayout>
+		}
+	}
+
+	@if (!isLoadedDataResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+</div>
+
+@code{
+
+	private bool isLoadedDataResult;
+
+	private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
+
+	public IHyperArgsSink HyperStore { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		HyperStore = await NetStore.ConnectAsyncThrows("http://service:serv12@usnbods01wan.orionscloud.com:8600/Execute");
+
+		await LoadDashboarList();
+
+		await base.OnInitializedAsync();
+	}
+
+	private async Task LoadDashboarList()
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
+
+		DataList = datas.Where(it=>it.Option.IsDefault == true).ToList();
+
+		isLoadedDataResult = true;
+
+		//StateHasChanged();
+	}
+
+}

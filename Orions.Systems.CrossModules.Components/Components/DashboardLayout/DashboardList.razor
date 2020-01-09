@@ -18,6 +18,7 @@
 					<tr>
 						<th scope="col"></th>
 						<th class="w-75" scope="col">Name</th>
+						<th scope="col">Home</th>
 						<th class="w-25" scope="col"></th>
 					</tr>
 				</thead>
@@ -29,6 +30,7 @@
 						<tr>
 							<td>@rowIndex</td>
 							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
+							<td>@(item.Option.IsDefault == true ? "True":"")</td>
 							<td class="text-center">
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
@@ -184,9 +186,12 @@
 	{
 		var doc = new HyperDocument(data);
 		var args = new DeleteHyperDocumentArgs(doc.Id);
-		var res = await HyperStore.ExecuteAsync(args);
+		var isDeleteSuccessful = await HyperStore.ExecuteAsync(args);
 
-		DataList.RemoveAll(it => it.Id == data.Id);
+		if (isDeleteSuccessful)
+		{
+			DataList.RemoveAll(it => it.Id == data.Id);
+		}
 	}
 
 	private void EditName(DashboardData data)
@@ -207,8 +212,8 @@
 		isShowProperty = false;
 	}
 
-	public async Task OnOkProperty() 
-	{ 
+	public async Task OnOkProperty()
+	{
 		propGrid.CleanSourceCache();
 		isShowProperty = false;
 

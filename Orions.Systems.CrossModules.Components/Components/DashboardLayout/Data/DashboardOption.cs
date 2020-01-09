@@ -10,5 +10,7 @@ namespace Orions.Systems.CrossModules.Components
 		public string Name { get; set; } = "New Dashboard";
 
 		public bool IsDefault { get; set; }
+
+		public bool IsHideTitle { get; set; }
 	}
 }
