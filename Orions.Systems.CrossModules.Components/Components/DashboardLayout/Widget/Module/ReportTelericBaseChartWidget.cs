@@ -4,23 +4,25 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportTelericBaseChartWidget : ReportBaseWidget, IDashboardWidget
 	{
-        public bool IsShowChartTitle { get; set; } = false;
-        public string ChartTitle { get; set; }
+		public bool IsShowChartTitle { get; set; } = false;
+		public string ChartTitle { get; set; }
 
-        public ChartTitlePosition ChartTitlePosition { get; set; } = ChartTitlePosition.Top;
+		public ChartTitlePosition ChartTitlePosition { get; set; } = ChartTitlePosition.Top;
 
-        public virtual ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Line;
+		public virtual ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Line;
 
-        public ChartSeriesStyle ChartSeriesStyle { get; set; } = ChartSeriesStyle.Normal;
+		public ChartSeriesStyle ChartSeriesStyle { get; set; } = ChartSeriesStyle.Normal;
 
-        public ChartCategoryAxisBaseUnit ChartCategoryAxisBaseUnit { get; set; } = ChartCategoryAxisBaseUnit.Fit;
+		public int BaseUnitStep { get; set; }
 
-        public ChartLegendPosition ChartLegendPosition { get; set; } = ChartLegendPosition.Bottom;
+		public ChartCategoryAxisBaseUnit ChartCategoryAxisBaseUnit { get; set; } = ChartCategoryAxisBaseUnit.Fit;
 
-        public string ChartCategoryAxisLabelsFormat { get; set; } = "{0:dd MMM HH:mm}";
+		public ChartLegendPosition ChartLegendPosition { get; set; } = ChartLegendPosition.Bottom;
 
-        public bool IsChartSeriesLabelsVisible { get; set; } = false;
+		public string ChartCategoryAxisLabelsFormat { get; set; } = "{0:dd MMM HH:mm}";
 
-        public virtual bool IsChartSeriesStackEnabled { get; set; } = false;
-    }
+		public bool IsChartSeriesLabelsVisible { get; set; } = false;
+
+		public virtual bool IsChartSeriesStackEnabled { get; set; } = false;
+	}
 }
