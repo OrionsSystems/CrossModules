@@ -1,0 +1,109 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent<ReportVm>
+
+@using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Charts
+
+<div class="widget-content-report-linechart">
+
+	@if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+	{
+		@if (Widget.ShowTitle && DataContext.ReportHasName)
+		{
+			<h3>@DataContext.ReportName</h3>
+		}
+
+		<div class="widget-content-report-linechart-view">
+
+			<EjsChart>
+				<ChartPrimaryXAxis IsIndexed="true" 
+										 LabelPlacement="LabelPlacement.OnTicks" 
+										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category">
+				</ChartPrimaryXAxis>
+
+				<ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+
+				<ChartLegendSettings Visible="true"></ChartLegendSettings>
+
+				<ChartSeriesCollection>
+					@foreach (var ser in ChartData.Series)
+					{
+						<ChartSeries DataSource="@ser.Data"
+										 Name="@ser.Name"
+										 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+										 YName="@nameof(ReportSeriesChartDataItem.Count)"
+										 Type="ChartSeriesType.Column">
+							<ChartMarker>
+								<ChartDataLabel Visible="true"></ChartDataLabel>
+							</ChartMarker>
+						</ChartSeries>
+					}
+
+				</ChartSeriesCollection>
+			</EjsChart>
+
+		</div>
+
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-linechart-footer">
+				<div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
+
+	@if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report-data">
+			Missing report data!
+		</div>
+	}
+
+	@if (!DataContext.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+</div>
+
+@code {
+
+	public ReportChartData ChartData { get; set; } = new ReportChartData();
+
+	[Parameter]
+	public ReportSyncfusionSeriesChartWidget Widget { get; set; }
+
+	[Parameter]
+	public IHyperArgsSink HyperStore { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		DataContext.InitStore(HyperStore);
+
+		await DataContext.LoadReportResultData(Widget.DataSource);
+
+		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
+
+		await base.OnInitializedAsync();
+	}
+}
+
+<style>
+	.widget-content-report-linechart {
+		padding: 15px;
+		overflow: hidden;
+	}
+
+		.widget-content-report-linechart h3 {
+			text-align: center;
+		}
+
+	.widget-content-report-linechart-footer {
+		font-size: 12px;
+		font-style: italic;
+	}
+</style>
