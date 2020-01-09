@@ -1,26 +1,27 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <RootNamespace>Orions.Systems.CrossModules.Portal</RootNamespace>
-    <AssemblyName>Orions.Systems.CrossModules.Portal</AssemblyName>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<RootNamespace>Orions.Systems.CrossModules.Portal</RootNamespace>
+		<AssemblyName>Orions.Systems.CrossModules.Portal</AssemblyName>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
-    <PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
-    <PackageReference Include="MatBlazor" Version="1.10.1" />
-    <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+		<PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
+		<PackageReference Include="MatBlazor" Version="1.10.1" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.3.1" />
+		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+		<PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
-    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
-    <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
-    <ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
-    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Debug.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
+		<ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
+		<ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Node.Common\Orions.Node.Common.NetStandard.csproj" />
+		<ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
+		<ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Debug.csproj" />
+		<ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Debug.csproj" />
+	</ItemGroup>
 
 </Project>

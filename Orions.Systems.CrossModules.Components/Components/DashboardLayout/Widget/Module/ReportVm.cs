@@ -67,12 +67,16 @@ namespace Orions.Systems.CrossModules.Components
 			IsLoadedReportResult = true;
 		}
 
-
-		public ReportChartData LoadReportLineChartData()
+		public ReportChartData LoadReportLineChartData(string filter)
 		{
 			var result = new ReportChartData();
 
 			if (Report == null) return result;
+
+			var categoryFilters = new List<string>();
+			if (!string.IsNullOrWhiteSpace(filter)) {
+				categoryFilters = filter.Split(',').Select(it => it.Trim()).ToList();
+			}
 
 			var categories = Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
 			var rowsDef = Report.Data.RowsDefinitions.ToList();
@@ -83,8 +87,14 @@ namespace Orions.Systems.CrossModules.Components
 
 			for (var i = 0; i < categories.Count; i++)
 			{
+				var categoryTitle = categories[i];
+
+				if (categoryFilters.Any() && !categoryFilters.Contains(categoryTitle)) {
+					continue;
+				}
+
 				var chartSeries = new ReportSeriesChartData();
-				chartSeries.Name = categories[i];
+				chartSeries.Name = categoryTitle;
 
 				for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
 				{

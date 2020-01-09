@@ -39,7 +39,7 @@
 				</ChartSeriesItems>
 
 				<ChartCategoryAxes>
-					<ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
+					<ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnitStep="@Widget.BaseUnitStep" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
 						<ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
 						</ChartCategoryAxisLabels>
 					</ChartCategoryAxis>
@@ -90,7 +90,7 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData();
+		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
 
 		await base.OnInitializedAsync();
 	}

@@ -3,9 +3,8 @@
 @inherits BaseBlazorComponent<ReportVm>
 
 @using Orions.Node.Common
-
-@using Telerik.Blazor;
-@using Telerik.Blazor.Components;
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Charts
 
 <div class="widget-content-report-linechart">
 
@@ -18,34 +17,33 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<TelerikChart>
+			<EjsChart>
+				<ChartPrimaryXAxis IsIndexed="true" 
+										 LabelPlacement="LabelPlacement.OnTicks" 
+										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category">
+				</ChartPrimaryXAxis>
 
-				<ChartTitle Visible="@Widget.IsShowChartTitle" Position="@Widget.ChartTitlePosition" Text="@Widget.ChartTitle"></ChartTitle>
-				<ChartLegend Position="@Widget.ChartLegendPosition"></ChartLegend>
+				<ChartTooltipSettings Enable="true"></ChartTooltipSettings>
 
-				<ChartSeriesItems>
+				<ChartLegendSettings Visible="true"></ChartLegendSettings>
+
+				<ChartSeriesCollection>
 					@foreach (var ser in ChartData.Series)
 					{
-						<ChartSeries Type="@Widget.ChartSeriesType"
-										 Data="@ser.Data"
+						<ChartSeries DataSource="@ser.Data"
 										 Name="@ser.Name"
-										 Style="@Widget.ChartSeriesStyle"
-										 CategoryField="@nameof(ReportSeriesChartDataItem.DatePosition)"
-										 Field="@nameof(ReportSeriesChartDataItem.Count)">
-							<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
-							<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
+										 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+										 YName="@nameof(ReportSeriesChartDataItem.Count)"
+										 Type="ChartSeriesType.Column">
+							<ChartMarker>
+								<ChartDataLabel Visible="true"></ChartDataLabel>
+							</ChartMarker>
 						</ChartSeries>
 					}
-				</ChartSeriesItems>
 
-				<ChartCategoryAxes>
-					<ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
-						<ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
-						</ChartCategoryAxisLabels>
-					</ChartCategoryAxis>
-				</ChartCategoryAxes>
+				</ChartSeriesCollection>
+			</EjsChart>
 
-			</TelerikChart>
 		</div>
 
 		@if (Widget.ShowFooter)
@@ -74,12 +72,10 @@
 
 @code {
 
-	public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
-
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
 
 	[Parameter]
-	public ReportTelericAreaChartWidget Widget { get; set; }
+	public ReportSyncfusionSeriesChartWidget Widget { get; set; }
 
 	[Parameter]
 	public IHyperArgsSink HyperStore { get; set; }
@@ -90,7 +86,7 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData();
+		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
 
 		await base.OnInitializedAsync();
 	}
