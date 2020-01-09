@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orions.Systems.CrossModules.Components;
+using Syncfusion.EJ2.Blazor;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -40,6 +41,8 @@ namespace Orions.Systems.CrossModules.Portal
 
 			services.AddTelerikBlazor();
 
+			services.AddSyncfusionBlazor();
+
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
@@ -62,6 +65,9 @@ namespace Orions.Systems.CrossModules.Portal
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			//Register Syncfusion license
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTk0MDU3QDMxMzcyZTM0MmUzMGJIcnNicmc0ek1LU0dqNHQ1bERLTzUybFk1YllGb25wVnlEVk9WZ3JDbUU9");
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
