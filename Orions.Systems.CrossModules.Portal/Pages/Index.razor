@@ -3,54 +3,40 @@
 
 @inherits PortalBaseComponent
 
-@inject IMatToaster Toaste
-
 <div class="container-fluid">
-
-    @if (DataList.Any() && isLoadedDataResult)
-    {
-        @foreach (var data in DataList)
+    @{
+        for (var index = 1; index <= 6; index++)
         {
-            <DashboardLayout Data="data"
-                             EnableBetweenBox="true"
-                             IsPreviewMode="true"
-                             HideModeOption="true"
-                             IsHideTitle="data.Option.IsHideTitle"
-                             HyperStore="@HyperStore">
-            </DashboardLayout>
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="images/story/cam-preview (@index).jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
         }
     }
-
-    @if (!isLoadedDataResult)
-    {
-        <div style="position:relative;">
-            <div class="loading-bar"></div>
-        </div>
-    }
-
 </div>
 
 @code{
-
-    private bool isLoadedDataResult;
-
-    private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
         await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
-
-        await LoadDashboarList();
-    }
-
-    private async Task LoadDashboarList()
-    {
-        var datas = await HyperStore.FindAllAsync<DashboardData>();
-
-        DataList = datas.Where(it => it.Option.IsDefault == true).ToList();
-
-        isLoadedDataResult = true;
     }
 }
+
+<style>
+    .card {
+        float: left;
+        margin: 10px;
+    }
+
+    .btn-primary {
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+</style>
