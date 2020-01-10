@@ -1,15 +1,18 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using Blazored.LocalStorage;
 using EmbeddedBlazorContent;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Orions.Systems.CrossModules.Components;
+using Orions.Systems.CrossModules.Portal.Providers;
 using Syncfusion.EJ2.Blazor;
 
 namespace Orions.Systems.CrossModules.Portal
@@ -44,6 +47,11 @@ namespace Orions.Systems.CrossModules.Portal
 			services.AddSyncfusionBlazor();
 
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
+
+			services.AddBlazoredLocalStorage();
+
+			// Custom AuthenticationState provider
+			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
 			if (services.All(x => x.ServiceType != typeof(HttpClient)))
@@ -83,6 +91,10 @@ namespace Orions.Systems.CrossModules.Portal
 			app.UseStaticFiles();
 
 			app.UseRouting();
+
+			// Authentication & Authorization
+			app.UseAuthentication();
+			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
 			{

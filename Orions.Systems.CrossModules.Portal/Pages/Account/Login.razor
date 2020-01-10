@@ -1,0 +1,84 @@
+﻿@page "/login"
+@using Orions.Systems.CrossModules.Portal.Models
+@using Orions.Systems.CrossModules.Portal.Providers
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<EditForm Model="@user" OnValidSubmit="@ValidateUser">
+    <DataAnnotationsValidator />
+    <div>
+        <h3><b>Login</b></h3>
+    </div>
+    <div>
+        <br />
+    </div>
+    <div class="col-12 row">
+        <input class="form-control col-12" @bind="user.Username" placeholder="Username" />
+        <ValidationMessage For="(() => user.Username)" />
+    </div>
+    <div>
+        <br />
+    </div>
+    <div class="col-12 row">
+        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="Password" />
+        <ValidationMessage For="(() => user.Password)" />
+    </div>
+    <div>
+        <br />
+        @if (loginFailed)
+        {
+            <p class="validation-message">Login failed. Please try again!</p>
+        }
+    </div>
+    <div class="col-12 row">
+        <span class="col-12"></span>
+        <div class="col-12">
+            <center>
+                <input type="submit" class="form-control col-3 btn btn-primary" value="Login" />
+            </center>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private UserLogin user;
+    private bool loginFailed;
+    public IHyperArgsSink HyperStore { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        user = new UserLogin();
+        return base.OnInitializedAsync();
+    }
+
+    private async Task<bool> ValidateUser()
+    {
+        var data = new Infrastructure.Common.HyperUserLoginData();
+        //data.SetUserAndPassword("gabe", "g203040");
+        data.SetUserAndPassword(user.Username, user.Password);
+
+        var loginArgs = new HyperUserLoginArgs()
+        {
+            Data = data,
+        };
+
+        HyperStore = await NetStore.ConnectAsyncThrows("http://usnbods01wan.orionscloud.com:8600/Execute");
+
+        var result = await HyperStore.ExecuteAsync(loginArgs);
+
+        HyperStore.DefaultAuthenticationInfo = result;
+
+        loginFailed = (result == null);
+
+        if (!loginFailed)
+        {
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Authenticated(user.Username, result);
+
+            NavigationManager.NavigateTo("/dashboard");
+        }
+
+        return await Task.FromResult(!loginFailed);
+    }
+}

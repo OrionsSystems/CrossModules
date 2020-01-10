@@ -7,6 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
 		<PackageReference Include="MatBlazor" Version="1.10.1" />
@@ -21,6 +22,10 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
 		<ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\image\" />
 	</ItemGroup>
 
 </Project>
