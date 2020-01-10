@@ -2,6 +2,8 @@
 
 @inherits BaseBlazorComponent<ReportVm>
 
+@implements IDisposable
+
 @using Orions.Node.Common
 
 @using Telerik.Blazor;
@@ -18,7 +20,7 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<TelerikChart>
+			<TelerikChart @ref="ChartRef">
 
 				<ChartTitle Visible="@Widget.IsShowChartTitle" Position="@Widget.ChartTitlePosition" Text="@Widget.ChartTitle"></ChartTitle>
 				<ChartLegend Position="@Widget.ChartLegendPosition"></ChartLegend>
@@ -75,6 +77,8 @@
 
 @code {
 
+	TelerikChart ChartRef { get; set; }
+
 	public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
 
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
@@ -93,7 +97,30 @@
 
 		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
 
+		WindowResizeDispatcher.WindowResize += ResizeChart;
+
 		await base.OnInitializedAsync();
+	}
+
+	public void Dispose()
+	{
+		WindowResizeDispatcher.WindowResize -= ResizeChart;
+	}
+
+	protected async Task ResizeChart()
+	{
+		// now that you know the size of the chart container changed, re-render the chart
+		ChartRef.Refresh();
+
+		//you can do this for more than one chart if the component has more than one chart
+
+		//current browser dimensions are stored in the static class as well for easy retrieval
+		//this example sets them only after a resize has occurred, you can invoke a JS method to
+		//get them upon initialization as well (e.g., in the constructor of the dispatcher class)
+		//WindowResizeDispatcher.WindowWidth
+		//WindowResizeDispatcher.WindowHeight
+		//if you use these values in the markup, call StateHasChanged(), this is not raised by an EventCallback
+		//StateHasChanged();
 	}
 }
 
