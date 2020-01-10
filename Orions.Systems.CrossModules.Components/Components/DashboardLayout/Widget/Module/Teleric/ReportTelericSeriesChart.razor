@@ -25,28 +25,56 @@
 				<ChartTitle Visible="@Widget.IsShowChartTitle" Position="@Widget.ChartTitlePosition" Text="@Widget.ChartTitle"></ChartTitle>
 				<ChartLegend Position="@Widget.ChartLegendPosition"></ChartLegend>
 
-				<ChartSeriesItems>
-					@foreach (var ser in ChartData.Series)
-					{
-						<ChartSeries Type="@Widget.ChartSeriesType"
-										 Data="@ser.Data"
-										 Name="@ser.Name"
-										 Style="@Widget.ChartSeriesStyle"
-										 CategoryField="@nameof(ReportSeriesChartDataItem.DatePosition)"
-										 Field="@nameof(ReportSeriesChartDataItem.Count)">
-							<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
-							<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
-						</ChartSeries>
-					}
-				</ChartSeriesItems>
 
-				<ChartCategoryAxes>
-					<ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnitStep="@Widget.BaseUnitStep" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
-						<ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
-							@*<ChartCategoryAxisLabelsRotation Angle="-90"></ChartCategoryAxisLabelsRotation>*@
-						</ChartCategoryAxisLabels>
-					</ChartCategoryAxis>
-				</ChartCategoryAxes>
+				@if (ChartData.IsDateAxis)
+				{
+					<ChartSeriesItems>
+						@foreach (var ser in ChartData.Series)
+						{
+							<ChartSeries Type="@Widget.ChartSeriesType"
+											 Data="@ser.Data"
+											 Name="@ser.Name"
+											 VisibleInLegend="@Widget.IsLegenedVisible"
+											 Style="@Widget.ChartSeriesStyle"
+											 CategoryField="@nameof(ReportSeriesChartDataItem.DatePosition)"
+											 Field="@nameof(ReportSeriesChartDataItem.Count)">
+								<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
+								<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
+							</ChartSeries>
+						}
+					</ChartSeriesItems>
+
+					<ChartCategoryAxes>
+						<ChartCategoryAxis Type="ChartCategoryAxisType.Date" WeekStartDay="1" BaseUnitStep="@Widget.BaseUnitStep" BaseUnit="@Widget.ChartCategoryAxisBaseUnit" Categories="@ChartData.Categories.ToArray()">
+							<ChartCategoryAxisLabels Format="@Widget.ChartCategoryAxisLabelsFormat">
+								@*<ChartCategoryAxisLabelsRotation Angle="-90"></ChartCategoryAxisLabelsRotation>*@
+							</ChartCategoryAxisLabels>
+						</ChartCategoryAxis>
+					</ChartCategoryAxes>
+				}
+				else
+				{
+					<ChartSeriesItems>
+						@foreach (var ser in ChartData.Series)
+						{
+							<ChartSeries Type="@Widget.ChartSeriesType"
+											 Data="@ser.Data"
+											 VisibleInLegend="@Widget.IsLegenedVisible"
+											 Name="@ser.Name"
+											 Style="@Widget.ChartSeriesStyle"
+											 CategoryField="@nameof(ReportSeriesChartDataItem.Time)"
+											 Field="@nameof(ReportSeriesChartDataItem.Count)">
+								<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible"></ChartSeriesLabels>
+								<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
+							</ChartSeries>
+						}
+					</ChartSeriesItems>
+
+					<ChartCategoryAxes>
+						<ChartCategoryAxis Type="ChartCategoryAxisType.Category" Categories="@ChartData.Categories.ToArray()">
+						</ChartCategoryAxis>
+					</ChartCategoryAxes>
+				}
 
 			</TelerikChart>
 		</div>
@@ -95,7 +123,7 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
+		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
 
 		WindowResizeDispatcher.WindowResize += ResizeChart;
 

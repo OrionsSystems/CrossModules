@@ -17,20 +17,36 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<EjsChart Title=""
+			<EjsChart Title="@Widget.ChartTitle"
 						 Background="@Widget.ChartBackground"
 						 SelectionMode="SelectionMode.Series">
 
 				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
+				<ChartEvents OnPointClick="@PointClickHandler"></ChartEvents>
 
-				<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
-										 LabelPlacement="@Widget.LabelPlacement"
-										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
-										 IntervalType="@Widget.IntervalType"
-										 LabelFormat="@Widget.LabelFormat"
-										 Skeleton="@Widget.Skeleton"
-										 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
-				</ChartPrimaryXAxis>
+
+				@if (ChartData.IsDateAxis)
+				{
+					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+											 LabelPlacement="@Widget.LabelPlacement"
+											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+											 IntervalType="@Widget.IntervalType"
+											 LabelFormat="@Widget.LabelFormat"
+											 Skeleton="@Widget.Skeleton"
+											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+					</ChartPrimaryXAxis>
+				}
+				else
+				{ 
+					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+											 LabelPlacement="@Widget.LabelPlacement"
+											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
+											 IntervalType="@Widget.IntervalType"
+											 LabelFormat="@Widget.LabelFormat"
+											 Skeleton="@Widget.Skeleton"
+											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+					</ChartPrimaryXAxis>
+				}
 
 				<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
 
@@ -50,15 +66,30 @@
 				<ChartSeriesCollection>
 					@foreach (var ser in ChartData.Series)
 					{
-						<ChartSeries DataSource="@ser.Data"
-										 Name="@ser.Name"
-										 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
-										 YName="@nameof(ReportSeriesChartDataItem.Count)"
-										 Type="@Widget.ChartSeriesType">
-							<ChartMarker>
-								<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-							</ChartMarker>
-						</ChartSeries>
+						@if (ChartData.IsDateAxis)
+						{
+							<ChartSeries DataSource="@ser.Data"
+											 Name="@ser.Name"
+											 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+											 YName="@nameof(ReportSeriesChartDataItem.Count)"
+											 Type="@Widget.ChartSeriesType">
+								<ChartMarker>
+									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+								</ChartMarker>
+							</ChartSeries>
+						}
+						else
+						{
+							<ChartSeries DataSource="@ser.Data"
+											 Name="@ser.Name"
+											 XName="@nameof(ReportSeriesChartDataItem.Time)"
+											 YName="@nameof(ReportSeriesChartDataItem.Count)"
+											 Type="@Widget.ChartSeriesType">
+								<ChartMarker>
+									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+								</ChartMarker>
+							</ChartSeries>
+						}
 					}
 
 				</ChartSeriesCollection>
@@ -110,7 +141,7 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
+		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
 
 		await base.OnInitializedAsync();
 	}
@@ -119,7 +150,14 @@
 	{
 		// Here you can customize your code
 
-		ChartClickHandlerMessage = $"Clicked point is X:{args.X} Y:{args.Y}";
+		ChartClickHandlerMessage = $"ChartMouseClick at X:{args.X} Y:{args.Y}";
+	}
+
+	public void PointClickHandler(IPointEventArgs args)
+	{
+		// Here you can customize your code
+
+		ChartClickHandlerMessage = $"PointClick at X:{args.X} Y:{args.Y}";
 	}
 
 }

@@ -8,8 +8,7 @@ namespace Orions.Systems.CrossModules.Components
 		public bool IsShowChartTitle { get; set; } = false;
 		public string ChartTitle { get; set; }
 
-		public string LabelFormat { get; set; } = "Md hm";
-
+		public string LabelFormat { get; set; } = "dd MMM HH:mm";
 
 		public SelectionMode SelectionMode { get; set; } = SelectionMode.Series;
 		public string Skeleton { get; set; } = "Ed";
@@ -22,7 +21,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool XAxisIsIndexed { get; set; } = true;
 
-		public bool IsEnableTooltip { get; set; } = true;
+		public bool IsEnableTooltip { get; set; }
 
 		public bool IsEnableLegend { get; set; } = true;
 
@@ -36,16 +35,16 @@ namespace Orions.Systems.CrossModules.Components
 
 		public Alignment LegendAlignment { get; set; } = Alignment.Center;
 
-		public bool EnableMouseWheelZooming { get; set; } = true;
+		public bool EnableMouseWheelZooming { get; set; }
 
-		public bool EnablePinchZooming { get; set; } = true;
+		public bool EnablePinchZooming { get; set; }
 
-		public bool EnableSelectionZooming { get; set; } = true;
+		public bool EnableSelectionZooming { get; set; }
 
 		public bool EnablePan { get; set; }
 
-		public bool EnableScrollbarZooming { get; set; } = true;
+		public bool EnableScrollbarZooming { get; set; }
 
-		public bool IsEnableCrosshair { get; set; } = true;
+		public bool IsEnableCrosshair { get; set; }
 	}
 }
