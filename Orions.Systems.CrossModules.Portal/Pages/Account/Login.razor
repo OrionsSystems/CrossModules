@@ -56,7 +56,7 @@
     private async Task<bool> ValidateUser()
     {
         var data = new Infrastructure.Common.HyperUserLoginData();
-        //data.SetUserAndPassword("gabe", "g203040");
+        
         data.SetUserAndPassword(user.Username, user.Password);
 
         var loginArgs = new HyperUserLoginArgs()
@@ -76,7 +76,7 @@
         {
             await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Authenticated(user.Username, result);
 
-            NavigationManager.NavigateTo("/dashboard");
+            NavigationManager.NavigateTo("/");
         }
 
         return await Task.FromResult(!loginFailed);

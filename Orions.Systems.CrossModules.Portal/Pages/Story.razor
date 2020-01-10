@@ -1,0 +1,42 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/story"
+
+@inherits PortalBaseComponent
+
+<div class="container-fluid">
+    @{
+        for (var index = 1; index <= 6; index++)
+        {
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="images/story/cam-preview (@index).jpg" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">Card title</h5>
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code{
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
+    }
+}
+
+<style>
+    .card {
+        float: left;
+        margin: 10px;
+    }
+
+    .btn-primary {
+        background-color: #343a40;
+        border-color: #343a40;
+    }
+</style>

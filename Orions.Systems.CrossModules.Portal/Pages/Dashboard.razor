@@ -4,20 +4,19 @@
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
 
-@inherits BaseOrionsComponent
+@inherits PortalBaseComponent
 
 @inject IMatToaster Toaster
-@attribute [Authorize]
 
 @if (isDashboardSelected)
 {
 	<DashboardLayout Data="Data"
-						  EnableBetweenBox="true"
-						  IsPreviewMode="@isShowViewDashboard"
-						  DisableModeOption="false"
-						  HyperStore="@HyperStore"
-						  OnSave="SaveChanges"
-						  OnBackToList="ShowDashboardList">
+					 EnableBetweenBox="true"
+					 IsPreviewMode="@isShowViewDashboard"
+					 DisableModeOption="false"
+					 HyperStore="@HyperStore"
+					 OnSave="SaveChanges"
+					 OnBackToList="ShowDashboardList">
 	</DashboardLayout>
 }
 else
@@ -27,59 +26,56 @@ else
 
 @code{
 
-	private bool isDashboardSelected;
-	private bool isShowViewDashboard;
-	private DashboardData Data { get; set; }
+    private bool isDashboardSelected;
+    private bool isShowViewDashboard;
+    private DashboardData Data { get; set; }
 
-	public IHyperArgsSink HyperStore { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
 
-	protected override async Task OnInitializedAsync()
-	{
-		HyperStore = await NetStore.ConnectAsyncThrows("http://service:serv12@usnbods01wan.orionscloud.com:8600/Execute");
+        await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
+    }
 
-		await base.OnInitializedAsync();
-	}
 
-	async Task SaveChanges()
-	{
-		// Save dashboard data here
+    async Task SaveChanges()
+    {
+        var doc = new HyperDocument(Data);
 
-		var doc = new HyperDocument(Data);
+        var args = new StoreHyperDocumentArgs(doc);
+        var res = await HyperStore.ExecuteAsync(args);
 
-		var args = new StoreHyperDocumentArgs(doc);
-		var res = await HyperStore.ExecuteAsync(args);
+        ShowToaster(MatToastType.Success, "", "Save changes");
+    }
 
-		ShowToaster(MatToastType.Success, "", "Save changes");
-	}
+    private void ShowDashboardList()
+    {
+        Data = null;
+        isDashboardSelected = false;
+    }
 
-	private void ShowDashboardList()
-	{
-		Data = null;
-		isDashboardSelected = false;
-	}
+    private void OnSelectDesignDashboard(DashboardData data)
+    {
+        Data = data;
+        isShowViewDashboard = false;
+        isDashboardSelected = true;
+    }
 
-	private void OnSelectDesignDashboard(DashboardData data)
-	{
-		Data = data;
-		isShowViewDashboard = false;
-		isDashboardSelected = true;
-	}
+    private void OnSelectViewDashboard(DashboardData data)
+    {
+        Data = data;
+        isShowViewDashboard = true;
+        isDashboardSelected = true;
 
-	private void OnSelectViewDashboard(DashboardData data)
-	{
-		Data = data;
-		isShowViewDashboard = true;
-		isDashboardSelected = true;
+    }
 
-	}
-
-	private void ShowToaster(MatToastType type, string title, string message)
-	{
-		Toaster.Add(message, type, title, "", config =>
-		{
-			config.ShowCloseButton = false;
-			config.ShowProgressBar = false;
-			config.MaximumOpacity = 100;
-		});
-	}
+    private void ShowToaster(MatToastType type, string title, string message)
+    {
+        Toaster.Add(message, type, title, "", config =>
+        {
+            config.ShowCloseButton = false;
+            config.ShowProgressBar = false;
+            config.MaximumOpacity = 100;
+        });
+    }
 }

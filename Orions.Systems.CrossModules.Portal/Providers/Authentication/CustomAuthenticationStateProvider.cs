@@ -21,6 +21,7 @@ namespace Orions.Systems.CrossModules.Portal.Providers
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
 			var userName = await _localStorageService.GetItemAsync<string>("userName");
+			var authToken = await _localStorageService.GetItemAsync<string>("authToken");
 
 			ClaimsIdentity identity;
 
@@ -29,6 +30,7 @@ namespace Orions.Systems.CrossModules.Portal.Providers
 				identity = new ClaimsIdentity(new[]
 				{
 					new Claim(ClaimTypes.Name, userName),
+					new Claim(ClaimTypes.Sid, authToken),
 				}, "form_auth_type");
 			}
 			else
@@ -52,6 +54,7 @@ namespace Orions.Systems.CrossModules.Portal.Providers
 			var identity = new ClaimsIdentity(new[]
 			{
 				new Claim(ClaimTypes.Name, userName),
+				new Claim(ClaimTypes.Sid, authInfo.Auth.Token),
 			}, "form_auth_type");
 
 			var user = new ClaimsPrincipal(identity);

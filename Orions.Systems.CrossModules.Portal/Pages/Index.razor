@@ -1,65 +1,56 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/"
 
-@using Orions.Infrastructure.HyperMedia
-@using Orions.Node.Common
+@inherits PortalBaseComponent
 
-@inherits BaseOrionsComponent
-
-@inject IMatToaster Toaster
-@attribute [Authorize]
+@inject IMatToaster Toaste
 
 <div class="container-fluid">
 
-	@if (DataList.Any() && isLoadedDataResult)
-	{
-		@foreach (var data in DataList)
-		{
-			<DashboardLayout Data="data"
-							 EnableBetweenBox="true"
-							 IsPreviewMode="true"
-							 HideModeOption="true"
-							 IsHideTitle="data.Option.IsHideTitle"
-							 HyperStore="@HyperStore">
-			</DashboardLayout>
-		}
-	}
+    @if (DataList.Any() && isLoadedDataResult)
+    {
+        @foreach (var data in DataList)
+        {
+            <DashboardLayout Data="data"
+                             EnableBetweenBox="true"
+                             IsPreviewMode="true"
+                             HideModeOption="true"
+                             IsHideTitle="data.Option.IsHideTitle"
+                             HyperStore="@HyperStore">
+            </DashboardLayout>
+        }
+    }
 
-	@if (!isLoadedDataResult)
-	{
-		<div style="position:relative;">
-			<div class="loading-bar"></div>
-		</div>
-	}
+    @if (!isLoadedDataResult)
+    {
+        <div style="position:relative;">
+            <div class="loading-bar"></div>
+        </div>
+    }
 
 </div>
 
 @code{
 
-	private bool isLoadedDataResult;
+    private bool isLoadedDataResult;
 
-	private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
+    private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
 
-	public IHyperArgsSink HyperStore { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
 
-	protected override async Task OnInitializedAsync()
-	{
-		HyperStore = await NetStore.ConnectAsyncThrows("http://service:serv12@usnbods01wan.orionscloud.com:8600/Execute");
+        await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
 
-		await LoadDashboarList();
+        await LoadDashboarList();
+    }
 
-		await base.OnInitializedAsync();
-	}
+    private async Task LoadDashboarList()
+    {
+        var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-	private async Task LoadDashboarList()
-	{
-		var datas = await HyperStore.FindAllAsync<DashboardData>();
+        DataList = datas.Where(it => it.Option.IsDefault == true).ToList();
 
-		DataList = datas.Where(it => it.Option.IsDefault == true).ToList();
-
-		isLoadedDataResult = true;
-
-		//StateHasChanged();
-	}
-
+        isLoadedDataResult = true;
+    }
 }
