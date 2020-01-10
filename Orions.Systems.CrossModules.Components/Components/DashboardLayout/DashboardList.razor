@@ -18,6 +18,7 @@
 					<tr>
 						<th scope="col"></th>
 						<th class="w-75" scope="col">Name</th>
+						<th scope="col">Home</th>
 						<th class="w-25" scope="col"></th>
 					</tr>
 				</thead>
@@ -28,12 +29,13 @@
 
 						<tr>
 							<td>@rowIndex</td>
-							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Name</td>
+							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
+							<td>@(item.Option.IsDefault == true ? "True":"")</td>
 							<td class="text-center">
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
 								<button class="btn btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-
+								<button class="btn btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
 							</td>
 						</tr>
 					}
@@ -50,6 +52,32 @@
 	}
 
 </div>
+
+@if (isShowProperty)
+{
+	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<PropertyGrid @ref="propGrid"
+											  Loader="LoadDashboardOption"
+											  CancelVisible="true"
+											  HyperStore="HyperStore"
+											  OKVisible="true"
+											  CancelCommand="OnCancelProperty"
+											  OkCommand="OnOkProperty">
+							</PropertyGrid>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
 
 
 @if (isShowRenameDashboardModal)
@@ -68,7 +96,7 @@
 						<div class="card-body">
 							<div class="form-group">
 								<label for="dashboardName">Name</label>
-								<input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Name">
+								<input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Option.Name"/>
 							</div>
 						</div>
 					</div>
@@ -86,7 +114,10 @@
 
 @code{
 
+	PropertyGrid propGrid;
+
 	private bool isShowRenameDashboardModal;
+	private bool isShowProperty;
 	private bool isLoadedDataResult;
 	private DashboardData SelectedDashboard;
 
@@ -114,6 +145,11 @@
 		}
 	}
 
+	public async Task<object> LoadDashboardOption()
+	{
+		return SelectedDashboard.Option;
+	}
+
 	private async Task LoadDashboarList()
 	{
 		var datas = await HyperStore.FindAllAsync<DashboardData>();
@@ -127,7 +163,8 @@
 
 	private void SelectDashboard(DashboardData data, bool showView = false)
 	{
-		if (showView) { 
+		if (showView)
+		{
 			OnSelectView.InvokeAsync(data);
 			return;
 		}
@@ -149,14 +186,37 @@
 	{
 		var doc = new HyperDocument(data);
 		var args = new DeleteHyperDocumentArgs(doc.Id);
-		var res = await HyperStore.ExecuteAsync(args);
+		var isDeleteSuccessful = await HyperStore.ExecuteAsync(args);
 
-		DataList.RemoveAll(it => it.Id == data.Id);
+		if (isDeleteSuccessful)
+		{
+			DataList.RemoveAll(it => it.Id == data.Id);
+		}
 	}
 
 	private void EditName(DashboardData data)
 	{
 		isShowRenameDashboardModal = true;
 		SelectedDashboard = data;
+	}
+
+	private void OpenPropertyGrid(DashboardData data)
+	{
+		isShowProperty = true;
+		SelectedDashboard = data;
+	}
+
+	public void OnCancelProperty()
+	{
+		propGrid.CleanSourceCache();
+		isShowProperty = false;
+	}
+
+	public async Task OnOkProperty()
+	{
+		propGrid.CleanSourceCache();
+		isShowProperty = false;
+
+		await SaveChanges();
 	}
 }

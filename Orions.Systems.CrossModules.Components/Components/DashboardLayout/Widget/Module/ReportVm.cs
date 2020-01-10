@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task LoadReportResultData(WidgetDataSource dataSource)
 		{
-			var reportResult = await dataSource.GenerateReprotDataAsync(this.HyperStore);
+			var reportResult = await dataSource.GenerateReportDataAsync(this.HyperStore);
 			if (reportResult == null)
 			{
 				Logger.Instance.Error("Cannot load report result");
@@ -67,14 +67,15 @@ namespace Orions.Systems.CrossModules.Components
 			IsLoadedReportResult = true;
 		}
 
-		public ReportChartData LoadReportLineChartData(string filter)
+		public ReportChartData LoadReportChartData(string filter)
 		{
 			var result = new ReportChartData();
 
 			if (Report == null) return result;
 
 			var categoryFilters = new List<string>();
-			if (!string.IsNullOrWhiteSpace(filter)) {
+			if (!string.IsNullOrWhiteSpace(filter))
+			{
 				categoryFilters = filter.Split(',').Select(it => it.Trim()).ToList();
 			}
 
@@ -89,7 +90,8 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				var categoryTitle = categories[i];
 
-				if (categoryFilters.Any() && !categoryFilters.Contains(categoryTitle)) {
+				if (categoryFilters.Any() && !categoryFilters.Contains(categoryTitle))
+				{
 					continue;
 				}
 
@@ -111,8 +113,19 @@ namespace Orions.Systems.CrossModules.Components
 						Time = timeEl
 					};
 
-					chartItem.DatePosition = ParseTimePosition(timeEl);
-					chartItem.StreamPosition = ParseStreamPosition(timeEl);
+					if (result.IsDateAxis)
+					{
+						try
+						{
+							chartItem.DatePosition = ParseTimePosition(timeEl);
+							chartItem.StreamPosition = ParseStreamPosition(timeEl);
+						}
+						catch (Exception)
+						{
+							result.IsDateAxis = false;
+						}
+					}
+
 					chartSeries.Data.Add(chartItem);
 				}
 
@@ -133,7 +146,7 @@ namespace Orions.Systems.CrossModules.Components
 					return timeEl.Substring(0, timeEl.LastIndexOf("("));
 				}
 			}
-			catch (Exception ex) { Console.WriteLine(ex.Message); }
+			catch (Exception) { throw; }
 
 			throw new Exception("Cannot parse row defenition title");
 		}
@@ -152,7 +165,7 @@ namespace Orions.Systems.CrossModules.Components
 						System.Globalization.CultureInfo.InvariantCulture);
 				}
 			}
-			catch (Exception ex) { Console.WriteLine(ex.Message); }
+			catch (Exception) { throw; }
 
 			throw new Exception("Cannot parse row defenition title");
 		}

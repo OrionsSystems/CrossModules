@@ -1,0 +1,43 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+@inherits MetadataReviewBase
+
+<WidgetGrid HyperTags="@DataContext.HyperTags" HyperStore="@_store"/>
+
+<ul class="pagination">
+
+    @{
+        var currentPageNumber = this.DataContext.PageNumber.Value;
+        var prevPageNumber = this.DataContext.PageNumber - 1;
+        var nextPageNumber = this.DataContext.PageNumber + 1;
+    }
+    @if (prevPageNumber > 0)
+    {
+        <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(prevPageNumber)">@prevPageNumber</a></li>
+    }
+    <li class="page-item active"><a class="page-link" @onclick="async () => await DataContext.ChangePage(currentPageNumber)">@currentPageNumber</a></li>
+    @if (nextPageNumber <= this.DataContext.TotalPages)
+    {
+        <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(nextPageNumber)">@nextPageNumber</a></li>
+    }
+    @if (nextPageNumber == 2)
+    {
+        <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(3)">3</a></li>
+    }
+
+</ul>
+
+<div class="input-group mb-3">
+    <div class="input-group-prepend">
+        <label class="input-group-text" for="inputGroupSelect01">Page size</label>
+    </div>
+    <select class="custom-select" id="inputGroupSelect01" @bind="@DataContext.PageSize.Value">
+        <option selected>Choose...</option>
+        <option value="8">8</option>
+        <option value="16">16</option>
+        <option value="24">24</option>
+        <option value="48">48</option>
+    </select>
+</div>
+
+<div>Total pages: @DataContext.TotalPages</div>
+

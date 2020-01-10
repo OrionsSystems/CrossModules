@@ -11,7 +11,7 @@
     "Orions.Systems.CrossModules.BlazorSample": {
       "commandName": "Project",
       "commandLineArgs": "--file=..\\..\\..\\Orions.Systems.Open\\CrossModules\\Samples\\Orions.Systems.CrossModules.BlazorSample\\config.json",
-      "launchBrowser": true,
+      "launchBrowser": false,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

@@ -17,28 +17,79 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<EjsChart>
-				<ChartPrimaryXAxis IsIndexed="true" 
-										 LabelPlacement="LabelPlacement.OnTicks" 
-										 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category">
-				</ChartPrimaryXAxis>
+			<EjsChart Title="@Widget.ChartTitle"
+						 Background="@Widget.ChartBackground"
+						 SelectionMode="SelectionMode.Series">
 
-				<ChartTooltipSettings Enable="true"></ChartTooltipSettings>
+				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
+				<ChartEvents OnPointClick="@PointClickHandler"></ChartEvents>
 
-				<ChartLegendSettings Visible="true"></ChartLegendSettings>
+
+				@if (ChartData.IsDateAxis)
+				{
+					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+											 LabelPlacement="@Widget.LabelPlacement"
+											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+											 IntervalType="@Widget.IntervalType"
+											 LabelFormat="@Widget.LabelFormat"
+											 Skeleton="@Widget.Skeleton"
+											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+					</ChartPrimaryXAxis>
+				}
+				else
+				{ 
+					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+											 LabelPlacement="@Widget.LabelPlacement"
+											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
+											 IntervalType="@Widget.IntervalType"
+											 LabelFormat="@Widget.LabelFormat"
+											 Skeleton="@Widget.Skeleton"
+											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+					</ChartPrimaryXAxis>
+				}
+
+				<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
+
+				<ChartLegendSettings Visible="@Widget.IsEnableLegend"
+											Position="LegendPosition.Bottom">
+				</ChartLegendSettings>
+
+				<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+										 EnablePinchZooming="@Widget.EnablePinchZooming"
+										 EnableSelectionZooming="@Widget.EnableSelectionZooming"
+										 EnablePan="@Widget.EnablePan"
+										 EnableScrollbar="true">
+				</ChartZoomSettings>
+
+				<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
 
 				<ChartSeriesCollection>
 					@foreach (var ser in ChartData.Series)
 					{
-						<ChartSeries DataSource="@ser.Data"
-										 Name="@ser.Name"
-										 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
-										 YName="@nameof(ReportSeriesChartDataItem.Count)"
-										 Type="ChartSeriesType.Column">
-							<ChartMarker>
-								<ChartDataLabel Visible="true"></ChartDataLabel>
-							</ChartMarker>
-						</ChartSeries>
+						@if (ChartData.IsDateAxis)
+						{
+							<ChartSeries DataSource="@ser.Data"
+											 Name="@ser.Name"
+											 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+											 YName="@nameof(ReportSeriesChartDataItem.Count)"
+											 Type="@Widget.ChartSeriesType">
+								<ChartMarker>
+									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+								</ChartMarker>
+							</ChartSeries>
+						}
+						else
+						{
+							<ChartSeries DataSource="@ser.Data"
+											 Name="@ser.Name"
+											 XName="@nameof(ReportSeriesChartDataItem.Time)"
+											 YName="@nameof(ReportSeriesChartDataItem.Count)"
+											 Type="@Widget.ChartSeriesType">
+								<ChartMarker>
+									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+								</ChartMarker>
+							</ChartSeries>
+						}
 					}
 
 				</ChartSeriesCollection>
@@ -68,9 +119,13 @@
 		</div>
 	}
 
+	<div class="dashboard=onchart-click">@ChartClickHandlerMessage</div>
+
 </div>
 
 @code {
+
+	public string ChartClickHandlerMessage { get; set; }
 
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
 
@@ -86,10 +141,25 @@
 
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
-		ChartData = DataContext.LoadReportLineChartData(Widget.CategoryFilter);
+		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
 
 		await base.OnInitializedAsync();
 	}
+
+	public void ChartMouseClickHandler(IMouseEventArgs args)
+	{
+		// Here you can customize your code
+
+		ChartClickHandlerMessage = $"ChartMouseClick at X:{args.X} Y:{args.Y}";
+	}
+
+	public void PointClickHandler(IPointEventArgs args)
+	{
+		// Here you can customize your code
+
+		ChartClickHandlerMessage = $"PointClick at X:{args.X} Y:{args.Y}";
+	}
+
 }
 
 <style>
