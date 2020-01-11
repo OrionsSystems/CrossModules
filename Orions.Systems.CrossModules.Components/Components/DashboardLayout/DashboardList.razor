@@ -32,10 +32,10 @@
 							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
 							<td>@(item.Option.IsDefault == true ? "True":"")</td>
 							<td class="text-center">
-								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
-								<button class="btn btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
-								<button class="btn btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-								<button class="btn btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
 							</td>
 						</tr>
 					}
