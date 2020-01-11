@@ -6,6 +6,7 @@ namespace Orions.Systems.CrossModules.Components
 	public abstract class ReportSyncfusionBaseChartWidget : ReportBaseWidget, IDashboardWidget
 	{
 		public bool IsShowChartTitle { get; set; } = false;
+
 		public string ChartTitle { get; set; }
 
 		public string LabelFormat { get; set; } = "dd MMM HH:mm";
@@ -46,5 +47,9 @@ namespace Orions.Systems.CrossModules.Components
 		public bool EnableScrollbarZooming { get; set; }
 
 		public bool IsEnableCrosshair { get; set; }
+
+		public ReportSyncfusionBaseChartWidget()
+		{
+		}
 	}
 }

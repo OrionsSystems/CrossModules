@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseBlazorComponent<ReportVm>
+@inherits WidgetComponent<ReportTelericSeriesChartVm, ReportTelericSeriesChartWidget>
 
 @implements IDisposable
 
@@ -111,16 +111,8 @@
 
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
 
-	[Parameter]
-	public ReportTelericSeriesChartWidget Widget { get; set; }
-
-	[Parameter]
-	public IHyperArgsSink HyperStore { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
-		DataContext.InitStore(HyperStore);
-
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
 		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
@@ -135,7 +127,7 @@
 		WindowResizeDispatcher.WindowResize -= ResizeChart;
 	}
 
-	protected async Task ResizeChart()
+	protected Task ResizeChart()
 	{
 		// now that you know the size of the chart container changed, re-render the chart
 		ChartRef.Refresh();
@@ -149,6 +141,8 @@
 		//WindowResizeDispatcher.WindowHeight
 		//if you use these values in the markup, call StateHasChanged(), this is not raised by an EventCallback
 		//StateHasChanged();
+
+		return Task.CompletedTask;
 	}
 }
 

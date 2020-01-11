@@ -2,13 +2,11 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class ReportSyncfusionSeriesChartWidget : ReportSyncfusionBaseChartWidget, IDashboardWidget
-    {
-        public override string Label { get; set; } = "Report Stacked Series Chart (Syncfusion)";
-
-        public override Type GetViewComponent()
-        {
-            return typeof(ReportSyncfusionSeriesChart);
-        }
-    }
+   public class ReportSyncfusionSeriesChartWidget : ReportSyncfusionBaseChartWidget, IDashboardWidget
+   {
+      public ReportSyncfusionSeriesChartWidget()
+      {
+         this.Label = "Report Stacked Series Chart (Syncfusion)";
+      }
+   }
 }

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Orions.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
+	[Compatibility("ReportTelericLineChartWidget")]
 	public class ReportTelericSeriesChartWidget : ReportTelericBaseChartWidget, IDashboardWidget
 	{
-		public override string Label { get; set; } = "Teleric Report Series Chart";
-
-		public override Type GetViewComponent()
+		public ReportTelericSeriesChartWidget()
 		{
-			return typeof(ReportTelericSeriesChart);
+			Label = "Teleric Report Series Chart";
 		}
 	}
 }

@@ -1,18 +1,11 @@
-﻿using Orions.Node.Common;
+﻿using Orions.Common;
+using Orions.Node.Common;
 using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public interface IDashboardWidget
+	public interface IDashboardWidget : IConfig
 	{
-		string Id { get; set; }
-
 		string Label { get; set; }
-
-		/// <summary>
-		/// Abstract method to get the view component type to use
-		/// </summary>
-		/// <returns></returns>
-		Type GetViewComponent();
 	}
 }

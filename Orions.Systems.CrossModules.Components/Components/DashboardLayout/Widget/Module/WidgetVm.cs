@@ -12,21 +12,52 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class ReportVm : BlazorVm
+	/// <summary>
+	/// Optional generic class helps assign a specialized type for the Widget class.
+	/// </summary>
+	public class WidgetVm<WidgetType> : WidgetVm
+		where WidgetType : IDashboardWidget
 	{
-		public IHyperArgsSink HyperStore { get; private set; }
+		public new WidgetType Widget
+		{
+			get => (WidgetType)base.Widget;
+			set => base.Widget = value;
+		}
 
-		public HyperMetadataReportResult Report { get; private set; }
+		public WidgetVm()
+		{
+		}
+	}
+
+	public class WidgetVm : BlazorVm
+	{
+		IHyperArgsSink _hyperStore = null;
+		public IHyperArgsSink HyperStore
+		{
+			get
+			{
+				return _hyperStore;
+			}
+
+			set
+			{
+				if (value != null)
+					_hyperStore = value;
+			}
+		}
+
+		public IDashboardWidget Widget { get; set; }
+
+		public IReportResult Report { get; private set; }
 
 		public bool IsLoadedReportResult { get; set; }
 
-		public string ReportName { get { return Report?.Report?.Name; } }
+		public string ReportName { get { return Report?.Name; } }
 
 		public bool ReportHasName { get { return !string.IsNullOrWhiteSpace(ReportName); } }
 
-		public ReportVm()
+		public WidgetVm()
 		{
-
 		}
 
 		public async Task InitStoreAsync(HyperConnectionSettings connection)
@@ -45,17 +76,12 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public void InitStore(IHyperArgsSink netStore)
-		{
-			if (netStore != null)
-			{
-				HyperStore = netStore;
-			}
-		}
-
 		public async Task LoadReportResultData(WidgetDataSource dataSource)
 		{
-			var reportResult = await dataSource.GenerateReportDataAsync(this.HyperStore);
+			var context = new WidgetDataSourceContext();
+			context.HyperStore = this.HyperStore;
+
+			var reportResult = await dataSource.GenerateReportResultAsync(context);
 			if (reportResult == null)
 			{
 				Logger.Instance.Error("Cannot load report result");

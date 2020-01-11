@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseBlazorComponent<ReportVm>
+@inherits WidgetComponent<ReportTelericPieChartVm, ReportTelericPieChartWidget>
 
 @using Orions.Node.Common
 
@@ -63,16 +63,8 @@
 
 	private List<ReportPieChartData> TagData = new List<ReportPieChartData>();
 
-	[Parameter]
-	public ReportTelericPieChartWidget Widget { get; set; }
-
-	[Parameter]
-	public IHyperArgsSink HyperStore { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
-		DataContext.InitStore(HyperStore);
-
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
 		LoadTagData();
