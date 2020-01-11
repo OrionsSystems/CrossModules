@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Orions.Infrastructure.HyperMedia;
 using System.Threading.Tasks;
+using Orions.Common;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -12,6 +13,7 @@ namespace Orions.Systems.CrossModules.Portal
 		{
 			try
 			{
+				ReflectionHelper.Instance.GatherExtraNativeAssemblies();
 				CreateHostBuilder(args).Build().Run();
 			}
 			catch (Exception ex)

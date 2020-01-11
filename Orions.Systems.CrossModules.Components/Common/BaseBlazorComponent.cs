@@ -43,6 +43,13 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		[Parameter]
+		public BaseVm ParentVm
+		{
+			get => _dataContext?.ParentVm;
+			set => _dataContext.ParentVm = value;
+		}
+
 		bool _initialized = false;
 
 		public BaseBlazorComponent()
