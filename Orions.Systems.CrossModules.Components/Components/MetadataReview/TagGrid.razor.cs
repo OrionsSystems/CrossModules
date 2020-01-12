@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class WidgetGridBase : BaseOrionsComponent
+    public class TagGridBase : BaseOrionsComponent
     {
         [Parameter]
         public List<HyperTag> HyperTags { get; set; }
