@@ -1,50 +1,41 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components;
-using Orions.Systems.CrossModules.Portal.Providers;
 
 namespace Orions.Systems.CrossModules.Portal.Domain
 {
 	[Authorize]
 	public class PortalBaseComponent : BaseOrionsComponent
 	{
-		public PortalBaseComponent()
-		{
+		[CascadingParameter]
+		public Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
-		}
+		public IHyperArgsSink HyperStore { get; set; }
 
 		protected override async Task OnInitializedAsync()
 		{
-			await InitHyperStoreInstanceAsync();
-			await base.OnInitializedAsync();
-		}
+			var authState = await AuthenticationStateTask;
 
-		protected async Task InitHyperStoreInstanceAsync()
-		{
-			if (HyperStore == null)
-				HyperStore = await NetStore.ConnectAsyncThrows("http://usnbods01wan.orionscloud.com:8600/Execute");
-		}
+			var claimToken = authState.User.Claims.FirstOrDefault(it => it.Type == System.Security.Claims.ClaimTypes.Sid);
 
-		public async Task AuthenticateAsync(CustomAuthenticationStateProvider provider)
-		{
-			await InitHyperStoreInstanceAsync();
+			var claimConnection = authState.User.Claims.FirstOrDefault(it => it.Type == System.Security.Claims.ClaimTypes.Uri);
 
-			var authState = await provider.GetAuthenticationStateAsync();
-
-			var claim = authState.User.Claims.FirstOrDefault(it => it.Type == System.Security.Claims.ClaimTypes.Sid);
+			HyperStore = await NetStore.ConnectAsyncThrows(claimConnection.Value);
 
 			HyperStore.DefaultAuthenticationInfo = new HyperAuthenticationInfo()
 			{
 				Auth = new HyperArgsAuthentication()
 				{
-					Token = claim.Value
+					Token = claimToken.Value
 				}
 			};
-		}
 
-		public IHyperArgsSink HyperStore { get; set; }
+			await base.OnInitializedAsync();
+		}
 	}
 }
