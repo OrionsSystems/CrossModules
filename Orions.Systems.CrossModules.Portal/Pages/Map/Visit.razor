@@ -1,0 +1,76 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/visit"
+
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor.DropDowns
+
+@inherits PortalBaseComponent
+
+
+<div class="row">
+	<div class="col-lg-12">
+		@*<TelerikComboBox Data="@FilterCategoryValues"
+								  @bind-Value="@SelectedValue"
+								  TextField="Label"
+								  ValueField="Value"
+								  AllowCustom="@IsCustom"
+								  Placeholder="Select a category"
+								  PopupHeight="">
+			</TelerikComboBox>*@
+		<div class="mapCategoryFilter">
+			<EjsComboBox TValue="string" Placeholder="Select a category" DataSource="@FilterCategoryValues">
+				<ComboBoxFieldSettings Text="Label" Value="Value"></ComboBoxFieldSettings>
+			</EjsComboBox>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col-lg-12">
+		<SVGMap></SVGMap>
+	</div>
+</div>
+
+@code {
+
+	public IEnumerable<VisitMapCategory> FilterCategoryValues { get; } = new List<VisitMapCategory>
+{
+			new VisitMapCategory{ Value="BEAUTY__x26__PERSONAL_CARE", Label="Beauty &amp; Personal Care" },
+			new VisitMapCategory{ Value="BOOKS_CARDS__x26__GIFTS", Label="Books, Cards &amp; Gifts" },
+			new VisitMapCategory{ Value="CHILDREN_x27_S_APPAREL__x26__TOYS", Label="Children’s Apparel &amp; Toys" },
+			new VisitMapCategory{ Value="CINEMA_x2F_THEATRES", Label="Cinema" },
+			new VisitMapCategory{ Value="DEPARTMENT_STORES", Label="Department Store" },
+			new VisitMapCategory{ Value="FOOD__x26__BEVERAGES|all-restaurant", Label="Food &amp; Beverages" },
+			new VisitMapCategory{ Value="FOOTWEAR", Label="Footwear" },
+			new VisitMapCategory{ Value="HANDBAGS__x26__LUGGAGE", Label="Handbags &amp; Luggage" },
+			new VisitMapCategory{ Value="HOME_FURNISHING", Label="Home Furnishings" },
+			new VisitMapCategory{ Value="JEWLERY__x26__ACCESSORIES", Label="Jewelry &amp; Accessories" },
+			new VisitMapCategory{ Value="MEN_x27_S_APPAREL_x0A_", Label="Men’s Apparel" },
+			new VisitMapCategory{ Value="TECHNOLOGY__x26__ELECTRONICS", Label="Technology &amp; Electronics" },
+			new VisitMapCategory{ Value="WOMENS_APPAREL", Label="Women’s Apparel" },
+	 };
+	public string SelectedValue { get; set; }
+
+	public bool IsCustom
+		  => FilterCategoryValues.FirstOrDefault(size => size.Value == SelectedValue) == null;
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
+	}
+
+	public class VisitMapCategory
+	{
+		public string Value { get; set; }
+		public string Label { get; set; }
+	}
+
+}
+
+<style>
+	.mapCategoryFilter {
+		width: 270px;
+	}
+</style>

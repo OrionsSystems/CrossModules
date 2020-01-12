@@ -11,15 +11,15 @@
 	{
 		var rowIndex = 0;
 
-		<button class="btn btn-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+		<button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
 		<div class="table-responsive">
 			<table class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
-						<th class="common-text" scope="col"></th>
-						<th class="w-75 common-text" scope="col">Name</th>
-						<th class="common-text" scope="col">Home</th>
-						<th class="w-25 common-text" scope="col"></th>
+						<th scope="col"></th>
+						<th class="w-75" scope="col">Name</th>
+						<th scope="col">Home</th>
+						<th class="w-25" scope="col"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -28,14 +28,14 @@
 						rowIndex++;
 
 						<tr>
-							<td class="common-text">@rowIndex</td>
-							<td class="common-text dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
+							<td>@rowIndex</td>
+							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
 							<td>@(item.Option.IsDefault == true ? "True":"")</td>
 							<td class="text-center">
-								<button class="btn btn-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
-								<button class="btn btn-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
-								<button class="btn btn-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-								<button class="btn btn-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
 							</td>
 						</tr>
 					}
