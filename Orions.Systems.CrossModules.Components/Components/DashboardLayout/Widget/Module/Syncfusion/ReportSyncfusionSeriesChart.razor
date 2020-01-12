@@ -9,11 +9,11 @@
 
 <div class="widget-content-report-linechart">
 
-	@if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
-		@if (Widget.ShowTitle && DataContext.ReportHasName)
+		@if (Widget.ShowTitle && Vm.ReportHasName)
 		{
-			<h3>@DataContext.ReportName</h3>
+			<h3>@Vm.ReportName</h3>
 		}
 
 		<div class="widget-content-report-linechart-view">
@@ -101,19 +101,19 @@
 		@if (Widget.ShowFooter)
 		{
 			<div class="widget-content-report-linechart-footer">
-				<div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
 			</div>
 		}
 	}
 
-	@if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
 	{
 		<div class="widget-missing-report-data">
 			Missing report data!
 		</div>
 	}
 
-	@if (!DataContext.IsLoadedReportResult)
+	@if (!Vm.IsLoadedReportResult)
 	{
 		<div style="position:relative;">
 			<div class="loading-bar"></div>
@@ -131,30 +131,31 @@
 
 @code {
 
-	public void OnApply()
-	{
-		var list = DataContext.ReportChartData.Series.FirstOrDefault();
-		DataContext.ReportChartData.Series.Clear();
+		public void OnApply()
+		{
+			// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
+			var list = Vm.ReportChartData.Series.FirstOrDefault();
+			Vm.ReportChartData.Series.Clear();
 
-		if (list != null)
-			DataContext.ReportChartData.Series.Add(list);
+			if (list != null)
+				Vm.ReportChartData.Series.Add(list);
 
-		var list2 = DataContext.ReportChartData.Categories.FirstOrDefault();
-		DataContext.ReportChartData.Categories.Clear();
+			var list2 = Vm.ReportChartData.Categories.FirstOrDefault();
+			Vm.ReportChartData.Categories.Clear();
 
-		if (list2 != null)
-			DataContext.ReportChartData.Categories.Add(list2);
+			if (list2 != null)
+				Vm.ReportChartData.Categories.Add(list2);
 
-		this.StateHasChanged();
-	}
+			this.StateHasChanged();
+		}
 
 	public string ChartClickHandlerMessage { get; set; }
 
-	public ReportChartData ChartData => DataContext.ReportChartData;
+	public ReportChartData ChartData => Vm.ReportChartData;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.RefreshReportResultData();
+		await Vm.RefreshReportResultData();
 
 		await base.OnInitializedAsync();
 	}

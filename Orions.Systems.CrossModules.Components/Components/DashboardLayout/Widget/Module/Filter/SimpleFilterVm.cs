@@ -15,9 +15,22 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
+		protected override void OnSetParentVm(BaseVm parentVm)
+		{
+			base.OnSetParentVm(parentVm);
+
+			if (this.DashboardVm != null && this.Widget.Filters?.Length > 0)
+				this.DashboardVm.SetStringFilters(this.Widget.Filters);
+		}
+
 		public async Task ApplyAsync(string[] filters)
 		{
+			this.Widget.Filters = filters;
+
 			this.DashboardVm.SetStringFilters(filters);
+
+			await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
+
 			await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 	}

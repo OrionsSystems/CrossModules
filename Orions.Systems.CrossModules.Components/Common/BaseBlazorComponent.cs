@@ -7,17 +7,31 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class BaseBlazorComponent : BaseOrionsComponent
-	{
-	}
-
 	public class BaseBlazorComponent<VmType> : BaseBlazorComponent
 		where VmType : BaseVm, new()
 	{
-		VmType _dataContext = null;
+		protected virtual bool AutoCreateVm => true;
+
+		public VmType Vm => (VmType)base.DataContext;
+
+		[Obsolete("Use Vm instead")]
+		public new VmType DataContext => Vm;
+
+		public BaseBlazorComponent()
+		{
+			if (this.AutoCreateVm)
+			{
+				base.DataContext = new VmType();
+			}
+		}
+	}
+
+	public class BaseBlazorComponent : BaseOrionsComponent
+	{
+		BaseVm _dataContext;
 
 		[Parameter]
-		public VmType DataContext
+		public BaseVm DataContext
 		{
 			get
 			{
@@ -26,6 +40,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			set
 			{
+				if (_dataContext == value)
+					return;
+
 				if (_dataContext != null)
 				{
 					_dataContext.PropertyChanged -= DataContext_PropertyChanged;
@@ -54,11 +71,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public BaseBlazorComponent()
 		{
-			// Create a default Vm instance.
-			DataContext = new VmType();
 		}
 
-		protected virtual void OnDataContextAssigned(VmType dataContext)
+		protected virtual void OnDataContextAssigned(BaseVm dataContext)
 		{
 			if (dataContext is IBlazorVm blazorVm)
 				blazorVm.OwnerComponent = this;

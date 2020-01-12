@@ -17,9 +17,9 @@ namespace Orions.Systems.CrossModules.Components
         {
             _store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usnbods01wan.orionscloud.com:8600/Execute");
 
-            await this.DataContext.Oninitialize(_store);
+            await this.Vm.Oninitialize(_store);
 
-            DataContext.PageSize.PropertyChanged += PageSize_PropertyChanged;
+            Vm.PageSize.PropertyChanged += PageSize_PropertyChanged;
 
             await base.OnInitializedAsync();
         }
@@ -28,8 +28,8 @@ namespace Orions.Systems.CrossModules.Components
         {
             this.InvokeAsync(async () =>
             {
-                await DataContext.LoadTotalPages();
-                await DataContext.LoadHyperTags();
+                await Vm.LoadTotalPages();
+                await Vm.LoadHyperTags();
 
                 this.StateHasChanged();
             });

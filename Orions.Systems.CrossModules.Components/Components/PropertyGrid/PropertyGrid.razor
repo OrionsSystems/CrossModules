@@ -11,9 +11,9 @@
 	<div class="row mb-2">
 		<div class="col-md-12 prop-grid-header">
 
-			@if (DataContext.BackButtonVisibleProp.Value)
+			@if (Vm.BackButtonVisibleProp.Value)
 			{
-				<a onclick="@DataContext.HomeCommand" title="Home" name="Home" class="btn prop-nav-btn">
+				<a onclick="@Vm.HomeCommand" title="Home" name="Home" class="btn prop-nav-btn">
 					<div class="prop-grid-icon">
 						<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
 							<title id="homeIconTitle">Home</title>
@@ -22,7 +22,7 @@
 					</div>
 				</a>
 
-				<a onclick="@DataContext.BackCommand" title="Back" name="Back" class="btn prop-nav-btn">
+				<a onclick="@Vm.BackCommand" title="Back" name="Back" class="btn prop-nav-btn">
 					<div class="prop-grid-icon">
 						<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-labelledby="backIconTitle">
 							<title id="backIconTitle">Back</title>
@@ -32,17 +32,17 @@
 				</a>
 			}
 
-			<h5 class="prop-grid-header-title">@DataContext.TrailProp.Value</h5>
+			<h5 class="prop-grid-header-title">@Vm.TrailProp.Value</h5>
 		</div>
 	</div>
 
 
-	@if (DataContext.Utility.ListMode || DataContext.Utility.CreatorMode)
+	@if (Vm.Utility.ListMode || Vm.Utility.CreatorMode)
 	{
 		<div class="row">
 			<div class="col px-0">
 				<select class="form-control" @onchange="OnCreatorItemSelect">
-					@foreach (var item in DataContext.Utility.CreatorItems)
+					@foreach (var item in Vm.Utility.CreatorItems)
 					{
 						<option value="@item.Type.FullName">@item</option>
 					}
@@ -50,21 +50,21 @@
 			</div>
 		</div>
 
-		@if (!DataContext.Utility.ReadOnlyMode)
+		@if (!Vm.Utility.ReadOnlyMode)
 		{
 			<div class="row">
 				<div class="col text-center my-2">
-					<button class="btn btn-outline-dark center" onclick="@DataContext.CreatorCreateCommand"> Create</button>
+					<button class="btn btn-outline-dark center" onclick="@Vm.CreatorCreateCommand"> Create</button>
 				</div>
 			</div>
 		}
 
 	}
 
-	@if (DataContext.Items.Any())
+	@if (Vm.Items.Any())
 	{
 
-		var groups = DataContext.Items.GroupBy(it => it.GroupName).ToDictionary(el => el.Key, el => el.ToList());
+		var groups = Vm.Items.GroupBy(it => it.GroupName).ToDictionary(el => el.Key, el => el.ToList());
 
 		@foreach (KeyValuePair<string, List<PropertyGridItemVm>> entry in groups)
 		{
@@ -179,11 +179,11 @@
 
 	<div class="row mt-2">
 		<div class="col-md-12 k-right">
-			@if (DataContext.OKVisible)
+			@if (Vm.OKVisible)
 			{
 				<button class="btn btn-outline-primary float-right ml-1" @onclick="OnOkCmd">OK</button>
 			}
-			@if (DataContext.CancelVisible)
+			@if (Vm.CancelVisible)
 			{
 				<button class="btn btn-outline-dark float-right" @onclick="OnCancelCmd">Cancel</button>
 			}
@@ -198,16 +198,16 @@
 	[Parameter] public Func<Task<object>> Loader { get; set; }
 
 	[Parameter]
-	public object Source { get { return DataContext.Source; } set { DataContext.Source = value; } }
+	public object Source { get { return Vm.Source; } set { Vm.Source = value; } }
 
 	[Parameter]
-	public IHyperArgsSink HyperStore { get { return DataContext.HyperStore; } set { DataContext.HyperStore = value; } }
+	public IHyperArgsSink HyperStore { get { return Vm.HyperStore; } set { Vm.HyperStore = value; } }
 
 	[Parameter]
-	public bool OKVisible { get { return DataContext.OKVisible; } set { DataContext.OKVisible = value; } }
+	public bool OKVisible { get { return Vm.OKVisible; } set { Vm.OKVisible = value; } }
 
 	[Parameter]
-	public bool CancelVisible { get { return DataContext.CancelVisible; } set { DataContext.CancelVisible = value; } }
+	public bool CancelVisible { get { return Vm.CancelVisible; } set { Vm.CancelVisible = value; } }
 
 	[Parameter]
 	public EventCallback OkCommand { get; set; }
@@ -278,11 +278,11 @@
 
 	private void OnCreatorItemSelect(ChangeEventArgs e)
 	{
-		foreach (var item in DataContext.Utility.CreatorItems)
+		foreach (var item in Vm.Utility.CreatorItems)
 		{
 			if (object.Equals(item.Type.FullName, e.Value))
 			{
-				DataContext.SelectedCreatorItemProp.Value = item;
+				Vm.SelectedCreatorItemProp.Value = item;
 				return;
 			}
 		}
@@ -290,7 +290,7 @@
 
 	private async Task OnCreatorCreate(object parameter)
 	{
-		await DataContext.OnCreatorCreate(DataContext.CreatorCreateCommand, parameter);
+		await Vm.OnCreatorCreate(Vm.CreatorCreateCommand, parameter);
 	}
 
 	private async Task HandleInputFileSelection(PropertyGridItemUtilityData data, IFileListEntry[] files)
@@ -328,13 +328,13 @@
 
 	private async Task OnCancelCmd(MouseEventArgs ev)
 	{
-		await DataContext.Utility.MoveBack(true);
+		await Vm.Utility.MoveBack(true);
 		await CancelCommand.InvokeAsync(ev);
 	}
 
 	private async Task OnOkCmd(MouseEventArgs ev)
 	{
-		await DataContext.Utility.MoveBack(true);
+		await Vm.Utility.MoveBack(true);
 		await OkCommand.InvokeAsync(ev);
 	}
 

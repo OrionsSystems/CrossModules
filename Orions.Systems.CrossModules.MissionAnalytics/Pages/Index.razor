@@ -5,12 +5,12 @@
 
     <dv class="orions-container">
 
-        <MissionTab Name="@DataContext.Mission?.Name"></MissionTab>
+        <MissionTab Name="@Vm.Mission?.Name"></MissionTab>
 
         <div id="missionProgressFilterId" class="orions-mission-analytics-header">
             <div>
-                <TelerikDropDownList Data="@DataContext.FilterVm.MissionInstanceOptions"
-                                     @bind-Value=@DataContext.FilterVm.SelectedMissionInstance
+                <TelerikDropDownList Data="@Vm.FilterVm.MissionInstanceOptions"
+                                     @bind-Value=@Vm.FilterVm.SelectedMissionInstance
                                      ValueField="Value"
                                      TextField="Text"
                                      Width="100%">
@@ -18,23 +18,23 @@
             </div>
 
             <div>
-                <TelerikDropDownList Data="@DataContext.FilterVm.TimeRangeOptions"
-                                     @bind-Value=@DataContext.FilterVm.SelectedTimeRange
+                <TelerikDropDownList Data="@Vm.FilterVm.TimeRangeOptions"
+                                     @bind-Value=@Vm.FilterVm.SelectedTimeRange
                                      ValueField="Value"
                                      TextField="Text"
                                      Width="100%">
                 </TelerikDropDownList>
             </div>
 
-            <TelerikButton OnClick="@DataContext.LoadCommand" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
+            <TelerikButton OnClick="@Vm.LoadCommand" Primary="true"><i class="fa fa-refresh mr-1"></i> Refresh</TelerikButton>
         </div>
 
         <div class="orions-mission-analytics-progress">
-            <Progress DataContext="@DataContext.ProgressVm"></Progress>
+            <Progress DataContext="@Vm.ProgressVm"></Progress>
         </div>
 
         <div class="orions-mission-analytics-stats">
-            <Stats DataContext="@DataContext.StatsVm"></Stats>
+            <Stats DataContext="@Vm.StatsVm"></Stats>
         </div>
 
     </dv>
@@ -44,9 +44,9 @@
 	
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.InitStoreAsync(Program.HyperConnectionSettings);
+		await Vm.InitStoreAsync(Program.HyperConnectionSettings);
 
-		await DataContext.LoadDataAsync();
+		await Vm.LoadDataAsync();
 
 		await base.OnInitializedAsync();
 	}

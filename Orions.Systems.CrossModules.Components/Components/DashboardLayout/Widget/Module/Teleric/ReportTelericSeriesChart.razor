@@ -11,11 +11,11 @@
 
 <div class="widget-content-report-linechart">
 
-	@if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
-		@if (Widget.ShowTitle && DataContext.ReportHasName)
+		@if (Widget.ShowTitle && Vm.ReportHasName)
 		{
-			<h3>@DataContext.ReportName</h3>
+			<h3>@Vm.ReportName</h3>
 		}
 
 		<div class="widget-content-report-linechart-view">
@@ -82,19 +82,19 @@
 		@if (Widget.ShowFooter)
 		{
 			<div class="widget-content-report-linechart-footer">
-				<div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
 			</div>
 		}
 	}
 
-	@if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
 	{
 		<div class="widget-missing-report-data">
 			Missing report data!
 		</div>
 	}
 
-	@if (!DataContext.IsLoadedReportResult)
+	@if (!Vm.IsLoadedReportResult)
 	{
 		<div style="position:relative;">
 			<div class="loading-bar"></div>
@@ -109,11 +109,11 @@
 
 	public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
 
-	public ReportChartData ChartData => DataContext.ReportChartData;
+	public ReportChartData ChartData => Vm.ReportChartData;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.RefreshReportResultData();
+		await Vm.RefreshReportResultData();
 
 		WindowResizeDispatcher.WindowResize += ResizeChart;
 		await base.OnInitializedAsync();

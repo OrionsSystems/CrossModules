@@ -19,7 +19,7 @@ namespace Orions.Systems.CrossModules.Components
         {
             if(Tag != null && HyperStore != null)
             {
-                await this.DataContext.Initialize(Tag, HyperStore);
+                await this.Vm.Initialize(Tag, HyperStore);
             }
 
             await base.OnParametersSetAsync();

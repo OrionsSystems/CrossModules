@@ -13,9 +13,26 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class DashboardVm : BlazorVm
 	{
+		static object g_syncRoot = new object();
+
 		object _syncRoot = new object();
 
-		public DashboardData Source { get; set; } = new DashboardData();
+		static Type[] _widgetVmTypes = null;
+
+		DashboardData _source = new DashboardData();
+		public DashboardData Source
+		{
+			get
+			{
+				return _source;
+			}
+
+			set
+			{
+				_source = value;
+				OnSourceSet();
+			}
+		}
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
@@ -30,20 +47,56 @@ namespace Orions.Systems.CrossModules.Components
 
 		public IHyperArgsSink HyperStore { get; set; }
 
-		List<WidgetVm> _widgets = new List<WidgetVm>();
-
-		public WidgetVm[] WidgetsVms
-		{
-			get
-			{
-				lock (_syncRoot)
-					return _widgets.ToArray();
-			}
-		}
+		Dictionary<IDashboardWidget, WidgetVm> _widgetsVms = new Dictionary<IDashboardWidget, WidgetVm>();
 
 		public DashboardVm()
 		{
+			lock (g_syncRoot)
+			{
+				if (_widgetVmTypes == null)
+				{// Cache this as it scans very many types.
+					_widgetVmTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(WidgetVm)).Where(it => it.IsAbstract == false).ToArray();
+				}
+			}
+
 			LoadAvailableWidget();
+		}
+
+		protected virtual void OnSourceSet()
+		{
+			// Create the Vms for all the widgets of this dashboard.
+			foreach (var row in this.Source.Rows)
+			{
+				foreach (var column in row.Columns)
+				{
+					if (column.Widget == null)
+						continue;
+
+					// Deduce vm type from the Widget type.
+					var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == column.Widget.GetType()));
+
+					var vm = (WidgetVm)Activator.CreateInstance(vmType);
+					vm.Widget = column.Widget; // ** Order matters here!!
+					vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
+
+					_widgetsVms[column.Widget] = vm;
+				}
+			}
+		}
+
+		public WidgetVm GetWidgetVm(IDashboardWidget widget)
+		{
+			return (WidgetVm)_widgetsVms[widget];
+		}
+
+		public async Task<Response> SaveChangesAsync()
+		{
+			var doc = new HyperDocument(this.Source);
+
+			var args = new StoreHyperDocumentArgs(doc);
+			await HyperStore.ExecuteAsync(args);
+
+			return args.ExecutionResult.AsResponse();
 		}
 
 		public void SetStringFilters(string[] filters)
@@ -64,18 +117,9 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public async Task UpdateDynamicWidgetsAsync()
 		{
-			foreach (var widgetVm in this.WidgetsVms)
+			foreach (var widgetVm in _widgetsVms.Select(it => it.Value))
 			{
 				await widgetVm.HandleFiltersChangedAsync();
-			}
-		}
-
-		public void TryAddWidgetVm(WidgetVm vm)
-		{
-			lock (_syncRoot)
-			{
-				if (_widgets.Contains(vm) == false)
-					_widgets.Add(vm);
 			}
 		}
 

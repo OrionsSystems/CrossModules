@@ -62,10 +62,10 @@ namespace Orions.Systems.CrossModules.Components
 		protected override void OnSetParentVm(BaseVm parentVm)
 		{
 			base.OnSetParentVm(parentVm);
-			if (this.AutoRegisterInDashboard && parentVm is DashboardVm dashboardVm)
-			{
-				dashboardVm.TryAddWidgetVm(this);
-			}
+			//if (this.AutoRegisterInDashboard && parentVm is DashboardVm dashboardVm)
+			//{
+			//	dashboardVm.TryAddWidgetVm(this);
+			//}
 		}
 
 		public virtual Task HandleFiltersChangedAsync()

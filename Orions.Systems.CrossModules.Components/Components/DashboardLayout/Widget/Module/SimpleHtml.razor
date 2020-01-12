@@ -5,13 +5,13 @@
 @inherits DashboardComponent<SimpleHtmlVm, SimpleHtmlWidget>
 
 <div class="widget-content-demo-simple">
-   @if (DataContext.Widget.ShowTitle)
+   @if (Vm.Widget.ShowTitle)
    {
-      <h3>@DataContext.Widget.Label</h3>
+      <h3>@Vm.Widget.Label</h3>
    }
 
    <section>
-      @((MarkupString)DataContext.Widget.RawHtml)
+      @((MarkupString)Vm.Widget.RawHtml)
    </section>
 </div>
 

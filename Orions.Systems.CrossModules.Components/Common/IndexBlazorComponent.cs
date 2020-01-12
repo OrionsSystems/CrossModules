@@ -16,9 +16,10 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		protected override void OnDataContextAssigned(VmType dataContext)
+		protected override void OnDataContextAssigned(BaseVm dataContext)
 		{
 			base.OnDataContextAssigned(dataContext);
+
 			if (dataContext is IVisualizationRequestVm vm)
 				vm.VisualizationRequest = this.VisualizationRequest;
 		}

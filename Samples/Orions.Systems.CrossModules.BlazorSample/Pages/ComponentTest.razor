@@ -7,7 +7,7 @@
 
 <h1>Counter</h1>
 
-<textarea>@DataContext.BlazorBindProperty.Value</textarea>
+<textarea>@Vm.BlazorBindProperty.Value</textarea>
 
 
 @code {
@@ -17,7 +17,7 @@
 
    protected override async Task OnInitializedAsync()
    {
-      this.DataContext.BlazorBindProperty.TakesFrom(Prop1);
+      this.Vm.BlazorBindProperty.TakesFrom(Prop1);
    }
 
 }

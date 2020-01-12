@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WidgetDynamicComponent : DashboardComponent<WidgetVm<DashboardWidget>, DashboardWidget>
+	public class WidgetDynamicComponent : DashboardComponent
 	{
 		static readonly object g_syncRoot = new object();
 
@@ -42,7 +42,8 @@ namespace Orions.Systems.CrossModules.Components
 				componentTypes = _widgetComponentTypes;
 			}
 
-			var componentType = componentTypes.First(it => it.BaseType.GetGenericArguments().Length == 2 && it.BaseType.GetGenericArguments()[1] == Widget.GetType());
+			// Deduce compoennt type from Widget type.
+			var componentType = componentTypes.First(it => it.BaseType.GetGenericArguments().Length == 2 && it.BaseType.GetGenericArguments()[1] == WidgetRaw.GetType());
 
 			// get the component to view the product with, based on the Config attribute system.
 			//Type componentType = ConfigAttribute.FindTypeByConfigType<WidgetVm>(Widget.GetType());
@@ -51,7 +52,10 @@ namespace Orions.Systems.CrossModules.Components
 			builder.OpenComponent(0, componentType);
 
 			// set the `Widget` attribute of the component
-			builder.AddAttribute(1, nameof(Widget), Widget);
+			builder.AddAttribute(1, nameof(DataContext), DataContext);
+
+			// set the `Widget` attribute of the component
+			builder.AddAttribute(1, nameof(WidgetRaw), WidgetRaw);
 
 			// set the `HyperStore` attribute of the component
 			builder.AddAttribute(1, nameof(HyperStore), HyperStore);

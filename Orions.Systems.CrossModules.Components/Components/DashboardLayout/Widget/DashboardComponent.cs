@@ -11,9 +11,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 	}
 
-	public class DashboardComponent<VmType, WidgetType> : BaseBlazorComponent<VmType>, IDashboardComponent
-		where VmType : WidgetVm<WidgetType>, new()
-		where WidgetType : class, IDashboardWidget
+	public abstract class DashboardComponent : BaseBlazorComponent, IDashboardComponent
 	{
 		[Parameter]
 		public DashboardVm DashboardVm
@@ -23,17 +21,44 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
-		public WidgetType Widget
+		public IDashboardWidget WidgetRaw
 		{
-			get => this.DataContext?.Widget;
-			set => this.DataContext.Widget = value;
+			get => ((WidgetVm)this.DataContext)?.Widget;
+			set => ((WidgetVm)this.DataContext).Widget = value;
 		}
+
 
 		[Parameter]
 		public IHyperArgsSink HyperStore
 		{
-			get => this.DataContext?.HyperStore;
-			set => this.DataContext.HyperStore = value;
+			get => ((WidgetVm)this.DataContext)?.HyperStore;
+			set => ((WidgetVm)this.DataContext).HyperStore = value;
+		}
+
+		public DashboardComponent()
+		{
+		}
+	}
+
+	public class DashboardComponent<VmType, WidgetType> : DashboardComponent
+		where VmType : WidgetVm<WidgetType>, new()
+		where WidgetType : class, IDashboardWidget
+	{
+		/// <summary>
+		/// Allows us to assign from non-fully generic values.
+		/// </summary>
+		[Parameter]
+		public VmType Vm
+		{
+			get => (VmType)this.DataContext;
+			set => this.DataContext = (VmType)value;
+		}
+
+		[Parameter]
+		public WidgetType Widget
+		{
+			get => this.Vm?.Widget;
+			set => this.Vm.Widget = value;
 		}
 
 		public DashboardComponent()

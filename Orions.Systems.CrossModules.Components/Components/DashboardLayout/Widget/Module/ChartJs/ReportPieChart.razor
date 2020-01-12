@@ -12,12 +12,12 @@
 
 <div class="widget-content-report-piechart">
 
-	@if (DataContext.Report != null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
 
-		@if (Widget.ShowTitle && DataContext.ReportHasName)
+		@if (Widget.ShowTitle && Vm.ReportHasName)
 		{
-			<h3>@DataContext.ReportName</h3>
+			<h3>@Vm.ReportName</h3>
 		}
 
 		<div class="widget-content-report-piechart-view">
@@ -27,19 +27,19 @@
 		@if (Widget.ShowFooter)
 		{
 			<div class="widget-content-report-piechart-footer">
-				<div class="">Created at @DataContext.Report.CreatedAtUTC</div>
+				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
 			</div>
 		}
 	}
 
-	@if (DataContext.Report == null && DataContext.IsLoadedReportResult)
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
 	{
 		<div class="widget-missing-report-data">
 			Missing report data!
 		</div>
 	}
 
-	@if (!DataContext.IsLoadedReportResult)
+	@if (!Vm.IsLoadedReportResult)
 	{
 		<div style="position:relative;">
 			<div class="loading-bar"></div>
@@ -53,7 +53,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.RefreshReportResultData();
+		await Vm.RefreshReportResultData();
 
 		SetPieConfiguration();
 
@@ -62,7 +62,7 @@
 
 	private void SetPieConfiguration()
 	{
-		if (DataContext.Report == null) 
+		if (Vm.Report == null) 
 			return;
 
 		_pieConfig = new PieConfig
@@ -72,7 +72,7 @@
 				Title = new OptionsTitle
 				{
 					Display = false,
-					Text = DataContext.Report.Name
+					Text = Vm.Report.Name
 				},
 				Responsive = true,
 				Animation = new ArcAnimation
@@ -85,7 +85,7 @@
 
 		_pieConfig.Options.Legend.Position = Position.Bottom;
 
-		var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+		var labels = Vm.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
 		_pieConfig.Data.Labels.AddRange(labels);
 
 		var pieSet = new PieDataset
@@ -98,7 +98,7 @@
 		};
 		pieSet.BackgroundColor = RandomBackgroudColors(labels.Count);
 
-		var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
+		var rowData = Vm.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
 		pieSet.Data.AddRange(rowData);
 		_pieConfig.Data.Datasets.Add(pieSet);
 	}

@@ -12,14 +12,13 @@
 
 	<div class="widget-content-report-piechart">
 
-		<h3>@DataContext.Widget.Label</h3>
-
-		<div class="widget-content-report-piechart-view">
-			@*<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />*@
-		</div>
+		<h3>@Vm.Widget.Label</h3>
 
 		<div class="control-styles">
-			<EjsMultiSelect @ref="MultiSelect"  TValue="string[]" OnChange="@OnChange" Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+			<EjsMultiSelect @ref="MultiSelect"  TValue="string[]" 
+								 OnChange="@OnChange"  Value="@Values"
+								 Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+
 				<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
 			</EjsMultiSelect>
 		</div>
@@ -50,10 +49,12 @@
 
 	public EjsMultiSelect<string[]> MultiSelect;
 
+	public string[] Values => Widget.Filters;
+
 	public async Task OnApply(MouseEventArgs args)
 	{
 		string[] filters = MultiSelect.Value;
-		await DataContext.ApplyAsync(filters);
+		await Vm.ApplyAsync(filters);
 		await ProgressButton.ProgressComplete(); // Mark completion.
 	}
 

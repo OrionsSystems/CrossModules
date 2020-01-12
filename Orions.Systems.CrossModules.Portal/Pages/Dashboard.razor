@@ -15,7 +15,6 @@
 					 IsPreviewMode="@isShowViewDashboard"
 					 DisableModeOption="false"
 					 HyperStore="@HyperStore"
-					 OnSave="SaveChanges"
 					 OnBackToList="ShowDashboardList">
 	</DashboardLayout>
 }
@@ -35,17 +34,6 @@ else
         await base.OnInitializedAsync();
 
         await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
-    }
-
-
-    async Task SaveChanges()
-    {
-        var doc = new HyperDocument(Data);
-
-        var args = new StoreHyperDocumentArgs(doc);
-        var res = await HyperStore.ExecuteAsync(args);
-
-        ShowToaster(MatToastType.Success, "", "Save changes");
     }
 
     private void ShowDashboardList()

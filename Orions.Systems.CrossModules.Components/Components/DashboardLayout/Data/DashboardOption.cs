@@ -12,5 +12,9 @@ namespace Orions.Systems.CrossModules.Components
 		public bool IsDefault { get; set; }
 
 		public bool IsHideTitle { get; set; }
+
+		public DashboardOption()
+		{
+		}
 	}
 }
