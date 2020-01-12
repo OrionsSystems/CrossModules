@@ -6,41 +6,36 @@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<EditForm Model="@user" OnValidSubmit="@ValidateUser">
-    <DataAnnotationsValidator />
-    <div>
+    <EditForm Model="@user" OnValidSubmit="@ValidateUser">
+        <DataAnnotationsValidator />
         <h3><b>Login</b></h3>
-    </div>
-    <div>
-        <br />
-    </div>
-    <div class="col-12 row">
-        <input class="form-control col-12" @bind="user.Username" placeholder="Username" />
-        <ValidationMessage For="(() => user.Username)" />
-    </div>
-    <div>
-        <br />
-    </div>
-    <div class="col-12 row">
-        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="Password" />
-        <ValidationMessage For="(() => user.Password)" />
-    </div>
-    <div>
-        <br />
-        @if (loginFailed)
-        {
-            <p class="validation-message">Login failed. Please try again!</p>
-        }
-    </div>
-    <div class="col-12 row">
-        <span class="col-12"></span>
-        <div class="col-12">
-            <center>
-                <input type="submit" class="form-control col-3 btn btn-primary" value="Login" />
-            </center>
+        <div class="form-group">
+                <input class="form-control col-12" @bind="user.Username" placeholder="Username" />
+                <ValidationMessage For="(() => user.Username)" />
         </div>
-    </div>
-</EditForm>
+        <div class="form-group">
+                <input type="password" class="form-control col-12" @bind="user.Password" placeholder="Password" />
+                <ValidationMessage For="(() => user.Password)" />
+        </div>
+        <div class="form-group">
+                <input class="form-control col-12" @bind="user.Uri" placeholder="Connection uri" />
+                <ValidationMessage For="(() => user.Uri)" />
+        </div>
+        <div>
+            @if (loginFailed)
+            {
+                <p class="validation-message">Login failed. Please try again!</p>
+            }
+        </div>
+        <div class="col-12 row mt-2">
+            <span class="col-12"></span>
+            <div class="col-12">
+                <center>
+                    <input type="submit" class="form-control col-3 btn btn-primary" value="Login" />
+                </center>
+            </div>
+        </div>
+    </EditForm>
 
 @code {
     private UserLogin user;
@@ -64,7 +59,7 @@
             Data = data,
         };
 
-        HyperStore = await NetStore.ConnectAsyncThrows("http://usnbods01wan.orionscloud.com:8600/Execute");
+        HyperStore = await NetStore.ConnectAsyncThrows(user.Uri);
 
         var result = await HyperStore.ExecuteAsync(loginArgs);
 
@@ -74,7 +69,8 @@
 
         if (!loginFailed)
         {
-            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Authenticated(user.Username, result);
+            await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Authenticated(
+                user.Username, user.Uri, result);
 
             NavigationManager.NavigateTo("/");
         }

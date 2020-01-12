@@ -20,7 +20,7 @@
 }
 else
 {
-	<DashboardList HyperStore="@HyperStore" OnSelectDesign="OnSelectDesignDashboard" OnSelectView="OnSelectViewDashboard"></DashboardList>
+    <DashboardList HyperStore="@HyperStore" OnSelectDesign="OnSelectDesignDashboard" OnSelectView="OnSelectViewDashboard"></DashboardList>
 }
 
 @code{
@@ -32,8 +32,6 @@ else
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-
-        await AuthenticateAsync(((CustomAuthenticationStateProvider)AuthenticationStateProvider));
     }
 
     private void ShowDashboardList()

@@ -22,6 +22,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="Components\TagWidget\MetadataReview.razor" />
+	  <Content Remove="Components\TagWidget\TagWidget.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
 		<None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
 		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
@@ -79,6 +84,10 @@
 		<ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
 		  <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
 </ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Components\TagWidget\" />
+	</ItemGroup>
 
 </Project>
 

@@ -11,16 +11,15 @@ namespace Orions.Systems.CrossModules.Components
 {
     public class MetadataReviewVm : BlazorVm
     {
-        public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>(new List<HyperTag>());
         private NetStore _store;
         private HyperDocumentId _hyperDocumentId;
 
+        public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>(new List<HyperTag>());
         public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
         public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
-
         public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
 
-        public async Task Oninitialize(NetStore store)
+        public async Task Initialize(NetStore store)
         {
             this._store = store;
 
@@ -28,17 +27,14 @@ namespace Orions.Systems.CrossModules.Components
 
             await LoadTotalPages();
             await LoadHyperTags();
-
-            
         }
-
         public async Task LoadTotalPages()
         {
             var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
             var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this._store, countArgs);
 
-            TotalPages = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / (PageSize + 1);
+            TotalPages.Value = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / (PageSize + 1);
         }
 
         public async Task LoadHyperTags()
@@ -58,12 +54,14 @@ namespace Orions.Systems.CrossModules.Components
                 hyperTags.Add(doc.GetPayload<HyperTag>());
             }
 
-            HyperTags = hyperTags;
+            HyperTags.Value = hyperTags;
         }
 
         public async Task ChangePage(int pageNumber)
         {
             PageNumber.Value = pageNumber;
+
+            HyperTags.Value = new List<HyperTag>();
 
             await LoadHyperTags();
         }

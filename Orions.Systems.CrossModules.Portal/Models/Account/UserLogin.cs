@@ -13,5 +13,8 @@ namespace Orions.Systems.CrossModules.Portal.Models
 
 		[Required(ErrorMessage = "Password is required")]
 		public string Password { get; set; }
+
+		[Required(ErrorMessage = "Url host is required")]
+		public string Uri { get; set; }
 	}
 }
