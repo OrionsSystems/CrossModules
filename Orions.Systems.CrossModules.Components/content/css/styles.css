@@ -21,6 +21,14 @@
 }
 
 
+.common-text {
+	color:white;
+}
+
+.common-table-border {
+	border: 1px solid #55545f;
+}
+
 /* 
     START DASHBOARD LAYOUT COMPONENT
 */
