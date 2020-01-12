@@ -1,0 +1,78 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<SimpleFilterVm, SimpleFilterWidget>
+
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Charts
+@using Syncfusion.EJ2.Blazor.DropDowns
+@using Syncfusion.EJ2.Blazor.SplitButtons
+
+	<div class="widget-content-report-piechart">
+
+		<h3>@DataContext.Widget.Label</h3>
+
+		<div class="widget-content-report-piechart-view">
+			@*<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />*@
+		</div>
+
+		<div class="control-styles">
+			<EjsMultiSelect @ref="MultiSelect"  TValue="string[]" OnChange="@OnChange" Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+				<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
+			</EjsMultiSelect>
+		</div>
+
+		<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
+			<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
+				<ProgressButtonEvents></ProgressButtonEvents>
+			</EjsProgressButton>
+		</div>
+
+		@*<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
+			<EjsProgressButton Duration="9999999" Content="Apply" OnClick="@OnApply" IsPrimary="true">
+			</EjsProgressButton>
+		</div>*@
+
+	</div>
+
+@code {
+
+	public class Option
+	{
+		public string ID { get; set; }
+		public string Group { get; set; }
+		public string Text { get; set; }
+	}
+
+	public EjsProgressButton ProgressButton;
+
+	public EjsMultiSelect<string[]> MultiSelect;
+
+	public async Task OnApply(MouseEventArgs args)
+	{
+		string[] filters = MultiSelect.Value;
+		await DataContext.ApplyAsync(filters);
+		await ProgressButton.ProgressComplete(); // Mark completion.
+	}
+
+	public void OnChange(ChangeEventArgs args)
+	{
+	}
+
+	public List<Option> Options = new List<Option>()
+{
+		  new Option(){ ID= "Person", Group = "Common", Text= "Person" },
+		  new Option(){ ID= "Human", Group = "Common", Text= "Human" },
+		  new Option(){ ID= "Adult", Group = "Common", Text= "Adult" },
+		  new Option(){ ID= "Male", Group = "Common", Text= "Male" },
+		  new Option(){ ID= "Female", Group = "Common", Text= "Female" },
+		  new Option(){ ID= "Child", Group = "Common", Text= "Child" },
+		  new Option(){ ID= "Father", Group = "Common", Text= "Father" },
+		  new Option(){ ID= "Mother", Group = "Common", Text= "Mother" },
+		  new Option(){ ID= "Son", Group = "Common", Text= "Son" },
+		  new Option(){ ID= "Daughter", Group = "Common", Text= "Daughter" },
+	 };
+
+}

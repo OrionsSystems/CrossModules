@@ -6,8 +6,10 @@ using System.Text;
 namespace Orions.Systems.CrossModules.Components
 {
 	[Config(typeof(ReportTelericSeriesChartWidget))]
-	public class ReportTelericSeriesChartVm : WidgetVm<ReportTelericSeriesChartWidget>
+	public class ReportTelericSeriesChartVm : ReportWidgetVm<ReportTelericSeriesChartWidget>
 	{
+		protected override bool AutoRegisterInDashboard => true;
+
 		public ReportTelericSeriesChartVm()
 		{
 		}

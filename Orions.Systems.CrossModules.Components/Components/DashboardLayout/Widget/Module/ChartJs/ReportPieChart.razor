@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits WidgetComponent<ReportPieChartVm, ReportPieChartWidget>
+@inherits DashboardComponent<ReportPieChartVm, ReportPieChartWidget>
 
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
@@ -51,15 +51,9 @@
 	private PieConfig _pieConfig;
 	private ChartJsPieChart _pieChartJs;
 
-	[Parameter]
-	public ReportPieChartWidget Widget { get; set; }
-
-	[Parameter]
-	public IHyperArgsSink HyperStore { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.LoadReportResultData(Widget.DataSource);
+		await DataContext.RefreshReportResultData();
 
 		SetPieConfiguration();
 
@@ -68,8 +62,8 @@
 
 	private void SetPieConfiguration()
 	{
-
-		if (DataContext.Report == null) return;
+		if (DataContext.Report == null) 
+			return;
 
 		_pieConfig = new PieConfig
 		{

@@ -5,10 +5,10 @@ using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	[Config(typeof(ReportPieChartWidget))]
-	public class ReportPieChartVm : WidgetVm<ReportPieChartWidget>
+	[Config(typeof(ReportGridWidget))]
+	public class ReportGridVm : ReportWidgetVm<ReportGridWidget>
 	{
-		public ReportPieChartVm()
+		public ReportGridVm()
 		{
 		}
 	}

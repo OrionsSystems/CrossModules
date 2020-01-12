@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits WidgetComponent<ReportTelericPieChartVm, ReportTelericPieChartWidget>
+@inherits DashboardComponent<ReportTelericPieChartVm, ReportTelericPieChartWidget>
 
 @using Orions.Node.Common
 
@@ -65,7 +65,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.LoadReportResultData(Widget.DataSource);
+		await DataContext.RefreshReportResultData();
 
 		LoadTagData();
 
@@ -74,7 +74,8 @@
 
 	private void LoadTagData()
 	{
-		if (DataContext.Report == null) return;
+		if (DataContext.Report == null) 
+			return;
 
 		var labels = DataContext.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
 		var rowData = DataContext.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToUInt16(it.ToString())).ToList();
