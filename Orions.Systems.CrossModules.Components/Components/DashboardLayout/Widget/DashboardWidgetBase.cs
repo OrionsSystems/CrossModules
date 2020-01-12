@@ -1,22 +1,25 @@
-﻿using Orions.Node.Common;
+﻿using Orions.Common;
+using Orions.Node.Common;
 using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class DashboardWidgetBase : IDashboardWidget
+	public abstract class DashboardWidgetBase : IdUnifiedBlob, IDashboardWidget 
 	{
-		public string Id { get; set; } = IdGeneratorHelper.Generate("widget-");
-
-		public abstract string Label { get; set; }
+		public string Label { get; set; }
 
 		public bool ShowTitle { get; set; } = true;
 
 		public bool ShowFooter { get; set; } = true;
 
-		protected virtual string PrintLabel() {
+		public DashboardWidgetBase()
+		{
+			this.Id = IdGeneratorHelper.Generate("widget-");
+		}
+
+		protected virtual string PrintLabel()
+		{
 			return $"Widget : {Label}";
 		}
-		
-		public abstract Type GetViewComponent();
 	}
 }

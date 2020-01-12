@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseBlazorComponent<ReportVm>
+@inherits WidgetComponent<ReportSyncfusionSeriesChartVm, ReportSyncfusionSeriesChartWidget>
 
 @using Orions.Node.Common
 @using Syncfusion.EJ2.Blazor
@@ -19,6 +19,7 @@
 
 			<EjsChart Title="@Widget.ChartTitle"
 						 Background="@Widget.ChartBackground"
+						 
 						 SelectionMode="SelectionMode.Series">
 
 				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
@@ -129,16 +130,8 @@
 
 	public ReportChartData ChartData { get; set; } = new ReportChartData();
 
-	[Parameter]
-	public ReportSyncfusionSeriesChartWidget Widget { get; set; }
-
-	[Parameter]
-	public IHyperArgsSink HyperStore { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
-		DataContext.InitStore(HyperStore);
-
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
 		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);

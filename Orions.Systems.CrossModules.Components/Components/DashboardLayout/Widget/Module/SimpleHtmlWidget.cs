@@ -2,16 +2,14 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class SimpleHtmlWidget : DashboardWidgetBase, IDashboardWidget
-    {
-        public override string Label { get; set; } = "Simple Html Widget";
+   public class SimpleHtmlWidget : DashboardWidgetBase, IDashboardWidget
+   {
+      [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
+      public string RawHtml { get; set; }
 
-        [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
-        public string RawHtml { get; set; }
-
-        public override Type GetViewComponent()
-        {
-            return typeof(SimpleHtml);
-        }
-    }
+      public SimpleHtmlWidget()
+      {
+         this.Label = "Simple Html Widget";
+      }
+   }
 }

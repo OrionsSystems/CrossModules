@@ -29,10 +29,10 @@
 			@if (!HideModeOption)
 			{
 				<div class="float-right">
-					<button class="btn btn-outline-dark mr-2" @onclick="OnBackToList">List</button>
+					<button class="btn btn-dark  mr-2" @onclick="OnBackToList">List</button>
 					@if (IsEditMode)
 					{
-						<button class="btn btn-outline-dark mr-4" @onclick="OnSave">Save</button>
+						<button class="btn btn-dark mr-4" @onclick="OnSave">Save</button>
 					}
 					<div class="d-inline-block">
 						<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>

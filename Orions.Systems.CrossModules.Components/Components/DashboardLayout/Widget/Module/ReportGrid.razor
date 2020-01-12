@@ -3,7 +3,7 @@
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
 
-@inherits BaseBlazorComponent<ReportVm>
+@inherits WidgetComponent<ReportGridVm, ReportGridWidget>
 
 <div class="widget-content-report-grid">
 
@@ -73,16 +73,8 @@
 
 @code {
 
-   [Parameter]
-   public ReportGridWidget Widget { get; set; }
-
-   [Parameter]
-   public IHyperArgsSink HyperStore { get; set; }
-
    protected override async Task OnInitializedAsync()
    {
-      DataContext.InitStore(HyperStore);
-
       await DataContext.LoadReportResultData(Widget.DataSource);
 
       //TODO filter report categories

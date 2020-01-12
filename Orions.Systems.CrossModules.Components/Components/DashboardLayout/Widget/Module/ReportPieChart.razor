@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits BaseBlazorComponent<ReportVm>
+@inherits WidgetComponent<ReportPieChartVm, ReportPieChartWidget>
 
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
@@ -59,8 +59,6 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		DataContext.InitStore(HyperStore);
-
 		await DataContext.LoadReportResultData(Widget.DataSource);
 
 		SetPieConfiguration();
@@ -80,7 +78,7 @@
 				Title = new OptionsTitle
 				{
 					Display = false,
-					Text = DataContext.Report.Report.Name
+					Text = DataContext.Report.Name
 				},
 				Responsive = true,
 				Animation = new ArcAnimation

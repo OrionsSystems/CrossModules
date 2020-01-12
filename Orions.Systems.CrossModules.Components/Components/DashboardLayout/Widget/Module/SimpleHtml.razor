@@ -2,41 +2,38 @@
 
 @using Orions.Node.Common
 
-<div class="widget-content-demo-simple">
-    @if (Widget.ShowTitle)
-    {
-        <h3>@Widget.Label</h3>
-    }
+@inherits WidgetComponent<SimpleHtmlVm, SimpleHtmlWidget>
 
-    <section>
-        @((MarkupString)Widget.RawHtml)
-    </section>
+<div class="widget-content-demo-simple">
+   @if (DataContext.Widget.ShowTitle)
+   {
+      <h3>@DataContext.Widget.Label</h3>
+   }
+
+   <section>
+      @((MarkupString)DataContext.Widget.RawHtml)
+   </section>
 </div>
 
 @code {
-    [Parameter]
-    public SimpleHtmlWidget Widget { get; set; }
-
-    [Parameter]
-    public IHyperArgsSink HyperStore { get; set; }
 }
 
 <style>
-    .widget-content-demo-simple {
-        padding: 20px;
-        overflow: hidden;
-    }
+   .widget-content-demo-simple {
+      padding: 20px;
+      overflow: hidden;
+   }
 
-        .widget-content-demo-simple h3 {
-            text-align: center;
-        }
+      .widget-content-demo-simple h3 {
+         text-align: center;
+      }
 
-        .widget-content-demo-simple section {
-            color: #018786;
-            font-size: 12px;
-        }
+      .widget-content-demo-simple section {
+         color: #018786;
+         font-size: 12px;
+      }
 
-        .widget-content-demo-simple p {
-            text-align: justify;
-        }
+      .widget-content-demo-simple p {
+         text-align: justify;
+      }
 </style>
