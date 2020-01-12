@@ -2,6 +2,8 @@
 
 using Orions.Common;
 using Orions.Node.Common;
+using Orions.Infrastructure.HyperMedia;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +13,71 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class DashboardVm : BlazorVm
 	{
+		object _syncRoot = new object();
+
 		public DashboardData Source { get; set; } = new DashboardData();
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
+
+		public UniFilterData DynamicFilter { get; set; } = new MultiFilterData();
+
+		public PropertyGrid PropGrid { get; set; }
+
+		public bool IsShowModalWidget { get; set; }
+		public bool IsShowProperty { get; private set; }
+
+		private DashboardColumn SelectedColumn { get; set; }
+
+		public IHyperArgsSink HyperStore { get; set; }
+
+		List<WidgetVm> _widgets = new List<WidgetVm>();
+
+		public WidgetVm[] WidgetsVms
+		{
+			get
+			{
+				lock (_syncRoot)
+					return _widgets.ToArray();
+			}
+		}
 
 		public DashboardVm()
 		{
 			LoadAvailableWidget();
 		}
 
-		public IHyperArgsSink HyperStore { get; set; }
+		public void SetStringFilters(string[] filters)
+		{
+			if (DynamicFilter is MultiFilterData multiFilter)
+			{
+				multiFilter.Elements = new IUniFilterData[] { new TextFilterData() { 
+					LabelsArray = filters, Mode = AndOr.Or, StringCompareMode = TextFilterData.StringComparisonMode.Contains } };
+			}
+			else
+			{
+				System.Diagnostics.Debug.Assert(false, "Main filter not set as expected");
+			}
+		}
+
+		/// <summary>
+		/// Run this to update dynamic filter widgets, so they can pick up changed filter values.
+		/// </summary>
+		public async Task UpdateDynamicWidgetsAsync()
+		{
+			foreach (var widgetVm in this.WidgetsVms)
+			{
+				await widgetVm.HandleFiltersChangedAsync();
+			}
+		}
+
+		public void TryAddWidgetVm(WidgetVm vm)
+		{
+			lock (_syncRoot)
+			{
+				if (_widgets.Contains(vm) == false)
+					_widgets.Add(vm);
+			}
+		}
 
 		public void OnAddRow()
 		{
@@ -153,13 +210,6 @@ namespace Orions.Systems.CrossModules.Components
 			column.Widget = null;
 		}
 
-		public PropertyGrid PropGrid { get; set; }
-
-		public bool IsShowModalWidget { get; set; }
-		public bool IsShowProperty { get; private set; }
-
-		private DashboardColumn SelectedColumn { get; set; }
-
 		public void OpenWidgetModal(MouseEventArgs e, DashboardColumn column)
 		{
 			if (AvailableWidgets != null && AvailableWidgets.Any())
@@ -177,7 +227,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void AddSelectedWidget(MouseEventArgs e, Type widgetType)
 		{
-			if (widgetType != null && SelectedColumn != null) SelectedColumn.Widget = LoadWidget(widgetType);
+			if (widgetType != null && SelectedColumn != null) 
+				SelectedColumn.Widget = LoadWidget(widgetType);
 
 			IsShowModalWidget = false;
 		}
@@ -188,9 +239,9 @@ namespace Orions.Systems.CrossModules.Components
 			IsShowProperty = false;
 		}
 
-		public async Task<object> GetSelectedColumnWidget()
+		public Task<object> GetSelectedColumnWidget()
 		{
-			return SelectedColumn.Widget;
+			return Task.FromResult((object)SelectedColumn.Widget);
 		}
 
 		private bool _isStartDraging;
@@ -248,10 +299,10 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		private IDashboardWidget LoadWidget(Type t)
+		private DashboardWidget LoadWidget(Type t)
 		{
 			var widget = Activator.CreateInstance(t);
-			return widget as IDashboardWidget;
+			return widget as DashboardWidget;
 		}
 	}
 }

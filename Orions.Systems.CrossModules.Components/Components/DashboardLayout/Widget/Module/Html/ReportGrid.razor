@@ -3,7 +3,7 @@
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
 
-@inherits WidgetComponent<ReportGridVm, ReportGridWidget>
+@inherits DashboardComponent<ReportGridVm, ReportGridWidget>
 
 <div class="widget-content-report-grid">
 
@@ -32,7 +32,7 @@
                     {
                        var rowDef = DataContext.Report.Data.RowsDefinitions[rowIndex];
                        var rowTitle = rowDef.Title;
-                       var rowDate = DataContext.ParseTimePosition(rowTitle);
+                       var rowDate = ReportWidgetVm<ReportGridWidget>.ParseTimePosition(rowTitle);
                        rowIndex++;
 
                         <tr>
@@ -75,7 +75,7 @@
 
    protected override async Task OnInitializedAsync()
    {
-      await DataContext.LoadReportResultData(Widget.DataSource);
+      await DataContext.RefreshReportResultData();
 
       //TODO filter report categories
 

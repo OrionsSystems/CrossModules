@@ -1,10 +1,11 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits WidgetComponent<ReportSyncfusionSeriesChartVm, ReportSyncfusionSeriesChartWidget>
+@inherits DashboardComponent<ReportSyncfusionSeriesChartVm, ReportSyncfusionSeriesChartWidget>
 
 @using Orions.Node.Common
 @using Syncfusion.EJ2.Blazor
 @using Syncfusion.EJ2.Blazor.Charts
+@using Syncfusion.EJ2.Blazor.SplitButtons
 
 <div class="widget-content-report-linechart">
 
@@ -19,7 +20,6 @@
 
 			<EjsChart Title="@Widget.ChartTitle"
 						 Background="@Widget.ChartBackground"
-						 
 						 SelectionMode="SelectionMode.Series">
 
 				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
@@ -38,7 +38,7 @@
 					</ChartPrimaryXAxis>
 				}
 				else
-				{ 
+				{
 					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
 											 LabelPlacement="@Widget.LabelPlacement"
 											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
@@ -122,21 +122,46 @@
 
 	<div class="dashboard=onchart-click">@ChartClickHandlerMessage</div>
 
+	<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
+		<EjsProgressButton Duration="99" OnClick="@OnApply" Content="Apply" IsPrimary="true">
+		</EjsProgressButton>
+	</div>
+
 </div>
 
 @code {
 
+	public void OnApply()
+	{
+		var list = DataContext.ReportChartData.Series.FirstOrDefault();
+		DataContext.ReportChartData.Series.Clear();
+
+		if (list != null)
+			DataContext.ReportChartData.Series.Add(list);
+
+		var list2 = DataContext.ReportChartData.Categories.FirstOrDefault();
+		DataContext.ReportChartData.Categories.Clear();
+
+		if (list2 != null)
+			DataContext.ReportChartData.Categories.Add(list2);
+
+		this.StateHasChanged();
+	}
+
 	public string ChartClickHandlerMessage { get; set; }
 
-	public ReportChartData ChartData { get; set; } = new ReportChartData();
+	public ReportChartData ChartData => DataContext.ReportChartData;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.LoadReportResultData(Widget.DataSource);
-
-		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
+		await DataContext.RefreshReportResultData();
 
 		await base.OnInitializedAsync();
+	}
+
+	protected override void OnStateHasChanged()
+	{
+		base.OnStateHasChanged();
 	}
 
 	public void ChartMouseClickHandler(IMouseEventArgs args)

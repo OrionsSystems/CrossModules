@@ -4,11 +4,11 @@
 
 @inherits BaseBlazorComponent
 
-@if (Data.Rows.Any())
+@if (DashboardVm.Source.Rows.Any())
 {
-    var firstRowId = Data.Rows.FirstOrDefault()?.Id;
+    var firstRowId = DashboardVm.Source.Rows.FirstOrDefault()?.Id;
 
-    @foreach (var row in Data.Rows)
+    @foreach (var row in DashboardVm.Source.Rows)
     {
         <div class="row mb-4">
             @foreach (var column in row.Columns)
@@ -19,7 +19,7 @@
                         <div class="dashboard-content-live">
                             @if (column.Widget != null)
                             {
-                                <WidgetDynamicComponent @key="column.Widget.Id" Widget="column.Widget" HyperStore="HyperStore" />
+                                <WidgetDynamicComponent @key="column.Widget.Id" Widget="column.Widget" HyperStore="HyperStore" DashboardVm="DashboardVm" />
                             }
                         </div>
                     </div>
@@ -32,7 +32,7 @@
 @code{
 
     [Parameter]
-    public DashboardData Data { get; set; }
+    public DashboardVm DashboardVm { get; set; }
 
     [Parameter]
     public IHyperArgsSink HyperStore { get; set; }

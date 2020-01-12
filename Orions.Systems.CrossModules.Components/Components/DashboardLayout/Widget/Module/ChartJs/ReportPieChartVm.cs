@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	[Config(typeof(ReportSyncfusionSeriesChartWidget))]
-	public class ReportSyncfusionSeriesChartVm : ReportWidgetVm<ReportSyncfusionSeriesChartWidget>
+	[Config(typeof(ReportPieChartWidget))]
+	public class ReportPieChartVm : ReportWidgetVm<ReportPieChartWidget>
 	{
 		protected override bool AutoRegisterInDashboard => true;
 
-		public ReportSyncfusionSeriesChartVm()
+		public ReportPieChartVm()
 		{
 		}
 	}

@@ -71,8 +71,13 @@ namespace Orions.Systems.CrossModules.Components
 
 			var t = this.InvokeAsync(() =>
 			{
-				this.StateHasChanged();
+				OnStateHasChanged();
 			});
+		}
+
+		protected virtual void OnStateHasChanged()
+		{
+			this.StateHasChanged();
 		}
 
 		protected override Task OnInitializedAsync()

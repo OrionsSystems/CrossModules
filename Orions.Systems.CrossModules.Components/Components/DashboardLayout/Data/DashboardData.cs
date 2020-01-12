@@ -46,6 +46,6 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowBetweenCommands { get; set; }
 
-      public IDashboardWidget Widget { get; set; }
+      public DashboardWidget Widget { get; set; }
    }
 }

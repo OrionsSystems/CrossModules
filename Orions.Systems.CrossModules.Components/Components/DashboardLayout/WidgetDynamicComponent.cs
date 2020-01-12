@@ -8,20 +8,15 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WidgetDynamicComponent : BaseBlazorComponent
+	public class WidgetDynamicComponent : DashboardComponent<WidgetVm<DashboardWidget>, DashboardWidget>
 	{
 		static readonly object g_syncRoot = new object();
 
 		static Type[] _widgetComponentTypes = null;
 
-		/// <summary>
-		/// The product we want to render
-		/// </summary>
-		[Parameter]
-		public IDashboardWidget Widget { get; set; }
-
-		[Parameter]
-		public IHyperArgsSink HyperStore { get; set; }
+		public WidgetDynamicComponent()
+		{
+		}
 
 		protected override Task OnInitializedAsync()
 		{
@@ -41,7 +36,7 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				if (_widgetComponentTypes == null)
 				{// Cache this as it scans very many types.
-					_widgetComponentTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(IWidgetComponent)).ToArray();
+					_widgetComponentTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(IDashboardComponent)).ToArray();
 				}
 
 				componentTypes = _widgetComponentTypes;
@@ -56,12 +51,13 @@ namespace Orions.Systems.CrossModules.Components
 			builder.OpenComponent(0, componentType);
 
 			// set the `Widget` attribute of the component
-			// we are using fake generic prototypes here, but it does not matter for the property name
-			builder.AddAttribute(1, nameof(WidgetComponent<WidgetVm<DashboardWidgetBase>, DashboardWidgetBase>.Widget), Widget);
+			builder.AddAttribute(1, nameof(Widget), Widget);
 
 			// set the `HyperStore` attribute of the component
-			// we are using fake generic prototypes here, but it does not matter for the property name
-			builder.AddAttribute(1, nameof(WidgetComponent<WidgetVm<DashboardWidgetBase>, DashboardWidgetBase>.HyperStore), HyperStore);
+			builder.AddAttribute(1, nameof(HyperStore), HyperStore);
+
+			// set the `HyperStore` attribute of the component
+			builder.AddAttribute(1, nameof(DashboardVm), DashboardVm);
 
 			// close
 			builder.CloseComponent();

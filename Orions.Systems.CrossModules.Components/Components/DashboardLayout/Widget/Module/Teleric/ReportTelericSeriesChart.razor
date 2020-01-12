@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits WidgetComponent<ReportTelericSeriesChartVm, ReportTelericSeriesChartWidget>
+@inherits DashboardComponent<ReportTelericSeriesChartVm, ReportTelericSeriesChartWidget>
 
 @implements IDisposable
 
@@ -109,16 +109,13 @@
 
 	public string CustomSeriesTemplate = "# if (value != 0) { # #=value# #}#";
 
-	public ReportChartData ChartData { get; set; } = new ReportChartData();
+	public ReportChartData ChartData => DataContext.ReportChartData;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await DataContext.LoadReportResultData(Widget.DataSource);
-
-		ChartData = DataContext.LoadReportChartData(Widget.CategoryFilter);
+		await DataContext.RefreshReportResultData();
 
 		WindowResizeDispatcher.WindowResize += ResizeChart;
-
 		await base.OnInitializedAsync();
 	}
 

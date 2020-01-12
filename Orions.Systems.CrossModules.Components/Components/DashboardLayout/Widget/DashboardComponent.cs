@@ -7,30 +7,36 @@ using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public interface IWidgetComponent
+	public interface IDashboardComponent
 	{
 	}
 
-	public class WidgetComponent<VmType, WidgetType> : BaseBlazorComponent<VmType>, IWidgetComponent
+	public class DashboardComponent<VmType, WidgetType> : BaseBlazorComponent<VmType>, IDashboardComponent
 		where VmType : WidgetVm<WidgetType>, new()
 		where WidgetType : class, IDashboardWidget
 	{
+		[Parameter]
+		public DashboardVm DashboardVm
+		{
+			get => this.DataContext?.ParentVm as DashboardVm;
+			set => this.DataContext.ParentVm = value;
+		}
 
-		[ParameterAttribute]
+		[Parameter]
 		public WidgetType Widget
 		{
 			get => this.DataContext?.Widget;
 			set => this.DataContext.Widget = value;
 		}
 
-		[ParameterAttribute]
+		[Parameter]
 		public IHyperArgsSink HyperStore
 		{
 			get => this.DataContext?.HyperStore;
 			set => this.DataContext.HyperStore = value;
 		}
 
-		public WidgetComponent()
+		public DashboardComponent()
 		{
 		}
 	}

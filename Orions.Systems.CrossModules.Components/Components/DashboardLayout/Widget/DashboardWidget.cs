@@ -4,7 +4,7 @@ using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class DashboardWidgetBase : IdUnifiedBlob, IDashboardWidget 
+	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget 
 	{
 		public string Label { get; set; }
 
@@ -12,7 +12,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool ShowFooter { get; set; } = true;
 
-		public DashboardWidgetBase()
+		public DashboardWidget()
 		{
 			this.Id = IdGeneratorHelper.Generate("widget-");
 		}
