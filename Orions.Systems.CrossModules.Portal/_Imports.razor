@@ -1,5 +1,6 @@
 ﻿@using System.Net.Http
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Configuration
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Routing
@@ -19,5 +20,9 @@
 @using Syncfusion.EJ2.Blazor.Charts
 
 @using MatBlazor
+
+@using Microsoft.AspNetCore.ProtectedBrowserStorage
+
+@inject ProtectedSessionStorage ProtectedSessionStore
 
 @inject AuthenticationStateProvider AuthenticationStateProvider

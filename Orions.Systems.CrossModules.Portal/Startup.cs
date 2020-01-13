@@ -1,14 +1,7 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using Blazored.LocalStorage;
 using EmbeddedBlazorContent;
 using MatBlazor;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,8 +21,6 @@ namespace Orions.Systems.CrossModules.Portal
 
 		public IConfiguration Configuration { get; }
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.AddRazorPages();
@@ -50,10 +41,10 @@ namespace Orions.Systems.CrossModules.Portal
 
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
-			services.AddBlazoredLocalStorage();
+			services.AddProtectedBrowserStorage();
 
 			// Custom AuthenticationState provider
-			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();	
+			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 		}
 
 
@@ -61,7 +52,8 @@ namespace Orions.Systems.CrossModules.Portal
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			//Register Syncfusion license
-			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MTk0MDU3QDMxMzcyZTM0MmUzMGJIcnNicmc0ek1LU0dqNHQ1bERLTzUybFk1YllGb25wVnlEVk9WZ3JDbUU9");
+			var syncfusionLicense = Configuration.GetValue<string>("SyncfusionLicense");
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
 
 			if (env.IsDevelopment())
 			{

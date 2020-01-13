@@ -5,37 +5,38 @@
 @using Orions.Node.Common
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
 
-    <EditForm Model="@user" OnValidSubmit="@ValidateUser">
-        <DataAnnotationsValidator />
-        <h3><b>Login</b></h3>
-        <div class="form-group">
-                <input class="form-control col-12" @bind="user.Username" placeholder="Username" />
-                <ValidationMessage For="(() => user.Username)" />
+<EditForm Model="@user" OnValidSubmit="@ValidateUser">
+    <DataAnnotationsValidator />
+    <h3><b>Login</b></h3>
+    <div class="form-group">
+        <input class="form-control col-12" @bind="user.Username" placeholder="Username" />
+        <ValidationMessage For="(() => user.Username)" />
+    </div>
+    <div class="form-group">
+        <input type="password" class="form-control col-12" @bind="user.Password" placeholder="Password" />
+        <ValidationMessage For="(() => user.Password)" />
+    </div>
+    <div class="form-group">
+        <input class="form-control col-12" @bind="user.Uri" placeholder="Connection uri" />
+        <ValidationMessage For="(() => user.Uri)" />
+    </div>
+    <div>
+        @if (loginFailed)
+        {
+            <p class="validation-message">Login failed. Please try again!</p>
+        }
+    </div>
+    <div class="col-12 row mt-2">
+        <span class="col-12"></span>
+        <div class="col-12">
+            <center>
+                <input type="submit" class="form-control col-3 btn btn-primary" value="Login" />
+            </center>
         </div>
-        <div class="form-group">
-                <input type="password" class="form-control col-12" @bind="user.Password" placeholder="Password" />
-                <ValidationMessage For="(() => user.Password)" />
-        </div>
-        <div class="form-group">
-                <input class="form-control col-12" @bind="user.Uri" placeholder="Connection uri" />
-                <ValidationMessage For="(() => user.Uri)" />
-        </div>
-        <div>
-            @if (loginFailed)
-            {
-                <p class="validation-message">Login failed. Please try again!</p>
-            }
-        </div>
-        <div class="col-12 row mt-2">
-            <span class="col-12"></span>
-            <div class="col-12">
-                <center>
-                    <input type="submit" class="form-control col-3 btn btn-primary" value="Login" />
-                </center>
-            </div>
-        </div>
-    </EditForm>
+    </div>
+</EditForm>
 
 @code {
     private UserLogin user;
@@ -45,13 +46,14 @@
     protected override Task OnInitializedAsync()
     {
         user = new UserLogin();
+        user.Uri = Configuration.GetValue<string>("DefaultNodeUriConnection") ?? "";
         return base.OnInitializedAsync();
     }
 
     private async Task<bool> ValidateUser()
     {
         var data = new Infrastructure.Common.HyperUserLoginData();
-        
+
         data.SetUserAndPassword(user.Username, user.Password);
 
         var loginArgs = new HyperUserLoginArgs()
