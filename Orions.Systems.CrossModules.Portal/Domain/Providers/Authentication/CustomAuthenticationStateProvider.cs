@@ -2,30 +2,30 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.ProtectedBrowserStorage;
+using Blazored.LocalStorage;
 using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Portal.Providers
 {
 	public class CustomAuthenticationStateProvider : AuthenticationStateProvider
 	{
-		private ProtectedSessionStorage _protectedSessionStorage;
+		private ILocalStorageService _storage;
 
 		public const string AuthUsernameLabel = "_u_v1";
 		public const string AuthTokenLabel = "_t_v1";
 		public const string AuthUriLabel = "_r_v1";
 		public const string FormAuthTypeLabel = "form_auth_type";
 
-		public CustomAuthenticationStateProvider(ProtectedSessionStorage protectedSessionStorage)
+		public CustomAuthenticationStateProvider(ILocalStorageService storage)
 		{
-			_protectedSessionStorage = protectedSessionStorage;
+			_storage = storage;
 		}
 
 		public override async Task<AuthenticationState> GetAuthenticationStateAsync()
 		{
-			var authUsername = await _protectedSessionStorage.GetAsync<string>(AuthUsernameLabel);
-			var authToken = await _protectedSessionStorage.GetAsync<string>(AuthTokenLabel);
-			var authUri = await _protectedSessionStorage.GetAsync<string>(AuthUriLabel);
+			var authUsername = await _storage.GetItemAsync<string>(AuthUsernameLabel);
+			var authToken = await _storage.GetItemAsync<string>(AuthTokenLabel);
+			var authUri = await _storage.GetItemAsync<string>(AuthUriLabel);
 
 			ClaimsIdentity identity;
 
@@ -64,13 +64,13 @@ namespace Orions.Systems.CrossModules.Portal.Providers
 			if (string.IsNullOrWhiteSpace(uri))
 				throw new ArgumentException(nameof(uri));
 
-			await _protectedSessionStorage.DeleteAsync(AuthUsernameLabel);
-			await _protectedSessionStorage.DeleteAsync(AuthTokenLabel);
-			await _protectedSessionStorage.DeleteAsync(AuthUriLabel);
+			await _storage.RemoveItemAsync(AuthUsernameLabel);
+			await _storage.RemoveItemAsync(AuthTokenLabel);
+			await _storage.RemoveItemAsync(AuthUriLabel);
 
-			await _protectedSessionStorage.SetAsync(AuthUsernameLabel, username);
-			await _protectedSessionStorage.SetAsync(AuthTokenLabel, authInfo.Auth.Token);
-			await _protectedSessionStorage.SetAsync(AuthUriLabel, uri);
+			await _storage.SetItemAsync(AuthUsernameLabel, username);
+			await _storage.SetItemAsync(AuthTokenLabel, authInfo.Auth.Token);
+			await _storage.SetItemAsync(AuthUriLabel, uri);
 
 			var identity = new ClaimsIdentity(new[]
 			{
@@ -86,9 +86,9 @@ namespace Orions.Systems.CrossModules.Portal.Providers
 
 		public async Task LogOut()
 		{
-			await _protectedSessionStorage.DeleteAsync(AuthUsernameLabel);
-			await _protectedSessionStorage.DeleteAsync(AuthTokenLabel);
-			await _protectedSessionStorage.DeleteAsync(AuthUriLabel);
+			await _storage.RemoveItemAsync(AuthUsernameLabel);
+			await _storage.RemoveItemAsync(AuthTokenLabel);
+			await _storage.RemoveItemAsync(AuthUriLabel);
 
 			var identity = new ClaimsIdentity();
 

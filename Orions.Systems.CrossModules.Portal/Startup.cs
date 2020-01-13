@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Portal.Providers;
 using Syncfusion.EJ2.Blazor;
+using Blazored.LocalStorage;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -42,6 +43,8 @@ namespace Orions.Systems.CrossModules.Portal
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
 			services.AddProtectedBrowserStorage();
+
+			services.AddBlazoredLocalStorage();
 
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
