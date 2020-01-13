@@ -86,7 +86,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public WidgetVm GetWidgetVm(IDashboardWidget widget)
 		{
-			return (WidgetVm)_widgetsVms[widget];
+			WidgetVm widgetVm;
+			if (_widgetsVms.TryGetValue(widget, out widgetVm))
+				return widgetVm;
+
+			return null;
 		}
 
 		public async Task<Response> SaveChangesAsync()
