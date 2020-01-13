@@ -76,6 +76,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected virtual void OnSourceSet()
 		{
+			if (this.HyperStore == null)
+			{
+				System.Diagnostics.Debug.Assert(false, "HyperStore not assigned");
+			}
+
 			// Create the Vms for all the widgets of this dashboard.
 			foreach (var row in this.Source.Rows)
 			{

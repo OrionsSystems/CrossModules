@@ -8,46 +8,48 @@
 <div class="container-fluid">
 
     @if (DataList.Any() && isLoadedDataResult)
-    {
+	 {
         @foreach (var data in DataList)
-        {
-            <DashboardLayout Data="data"
+		  {
+			  /* IMPORTANT WE NEED TO ASSIGN THE HYPER STORE FIRST */
+            <DashboardLayout 
+                             HyperStore="@HyperStore"
+                             Data="data"
                              EnableBetweenBox="true"
                              IsPreviewMode="true"
                              HideModeOption="true"
-                             IsHideTitle="data.Option.IsHideTitle"
-                             HyperStore="@HyperStore">
+                             IsHideTitle="data.Option.IsHideTitle">
             </DashboardLayout>
-        }
-    }
+		  }
+	 }
 
     @if (!isLoadedDataResult)
-    {
+	 {
         <div style="position:relative;">
             <div class="loading-bar"></div>
         </div>
-    }
+	 }
 </div>
 
 @code{
 
-    private bool isLoadedDataResult;
+	private bool isLoadedDataResult;
 
-    private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
+	private List<DashboardData> DataList { get; set; } = new List<DashboardData>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 
-        await LoadDashboarList();
-    }
+		await LoadDashboarList();
+	}
 
-    private async Task LoadDashboarList()
-    {
-        var datas = await HyperStore.FindAllAsync<DashboardData>();
+	private async Task LoadDashboarList()
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-        DataList = datas.Where(it => it.Option.IsDefault == true).ToList();
+		DataList = datas.Where(it => it.Option.IsDefault == true).ToList();
 
-        isLoadedDataResult = true;
-    }
+		isLoadedDataResult = true;
+	}
 }
