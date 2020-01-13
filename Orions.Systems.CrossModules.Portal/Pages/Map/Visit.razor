@@ -19,7 +19,7 @@
 								  PopupHeight="">
 			</TelerikComboBox>*@
 		<div class="mapCategoryFilter">
-			<EjsComboBox TValue="string" Placeholder="Select a category" DataSource="@FilterCategoryValues">
+			<EjsComboBox TValue="string" @bind-Value="SelectedValue"  @onchange="OnChangeFilterCategory" Placeholder="Select a category" DataSource="@FilterCategoryValues">
 				<ComboBoxFieldSettings Text="Label" Value="Value"></ComboBoxFieldSettings>
 			</EjsComboBox>
 		</div>
@@ -27,7 +27,7 @@
 </div>
 <div class="row">
 	<div class="col-lg-12">
-		<SVGMap></SVGMap>
+		<SVGMap SelectedCategory="@SelectedValue"></SVGMap>
 	</div>
 </div>
 
@@ -57,6 +57,10 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+	}
+
+	private void OnChangeFilterCategory(ChangeEventArgs arg) {
+		//TODO 
 	}
 
 	public class VisitMapCategory
