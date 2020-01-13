@@ -85,7 +85,7 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				var categoryTitle = categories[i];
 
-				if (categoryFilters.Any() && !categoryFilters.Contains(categoryTitle))
+				if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
 				{
 					continue;
 				}
