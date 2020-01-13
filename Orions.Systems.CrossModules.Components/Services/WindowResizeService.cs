@@ -18,7 +18,14 @@ namespace Orions.Systems.CrossModules.Components
 			bool canRaiseEvent = true;
 			try
 			{
-				_ = WindowResize.Target.ToString();
+				if (WindowResize?.Target == null)
+				{
+					canRaiseEvent = false;
+				}
+				else
+				{
+					_ = WindowResize.Target.ToString();
+				}
 			}
 			catch (Exception ex)
 			{

@@ -10,11 +10,12 @@
 
 @if (isDashboardSelected)
 {
-	<DashboardLayout Data="Data"
+	<DashboardLayout 
+                HyperStore="@HyperStore"
+                Data="Data"
 					 EnableBetweenBox="true"
 					 IsPreviewMode="@isShowViewDashboard"
 					 DisableModeOption="false"
-					 HyperStore="@HyperStore"
 					 OnBackToList="ShowDashboardList">
 	</DashboardLayout>
 }

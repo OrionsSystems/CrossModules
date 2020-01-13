@@ -18,6 +18,11 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
+		protected override void OnDataContextAssigned(BaseVm dataContext)
+		{
+			base.OnDataContextAssigned(dataContext);
+		}
+
 		protected override Task OnInitializedAsync()
 		{
 			return base.OnInitializedAsync();

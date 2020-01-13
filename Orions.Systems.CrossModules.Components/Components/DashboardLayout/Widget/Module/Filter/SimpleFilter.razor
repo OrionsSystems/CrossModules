@@ -49,7 +49,11 @@
 
 	public EjsMultiSelect<string[]> MultiSelect;
 
-	public string[] Values => Widget.Filters;
+	public string[] Values
+	{
+		get => Widget.Filters;
+		set => Widget.Filters = value;
+	}
 
 	public async Task OnApply(MouseEventArgs args)
 	{

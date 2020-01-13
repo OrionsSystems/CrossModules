@@ -32,7 +32,13 @@ namespace Orions.Systems.CrossModules.Components
 		public IHyperArgsSink HyperStore
 		{
 			get => ((WidgetVm)this.DataContext)?.HyperStore;
-			set => ((WidgetVm)this.DataContext).HyperStore = value;
+			set
+			{
+				if (this.DataContext != null)
+					((WidgetVm)this.DataContext).HyperStore = value;
+				else
+					System.Diagnostics.Debug.Assert(false, "Data context not available");
+			}
 		}
 
 		public DashboardComponent()

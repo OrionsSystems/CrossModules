@@ -45,7 +45,19 @@ namespace Orions.Systems.CrossModules.Components
 
 		private DashboardColumn SelectedColumn { get; set; }
 
-		public IHyperArgsSink HyperStore { get; set; }
+		IHyperArgsSink _hyperStore = null;
+		public IHyperArgsSink HyperStore
+		{
+			get
+			{
+				return _hyperStore;
+			}
+
+			set
+			{
+				_hyperStore = value;
+			}
+		}
 
 		Dictionary<IDashboardWidget, WidgetVm> _widgetsVms = new Dictionary<IDashboardWidget, WidgetVm>();
 
@@ -76,6 +88,7 @@ namespace Orions.Systems.CrossModules.Components
 					var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == column.Widget.GetType()));
 
 					var vm = (WidgetVm)Activator.CreateInstance(vmType);
+					vm.HyperStore = this.HyperStore;
 					vm.Widget = column.Widget; // ** Order matters here!!
 					vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
 
@@ -90,6 +103,7 @@ namespace Orions.Systems.CrossModules.Components
 			if (_widgetsVms.TryGetValue(widget, out widgetVm))
 				return widgetVm;
 
+			System.Diagnostics.Debug.Assert(false, "Failed to find Vm for widget");
 			return null;
 		}
 

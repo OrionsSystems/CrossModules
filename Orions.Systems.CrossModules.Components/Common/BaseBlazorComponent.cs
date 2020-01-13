@@ -15,10 +15,27 @@ namespace Orions.Systems.CrossModules.Components
 		public VmType Vm => (VmType)base.DataContext;
 
 		[Obsolete("Use Vm instead")]
-		public new VmType DataContext => Vm;
+		public new VmType DataContext
+		{
+			get
+			{
+				return Vm;
+			}
+
+			set
+			{
+				base.DataContext = value;
+			}
+		}
 
 		public BaseBlazorComponent()
 		{
+		}
+
+		protected override void OnDataContextAssigned(BaseVm dataContext)
+		{
+			base.OnDataContextAssigned(dataContext);
+
 			if (this.AutoCreateVm)
 			{
 				base.DataContext = new VmType();
