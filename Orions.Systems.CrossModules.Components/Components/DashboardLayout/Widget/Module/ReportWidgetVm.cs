@@ -35,7 +35,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task RefreshReportResultData()
 		{
-			var dataSource = (this.Widget as ReportBaseWidget)?.DataSource;
+			var widget = this.Widget as ReportBaseWidget;
+			var dataSource = widget?.DataSource;
 			if (dataSource == null)
 				return;
 
@@ -55,23 +56,23 @@ namespace Orions.Systems.CrossModules.Components
 			Report = reportResult;
 			IsLoadedReportResult = true;
 
-			ReportChartData = LoadReportChartData(reportResult, null);
+			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',').Select(it => it.Trim()).ToArray());
 
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 		}
 
-		public static ReportChartData LoadReportChartData(IReportResult report, string filter)
+		public static ReportChartData LoadReportChartData(IReportResult report, string[] categoryFilters)
 		{
 			var result = new ReportChartData();
 
 			if (report == null) 
 				return result;
 
-			var categoryFilters = new List<string>();
-			if (!string.IsNullOrWhiteSpace(filter))
-			{
-				categoryFilters = filter.Split(',').Select(it => it.Trim()).ToList();
-			}
+			//var categoryFilters = new List<string>();
+			//if (!string.IsNullOrWhiteSpace(filter))
+			//{
+			//	categoryFilters = filter.Split(',').Select(it => it.Trim()).ToList();
+			//}
 
 			var categories = report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
 			var rowsDef = report.Data.RowsDefinitions.ToList();
