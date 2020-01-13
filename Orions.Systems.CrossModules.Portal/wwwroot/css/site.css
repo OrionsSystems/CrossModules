@@ -229,18 +229,10 @@ html, body, table, .btn-outline-dark {
 
 
 
-.dashboard-widget-label {
-	color: black;
-}
-	.dashboard-title rect {
-		fill: #898888 !important;
-	}
-
 .dashboard-element-container {
 	border: 1px dashed #f8f8f8;
 	background-color: #403f3f;
 }
-
 
 		.dashboard-element-commands > a:hover {
 			background-color: transparent !important;
@@ -286,6 +278,11 @@ html, body, table, .btn-outline-dark {
 	-webkit-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
 	-moz-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
 	box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+}
+
+
+.e-btn.e-primary, .e-css.e-btn.e-primary {
+	background-color: #e0e1e1 !important;
 }
 
 /* END DARK THEME FIX */
