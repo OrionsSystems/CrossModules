@@ -30,16 +30,15 @@ namespace Orions.Systems.CrossModules.Components
 
 		public BaseBlazorComponent()
 		{
+			if (this.AutoCreateVm)
+			{
+				base.DataContext = new VmType();
+			}
 		}
 
 		protected override void OnDataContextAssigned(BaseVm dataContext)
 		{
 			base.OnDataContextAssigned(dataContext);
-
-			if (this.AutoCreateVm)
-			{
-				base.DataContext = new VmType();
-			}
 		}
 	}
 
