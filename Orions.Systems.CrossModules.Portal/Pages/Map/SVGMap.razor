@@ -144,6 +144,10 @@
                    stroke-width: 0.1808;
                    stroke-miterlimit: 2.1162;
                }
+
+					.st21-over {
+                   opacity: 0.7;
+               }
             
                .st22 {
                    fill: #159C70;
@@ -1055,20 +1059,15 @@
 
 
 						</g>
-	<g id="HOME_FURNISHING" style="display:@(isShowHomeFurnishings ? "block":"none");">
-	<polygon class="st21" points="2228.4,1979 2189.7,2200.2 2190.2,2200.2 2137.9,2512.4 2322.2,2543.3 2411.4,2009.1 		" />
-
-
-
-	<polygon class="st21" points="1442.5,1215.4 1424.3,1161.7 1346.1,1148.6 1294.6,1471.2 1396.6,1488 		" />
-
-
-
-	<polygon class="st21" points="1749.7,1693.3 1698.3,2001.3 1747.9,2010 1800.2,1701.4 		" />
-
-
-
-						</g>
+	<g id="HOME_FURNISHING">
+		<polygon @onclick="OnCraleAndBarel" 
+					@onmouseover="@(ev => { isCarelAndBarel = true; })" 
+					@onmouseout="@(ev => { isCarelAndBarel = false; })" 
+					class="@(isCarelAndBarel ? "st21" : "st21-over")" 
+					points="2228.4,1979 2189.7,2200.2 2190.2,2200.2 2137.9,2512.4 2322.2,2543.3 2411.4,2009.1" />
+		<polygon style="visibility:@(isShowHomeFurnishings ? "inherit":"hidden");" class="st21" points="1442.5,1215.4 1424.3,1161.7 1346.1,1148.6 1294.6,1471.2 1396.6,1488" />
+		<polygon style="visibility:@(isShowHomeFurnishings ? "inherit":"hidden");" class="st21" points="1749.7,1693.3 1698.3,2001.3 1747.9,2010 1800.2,1701.4" />
+	</g>
 	<g id="HANDBAGS__x26__LUGGAGE" style="display:@(isShowHandbagsLuggage ? "block":"none");">
 	<path class="st21" d="M1579,1705.5c-10.9-1.8-20.9-5.5-29.1-10l-46.4,273l52.8,8.6l46-271.2
 					C1595,1707.4,1587.2,1706.9,1579,1705.5z" />
@@ -6399,6 +6398,9 @@
 	public bool isShowTechnologyElectronics;
 	public bool isShowWomenApparel;
 
+
+	private bool isCarelAndBarel = false;
+
 	[Parameter]
 	public string SelectedCategory { get; set; }
 
@@ -6453,7 +6455,12 @@
 		}
 	}
 
-	private void DisableAllCategories() { 
+	private void OnCraleAndBarel() {
+
+		//Show CraleAndBarel Dashboard 
+	}
+
+	private void DisableAllCategories() {
 		isShowBeautyPersonalCar = false;
 		isShowBooksCardsGifts = false;
 		isShowChildrenApparelToys = false;
