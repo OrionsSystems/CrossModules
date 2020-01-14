@@ -9,7 +9,7 @@
                }
             
                .st1 {
-                   fill: #E0E0E0;
+                   fill: #4f4e4e;
                }
             
                .st2 {
@@ -6404,6 +6404,9 @@
 	[Parameter]
 	public string SelectedCategory { get; set; }
 
+	[Parameter]
+	public EventCallback<string> OnSelectZone { get; set; }
+
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -6457,7 +6460,9 @@
 
 	private void OnCraleAndBarel() {
 
-		//Show CraleAndBarel Dashboard 
+		//Show CraleAndBarel Dashboard by tag
+		var tag = "craleandbarel";
+		OnSelectZone.InvokeAsync(tag);
 	}
 
 	private void DisableAllCategories() {
