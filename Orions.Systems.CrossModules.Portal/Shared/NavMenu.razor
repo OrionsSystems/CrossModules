@@ -1,33 +1,39 @@
 ﻿<div class="top-row pl-2 navbar">
-    <a class="navbar-brand" href="">Orions Systems Portal</a>
-    @*<button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>*@
+	<a class="navbar-brand" href="/">
+		<div class="logo-element">
+			<img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
+		</div>
+		<span>Orions Systems Portal</span>
+	</a>
+
+	@*<button class="navbar-toggler" @onclick="ToggleNavMenu">
+			 <span class="navbar-toggler-icon"></span>
+		</button>*@
 </div>
 
 <MatNavMenu Class="mat-nav">
-   <MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon> Home</MatNavItem>
-   <MatNavItem Href="/default"> <MatIcon Icon="list_alt"></MatIcon> Default</MatNavItem>
-   <MatNavItem Href="/dashboard"> <MatIcon Icon="view_module"></MatIcon> Dashboards</MatNavItem>
-   <MatNavItem Href="/visit"> <MatIcon Icon="directions"></MatIcon> Visit</MatNavItem>
+	<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon> Home</MatNavItem>
+	<MatNavItem Href="/default"> <MatIcon Icon="list_alt"></MatIcon> Default</MatNavItem>
+	<MatNavItem Href="/dashboard"> <MatIcon Icon="view_module"></MatIcon> Dashboards</MatNavItem>
+	<MatNavItem Href="/visit"> <MatIcon Icon="directions"></MatIcon> Visit</MatNavItem>
 </MatNavMenu>
 
 @code {
-    bool collapseNavMenu = true;
+	bool collapseNavMenu = true;
 
-    string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+	string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
-    void ToggleNavMenu()
-    {
-        collapseNavMenu = !collapseNavMenu;
-    }
+	void ToggleNavMenu()
+	{
+		collapseNavMenu = !collapseNavMenu;
+	}
 }
 
 <style>
-    .mat-nav, .mat-nav a {
-        
-    }
-        .mat-nav .mdc-list-item--selected {
-            background-color: #bab9b9;
-        }
+	.mat-nav, .mat-nav a {
+	}
+
+		.mat-nav .mdc-list-item--selected {
+			background-color: #4e4c4c;
+		}
 </style>
