@@ -18,7 +18,8 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<EjsChart Title="@Widget.ChartTitle"
+			<EjsChart @ref="Chartobj"
+						 Title="@Widget.ChartTitle"
 						 Background="@Widget.ChartBackground"
 						 SelectionMode="SelectionMode.Series">
 
@@ -131,23 +132,25 @@
 
 @code {
 
-		public void OnApply()
-		{
-			// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
-			var list = Vm.ReportChartData.Series.FirstOrDefault();
-			Vm.ReportChartData.Series.Clear();
+	public EjsChart Chartobj;
 
-			if (list != null)
-				Vm.ReportChartData.Series.Add(list);
+	public void OnApply()
+	{
+		// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
+		var list = Vm.ReportChartData.Series.FirstOrDefault();
+		Vm.ReportChartData.Series.Clear();
 
-			var list2 = Vm.ReportChartData.Categories.FirstOrDefault();
-			Vm.ReportChartData.Categories.Clear();
+		if (list != null)
+			Vm.ReportChartData.Series.Add(list);
 
-			if (list2 != null)
-				Vm.ReportChartData.Categories.Add(list2);
+		var list2 = Vm.ReportChartData.Categories.FirstOrDefault();
+		Vm.ReportChartData.Categories.Clear();
 
-			this.StateHasChanged();
-		}
+		if (list2 != null)
+			Vm.ReportChartData.Categories.Add(list2);
+
+		Chartobj.Refresh();
+	}
 
 	public string ChartClickHandlerMessage { get; set; }
 
