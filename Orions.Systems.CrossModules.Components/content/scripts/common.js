@@ -396,3 +396,32 @@ window.addEventListener("resize", function () {
 
    timeout = setTimeout(raiseResizeEvent, 200);
 });
+
+
+(function () {
+   window.Orions.AddClassById = {
+      init: function (elementId, className, componentInstance) {
+         var element = document.querySelector('#' + elementId);
+
+         element.className = className;
+         element.classList.add(className);
+         element.classList.remove("mystyle");
+
+         componentInstance.invokeMethodAsync('OnAddClass').then(null, function (err) {
+            throw new Error(err);
+         });
+      },
+   };
+   window.Orions.RemoveClassById = {
+      init: function (elementId, className, componentInstance) {
+         var element = document.querySelector('#' + elementId);
+
+         element.className = className;
+         element.classList.remove(className);
+
+         componentInstance.invokeMethodAsync('OnRemoveClass').then(null, function (err) {
+            throw new Error(err);
+         });
+      },
+   };
+})();
