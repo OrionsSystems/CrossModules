@@ -22,7 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool XAxisIsIndexed { get; set; } = true;
 
-		public bool IsEnableTooltip { get; set; }
+		public bool IsEnableTooltip { get; set; } = true;
 
 		public bool IsEnableLegend { get; set; } = true;
 
