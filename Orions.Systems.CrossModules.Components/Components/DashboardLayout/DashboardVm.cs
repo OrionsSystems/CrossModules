@@ -89,27 +89,28 @@ namespace Orions.Systems.CrossModules.Components
 					if (column.Widget == null)
 						continue;
 
-					// Deduce vm type from the Widget type.
-					var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == column.Widget.GetType()));
-
-					var vm = (WidgetVm)Activator.CreateInstance(vmType);
-					vm.HyperStore = this.HyperStore;
-					vm.Widget = column.Widget; // ** Order matters here!!
-					vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
-
-					_widgetsVms[column.Widget] = vm;
+					ObtainWidgetVm(column.Widget);
 				}
 			}
 		}
 
-		public WidgetVm GetWidgetVm(IDashboardWidget widget)
+		public WidgetVm ObtainWidgetVm(IDashboardWidget widget)
 		{
 			WidgetVm widgetVm;
 			if (_widgetsVms.TryGetValue(widget, out widgetVm))
 				return widgetVm;
 
-			System.Diagnostics.Debug.Assert(false, "Failed to find Vm for widget");
-			return null;
+			// Deduce vm type from the Widget type.
+			var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == widget.GetType()));
+
+			var vm = (WidgetVm)Activator.CreateInstance(vmType);
+			vm.HyperStore = this.HyperStore;
+			vm.Widget = widget; // ** Order matters here!!
+			vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
+			
+			_widgetsVms[widget] = vm;
+
+			return vm;
 		}
 
 		public async Task<Response> SaveChangesAsync()
