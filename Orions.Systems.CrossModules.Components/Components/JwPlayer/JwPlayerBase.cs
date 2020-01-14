@@ -14,7 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 		/// Unique element ID
 		/// </summary>
 		[Parameter]
-		public string Id
+		public override string Id
 		{
 			get
 			{
@@ -277,7 +277,19 @@ namespace Orions.Systems.CrossModules.Components
 		[Parameter]
 		public List<PlayerSource> Sources { get; set; } = new List<PlayerSource>();
 
-		
+        [Parameter]
+        public int StartAt
+        {
+            get
+            {
+                return JwPlayerConfig.StartAt;
+            }
+            set
+            {
+                JwPlayerConfig.StartAt = value;
+            }
+        }
+
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			if (JwPlayerConfig == null || string.IsNullOrWhiteSpace(JwPlayerConfig.Id)) throw new ArgumentException(nameof(JwPlayerConfig));

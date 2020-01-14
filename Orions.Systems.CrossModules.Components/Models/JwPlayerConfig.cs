@@ -109,10 +109,16 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public string Preload { get; set; } = "auto";
 
-		/// <summary>
-		/// Jw player license key
+
+        /// <summary>
+		/// Initial playback position to start from
 		/// </summary>
-		public string Key => "0cEcLfyR+RBLPh2z3KkWfFzX1U/w/2AtglS1xoT4xl8=";
+        public int StartAt { get; set; }
+
+        /// <summary>
+        /// Jw player license key
+        /// </summary>
+        public string Key => "0cEcLfyR+RBLPh2z3KkWfFzX1U/w/2AtglS1xoT4xl8=";
 
 	}
 

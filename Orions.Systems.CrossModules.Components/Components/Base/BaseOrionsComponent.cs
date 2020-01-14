@@ -38,7 +38,7 @@ namespace Orions.Systems.CrossModules.Components
 		public ForwardRef RefBack { get; set; }
 
 		[Parameter]
-		public string Id { get; set; } = IdGeneratorHelper.Generate("orions_id_");
+		public virtual string Id { get; set; } = IdGeneratorHelper.Generate("orions_id_");
 
 		[Parameter(CaptureUnmatchedValues = true)]
 		public Dictionary<string, object> Attributes { get; set; }

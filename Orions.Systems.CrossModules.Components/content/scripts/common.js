@@ -22,7 +22,13 @@ window.Orions.JwPlayer = {
          abouttext: config.aboutText,
          aboutlink: config.aboutLink,
          autostart: config.autostart,
-         mute: config.mute,
+          mute: config.mute,
+          playlist: [
+              {
+                  file: config.file,
+                  starttime: config.startAt
+              }
+          ]
          //playlist: 'https://cdn.jwplayer.com/v2/playlists/qI5YMsQg?related_media_id=OpQMbAfZ',
          //related: {
          //    autoplaytimer: 10,
@@ -40,6 +46,10 @@ window.Orions.JwPlayer = {
          player.play();
       });
    },
+
+    seek: function (id, position) {
+        jwplayer(id).seek(position);
+    },
 
    remove: function (id) {
       var player = jwplayer(id);

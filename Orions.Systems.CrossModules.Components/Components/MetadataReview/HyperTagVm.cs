@@ -8,15 +8,29 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Orions.Infrastructure.HyperSemantic;
 
 namespace Orions.Systems.CrossModules.Components
 {
     public class HyperTagVm : BlazorVm
     {
-        private IHyperTagHyperIds HyperTagId;
-        public ViewModelProperty<byte[]> Image { get; set; } = new ViewModelProperty<byte[]>();
         private NetStore _store;
+        private HyperTag _hyperTag;
 
+        private IHyperTagHyperIds HyperTagId;
+
+        // Data props
+        public ViewModelProperty<byte[]> Image { get; set; } = new ViewModelProperty<byte[]>();
+        public ViewModelProperty<string> HyperTagLabel { get; set; } = new ViewModelProperty<string>();
+        public ViewModelProperty<string> HyperTagFragmentSliceLabel { get; set; } = new ViewModelProperty<string>();
+        public ViewModelProperty<List<string>> TagonomyLabels { get; private set; }
+
+        // Control state
+        public bool IsPlaying { get; private set; } = false;
+        public bool IsExpanded { get; set; }
+
+        // Computed props
         public string ImageBase64Url 
         { 
             get
@@ -29,25 +43,91 @@ namespace Orions.Systems.CrossModules.Components
                 return null;
             } 
         }
+        public string PlayerUri
+        {
+            get
+            {
+                var dnsSafehost = _store.CurrentConnection.Uri.DnsSafeHost;
+                var assetId = HyperTagId.HyperId.AssetId.Value.Guid.ToString();
+                return $"http://{dnsSafehost}:8585/dash/{assetId}/asset.mpd";
+            }
+        }
+        public string PlayerId
+        {
+            get
+            {
+                return $"Orions.JwPlayer-{HyperTagId.HyperId.AssetId.Value.Guid}";
+            }
+        }
 
-        public ViewModelProperty<string> Id { get; set; } = new ViewModelProperty<string>();
+        public int StartAt { get; set; }
 
-        public ViewModelProperty<string> HyperTagLabel { get; set; } = new ViewModelProperty<string>();
-        public ViewModelProperty<string> HyperTagFragmentSliceLabel { get; set; } = new ViewModelProperty<string>();
-
-        //protected 
+        // Event callbacks
+        public EventCallback<string> OnPlayButtonClicked { get; set; }
 
         public async Task Initialize(HyperTag tag, NetStore store)
         {
             _store = store;
 
+            this._hyperTag = tag;
+
             this.HyperTagLabel.Value = tag.GetElement<HyperTagLabel>()?.Label ?? "";
 
             var ids = tag.GetElements<IHyperTagHyperIds>().FirstOrDefault(e => e.HyperId.TrackId.Value.Type == HyperTrackTypes.Video);
             this.HyperTagId = ids;
+
             this.HyperTagFragmentSliceLabel = $"@ {ids.HyperId.FragmentId}:{ids.HyperId.SliceId}";
 
+            var startAtElement = tag.GetElements<HyperTagTime>().FirstOrDefault(t => t.TimeType == HyperTagTime.TimeTypes.StreamTime);
+            this.StartAt = (int) (startAtElement.StreamTime_TimeSpan?.TotalSeconds ?? 0);
+
+            var execution = tag.GetElement<TagonomyExecutionResultHyperTagElement>();
+            if (execution != null && execution.Result != null)
+            {
+                var steps = execution.Result.FinishedPaths?.SelectMany(p => p.Steps).ToArray();
+                if (steps != null && steps.Any())
+                {
+                    var tagonomyLabels = new List<string>();
+
+                    foreach (var step in steps)
+                    {
+                        tagonomyLabels.Add(step.OptionalTargetNodeName);
+                        var checkLeafs = step.Actions.Where(it => it.NodeElementTypeName == typeof(CheckStateLeafNodeElement).FullName
+                                                        && ((CheckStateLeafNodeElement.ElementUniformResult)it.Result).IsChecked);
+                        foreach (var item in checkLeafs)
+                        {
+                            tagonomyLabels.Add(item.NodeName);
+                        }
+
+                    }
+
+                    TagonomyLabels = tagonomyLabels;
+                }
+            }
+
             Image = await LoadImage(tag);
+        }
+
+        public async Task OnPlayButtonClickedHandler()
+        {
+            this.IsPlaying = true;
+            await OnPlayButtonClicked.InvokeAsync(this.HyperTagId.HyperId.AssetId.Value.Value);
+        }
+
+        public void OnClosePlayer()
+        {
+            IsPlaying = false;
+        }
+
+        public async Task OnExpandButtonClickedHandler()
+        {
+            this.IsExpanded = true;
+            await OnPlayButtonClicked.InvokeAsync(this.HyperTagId.HyperId.AssetId.Value.Value);
+        }
+
+        public void OnCloseExpanded()
+        {
+            IsExpanded = false;
         }
 
         private async Task<byte[]> LoadImage(HyperTag tag)

@@ -1,8 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 @inherits MetadataReviewBase
-
 <div class="metadatareview-component">
-    <TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@_store" Class="metadatareview-grid"/>
+    <TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@_store" Class="metadatareview-grid" />
 
     <div class="metadatareview-page-controls">
         <ul class="pagination">
@@ -40,33 +39,52 @@
             </select>
         </div>
 
-        <div class="total-pages">Total pages: @DataContext.TotalPages</div>
+        <div class="go-to-page-control">
+            <span>Go to page: </span>
+            <input type="number" class="form-control" @bind="Vm.PageNumber.Value"/>
+        </div>
+
+        <div class="total-pages">Total pages: @DataContext.TotalPages.Value</div>
     </div>
+
+
 </div>
 
+
 <style>
-    .metadatareview-component .metadatareview-grid{
-        min-height:500px;
+    .metadatareview-component .metadatareview-grid {
+        min-height: 500px;
     }
 
-    .metadatareview-page-controls .pagination{
-        width:120px;
-        float:left;
-    }
-
-    .metadatareview-page-controls .pagination .page-link{
-        cursor:pointer;
-    }
-
-    .metadatareview-page-controls .page-select{
-        width:155px;
-        float:left;
-    }
-
-    .metadatareview-page-controls .total-pages{
+    .metadatareview-page-controls .pagination {
+        margin-right:10px;
         float: left;
+    }
+
+        .metadatareview-page-controls .pagination .page-link {
+            cursor: pointer;
+        }
+
+    .metadatareview-page-controls .page-select {
+        width: 155px;
+        float: left;
+    }
+
+    .metadatareview-page-controls .go-to-page-control {
+        float: left;
+        margin-left: 20px;
+    }
+
+    .metadatareview-page-controls .go-to-page-control input{
+        display:inline-block;
+        width:auto;
+    }
+
+    .metadatareview-page-controls .total-pages {
+        float: right;
         margin-left: 20px;
         margin-top: 8px;
     }
+
 </style>
 
