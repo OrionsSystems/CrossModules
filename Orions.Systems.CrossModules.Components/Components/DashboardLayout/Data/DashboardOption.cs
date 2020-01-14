@@ -1,9 +1,4 @@
-﻿using Orions.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Orions.Systems.CrossModules.Components
+﻿namespace Orions.Systems.CrossModules.Components
 {
 	public class DashboardOption
 	{
@@ -12,6 +7,8 @@ namespace Orions.Systems.CrossModules.Components
 		public bool IsDefault { get; set; }
 
 		public bool IsHideTitle { get; set; }
+
+		public string Tag { get; set; }
 
 		public DashboardOption()
 		{

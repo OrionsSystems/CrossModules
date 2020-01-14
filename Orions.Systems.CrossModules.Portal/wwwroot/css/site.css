@@ -18,7 +18,6 @@ html, body {
 }
 
 
-
 app {
 	position: relative;
 	display: flex;
@@ -26,11 +25,23 @@ app {
 }
 
 .top-row {
-	height: 2.6rem;
+	/*height: 2.6rem;*/
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 }
+
+.logo-element {
+	font-size: 18px;
+	font-weight: 600;
+	color: white;
+	display: inline-block;
+}
+
+	.logo-element img {
+		height: 35px;
+		width: 35px;
+	}
 
 .main {
 	flex: 1;
@@ -234,25 +245,25 @@ html, body, table, .btn-outline-dark {
 	background-color: #403f3f;
 }
 
-		.dashboard-element-commands > a:hover {
-			background-color: transparent !important;
-			-webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
-			-moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
-			box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
-		}
+.dashboard-element-commands > a:hover {
+	background-color: transparent !important;
+	-webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+	-moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+	box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+}
 
-	.dashboard-dragbar rect, .dashboard-dragbar polygon {
-		fill: #888888 !important;
-	}
+.dashboard-dragbar rect, .dashboard-dragbar polygon {
+	fill: #888888 !important;
+}
 
 
-	.dashboard-swap-column path, .dashboard-swap-column line {
-		stroke: #888888;
-	}
+.dashboard-swap-column path, .dashboard-swap-column line {
+	stroke: #888888;
+}
 
-	.dashboard-content-next polygon, .dashboard-content-prev polygon {
-		stroke: #888888;
-	}
+.dashboard-content-next polygon, .dashboard-content-prev polygon {
+	stroke: #888888;
+}
 
 .dashboard-widget-add > a {
 	border: 1px solid #888888;
@@ -264,9 +275,9 @@ html, body, table, .btn-outline-dark {
 		box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
 	}
 
-	.dashboard-swap-row path, .dashboard-swap-row line {
-		stroke: #888888;
-	}
+.dashboard-swap-row path, .dashboard-swap-row line {
+	stroke: #888888;
+}
 
 .dashboard-modal-widget-element {
 	-webkit-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);

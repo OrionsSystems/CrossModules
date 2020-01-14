@@ -18,7 +18,8 @@
 
 		<div class="widget-content-report-linechart-view">
 
-			<EjsChart Title="@Widget.ChartTitle"
+			<EjsChart @ref="Chartobj"
+						 Title="@Widget.ChartTitle"
 						 Background="@Widget.ChartBackground"
 						 SelectionMode="SelectionMode.Series">
 
@@ -134,23 +135,34 @@
 
 @code {
 
-		public void OnApply()
+	public EjsChart Chartobj;
+
+	public void OnApply()
+	{
+
+		// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
+		var seriesData = Vm.ReportChartData.Series.FirstOrDefault();
+		Vm.ReportChartData.Series.Clear();
+
+		for (var i = 0; i <= Chartobj.Series.Count; i++)
 		{
-			// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
-			var list = Vm.ReportChartData.Series.FirstOrDefault();
-			Vm.ReportChartData.Series.Clear();
-
-			if (list != null)
-				Vm.ReportChartData.Series.Add(list);
-
-			var list2 = Vm.ReportChartData.Categories.FirstOrDefault();
-			Vm.ReportChartData.Categories.Clear();
-
-			if (list2 != null)
-				Vm.ReportChartData.Categories.Add(list2);
-
-			this.StateHasChanged();
+			Chartobj.RemoveSeries(i);
 		}
+
+		var chartSeries = Chartobj.Series.FirstOrDefault();
+		if (seriesData != null) {
+			Vm.ReportChartData.Series.Add(seriesData);
+			Chartobj.AddSeries(chartSeries);
+		}
+
+		var category = Vm.ReportChartData.Categories.FirstOrDefault();
+		Vm.ReportChartData.Categories.Clear();
+
+		if (string.IsNullOrEmpty(category))
+			Vm.ReportChartData.Categories.Add(category);
+
+		Chartobj.Refresh();
+	}
 
 	public string ChartClickHandlerMessage { get; set; }
 
@@ -197,5 +209,13 @@
 	.widget-content-report-linechart-footer {
 		font-size: 12px;
 		font-style: italic;
+	}
+
+	svg > text {
+		fill: white !important;
+	}
+
+	g > text {
+		fill: white !important;
 	}
 </style>
