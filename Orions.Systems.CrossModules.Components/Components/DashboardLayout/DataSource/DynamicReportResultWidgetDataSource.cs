@@ -30,7 +30,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<IReportResult> GenerateReportResultAsync(WidgetDataSourceContext context)
+		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			if (this.ReportId.HasValue == false)
 				throw new OrionsException($"No {nameof(ReportId)} assigned");
@@ -47,30 +47,7 @@ namespace Orions.Systems.CrossModules.Components
 			var templateData = await manager.GenerateTemplateAsync(context.HyperStore, reportTemplate, this.MetadataSetId.Value);
 
 			if (context.DynamicFilter != null)
-			{
-				// Modify report template to fit runtime requirements.
-				if (context.DynamicFilter is MultiFilterData multiFilter)
-				{
-					foreach (var textFilterData in multiFilter.Elements?.OfType<TextFilterData>() ?? Enumerable.Empty<TextFilterData>())
-					{
-						var columns = new List<ReportColumn>(templateData.ColumnsDefinitions);
-						var rows = new List<ReportRow>(templateData.RowsDefinitions);
-
-						foreach (var column in columns.ToArray())
-						{
-							if (textFilterData.Filter(new string[] { column.Title }, null) == false)
-								columns.Remove(column);
-
-							//foreach (var row in rows)
-							//{
-							//}
-						}
-
-						templateData.ColumnsDefinitions = columns.ToArray(); // Re-apply the filtered columns.
-					}
-				}
-
-			}
+				templateData.FilterWith(context.DynamicFilter);
 
 			// Actually run the report.
 			var data = await manager.ExecuteTemplate(context.HyperStore, reportTemplate, templateData, this.MetadataSetId.Value, false);

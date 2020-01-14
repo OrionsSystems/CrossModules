@@ -16,18 +16,20 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Add report result document", HelpTextAttribute.Priorities.Important)]
 		public byte[] Data { get; set; }
 
+		public override bool SupportsDynamicFiltration => true;
+
 		public CSVWidgetDataSource()
 		{
 		}
 
-		public override async Task<IReportResult> GenerateReportResultAsync(WidgetDataSourceContext context)
+		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var byteArray = this.Data;
 
 			if (byteArray == null)
 				return null;
 
-			var result = new ReportData();
+			var reportData = new ReportData();
 
 			var rowDefList = new List<ReportRow>();
 			var colDefList = new List<ReportColumn>();
@@ -57,7 +59,7 @@ namespace Orions.Systems.CrossModules.Components
 								colDefList.Add(colDef);
 							}
 
-							result.ColumnsDefinitions = colDefList.ToArray();
+							reportData.ColumnsDefinitions = colDefList.ToArray();
 
 						}
 						else
@@ -83,24 +85,26 @@ namespace Orions.Systems.CrossModules.Components
 				}
 			}
 
-			result.ColumnsDefinitions = colDefList.ToArray();
-			result.RowsDefinitions = rowDefList.ToArray();
+			reportData.ColumnsDefinitions = colDefList.ToArray();
+			reportData.RowsDefinitions = rowDefList.ToArray();
+
+			if (context.DynamicFilter != null)
+				reportData.FilterWith(context.DynamicFilter);
 
 			var item1 = dataMap.Values;
 
-			foreach (var item in dataMap)
+			foreach (KeyValuePair<int, List<string>> item in dataMap)
 			{
 				var rowIndex = item.Key;
 				var columnData = item.Value;
 
 				var cells = new List<ReportDataCell>();
 				var dataCell = columnData.Select(it => new ReportDataCell() { Values = new[] { it } }).ToArray();
-				result.AddRow(dataCell);
-
+				reportData.AddRow(dataCell);
 			}
 
 			var report = new HyperMetadataReportResult();
-			report.Data = result;
+			report.Data = reportData;
 
 			return report;
 		}

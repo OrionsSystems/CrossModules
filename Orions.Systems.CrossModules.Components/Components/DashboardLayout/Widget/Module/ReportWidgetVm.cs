@@ -45,7 +45,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			context.DynamicFilter = this.DashboardVm?.DynamicFilter;
 
-			var reportResult = await dataSource.GenerateReportResultAsync(context);
+			var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
 			if (reportResult == null)
 			{
 				Logger.Instance.Error("Cannot load report result");
@@ -67,12 +67,6 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (report == null) 
 				return result;
-
-			//var categoryFilters = new List<string>();
-			//if (!string.IsNullOrWhiteSpace(filter))
-			//{
-			//	categoryFilters = filter.Split(',').Select(it => it.Trim()).ToList();
-			//}
 
 			var categories = report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
 			var rowsDef = report.Data.RowsDefinitions.ToList();

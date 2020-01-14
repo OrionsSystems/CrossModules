@@ -52,12 +52,12 @@
 	public string[] Values
 	{
 		get => Widget.Filters;
-		set => Widget.Filters = value;
 	}
 
 	public async Task OnApply(MouseEventArgs args)
 	{
-		string[] filters = MultiSelect.Value;
+		string text = MultiSelect.Text;
+		string[] filters = text.Split(',', StringSplitOptions.RemoveEmptyEntries); // There is a bug when using Value and we remove the last item, so using this is more reliable.
 		await Vm.ApplyAsync(filters);
 		await ProgressButton.ProgressComplete(); // Mark completion.
 	}

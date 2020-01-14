@@ -18,21 +18,29 @@ namespace Orions.Systems.CrossModules.Components
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataReportResult))]
 		public HyperDocumentId ReportResultId { get; set; }
 
+		public override bool SupportsDynamicFiltration => true;
+
 		public ReportResultWidgetDataSource()
 		{
 		}
 
-		public override async Task<IReportResult> GenerateReportResultAsync(WidgetDataSourceContext context)
+		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var args = new RetrieveHyperDocumentArgs(this.ReportResultId);
 			var doc = await context.HyperStore.ExecuteAsync(args);
 
 			if (args.ExecutionResult.IsNotSuccess)
-			{
 				return null;
+
+			var result = doc?.GetPayload<HyperMetadataReportResult>();
+
+			if (result != null)
+			{
+				if (context.DynamicFilter != null)
+					result.Data.FilterWith(context.DynamicFilter);
 			}
 
-			return doc?.GetPayload<HyperMetadataReportResult>();
+			return result;
 		}
 
 	}

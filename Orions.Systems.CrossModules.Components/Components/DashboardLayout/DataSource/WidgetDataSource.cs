@@ -16,6 +16,6 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public abstract Task<IReportResult> GenerateReportResultAsync(WidgetDataSourceContext context);
+		public abstract Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context);
 	}
 }
