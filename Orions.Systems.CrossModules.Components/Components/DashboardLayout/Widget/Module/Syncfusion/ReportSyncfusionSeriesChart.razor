@@ -172,7 +172,25 @@
 	{
 		await Vm.RefreshReportResultData();
 
+		Vm.OnReportResultChanged += OnChangeDataSource;
+
 		await base.OnInitializedAsync();
+	}
+
+	private void OnChangeDataSource()
+	{
+		//TODO
+		//for (var i = 0; i <= Chartobj.Series.Count; i++)
+		//{
+		//	Chartobj.RemoveSeries(i);
+		//}
+
+		//foreach (var chartSeries in Vm.ReportChartData.Series)
+		//{
+		//	Chartobj.AddSeries(chartSeries);
+		//}
+
+		Chartobj.Refresh();
 	}
 
 	protected override void OnStateHasChanged()

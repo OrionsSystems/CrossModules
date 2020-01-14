@@ -5,6 +5,7 @@ using Orions.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Infrastructure.Reporting;
+using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -23,6 +24,10 @@ namespace Orions.Systems.CrossModules.Components
 		public string ReportName { get { return Report?.Name; } }
 
 		public bool ReportHasName { get { return !string.IsNullOrWhiteSpace(ReportName); } }
+
+		public delegate void ReportResultChangedHandler();
+
+		public event ReportResultChangedHandler OnReportResultChanged;
 
 		public ReportWidgetVm()
 		{
@@ -59,6 +64,8 @@ namespace Orions.Systems.CrossModules.Components
 			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',').Select(it => it.Trim()).ToArray());
 
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+
+			OnReportResultChanged?.Invoke();
 		}
 
 		public static ReportChartData LoadReportChartData(IReportResult report, string[] categoryFilters)
