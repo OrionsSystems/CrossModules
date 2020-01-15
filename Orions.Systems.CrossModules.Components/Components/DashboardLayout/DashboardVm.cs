@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Orions.Infrastructure.Reporting;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -123,12 +124,12 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
-		public void SetStringFilters(string[] filters)
+		public void SetStringFilters(string[] filters, ReportInstruction.Targets filterTarget)
 		{
 			if (DynamicFilter is MultiFilterData multiFilter)
 			{
-				multiFilter.Elements = new IUniFilterData[] { new TextFilterData() { 
-					LabelsArray = filters, Mode = AndOr.Or, StringCompareMode = TextFilterData.StringComparisonMode.Contains } };
+				multiFilter.Elements = new IUniFilterData[] { new TextFilterData() {
+					LabelsArray = filters, Mode = AndOr.Or, StringCompareMode = TextFilterData.StringComparisonMode.Contains , Instruction = new ReportInstruction(){ Target = filterTarget }} };
 			}
 			else
 			{

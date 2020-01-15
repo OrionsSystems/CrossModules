@@ -20,14 +20,14 @@ namespace Orions.Systems.CrossModules.Components
 			base.OnSetParentVm(parentVm);
 
 			if (this.DashboardVm != null && this.Widget.Filters?.Length > 0)
-				this.DashboardVm.SetStringFilters(this.Widget.Filters);
+				this.DashboardVm.SetStringFilters(this.Widget.Filters, this.Widget.FilterTarget);
 		}
 
 		public async Task ApplyAsync(string[] filters)
 		{
 			this.Widget.Filters = filters;
 
-			this.DashboardVm.SetStringFilters(filters);
+			this.DashboardVm.SetStringFilters(filters, this.Widget.FilterTarget);
 
 			await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
 
