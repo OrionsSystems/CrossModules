@@ -31,7 +31,7 @@
 		@if (Vm.Widget.ShowDateTimeSelection)
 		{
 			<div class="control-styles">
-					<EjsDateRangePicker Placeholder="Select Time Range"></EjsDateRangePicker>
+					<EjsDateRangePicker @ref="DateRangePicker" Placeholder="Select Time Range"></EjsDateRangePicker>
 			</div>
 		}
 
@@ -56,6 +56,8 @@
 
 	public EjsMultiSelect<string[]> MultiSelect;
 
+	public EjsDateRangePicker DateRangePicker { get; set; }
+
 	public string[] Values
 	{
 		get => Widget.Filters;
@@ -63,9 +65,11 @@
 
 	public async Task OnApply(MouseEventArgs args)
 	{
+		// There is a bug when using Value and we remove the last item, so using this is more reliable.
 		string text = MultiSelect.Text;
-		string[] filters = text.Split(',', StringSplitOptions.RemoveEmptyEntries); // There is a bug when using Value and we remove the last item, so using this is more reliable.
-		await Vm.ApplyAsync(filters);
+		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { }; 
+
+		await Vm.ApplyAsync(filters, DateRangePicker.StartDate, DateRangePicker.EndDate);
 
 		await ProgressButton.ProgressComplete(); // Mark completion.
 	}

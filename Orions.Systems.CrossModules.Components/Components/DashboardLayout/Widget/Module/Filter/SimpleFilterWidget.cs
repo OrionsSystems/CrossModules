@@ -1,5 +1,5 @@
-<<<<<<< HEAD
 ﻿using Orions.Common;
+using Orions.Infrastructure.Reporting;
 using System;
 
 namespace Orions.Systems.CrossModules.Components
@@ -12,6 +12,12 @@ namespace Orions.Systems.CrossModules.Components
       [UniBrowsable(false)]
       public string[] Filters { get; set; }
 
+      [UniBrowsable(false)]
+      public DateTime? StartDate { get; set; }
+
+      [UniBrowsable(false)]
+      public DateTime? EndDate { get; set; }
+
       public bool ShowTextLabelSelection { get; set; } = true;
 
       public bool ShowDateTimeSelection { get; set; } = true;
@@ -23,3 +29,4 @@ namespace Orions.Systems.CrossModules.Components
          this.Label = "Simple Filter"; // Title of this widget.
       }
    }
+}
