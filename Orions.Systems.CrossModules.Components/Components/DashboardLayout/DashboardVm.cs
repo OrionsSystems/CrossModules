@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Orions.Infrastructure.Reporting;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -137,6 +138,7 @@ namespace Orions.Systems.CrossModules.Components
 					_dynamicFiltersByGroup[group] = data;
 				}
 			}
+
 			return data;
 		}
 
@@ -154,16 +156,17 @@ namespace Orions.Systems.CrossModules.Components
 			return result;
 		}
 
-		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime)
+		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime, ReportInstruction.Targets filterTarget)
 		{
 			var data = ObtainFilterData(group);
 
 			var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
 			dateTimeFilterData.StartTime = startTime;
 			dateTimeFilterData.EndTime = endTime;
+			dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
 		}
 
-		public void SetStringFilters(string group, string[] filters)
+		public void SetStringFilters(string group, string[] filters, ReportInstruction.Targets filterTarget)
 		{
 			var data = ObtainFilterData(group);
 
@@ -172,6 +175,7 @@ namespace Orions.Systems.CrossModules.Components
 			textFilterData.LabelsArray = filters;
 			textFilterData.Mode = AndOr.Or;
 			textFilterData.StringCompareMode = TextFilterData.StringComparisonMode.Contains;
+			textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
 		}
 
 		/// <summary>

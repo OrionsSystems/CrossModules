@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using Orions.Common;
 using System;
 
@@ -15,9 +16,10 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowDateTimeSelection { get; set; } = true;
 
+      public ReportInstruction.Targets FilterTarget { get; set; }
+
       public SimpleFilterWidget()
       {
          this.Label = "Simple Filter"; // Title of this widget.
       }
    }
-}
