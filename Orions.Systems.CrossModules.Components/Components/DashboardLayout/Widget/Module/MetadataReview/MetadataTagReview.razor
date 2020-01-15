@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits DashboardComponent<SimpleHtmlVm, SimpleHtmlWidget>
+@inherits DashboardComponent<MetadataTagReviewVm, MetadataTagReviewWidget>
 
 <div class="widget-content-report">
 	@if (Widget.ShowTitle)
@@ -9,9 +9,7 @@
 	}
 
 	<div class="widget-content-report-view">
-		<section>
-			@((MarkupString)Vm.Widget.RawHtml)
-		</section>
+		<MetadataReview></MetadataReview>
 	</div>
 </div>
 
