@@ -4,13 +4,16 @@ using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget 
+	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget
 	{
 		public string Label { get; set; }
 
 		public bool ShowTitle { get; set; } = true;
 
 		public bool ShowFooter { get; set; } = true;
+
+		[HelpText("Group of filters this widget belongs to")]
+		public string FilterGroup { get; set; }
 
 		public DashboardWidget()
 		{
