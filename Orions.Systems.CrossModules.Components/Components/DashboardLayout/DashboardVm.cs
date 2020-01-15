@@ -39,7 +39,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		Dictionary<string, MultiFilterData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, MultiFilterData>();
 
-		public PropertyGrid PropGrid { get; set; }
+		/// <summary>
+		/// The Propertyy grid has its own Vm, but we assign it one from here, to make sure it uses this one, so we can control it.
+		/// </summary>
+		public PropertyGridVm PropGridVm { get; set; } = new PropertyGridVm();
 
 		public bool IsShowModalWidget { get; set; }
 		public bool IsShowProperty { get; private set; }
@@ -345,7 +348,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void OnCancelProperty()
 		{
-			PropGrid.CleanSourceCache();
+			PropGridVm.CleanSourceCache();
 			IsShowProperty = false;
 		}
 

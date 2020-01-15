@@ -12,7 +12,18 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		protected virtual bool AutoCreateVm => true;
 
-		public VmType Vm => (VmType)base.DataContext;
+		public VmType Vm
+		{
+			get
+			{
+				return (VmType)base.DataContext;
+			}
+
+			set
+			{
+				base.DataContext = value;
+			}
+		}
 
 		[Obsolete("Use Vm instead")]
 		public new VmType DataContext

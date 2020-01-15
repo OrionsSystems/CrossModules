@@ -101,7 +101,8 @@ else
 
     public void OnClosePropertyGrid()
     {
-        if (propGrid != null) propGrid.CleanSourceCache();
+        if (propGrid != null) 
+           propGrid.Vm.CleanSourceCache();
 
         IsPropertyGridVisible = false;
 

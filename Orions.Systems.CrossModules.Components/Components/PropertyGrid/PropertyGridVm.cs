@@ -86,6 +86,14 @@ namespace Orions.Systems.CrossModules.Components
 			CreatorCreateCommand.AsyncDelegate = OnCreatorCreate;
 		}
 
+		public object SourceCache { get; set; } // init source data once
+
+		public void CleanSourceCache()
+		{
+			SourceCache = null;
+			//StateHasChanged();
+		}
+
 		private void Utility_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if ((e.PropertyName == nameof(PropertyGridUtility.CreatorMode) && Utility.CreatorMode)

@@ -113,8 +113,8 @@ namespace Orions.Systems.CrossModules.Components
 					{
 						try
 						{
-							chartItem.DatePosition = ParseTimePosition(timeEl);
-							chartItem.StreamPosition = ParseStreamPosition(timeEl);
+							chartItem.DatePosition = ReportData.TryParseTimePosition(timeEl) ?? throw new OrionsException("Failed to parse");
+							chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
 						}
 						catch (Exception)
 						{
@@ -131,39 +131,5 @@ namespace Orions.Systems.CrossModules.Components
 			return result;
 		}
 
-		public static string ParseStreamPosition(string timeEl)
-		{
-			try
-			{
-				if (!string.IsNullOrWhiteSpace(timeEl) && timeEl.Contains("(") && timeEl.Contains(")"))
-				{
-					var timeStr = timeEl.Substring(timeEl.LastIndexOf("(") + 1, timeEl.LastIndexOf(")") - timeEl.LastIndexOf("(") - 1);
-
-					return timeEl.Substring(0, timeEl.LastIndexOf("("));
-				}
-			}
-			catch (Exception) { throw; }
-
-			throw new Exception("Cannot parse row defenition title");
-		}
-
-		public static DateTime ParseTimePosition(string timeEl)
-		{
-			try
-			{
-				if (!string.IsNullOrWhiteSpace(timeEl) && timeEl.Contains("(") && timeEl.Contains(")"))
-				{
-					var timeStr = timeEl.Substring(timeEl.LastIndexOf("(") + 1, timeEl.LastIndexOf(")") - timeEl.LastIndexOf("(") - 1);
-
-					return DateTime.ParseExact(
-						timeStr,
-						"MM/dd/yyyy h:mm:ss tt",
-						System.Globalization.CultureInfo.InvariantCulture);
-				}
-			}
-			catch (Exception) { throw; }
-
-			throw new Exception("Cannot parse row defenition title");
-		}
 	}
 }

@@ -210,13 +210,13 @@
 
 	public void OnCancelProperty()
 	{
-		propGrid.CleanSourceCache();
+		propGrid.Vm.CleanSourceCache();
 		isShowProperty = false;
 	}
 
 	public async Task OnOkProperty()
 	{
-		propGrid.CleanSourceCache();
+		propGrid.Vm.CleanSourceCache();
 		isShowProperty = false;
 
 		await SaveChanges();
