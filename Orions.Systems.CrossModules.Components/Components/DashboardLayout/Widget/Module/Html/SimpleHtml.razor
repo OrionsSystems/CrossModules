@@ -1,39 +1,30 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@using Orions.Node.Common
-
 @inherits DashboardComponent<SimpleHtmlVm, SimpleHtmlWidget>
 
-<div class="widget-content-demo-simple">
-   @if (Vm.Widget.ShowTitle)
-   {
-      <h3>@Vm.Widget.Label</h3>
-   }
+<div class="widget-content-report">
+	@if (Widget.ShowTitle)
+	{
+		<h3>@Widget.Label</h3>
+	}
 
-   <section>
-      @((MarkupString)Vm.Widget.RawHtml)
-   </section>
+	<div class="widget-content-report-view">
+		<section>
+			@((MarkupString)Vm.Widget.RawHtml)
+		</section>
+	</div>
 </div>
 
 @code {
 }
 
 <style>
-   .widget-content-demo-simple {
-      padding: 20px;
-      overflow: hidden;
-   }
+		.widget-content-report-view section {
+			color: #018786;
+			font-size: 14px;
+		}
 
-      .widget-content-demo-simple h3 {
-         text-align: center;
-      }
-
-      .widget-content-demo-simple section {
-         color: #018786;
-         font-size: 12px;
-      }
-
-      .widget-content-demo-simple p {
-         text-align: justify;
-      }
+		.widget-content-report-view p {
+			text-align: justify;
+		}
 </style>

@@ -1,100 +1,86 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@using Orions.Infrastructure.HyperMedia
-@using Orions.Node.Common
-
 @inherits DashboardComponent<ReportGridVm, ReportGridWidget>
 
-<div class="widget-content-report-grid">
+<div class="widget-content-report">
 
-    @if (Vm.Report != null && Vm.IsLoadedReportResult)
-	 {
-		 var rowIndex = 0;
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+		var rowIndex = 0;
 
-        @if (Widget.ShowTitle && Vm.ReportHasName)
-        {
-            <h3>@Vm.ReportName</h3>
-        }
+		@if (Widget.ShowTitle)
+		{
+			<h3>@Widget.Label</h3>
+		}
 
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col"></th>
-                        @foreach (var column in Vm.Report.Data.ColumnsDefinitions)
-                        {
-                            <th scope="col">@column.Title</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var rows in Vm.Report.Data.RowsCells)
-                    {
-                       var rowDef = Vm.Report.Data.RowsDefinitions[rowIndex];
-                       var rowTitle = rowDef.Title;
-                       var rowDate = ReportWidgetVm<ReportGridWidget>.ParseTimePosition(rowTitle);
-                       rowIndex++;
+		<div class="widget-content-report-view">
 
-                        <tr>
-                            <td>@rowDate.ToString("dd MMM HH:mm")</td>
-                            @foreach (var row in rows)
-                            {
-                                <td>@row.ToString()</td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+			<div class="table-responsive">
+				<table class="table table-striped table-bordered table-hover">
+					<thead>
+						<tr>
+							<th scope="col"></th>
+							@foreach (var column in Vm.Report.Data.ColumnsDefinitions)
+							{
+								<th scope="col">@column.Title</th>
+							}
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var rows in Vm.Report.Data.RowsCells)
+						{
+							var rowDef = Vm.Report.Data.RowsDefinitions[rowIndex];
+							var rowTitle = rowDef.Title;
+							var rowDate = ReportWidgetVm<ReportGridWidget>.ParseTimePosition(rowTitle);
+							rowIndex++;
 
-        @if (Widget.ShowFooter)
-        {
-            <div class="widget-content-report-grid-footer">
-                <div class="">Created at @Vm.Report.CreatedAtUTC</div>
-            </div>
-        }
-    }
+							<tr>
+								<td>@rowDate.ToString("dd MMM HH:mm")</td>
+								@foreach (var row in rows)
+								{
+									<td>@row.ToString()</td>
+								}
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
 
-    @if (Vm.Report == null && Vm.IsLoadedReportResult)
-    {
-        <div class="widget-missing-report-data">
-            Missing report data!
-        </div>
-    }
+		</div>
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-footer">
+				@if (Vm.ReportHasName)
+				{
+					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+				}
+				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
 
-    @if (!Vm.IsLoadedReportResult)
-    {
-        <div style="position:relative;">
-            <div class="loading-bar"></div>
-        </div>
-    }
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
 
 </div>
 
 @code {
 
-   protected override async Task OnInitializedAsync()
-   {
-      await Vm.RefreshReportResultData();
+	protected override async Task OnInitializedAsync()
+	{
+		await Vm.RefreshReportResultData();
 
-      //TODO filter report categories
-
-      await base.OnInitializedAsync();
-   }
+		await base.OnInitializedAsync();
+	}
 }
-
-<style>
-    .widget-content-report-grid {
-        padding: 15px;
-        overflow: hidden;
-    }
-
-        .widget-content-report-grid h3 {
-            text-align: center;
-        }
-
-    .widget-content-report-grid-footer {
-        font-size: 12px;
-        font-style: italic;
-    }
-</style>
