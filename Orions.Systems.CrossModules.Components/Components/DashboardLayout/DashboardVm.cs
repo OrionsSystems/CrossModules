@@ -36,7 +36,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
-		public UniFilterData DynamicFilter { get; set; } = new MultiFilterData();
+		Dictionary<string, MultiFilterData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, MultiFilterData>();
 
 		public PropertyGrid PropGrid { get; set; }
 
@@ -123,17 +123,55 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
-		public void SetStringFilters(string[] filters)
+		MultiFilterData ObtainFilterData(string group)
 		{
-			if (DynamicFilter is MultiFilterData multiFilter)
+			if (group == null)
+				group = "";
+
+			MultiFilterData data;
+			lock (_syncRoot)
 			{
-				multiFilter.Elements = new IUniFilterData[] { new TextFilterData() { 
-					LabelsArray = filters, Mode = AndOr.Or, StringCompareMode = TextFilterData.StringComparisonMode.Contains } };
+				if (_dynamicFiltersByGroup.TryGetValue(group, out data) == false)
+				{
+					data = new MultiFilterData();
+					_dynamicFiltersByGroup[group] = data;
+				}
 			}
-			else
+			return data;
+		}
+
+		public MultiFilterData GetFilterGroup(string group)
+		{
+			if (group == null)
+				group = "";
+
+			MultiFilterData result = null;
+			lock (_syncRoot)
 			{
-				System.Diagnostics.Debug.Assert(false, "Main filter not set as expected");
+				_dynamicFiltersByGroup.TryGetValue(group, out result);
 			}
+
+			return result;
+		}
+
+		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime)
+		{
+			var data = ObtainFilterData(group);
+
+			var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
+			dateTimeFilterData.StartTime = startTime;
+			dateTimeFilterData.EndTime = endTime;
+		}
+
+		public void SetStringFilters(string group, string[] filters)
+		{
+			var data = ObtainFilterData(group);
+
+			var textFilterData = data.ObtainElement<TextFilterData>();
+
+			textFilterData.LabelsArray = filters;
+			textFilterData.Mode = AndOr.Or;
+			textFilterData.StringCompareMode = TextFilterData.StringComparisonMode.Contains;
 		}
 
 		/// <summary>

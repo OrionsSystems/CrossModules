@@ -48,7 +48,7 @@ namespace Orions.Systems.CrossModules.Components
 			var context = new WidgetDataSourceContext();
 			context.HyperStore = this.HyperStore;
 
-			context.DynamicFilter = this.DashboardVm?.DynamicFilter;
+			context.DynamicFilter = this.DashboardVm?.GetFilterGroup(widget.FilterGroup);
 
 			var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
 			if (reportResult == null)
