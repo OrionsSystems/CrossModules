@@ -2,6 +2,8 @@
 
 @inherits DashboardComponent<ReportGridVm, ReportGridWidget>
 
+@using Orions.Infrastructure.Reporting
+
 <div class="widget-content-report">
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
@@ -31,16 +33,19 @@
 						{
 							var rowDef = Vm.Report.Data.RowsDefinitions[rowIndex];
 							var rowTitle = rowDef.Title;
-							var rowDate = ReportWidgetVm<ReportGridWidget>.ParseTimePosition(rowTitle);
+							var rowDate = ReportData.TryParseTimePosition(rowTitle);
 							rowIndex++;
 
+							@if (rowDate.HasValue)
+							{
 							<tr>
-								<td>@rowDate.ToString("dd MMM HH:mm")</td>
+								<td>@rowDate.Value.ToString("dd MMM HH:mm")</td>
 								@foreach (var row in rows)
 								{
 									<td>@row.ToString()</td>
 								}
 							</tr>
+							}
 						}
 					</tbody>
 				</table>
