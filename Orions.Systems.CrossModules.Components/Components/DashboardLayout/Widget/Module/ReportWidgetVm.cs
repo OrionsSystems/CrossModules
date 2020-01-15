@@ -19,7 +19,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ReportChartData ReportChartData { get; private set; }
 
-		public bool IsLoadedReportResult { get; set; }
+		public bool IsLoadedReportResult { get; private set; }
 
 		public string ReportName { get { return Report?.Name; } }
 
@@ -59,12 +59,12 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			Report = reportResult;
-			IsLoadedReportResult = true;
 
 			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',').Select(it => it.Trim()).ToArray());
 
-			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+			IsLoadedReportResult = true;
 
+			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 			OnReportResultChanged?.Invoke();
 		}
 
