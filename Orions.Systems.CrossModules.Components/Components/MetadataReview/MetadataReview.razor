@@ -1,31 +1,46 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 @inherits MetadataReviewBase
+
 <div class="metadatareview-component">
     <TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@_store" Class="metadatareview-grid" />
 
     <div class="metadatareview-page-controls">
-        <ul class="pagination">
+       <ul class="pagination">
 
-            @{
-                var currentPageNumber = this.DataContext.PageNumber.Value;
-                var prevPageNumber = this.DataContext.PageNumber - 1;
-                var nextPageNumber = this.DataContext.PageNumber + 1;
-            }
-            @if (prevPageNumber > 0)
-            {
-                <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(prevPageNumber)">@prevPageNumber</a></li>
-            }
-            <li class="page-item active"><a class="page-link" @onclick="async () => await DataContext.ChangePage(currentPageNumber)">@currentPageNumber</a></li>
-            @if (nextPageNumber <= this.DataContext.TotalPages)
-            {
-                <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(nextPageNumber)">@nextPageNumber</a></li>
-            }
-            @if (nextPageNumber == 2)
-            {
-                <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(3)">3</a></li>
-            }
+          @{
+             var currentPageNumber = this.Vm.PageNumber.Value;
+             var prevPageNumber = Math.Max(1, this.Vm.PageNumber - 1);
+             var nextPageNumber = this.Vm.PageNumber + 1;
+          }
 
-        </ul>
+          @for (int pageIndex = prevPageNumber; pageIndex < Math.Min(prevPageNumber + 5, this.Vm.TotalPages); pageIndex++)
+          {
+             int pIndex = pageIndex;
+             @if (pageIndex == currentPageNumber)
+				 {
+               <li class="page-item active"><a class="page-link" @onclick="async () => await Vm.ChangePage(pIndex)">@pageIndex</a></li>
+				 }
+              else
+				 {
+                <li class="page-item"><a class="page-link" @onclick="async () => await Vm.ChangePage(pIndex)">@pageIndex</a></li>
+				 }
+			 }
+
+          @*@if (prevPageNumber > 0)
+       {
+          <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(prevPageNumber)">@prevPageNumber</a></li>
+       }
+       <li class="page-item active"><a class="page-link" @onclick="async () => await DataContext.ChangePage(currentPageNumber)">@currentPageNumber</a></li>
+       @if (nextPageNumber <= this.Vm.TotalPages)
+       {
+          <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(nextPageNumber)">@nextPageNumber</a></li>
+       }
+       @if (nextPageNumber == 2)
+      {
+          <li class="page-item"><a class="page-link" @onclick="async () => await DataContext.ChangePage(3)">3</a></li>
+      }*@
+
+       </ul>
 
         <div class="input-group mb-3 page-select">
             <div class="input-group-prepend">
@@ -40,7 +55,7 @@
         </div>
 
         <div class="go-to-page-control">
-            <span>Go to page: </span>
+            <span>Page </span>
             <input type="number" class="form-control" @bind="Vm.PageNumber.Value"/>
         </div>
 
@@ -77,7 +92,7 @@
 
     .metadatareview-page-controls .go-to-page-control input{
         display:inline-block;
-        width:auto;
+        width:100px;
     }
 
     .metadatareview-page-controls .total-pages {
