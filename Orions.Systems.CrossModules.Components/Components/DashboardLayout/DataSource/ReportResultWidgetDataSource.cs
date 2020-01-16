@@ -24,7 +24,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		protected override async Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var args = new RetrieveHyperDocumentArgs(this.ReportResultId);
 			var doc = await context.HyperStore.ExecuteAsync(args);

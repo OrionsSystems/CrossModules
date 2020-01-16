@@ -22,12 +22,12 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		protected override Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var byteArray = this.Data;
 
 			if (byteArray == null)
-				return null;
+				return Task.FromResult<IReportResult>(null);
 
 			var reportData = new ReportData();
 
@@ -107,7 +107,7 @@ namespace Orions.Systems.CrossModules.Components
 			var report = new HyperMetadataReportResult();
 			report.Data = reportData;
 
-			return report;
+			return Task.FromResult<IReportResult>(report);
 		}
 	}
 }

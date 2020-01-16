@@ -25,9 +25,7 @@
 							 Background="@Widget.ChartBackground"
 							 SelectionMode="SelectionMode.Series">
 
-					<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
-					<ChartEvents OnPointClick="@PointClickHandler"></ChartEvents>
-
+					<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
 
 					@if (ChartData.IsDateAxis)
 					{
@@ -128,8 +126,6 @@
 		</div>
 	}
 
-	<div class="dashboard-onchart-click">@ChartClickHandlerMessage</div>
-
 
 	@* TEST BUTTON FOR TESTING CHANGING THE SERIES
 			<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
@@ -149,8 +145,6 @@
 	public void OnApply()
 	{
 	}
-
-	public string ChartClickHandlerMessage { get; set; }
 
 	public ReportChartData ChartData => Vm.ReportChartData;
 
@@ -181,20 +175,6 @@
 	protected override void OnStateHasChanged()
 	{
 		base.OnStateHasChanged();
-	}
-
-	public void ChartMouseClickHandler(IMouseEventArgs args)
-	{
-		// Here you can customize your code
-
-		ChartClickHandlerMessage = $"ChartMouseClick at X:{args.X} Y:{args.Y}";
-	}
-
-	public void PointClickHandler(IPointEventArgs args)
-	{
-		// Here you can customize your code
-
-		ChartClickHandlerMessage = $"Point:{args.Point}";
 	}
 
 }

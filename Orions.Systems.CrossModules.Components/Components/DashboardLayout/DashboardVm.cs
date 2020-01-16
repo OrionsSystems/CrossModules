@@ -177,7 +177,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			textFilterData.LabelsArray = filters;
 			textFilterData.Mode = AndOr.Or;
-			textFilterData.StringCompareMode = TextFilterData.StringComparisonMode.Contains;
+			textFilterData.StringCompareMode = StringComparisonMode.Contains;
 			textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
 		}
 
