@@ -116,7 +116,7 @@ namespace Orions.Systems.CrossModules.Components
 							try
 							{
 
-								var position = ReportData.TryParseTimePosition(timeEl);
+								var position = ReportData.ParseTimePosition(timeEl);
 								if (!position.HasValue)
 									result.IsDateAxis = false;
 								else
