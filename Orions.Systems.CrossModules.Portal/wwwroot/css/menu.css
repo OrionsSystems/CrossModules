@@ -137,3 +137,9 @@ body.highcontrast #dockSidebar {
 :not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item:hover::before {
     border-left: 4px solid #057ece !important;
 }
+
+
+/* SIDEBAR  */
+.sidebar-content.e-content-animation {
+   transform: none !important;
+}
