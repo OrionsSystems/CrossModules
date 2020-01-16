@@ -1,22 +1,10 @@
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
-/* Material Theme*/
-/*:root {
-    --mdc-theme-primary: #5D2E8F;
-    --mdc-theme-secondary: #fbaf41;
-    --mdc-theme-on-primary: #495f90;
-    --mdc-theme-on-secondary: #ffe172;
-    --mdc-theme-text-primary: #ffffff;
-    --mdc-theme-text-secondary: #333;
-    --mdc-theme-text-on-primary: #001037;
-    --mdc-theme-text-on-secondary: #c48003;
-    --mdc-theme-surface: #263238;
-}*/
-
 html, body {
 	font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", sans-serif;
+	margin: 0px;
+	padding: 0px;
 }
-
 
 app {
 	position: relative;
