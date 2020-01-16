@@ -1,0 +1,74 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+<div class="progress-line mt-1">
+
+	@if (!string.IsNullOrWhiteSpace(IconUrl)) 
+	{ 
+		<span class="icon"><img src="@IconUrl"></span>	
+	}
+
+	@if (IconSource != null)
+	{
+		<span class="icon"><img src="@ImageBase64Url"></span>
+	}
+
+	<span class="stat-progress" style="width: @(Progress)%;"></span>
+	<span class="stat-value opacity-medium">@Value</span>
+</div>
+
+@code {
+
+	[Parameter]
+	public byte[] IconSource { get; set; }
+
+	[Parameter]
+	public string IconUrl { get; set; }
+
+	[Parameter]
+	public int Progress { get; set; }
+
+	[Parameter]
+	public string Value { get; set; }
+
+	public string ImageBase64Url
+	{
+		get
+		{
+			if (IconSource != null)
+			{
+				return $"data:image/jpg;base64, {Convert.ToBase64String(IconSource)}";
+			}
+
+			return null;
+		}
+	}
+
+}
+
+<style>
+	.progress-line .icon {
+		display: inline-flex;
+		width: 12px;
+		vertical-align: middle;
+	}
+
+		.progress-line .icon img {
+			width: 12px;
+		}
+
+	.progress-line .stat-progress {
+		background-color: #bcc0cc;
+		display: inline-flex;
+		height: 6px;
+		border-radius: 10px;
+		vertical-align: middle;
+	}
+
+	.progress-line .stat-value {
+		vertical-align: middle;
+	}
+
+	.opacity-medium {
+		opacity: .5;
+	}
+</style>

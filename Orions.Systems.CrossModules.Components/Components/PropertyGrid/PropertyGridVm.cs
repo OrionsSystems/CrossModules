@@ -115,7 +115,15 @@ namespace Orions.Systems.CrossModules.Components
 		}
 		public async Task OnCreatorCreate(DefaultCommand command, object parameter)
 		{
-			await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
+			if (SelectedCreatorItemProp.Value == null)
+			{
+				var item = Utility.CreatorItems.FirstOrDefault();
+				await Utility.RunCreatorFor(item);
+			}
+			else {
+				await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
+			}
+			
 			RaisePropertyChanged("OnCreatorCreate");
 		}
 
