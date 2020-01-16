@@ -14,33 +14,14 @@ namespace Orions.Systems.CrossModules.Components
     {
         protected NetStore _store;
 
-        [Parameter]
-        public string MetadataSetId { get; set; }
+		protected override bool AutoCreateVm => false;
 
 		[Parameter]
-		public UniFilterData Filter { get; set; }
-
-		[Parameter]
-		public int ColumnsNumber { get; set; }
-
-
-		protected override async Task OnParametersSetAsync()
-		{
-			if(Filter != null)
-			{
-				await this.Vm.FilterTags(Filter);
-			}
-
-			await this.DataContext.Initialize(_store, MetadataSetId, ColumnsNumber * 2);
-
-			await base.OnParametersSetAsync();
-		}
+		public new MetadataReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
 
 		protected override async Task OnInitializedAsync()
         {
-            _store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usbellods01wan.orionscloud.com:4580/Execute");
-
-            await base.OnInitializedAsync();
+			await base.OnInitializedAsync();
         }
     }
 }

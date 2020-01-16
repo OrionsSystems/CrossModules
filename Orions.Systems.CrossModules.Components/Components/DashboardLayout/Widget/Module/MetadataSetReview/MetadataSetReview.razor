@@ -1,31 +1,44 @@
 ﻿@inherits DashboardComponent<MetadataSetReviewWidgetVm, MetadataSetReviewWidget>
+@using Orions.Common;
+@using Orions.Infrastructure.HyperMedia;
 
 <div class="metadata-review-widget">
-		@if (Widget.ShowTitle)
-		{
-			<h3>@Widget.Label</h3>
-		}
-		@if (Widget.MetadataSetId != null)
-		{
-			<MetadataReview MetadataSetId="@Widget.MetadataSetId" Filter="@Vm.Filter" ColumnsNumber="@Widget.ColumnsNumber" />
-		}
-		else
-		{
-			<span>Metadata set has not been selected.</span>
-		}
+	@if (Widget.ShowTitle)
+	{
+		<h3>@Widget.Label</h3>
+	}
+	@if (Widget.MetadataSetId != null && Vm != null)
+	{
+		<MetadataReview Vm="@Vm.MetadataReviewVm" />
+	}
+	else
+	{
+		<span>Metadata set has not been selected.</span>
+	}
 </div>
 
+@code{
+	protected override async Task OnInitializedAsync()
+	{
+
+		var store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usbellods01wan.orionscloud.com:4580/Execute");
+
+		this.Vm.MetadataReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
+		await this.Vm.MetadataReviewVm.Value.Initialize(store, Widget.MetadataSetId, Widget.ColumnsNumber * 2);
+	}
+}
+
 <style>
-    .metadata-review-widget a.page-link{
-        color: #495057;
-    }
+	.metadata-review-widget a.page-link {
+		color: #495057;
+	}
 
-    .metadata-review-widget .page-item.active .page-link{
-        background-color:#343a40;
-        border: 1px solid #6c757d;
-    }
+	.metadata-review-widget .page-item.active .page-link {
+		background-color: #343a40;
+		border: 1px solid #6c757d;
+	}
 
-    .metadata-review-widget .page-item.active a.page-link{
-        color: #dee2e6;
-    }
+	.metadata-review-widget .page-item.active a.page-link {
+		color: #dee2e6;
+	}
 </style>

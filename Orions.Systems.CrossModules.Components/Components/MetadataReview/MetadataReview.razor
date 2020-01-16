@@ -1,6 +1,8 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 @inherits MetadataReviewBase
+
 <div class="metadatareview-component">
+	
     <div class="metadatareview-grid">
         @if (Vm.TagsAreBeingLoaded || Vm.HyperTags == null)
         {
@@ -8,7 +10,7 @@
         }
         else
         {
-            <TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@_store" ColumnsNumber="@ColumnsNumber" DashApiPort="@Vm.DashApiPort"/>
+            <TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@DataContext.Store" ColumnsNumber="@Vm.ColumnsNumber" DashApiPort="@Vm.DashApiPort"/>
         }
     </div>
 
@@ -62,7 +64,6 @@
 	{
 		<span>No data found</span>
 	}
-
 </div>
 
 
