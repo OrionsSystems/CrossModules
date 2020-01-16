@@ -33,7 +33,7 @@
 						{
 							var rowDef = Vm.Report.Data.RowsDefinitions[rowIndex];
 							var rowTitle = rowDef.Title;
-							var rowDate = ReportData.TryParseTimePosition(rowTitle);
+							var rowDate = ReportData.ParseTimePosition(rowTitle);
 							rowIndex++;
 
 							@if (rowDate.HasValue)

@@ -115,10 +115,17 @@ namespace Orions.Systems.CrossModules.Components
 						{
 							try
 							{
-								chartItem.DatePosition = ReportData.TryParseTimePosition(timeEl) ?? throw new OrionsException("Failed to parse");
-								chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
+
+								var position = ReportData.ParseTimePosition(timeEl);
+								if (!position.HasValue)
+									result.IsDateAxis = false;
+								else
+								{
+									chartItem.DatePosition = position.Value;
+									chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
+								}
 							}
-							catch (Exception)
+							catch (Exception ex)
 							{
 								result.IsDateAxis = false;
 							}
