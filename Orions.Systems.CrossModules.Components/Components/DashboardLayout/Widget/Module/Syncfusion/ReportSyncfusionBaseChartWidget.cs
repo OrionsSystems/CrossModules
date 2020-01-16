@@ -8,8 +8,8 @@ namespace Orions.Systems.CrossModules.Components
 		public class LegendDefinition
 		{
 			public bool Visible { get; set; } = true;
-			public LegendPosition Position = LegendPosition.Top;
-			public Alignment Alignment = Alignment.Far;
+			public LegendPosition Position { get; set; } = LegendPosition.Top;
+			public Alignment Alignment { get; set; } = Alignment.Far;
 
 		}
 		public bool IsShowChartTitle { get; set; } = false;
