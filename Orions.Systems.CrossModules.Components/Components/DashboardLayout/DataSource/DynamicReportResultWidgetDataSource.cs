@@ -30,7 +30,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public override async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		protected override async Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			if (this.ReportId.HasValue == false)
 				throw new OrionsException($"No {nameof(ReportId)} assigned");
