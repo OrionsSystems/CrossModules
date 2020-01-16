@@ -31,7 +31,7 @@
 		@if (Vm.Widget.ShowDateTimeSelection)
 		{
 			<div class="control-styles">
-					<EjsDateRangePicker @ref="DateRangePicker" Placeholder="Select Time Range"></EjsDateRangePicker>
+					<EjsDateRangePicker @ref="DateRangePicker" StartDate="@StartDate" EndDate="@EndDate" Placeholder="Select Time Range"></EjsDateRangePicker>
 			</div>
 		}
 
@@ -62,6 +62,9 @@
 	{
 		get => Widget.Filters;
 	}
+
+	public DateTime? StartDate => Widget.StartDate;
+	public DateTime? EndDate => Widget.EndDate;
 
 	public async Task OnApply(MouseEventArgs args)
 	{

@@ -75,57 +75,64 @@ namespace Orions.Systems.CrossModules.Components
 			if (report == null) 
 				return result;
 
-			var categories = report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-			var rowsDef = report.Data.RowsDefinitions.ToList();
-
-			result.Categories.AddRange(categories);
-
-			var rowData = report.Data.RowsCells;
-
-			for (var i = 0; i < categories.Count; i++)
+			try
 			{
-				var categoryTitle = categories[i];
+				var categories = report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+				var rowsDef = report.Data.RowsDefinitions.ToList();
 
-				if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
+				result.Categories.AddRange(categories);
+
+				var rowData = report.Data.RowsCells;
+
+				for (var i = 0; i < categories.Count; i++)
 				{
-					continue;
-				}
+					var categoryTitle = categories[i];
 
-				var chartSeries = new ReportSeriesChartData();
-				chartSeries.Name = categoryTitle;
-
-				for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
-				{
-					var rowEl = rowData[rowIndex];
-
-					var reportRowEl = rowsDef[rowIndex];
-					var timeEl = reportRowEl.Title;
-
-					var data = rowEl[i].Values.FirstOrDefault();
-
-					var chartItem = new ReportSeriesChartDataItem
+					if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
 					{
-						Count = Convert.ToUInt16(data.ToString()),
-						Time = timeEl
-					};
-
-					if (result.IsDateAxis)
-					{
-						try
-						{
-							chartItem.DatePosition = ReportData.TryParseTimePosition(timeEl) ?? throw new OrionsException("Failed to parse");
-							chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
-						}
-						catch (Exception)
-						{
-							result.IsDateAxis = false;
-						}
+						continue;
 					}
 
-					chartSeries.Data.Add(chartItem);
-				}
+					var chartSeries = new ReportSeriesChartData();
+					chartSeries.Name = categoryTitle;
 
-				result.Series.Add(chartSeries);
+					for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
+					{
+						var rowEl = rowData[rowIndex];
+
+						var reportRowEl = rowsDef[rowIndex];
+						var timeEl = reportRowEl.Title;
+
+						var data = rowEl[i].Values.FirstOrDefault();
+
+						var chartItem = new ReportSeriesChartDataItem
+						{
+							Count = Convert.ToUInt16(data.ToString()),
+							Time = timeEl
+						};
+
+						if (result.IsDateAxis)
+						{
+							try
+							{
+								chartItem.DatePosition = ReportData.TryParseTimePosition(timeEl) ?? throw new OrionsException("Failed to parse");
+								chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
+							}
+							catch (Exception)
+							{
+								result.IsDateAxis = false;
+							}
+						}
+
+						chartSeries.Data.Add(chartItem);
+					}
+
+					result.Series.Add(chartSeries);
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.Assert(false, ex.Message);
 			}
 
 			return result;
