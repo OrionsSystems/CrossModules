@@ -16,89 +16,91 @@
 			<h3>@Widget.Label</h3>
 		}
 
-		<div class="widget-content-report-view">
+		@if (Showing)
+		{
+			<div class="widget-content-report-view">
 
-			<EjsChart @ref="Chartobj"
-						 Title="@Widget.ChartTitle"
-						 Background="@Widget.ChartBackground"
-						 SelectionMode="SelectionMode.Series">
+				<EjsChart @ref="Chartobj"
+							 Title="@Widget.ChartTitle"
+							 Background="@Widget.ChartBackground"
+							 SelectionMode="SelectionMode.Series">
 
-				<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
-				<ChartEvents OnPointClick="@PointClickHandler"></ChartEvents>
+					<ChartEvents OnChartMouseClick="@ChartMouseClickHandler"></ChartEvents>
+					<ChartEvents OnPointClick="@PointClickHandler"></ChartEvents>
 
 
-				@if (ChartData.IsDateAxis)
-				{
-					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
-											 LabelPlacement="@Widget.LabelPlacement"
-											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
-											 IntervalType="@Widget.IntervalType"
-											 LabelFormat="@Widget.LabelFormat"
-											 Skeleton="@Widget.Skeleton"
-											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
-					</ChartPrimaryXAxis>
-				}
-				else
-				{
-					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
-											 LabelPlacement="@Widget.LabelPlacement"
-											 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
-											 IntervalType="@Widget.IntervalType"
-											 LabelFormat="@Widget.LabelFormat"
-											 Skeleton="@Widget.Skeleton"
-											 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
-					</ChartPrimaryXAxis>
-				}
+					@if (ChartData.IsDateAxis)
+					{
+						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+												 LabelPlacement="@Widget.LabelPlacement"
+												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+												 IntervalType="@Widget.IntervalType"
+												 LabelFormat="@Widget.LabelFormat"
+												 Skeleton="@Widget.Skeleton"
+												 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+						</ChartPrimaryXAxis>
+					}
+					else
+					{
+						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
+												 LabelPlacement="@Widget.LabelPlacement"
+												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
+												 IntervalType="@Widget.IntervalType"
+												 LabelFormat="@Widget.LabelFormat"
+												 Skeleton="@Widget.Skeleton"
+												 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+						</ChartPrimaryXAxis>
+					}
 
-				<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
+					<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
 
 				<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
 											Position="@Widget.LegendSettings.Position"
 									         Alignment="@Widget.LegendSettings.Alignment">
 				</ChartLegendSettings>
+					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+											 EnablePinchZooming="@Widget.EnablePinchZooming"
+											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
+											 EnablePan="@Widget.EnablePan"
+											 EnableScrollbar="true">
+					</ChartZoomSettings>
 
-				<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
-										 EnablePinchZooming="@Widget.EnablePinchZooming"
-										 EnableSelectionZooming="@Widget.EnableSelectionZooming"
-										 EnablePan="@Widget.EnablePan"
-										 EnableScrollbar="true">
-				</ChartZoomSettings>
+					<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
 
-				<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
-
-				<ChartSeriesCollection>
-					@foreach (var ser in ChartData.Series)
-					{
-						@if (ChartData.IsDateAxis)
+					<ChartSeriesCollection>
+						@foreach (var ser in ChartData.Series)
 						{
-							<ChartSeries DataSource="@ser.Data"
-											 Name="@ser.Name"
-											 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
-											 YName="@nameof(ReportSeriesChartDataItem.Count)"
-											 Type="@Widget.ChartSeriesType">
-								<ChartMarker>
-									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-								</ChartMarker>
-							</ChartSeries>
+							@if (ChartData.IsDateAxis)
+							{
+								<ChartSeries DataSource="@ser.Data"
+												 Name="@ser.Name"
+												 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+												 YName="@nameof(ReportSeriesChartDataItem.Count)"
+												 Type="@Widget.ChartSeriesType">
+									<ChartMarker>
+										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+									</ChartMarker>
+								</ChartSeries>
+							}
+							else
+							{
+								<ChartSeries DataSource="@ser.Data"
+												 Name="@ser.Name"
+												 XName="@nameof(ReportSeriesChartDataItem.Time)"
+												 YName="@nameof(ReportSeriesChartDataItem.Count)"
+												 Type="@Widget.ChartSeriesType">
+									<ChartMarker>
+										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+									</ChartMarker>
+								</ChartSeries>
+							}
 						}
-						else
-						{
-							<ChartSeries DataSource="@ser.Data"
-											 Name="@ser.Name"
-											 XName="@nameof(ReportSeriesChartDataItem.Time)"
-											 YName="@nameof(ReportSeriesChartDataItem.Count)"
-											 Type="@Widget.ChartSeriesType">
-								<ChartMarker>
-									<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-								</ChartMarker>
-							</ChartSeries>
-						}
-					}
 
-				</ChartSeriesCollection>
-			</EjsChart>
+					</ChartSeriesCollection>
+				</EjsChart>
 
-		</div>
+			</div>
+		}
 
 		@if (Widget.ShowFooter)
 		{
@@ -130,11 +132,11 @@
 
 
 	@* TEST BUTTON FOR TESTING CHANGING THE SERIES
-
 			<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
 			<EjsProgressButton Duration="99" OnClick="@OnApply" Content="Apply" IsPrimary="true">
 			</EjsProgressButton>
-		</div>*@
+		</div>
+	*@
 
 </div>
 
@@ -142,32 +144,10 @@
 
 	public EjsChart Chartobj;
 
+	public bool Showing { get; set; } = true;
+
 	public void OnApply()
 	{
-
-		// TEST CODE - TRYING TO CHANGE DATA ON RUNTIME TO MAKE SERIES REDUCE, BUT NO LUCK SO FAR
-		var seriesData = Vm.ReportChartData.Series.FirstOrDefault();
-		Vm.ReportChartData.Series.Clear();
-
-		for (var i = 0; i <= Chartobj.Series.Count; i++)
-		{
-			Chartobj.RemoveSeries(i);
-		}
-
-		var chartSeries = Chartobj.Series.FirstOrDefault();
-		if (seriesData != null)
-		{
-			Vm.ReportChartData.Series.Add(seriesData);
-			Chartobj.AddSeries(chartSeries);
-		}
-
-		var category = Vm.ReportChartData.Categories.FirstOrDefault();
-		Vm.ReportChartData.Categories.Clear();
-
-		if (string.IsNullOrEmpty(category))
-			Vm.ReportChartData.Categories.Add(category);
-
-		Chartobj.Refresh();
 	}
 
 	public string ChartClickHandlerMessage { get; set; }
@@ -179,24 +159,23 @@
 		await Vm.RefreshReportResultData();
 
 		Vm.OnReportResultChanged += OnChangeDataSource;
-
 		await base.OnInitializedAsync();
 	}
 
 	private void OnChangeDataSource()
 	{
-		//TODO
-		//for (var i = 0; i <= Chartobj.Series.Count; i++)
-		//{
-		//	Chartobj.RemoveSeries(i);
-		//}
+		this.Showing = false;
+		this.StateHasChanged();
 
-		//foreach (var chartSeries in Vm.ReportChartData.Series)
-		//{
-		//	Chartobj.AddSeries(chartSeries);
-		//}
-
-		Chartobj.Refresh();
+		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
+		Task.Factory.StartNew(() => 
+		{
+			this.InvokeAsync(() =>
+			{
+				this.Showing = true;
+				this.StateHasChanged();
+			});
+		});
 	}
 
 	protected override void OnStateHasChanged()
