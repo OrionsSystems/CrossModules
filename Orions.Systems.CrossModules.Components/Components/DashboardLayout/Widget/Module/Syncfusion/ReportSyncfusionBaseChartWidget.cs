@@ -5,6 +5,13 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportSyncfusionBaseChartWidget : ReportBaseWidget, IDashboardWidget
 	{
+		public class LegendDefinition
+		{
+			public bool Visible { get; set; } = true;
+			public LegendPosition Position = LegendPosition.Top;
+			public Alignment Alignment = Alignment.Far;
+
+		}
 		public bool IsShowChartTitle { get; set; } = false;
 
 		public string ChartTitle { get; set; }
@@ -24,7 +31,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsEnableTooltip { get; set; } = true;
 
-		public bool IsEnableLegend { get; set; } = true;
+		public LegendDefinition LegendSettings { get; set; } = new LegendDefinition();
 
 		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Column;
 
