@@ -17,8 +17,8 @@ namespace Orions.Systems.CrossModules.Components
     {
         private NetStore _store;
         private HyperTag _hyperTag;
-
-        private IHyperTagHyperIds HyperTagId;
+		private int _dashApiPort;
+		private IHyperTagHyperIds HyperTagId;
 
         // Data props
         public ViewModelProperty<byte[]> Image { get; set; } = new ViewModelProperty<byte[]>();
@@ -49,7 +49,7 @@ namespace Orions.Systems.CrossModules.Components
             {
                 var dnsSafehost = _store.CurrentConnection.Uri.DnsSafeHost;
                 var assetId = HyperTagId.HyperId.AssetId.Value.Guid.ToString();
-                return $"http://{dnsSafehost}:8585/dash/{assetId}/asset.mpd";
+                return $"https://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
             }
         }
         public string PlayerId
@@ -65,11 +65,12 @@ namespace Orions.Systems.CrossModules.Components
         // Event callbacks
         public EventCallback<string> OnPlayButtonClicked { get; set; }
 
-        public async Task Initialize(HyperTag tag, NetStore store)
+        public async Task Initialize(HyperTag tag, NetStore store, int dashApiPort)
         {
             _store = store;
 
             this._hyperTag = tag;
+			this._dashApiPort = dashApiPort;
 
             this.HyperTagLabel.Value = tag.GetElement<HyperTagLabel>()?.Label ?? "";
 

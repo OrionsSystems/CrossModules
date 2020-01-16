@@ -1,0 +1,31 @@
+﻿@inherits DashboardComponent<MetadataSetReviewWidgetVm, MetadataSetReviewWidget>
+
+<div class="metadata-review-widget">
+		@if (Widget.ShowTitle)
+		{
+			<h3>@Widget.Label</h3>
+		}
+		@if (Widget.MetadataSetId != null)
+		{
+			<MetadataReview MetadataSetId="@Widget.MetadataSetId" Filter="@Vm.Filter" ColumnsNumber="@Widget.ColumnsNumber" />
+		}
+		else
+		{
+			<span>Metadata set has not been selected.</span>
+		}
+</div>
+
+<style>
+    .metadata-review-widget a.page-link{
+        color: #495057;
+    }
+
+    .metadata-review-widget .page-item.active .page-link{
+        background-color:#343a40;
+        border: 1px solid #6c757d;
+    }
+
+    .metadata-review-widget .page-item.active a.page-link{
+        color: #dee2e6;
+    }
+</style>

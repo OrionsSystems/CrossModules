@@ -16,6 +16,9 @@ namespace Orions.Systems.CrossModules.Components
         [Parameter]
         public NetStore HyperStore { get; set; }
 
+		[Parameter]
+		public int DashApiPort { get; set; }
+
         [Inject]
         public IJSRuntime JsRuntime { get; set; }
 
@@ -23,7 +26,7 @@ namespace Orions.Systems.CrossModules.Components
         {
             if(Tag != null && HyperStore != null)
             {
-                await this.Vm.Initialize(Tag, HyperStore);
+                await this.Vm.Initialize(Tag, HyperStore, DashApiPort);
             }
 
             await base.OnParametersSetAsync();

@@ -1,4 +1,5 @@
-﻿using Orions.Common;
+﻿using Microsoft.AspNetCore.Components;
+using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
@@ -9,41 +10,37 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class MetadataReviewBase : BaseBlazorComponent<MetadataReviewVm>
-   {
-      protected NetStore _store;
+    public class MetadataReviewBase : BaseBlazorComponent<MetadataReviewVm>
+    {
+        protected NetStore _store;
 
-      protected override async Task OnInitializedAsync()
-      {
-         _store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usbellods01wan.orionscloud.com:4580/Execute");
+        [Parameter]
+        public string MetadataSetId { get; set; }
 
-         await this.Vm.Initialize(_store);
+		[Parameter]
+		public UniFilterData Filter { get; set; }
 
-         // No need to do this, there is an embedded mechanism in BlazorComponent that scans all ViewModelProperties<> and updates the state.
-         Vm.PageSize.PropertyChanged += PageSize_PropertyChanged;
-         Vm.PageNumber.PropertyChanged += PageNumber_PropertyChanged;
+		[Parameter]
+		public int ColumnsNumber { get; set; }
 
-         await base.OnInitializedAsync();
-      }
 
-      private void PageNumber_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-      {
-         this.InvokeAsync(async () =>
-         {
-            await Vm.ChangePage(Vm.PageNumber); // This is already done in the razor
-            this.StateHasChanged();
-         });
-      }
+		protected override async Task OnParametersSetAsync()
+		{
+			if(Filter != null)
+			{
+				await this.Vm.FilterTags(Filter);
+			}
 
-      private void PageSize_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-      {
-         this.InvokeAsync(async () =>
-         {
-            await Vm.LoadTotalPages();
-            await Vm.LoadHyperTags();
+			await this.DataContext.Initialize(_store, MetadataSetId, ColumnsNumber * 2);
 
-            this.StateHasChanged();
-         });
-      }
-   }
+			await base.OnParametersSetAsync();
+		}
+
+		protected override async Task OnInitializedAsync()
+        {
+            _store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usbellods01wan.orionscloud.com:4580/Execute");
+
+            await base.OnInitializedAsync();
+        }
+    }
 }

@@ -3,17 +3,43 @@
 
 @inherits TagGridBase
 
-<div class="fluid-container @Class">
+	<div class="fluid-container">
+		<div class="row">
+			@{
+				var tagEnumerator = this.HyperTags.GetEnumerator();
+				HyperTag tag;
 
-    <div class="row">
-        @foreach(var tag in HyperTags)
-        {
-            <div class="col-6 col-sm-4 col-xl-3 widget-container">
-                <Tag Tag="@tag" HyperStore="@HyperStore"/>
-            </div>
-        }
-    </div>
-</div>
+				while (tagEnumerator.MoveNext())
+				{
+					@for (int colIndex = 1; colIndex <= this.ColumnsNumber; colIndex++)
+					{
+						{
+							tag = tagEnumerator.Current;
+
+
+						}
+						@if (tag != null)
+						{
+							<div class="col widget-container">
+								<Tag Tag="@tag" HyperStore="@HyperStore" DashApiPort="@DashApiPort"/>
+							</div>
+						}
+						{
+							if (colIndex != ColumnsNumber) // we don't need to move to the next element since its the last element in the row and MoveNext is gonna be called in "while" loop above
+							{
+								var nextColumnExists = tagEnumerator.MoveNext();
+								if (!nextColumnExists)
+								{
+									<div class="col"></div>
+								}
+							}
+						}
+					}
+					<div class="w-100"></div>
+				}
+			}
+			</div>
+	</div>
 
 <style>
     .widget-container{
