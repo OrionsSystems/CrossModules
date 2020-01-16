@@ -12,10 +12,17 @@ namespace Orions.Systems.CrossModules.Components
         [Parameter]
         public List<HyperTag> HyperTags { get; set; }
 
-        [Parameter]
+		[Parameter]
+		public int ColumnsNumber { get; set; } = 4;
+
+		[Parameter]
         public NetStore HyperStore { get; set; }
 
-        protected override Task OnParametersSetAsync()
+		[Parameter]
+		public int DashApiPort { get; set; }
+
+
+		protected override Task OnParametersSetAsync()
         {
             return base.OnParametersSetAsync();
         }
