@@ -20,7 +20,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			var filter = this.DashboardVm.DynamicFilter;
+			var filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
 
 			this.Filter = filter;
 

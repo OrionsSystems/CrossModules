@@ -229,5 +229,34 @@
 	cursor: pointer;
 }
 
+/*   START WIDGET DASHBOARD  */
+.widget-content-report {
+	padding: 15px;
+	overflow: hidden;
+}
+
+	.widget-content-report h3 {
+		text-align: center;
+	}
+
+.widget-content-report-footer {
+	font-size: 12px;
+}
+
+.widget-content-report-footer-name {
+	font-weight: bold;
+}
+
+.widget-content-report-footer-create {
+	font-style: italic;
+}
+
+.widget-missing-report {
+	text-align: center;
+}
+
+/*    END WIDGET DASHBOARD  */
+
+
 /*    END DASHBOARD LAYOUT COMPONENT */
 

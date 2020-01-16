@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Orions.Infrastructure.Reporting;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -36,9 +37,12 @@ namespace Orions.Systems.CrossModules.Components
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
-		public UniFilterData DynamicFilter { get; set; } = new MultiFilterData();
+		Dictionary<string, MultiFilterData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, MultiFilterData>();
 
-		public PropertyGrid PropGrid { get; set; }
+		/// <summary>
+		/// The Propertyy grid has its own Vm, but we assign it one from here, to make sure it uses this one, so we can control it.
+		/// </summary>
+		public PropertyGridVm PropGridVm { get; set; } = new PropertyGridVm();
 
 		public bool IsShowModalWidget { get; set; }
 		public bool IsShowProperty { get; private set; }
@@ -89,27 +93,28 @@ namespace Orions.Systems.CrossModules.Components
 					if (column.Widget == null)
 						continue;
 
-					// Deduce vm type from the Widget type.
-					var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == column.Widget.GetType()));
-
-					var vm = (WidgetVm)Activator.CreateInstance(vmType);
-					vm.HyperStore = this.HyperStore;
-					vm.Widget = column.Widget; // ** Order matters here!!
-					vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
-
-					_widgetsVms[column.Widget] = vm;
+					ObtainWidgetVm(column.Widget);
 				}
 			}
 		}
 
-		public WidgetVm GetWidgetVm(IDashboardWidget widget)
+		public WidgetVm ObtainWidgetVm(IDashboardWidget widget)
 		{
 			WidgetVm widgetVm;
 			if (_widgetsVms.TryGetValue(widget, out widgetVm))
 				return widgetVm;
 
-			System.Diagnostics.Debug.Assert(false, "Failed to find Vm for widget");
-			return null;
+			// Deduce vm type from the Widget type.
+			var vmType = _widgetVmTypes.First(it => it.GetCustomAttributes(true).OfType<ConfigAttribute>().Any(it => it.ConfigType == widget.GetType()));
+
+			var vm = (WidgetVm)Activator.CreateInstance(vmType);
+			vm.HyperStore = this.HyperStore;
+			vm.Widget = widget; // ** Order matters here!!
+			vm.ParentVm = this; // Allows the Vms to take action prior to any UI being renderered.
+			
+			_widgetsVms[widget] = vm;
+
+			return vm;
 		}
 
 		public async Task<Response> SaveChangesAsync()
@@ -122,17 +127,58 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
-		public void SetStringFilters(string[] filters)
+		MultiFilterData ObtainFilterData(string group)
 		{
-			if (DynamicFilter is MultiFilterData multiFilter)
+			if (group == null)
+				group = "";
+
+			MultiFilterData data;
+			lock (_syncRoot)
 			{
-				multiFilter.Elements = new IUniFilterData[] { new TextFilterData() { 
-					LabelsArray = filters, Mode = AndOr.Or, StringCompareMode = TextFilterData.StringComparisonMode.Contains } };
+				if (_dynamicFiltersByGroup.TryGetValue(group, out data) == false)
+				{
+					data = new MultiFilterData();
+					_dynamicFiltersByGroup[group] = data;
+				}
 			}
-			else
+
+			return data;
+		}
+
+		public MultiFilterData GetFilterGroup(string group)
+		{
+			if (group == null)
+				group = "";
+
+			MultiFilterData result = null;
+			lock (_syncRoot)
 			{
-				System.Diagnostics.Debug.Assert(false, "Main filter not set as expected");
+				_dynamicFiltersByGroup.TryGetValue(group, out result);
 			}
+
+			return result;
+		}
+
+		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime, ReportInstruction.Targets filterTarget)
+		{
+			var data = ObtainFilterData(group);
+
+			var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
+			dateTimeFilterData.StartTime = startTime;
+			dateTimeFilterData.EndTime = endTime;
+			dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+		}
+
+		public void SetStringFilters(string group, string[] filters, ReportInstruction.Targets filterTarget)
+		{
+			var data = ObtainFilterData(group);
+
+			var textFilterData = data.ObtainElement<TextFilterData>();
+
+			textFilterData.LabelsArray = filters;
+			textFilterData.Mode = AndOr.Or;
+			textFilterData.StringCompareMode = TextFilterData.StringComparisonMode.Contains;
+			textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
 		}
 
 		/// <summary>
@@ -302,7 +348,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void OnCancelProperty()
 		{
-			PropGrid.CleanSourceCache();
+			PropGridVm.CleanSourceCache();
 			IsShowProperty = false;
 		}
 

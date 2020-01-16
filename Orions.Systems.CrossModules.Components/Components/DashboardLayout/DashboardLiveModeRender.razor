@@ -20,7 +20,7 @@
                             @if (column.Widget != null)
                             {
                                 <WidgetDynamicComponent @key="column.Widget.Id" 
-                                    DataContext="@DashboardVm.GetWidgetVm(column.Widget)" 
+                                    DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)" 
                                     DashboardVm="DashboardVm" />
                             }
                         </div>

@@ -10,18 +10,30 @@
 @using Syncfusion.EJ2.Blazor.DropDowns
 @using Syncfusion.EJ2.Blazor.SplitButtons
 
+@using Syncfusion.EJ2.Blazor.Calendars
+
 	<div class="widget-content-report-piechart">
 
 		<h3>@Vm.Widget.Label</h3>
 
-		<div class="control-styles">
-			<EjsMultiSelect @ref="MultiSelect"  TValue="string[]" 
-								 OnChange="@OnChange"  Value="@Values"
-								 Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+		@if (Vm.Widget.ShowTextLabelSelection)
+		{
 
-				<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
-			</EjsMultiSelect>
-		</div>
+			<div class="control-styles">
+				<EjsMultiSelect @ref="MultiSelect" TValue="string[]" Value="@Values"
+									 Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+
+					<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
+				</EjsMultiSelect>
+			</div>
+		}
+
+		@if (Vm.Widget.ShowDateTimeSelection)
+		{
+			<div class="control-styles">
+					<EjsDateRangePicker @ref="DateRangePicker" StartDate="@StartDate" EndDate="@EndDate" Placeholder="Select Time Range"></EjsDateRangePicker>
+			</div>
+		}
 
 		<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
 			<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
@@ -29,45 +41,44 @@
 			</EjsProgressButton>
 		</div>
 
-		@*<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
-			<EjsProgressButton Duration="9999999" Content="Apply" OnClick="@OnApply" IsPrimary="true">
-			</EjsProgressButton>
-		</div>*@
-
 	</div>
 
 @code {
 
-		public class Option
-		{
-			public string ID { get; set; }
-			public string Group { get; set; }
-			public string Text { get; set; }
-		}
+	public class Option
+	{
+		public string ID { get; set; }
+		public string Group { get; set; }
+		public string Text { get; set; }
+	}
 
-		public EjsProgressButton ProgressButton;
+	public EjsProgressButton ProgressButton;
 
-		public EjsMultiSelect<string[]> MultiSelect;
+	public EjsMultiSelect<string[]> MultiSelect;
 
-		public string[] Values
-		{
-			get => Widget.Filters;
-		}
+	public EjsDateRangePicker DateRangePicker { get; set; }
 
-		public async Task OnApply(MouseEventArgs args)
-		{
-			string text = MultiSelect.Text;
-			string[] filters = text.Split(',', StringSplitOptions.RemoveEmptyEntries); // There is a bug when using Value and we remove the last item, so using this is more reliable.
-			await Vm.ApplyAsync(filters);
-			await ProgressButton.ProgressComplete(); // Mark completion.
-		}
+	public string[] Values
+	{
+		get => Widget.Filters;
+	}
 
-		public void OnChange(ChangeEventArgs args)
-		{
-		}
+	public DateTime? StartDate => Widget.StartDate;
+	public DateTime? EndDate => Widget.EndDate;
 
-		public List<Option> Options = new List<Option>()
-{
+	public async Task OnApply(MouseEventArgs args)
+	{
+		// There is a bug when using Value and we remove the last item, so using this is more reliable.
+		string text = MultiSelect.Text;
+		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { }; 
+
+		await Vm.ApplyAsync(filters, DateRangePicker.StartDate, DateRangePicker.EndDate);
+
+		await ProgressButton.ProgressComplete(); // Mark completion.
+	}
+
+	public List<Option> Options = new List<Option>()
+	{
 		  new Option(){ ID= "Person", Group = "Common", Text= "Person" },
 		  new Option(){ ID= "Human", Group = "Common", Text= "Human" },
 		  new Option(){ ID= "Adult", Group = "Common", Text= "Adult" },
@@ -78,7 +89,8 @@
 		  new Option(){ ID= "Mother", Group = "Common", Text= "Mother" },
 		  new Option(){ ID= "Son", Group = "Common", Text= "Son" },
 		  new Option(){ ID= "Daughter", Group = "Common", Text= "Daughter" },
-		  new Option() {ID="Head", Group = "Body parts", Text="Head" }
+		  new Option(){ ID= "Car", Group = "Common", Text= "Car" },
+		  new Option(){ ID= "Head", Group = "Body parts", Text= "Head" },
 	 };
 
 }

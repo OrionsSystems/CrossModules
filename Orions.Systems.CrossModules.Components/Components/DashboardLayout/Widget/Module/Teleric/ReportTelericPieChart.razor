@@ -2,21 +2,19 @@
 
 @inherits DashboardComponent<ReportTelericPieChartVm, ReportTelericPieChartWidget>
 
-@using Orions.Node.Common
-
 @using Telerik.Blazor;
 @using Telerik.Blazor.Components;
 
-<div class="widget-content-report-piechart">
+<div class="widget-content-report">
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
-		@if (Widget.ShowTitle && Vm.ReportHasName)
+		@if (Widget.ShowTitle)
 		{
-			<h3>@Vm.ReportName</h3>
+			<h3>@Widget.Label</h3>
 		}
 
-		<div class="widget-content-report-piechart-view">
+		<div class="widget-content-report-view">
 			<TelerikChart>
 				<ChartSeriesItems>
 					<ChartSeries Type="ChartSeriesType.Pie"
@@ -35,15 +33,19 @@
 
 		@if (Widget.ShowFooter)
 		{
-			<div class="widget-content-report-piechart-footer">
-				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
+			<div class="widget-content-report-footer">
+				@if (Vm.ReportHasName)
+				{
+					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+				}
+				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
 			</div>
 		}
 	}
 
 	@if (Vm.Report == null && Vm.IsLoadedReportResult)
 	{
-		<div class="widget-missing-report-data">
+		<div class="widget-missing-report">
 			Missing report data!
 		</div>
 	}
@@ -74,7 +76,7 @@
 
 	private void LoadTagData()
 	{
-		if (Vm.Report == null) 
+		if (Vm.Report == null)
 			return;
 
 		var labels = Vm.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
@@ -91,19 +93,3 @@
 	}
 
 }
-
-<style>
-	.widget-content-report-piechart {
-		padding: 15px;
-		overflow: hidden;
-	}
-
-		.widget-content-report-piechart h3 {
-			text-align: center;
-		}
-
-	.widget-content-report-piechart-footer {
-		font-size: 12px;
-		font-style: italic;
-	}
-</style>

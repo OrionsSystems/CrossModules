@@ -217,21 +217,13 @@
 	[Parameter]
 	public EventCallback CancelCommand { get; set; }
 
-	private object _sourceCache; // init source data once
-
-	public void CleanSourceCache()
-	{
-		_sourceCache = null;
-		//StateHasChanged();
-	}
 
 	protected override async Task OnParametersSetAsync()
 	{
-
-		if (_sourceCache == null)
+		if (Vm.SourceCache == null)
 		{
-			_sourceCache = await Loader();
-			Source = _sourceCache;
+			Vm.SourceCache = await Loader();
+			Source = Vm.SourceCache;
 		}
 	}
 

@@ -44,7 +44,7 @@ namespace Orions.Systems.CrossModules.Components
 			var manager = new ReportExecutionManager(Logger.Instance);
 
 			// Generate the basic template for the report.
-			var templateData = await manager.GenerateTemplateAsync(context.HyperStore, reportTemplate, this.MetadataSetId.Value);
+			var templateData = await manager.GenerateTemplateAsync(context.HyperStore, reportTemplate, this.MetadataSetId.Value, context.DynamicFilter);
 
 			if (context.DynamicFilter != null)
 				templateData.FilterWith(context.DynamicFilter);

@@ -13,7 +13,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public MetadataSetReviewWidget()
         {
-            this.Label = "Metadata Set Review";
+            this.Label = "Metadata Review Widget";
         }
     }
 }

@@ -154,7 +154,17 @@ namespace Orions.Systems.CrossModules.Components
             HyperTags.Value = hyperTags;
 
             TagsAreBeingLoaded = false;
+
+			RaiseNotify(nameof(HyperTags));
         }
+
+		public async Task ChangePageSize(int pageSize)
+		{
+			PageSize.Value = pageSize;
+
+			await LoadHyperTags();
+			await LoadTotalPages();
+		}
 
         public async Task ChangePage(int pageNumber)
         {

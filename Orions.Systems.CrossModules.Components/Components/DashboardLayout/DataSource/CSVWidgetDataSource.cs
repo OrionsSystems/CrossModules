@@ -88,9 +88,6 @@ namespace Orions.Systems.CrossModules.Components
 			reportData.ColumnsDefinitions = colDefList.ToArray();
 			reportData.RowsDefinitions = rowDefList.ToArray();
 
-			if (context.DynamicFilter != null)
-				reportData.FilterWith(context.DynamicFilter);
-
 			var item1 = dataMap.Values;
 
 			foreach (KeyValuePair<int, List<string>> item in dataMap)
@@ -102,6 +99,10 @@ namespace Orions.Systems.CrossModules.Components
 				var dataCell = columnData.Select(it => new ReportDataCell() { Values = new[] { it } }).ToArray();
 				reportData.AddRow(dataCell);
 			}
+
+			// We want to filter at the end, to ensure both data and definitions are synchronized filtered.
+			if (context.DynamicFilter != null)
+				reportData.FilterWith(context.DynamicFilter);
 
 			var report = new HyperMetadataReportResult();
 			report.Data = reportData;
