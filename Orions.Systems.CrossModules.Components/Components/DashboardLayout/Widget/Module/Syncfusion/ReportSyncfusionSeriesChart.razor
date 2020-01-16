@@ -52,8 +52,9 @@
 
 				<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
 
-				<ChartLegendSettings Visible="@Widget.IsEnableLegend"
-											Position="LegendPosition.Bottom">
+				<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
+											Position="@Widget.LegendSettings.Position"
+									         Alignment="@Widget.LegendSettings.Alignment">
 				</ChartLegendSettings>
 
 				<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
