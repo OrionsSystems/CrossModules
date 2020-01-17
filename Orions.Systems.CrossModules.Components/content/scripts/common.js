@@ -427,25 +427,17 @@ window.addEventListener("resize", function () {
             });
          }
       },
-      AddClassById: function (elementId, className, componentInstance) {
+      AddClassById: function (elementId, className) {
          var element = document.querySelector('#' + elementId);
 
          element.className = className;
          element.classList.add(className);
-
-         componentInstance.invokeMethodAsync('OnAddClass').then(null, function (err) {
-            throw new Error(err);
-         });
       },
-      RemoveClassById: function (elementId, className, componentInstance) {
+      RemoveClassById: function (elementId, className) {
          var element = document.querySelector('#' + elementId);
 
          element.className = className;
          element.classList.remove(className);
-
-         componentInstance.invokeMethodAsync('OnRemoveClass').then(null, function (err) {
-            throw new Error(err);
-         });
       }
    };
 })();
