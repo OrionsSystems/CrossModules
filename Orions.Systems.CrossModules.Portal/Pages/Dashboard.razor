@@ -1,5 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/dashboard"
+@page "/dashboard/{tag}"
 
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
@@ -8,61 +9,108 @@
 
 @inject IMatToaster Toaster
 
-@if (isDashboardSelected)
+@if (IsTagMode)
 {
-	<DashboardLayout 
-                HyperStore="@HyperStore"
-                Data="Data"
-					 EnableBetweenBox="true"
-					 IsPreviewMode="@isShowViewDashboard"
-					 DisableModeOption="false"
-					 OnBackToList="ShowDashboardList">
-	</DashboardLayout>
+
+	@if (TaggedDashboardList.Any())
+	{
+		<div class="row">
+			<div class="col-lg-12">
+				@foreach (var data in TaggedDashboardList)
+				{
+					/* IMPORTANT WE NEED TO ASSIGN THE HYPER STORE FIRST */
+					<DashboardLayout HyperStore="@HyperStore"
+										  Data="data"
+										  EnableBetweenBox="true"
+										  IsPreviewMode="true"
+										  HideModeOption="true"
+										  IsHideTitle="data.Option.IsHideTitle">
+					</DashboardLayout>
+				}
+			</div>
+		</div>
+	}
+
 }
 else
 {
-    <DashboardList HyperStore="@HyperStore" OnSelectDesign="OnSelectDesignDashboard" OnSelectView="OnSelectViewDashboard"></DashboardList>
+	@if (isDashboardSelected)
+	{
+		<DashboardLayout HyperStore="@HyperStore"
+							  Data="@Data"
+							  EnableBetweenBox="true"
+							  IsPreviewMode="@isShowViewDashboard"
+							  DisableModeOption="false"
+							  OnBackToList="ShowDashboardList">
+		</DashboardLayout>
+	}
+	else
+	{
+		<DashboardList HyperStore="@HyperStore" OnSelectDesign="OnSelectDesignDashboard" OnSelectView="OnSelectViewDashboard"></DashboardList>
+	}
 }
+
 
 @code{
 
-    private bool isDashboardSelected;
-    private bool isShowViewDashboard;
-    private DashboardData Data { get; set; }
+	private bool isDashboardSelected;
+	private bool isShowViewDashboard;
+	private DashboardData Data { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-    }
+	DashboardLayout _tagedDashboard;
 
-    private void ShowDashboardList()
-    {
-        Data = null;
-        isDashboardSelected = false;
-    }
+	private bool IsTagMode { get { return !string.IsNullOrWhiteSpace(Tag); } }
 
-    private void OnSelectDesignDashboard(DashboardData data)
-    {
-        Data = data;
-        isShowViewDashboard = false;
-        isDashboardSelected = true;
-    }
+	private List<DashboardData> TaggedDashboardList { get; set; } = new List<DashboardData>();
 
-    private void OnSelectViewDashboard(DashboardData data)
-    {
-        Data = data;
-        isShowViewDashboard = true;
-        isDashboardSelected = true;
+	[Parameter]
+	public string Tag { get; set; }
 
-    }
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 
-    private void ShowToaster(MatToastType type, string title, string message)
-    {
-        Toaster.Add(message, type, title, "", config =>
-        {
-            config.ShowCloseButton = false;
-            config.ShowProgressBar = false;
-            config.MaximumOpacity = 100;
-        });
-    }
+		if (IsTagMode && HyperStore != null)
+		{
+			await LoadTaggedDashboards(Tag);
+		}
+	}
+
+	private void ShowDashboardList()
+	{
+		Data = null;
+		isDashboardSelected = false;
+	}
+
+	private void OnSelectDesignDashboard(DashboardData data)
+	{
+		Data = data;
+		isShowViewDashboard = false;
+		isDashboardSelected = true;
+	}
+
+	private void OnSelectViewDashboard(DashboardData data)
+	{
+		Data = data;
+		isShowViewDashboard = true;
+		isDashboardSelected = true;
+
+	}
+
+	private async Task LoadTaggedDashboards(string tag)
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
+
+		TaggedDashboardList = datas.Where(it => it.Option.Tag == tag).ToList();
+	}
+
+	private void ShowToaster(MatToastType type, string title, string message)
+	{
+		Toaster.Add(message, type, title, "", config =>
+		{
+			config.ShowCloseButton = false;
+			config.ShowProgressBar = false;
+			config.MaximumOpacity = 100;
+		});
+	}
 }
