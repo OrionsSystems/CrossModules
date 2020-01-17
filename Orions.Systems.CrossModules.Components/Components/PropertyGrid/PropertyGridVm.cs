@@ -117,7 +117,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			if (SelectedCreatorItemProp.Value == null)
 			{
-				var item = Utility.CreatorItems.FirstOrDefault();
+				var item = Utility.CreatorItems?.FirstOrDefault();
 				await Utility.RunCreatorFor(item);
 			}
 			else {
