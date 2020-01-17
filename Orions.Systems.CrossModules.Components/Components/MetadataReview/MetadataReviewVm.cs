@@ -27,6 +27,7 @@ namespace Orions.Systems.CrossModules.Components
         public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
         public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
+		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
 
 		public List<int> PageSizeOptions	
@@ -54,20 +55,29 @@ namespace Orions.Systems.CrossModules.Components
             _metadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
             var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(_metadataSetId));
-			this._smallestPageSize = smallestPageSize;
 
-			PageSize = smallestPageSize;
+			if(metadataSetFilter != null)
+			{
+				this._smallestPageSize = smallestPageSize;
 
-            this._metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
-			this.DashApiPort = await GetDashApiUrl();
+				PageSize = smallestPageSize;
 
-            await LoadTotalPages();
-            await LoadHyperTags();
+				this._metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
+				this.DashApiPort = await GetDashApiPort();
+
+				await LoadTotalPages();
+				await LoadHyperTags();
+			}
+			else
+			{
+				MetadataSetLoadFailed.Value = true;
+			}
+
         }
 
-		private async Task<int> GetDashApiUrl()
+		private async Task<int> GetDashApiPort()
 		{
-			var hlsPort = 8585;
+			var streamingPort = 8585;
 			var retrieveConfigurationArgs = new RetrieveConfigurationArgs();
 
 			var result = await Store.ExecuteAsync(retrieveConfigurationArgs);
@@ -78,11 +88,11 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					var config = new StandardsBasedNetStoreServerConfig();
 					JsonHelper.Populate(item.Json, config);
-					if (config.HttpPort.HasValue) hlsPort = config.HttpPort.Value;
+					if (config.HttpPort.HasValue) streamingPort = config.HttpPort.Value;
 				}
 			}
 
-			return hlsPort + 1;
+			return streamingPort;
 		}
 
 		public async Task FilterTags(UniFilterData filter)
