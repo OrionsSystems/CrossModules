@@ -21,7 +21,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 
-		var store = await NetStore.ConnectAsyncThrows("http://vladimir:654321@usbellods01wan.orionscloud.com:4580/Execute");
+		var store = this.HyperStore;
 
 		this.Vm.MetadataReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
 		await this.Vm.MetadataReviewVm.Value.Initialize(store, Widget.MetadataSetId, Widget.ColumnsNumber * 2);
