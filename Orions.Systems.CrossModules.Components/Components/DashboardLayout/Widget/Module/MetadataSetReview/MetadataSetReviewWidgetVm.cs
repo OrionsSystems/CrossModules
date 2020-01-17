@@ -10,21 +10,18 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
     [Config(typeof(MetadataSetReviewWidget))]
     public class MetadataSetReviewWidgetVm : WidgetVm<MetadataSetReviewWidget>
     {
-
-
-        public MetadataSetReviewWidgetVm()
+		public MetadataSetReviewWidgetVm()
         {
-        }
+		}
 
-		public UniFilterData Filter { get; private set; }
+
+		public ViewModelProperty<MetadataReviewVm> MetadataReviewVm { get; set; } = new ViewModelProperty<MetadataReviewVm>(new MetadataReviewVm());
 
 		public override async Task HandleFiltersChangedAsync()
 		{
 			var filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
 
-			this.Filter = filter;
-
-			RaiseNotify("Filter");
+			await this.MetadataReviewVm.Value.FilterTags(filter);
 		}
 	}
 }

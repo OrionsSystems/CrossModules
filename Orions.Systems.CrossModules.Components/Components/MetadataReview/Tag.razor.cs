@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
         public HyperTag Tag { get; set; }
 
         [Parameter]
-        public NetStore HyperStore { get; set; }
+        public IHyperArgsSink HyperStore { get; set; }
 
 		[Parameter]
 		public int DashApiPort { get; set; }

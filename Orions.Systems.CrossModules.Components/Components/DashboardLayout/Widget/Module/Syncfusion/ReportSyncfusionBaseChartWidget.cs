@@ -39,10 +39,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public string ChartBackground { get; set; } = "transparent";
 
-		public LegendPosition LegendPosition { get; set; } = LegendPosition.Bottom;
-
-		public Alignment LegendAlignment { get; set; } = Alignment.Center;
-
 		public bool EnableMouseWheelZooming { get; set; }
 
 		public bool EnablePinchZooming { get; set; }

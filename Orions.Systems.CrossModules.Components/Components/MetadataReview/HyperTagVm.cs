@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 {
     public class HyperTagVm : BlazorVm
     {
-        private NetStore _store;
+        private IHyperArgsSink _store;
         private HyperTag _hyperTag;
 		private int _dashApiPort;
 		private IHyperTagHyperIds HyperTagId;
@@ -47,9 +47,9 @@ namespace Orions.Systems.CrossModules.Components
         {
             get
             {
-                var dnsSafehost = _store.CurrentConnection.Uri.DnsSafeHost;
+                var dnsSafehost = (_store as NetStore).CurrentConnection.Uri.DnsSafeHost;
                 var assetId = HyperTagId.HyperId.AssetId.Value.Guid.ToString();
-                return $"https://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
+                return $"http://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
             }
         }
         public string PlayerId
@@ -65,7 +65,7 @@ namespace Orions.Systems.CrossModules.Components
         // Event callbacks
         public EventCallback<string> OnPlayButtonClicked { get; set; }
 
-        public async Task Initialize(HyperTag tag, NetStore store, int dashApiPort)
+        public async Task Initialize(HyperTag tag, IHyperArgsSink store, int dashApiPort)
         {
             _store = store;
 

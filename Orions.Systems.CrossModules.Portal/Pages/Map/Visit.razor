@@ -10,14 +10,6 @@
 
 <div class="row">
 	<div class="col-lg-12">
-		@*<TelerikComboBox Data="@FilterCategoryValues"
-								  @bind-Value="@SelectedValue"
-								  TextField="Label"
-								  ValueField="Value"
-								  AllowCustom="@IsCustom"
-								  Placeholder="Select a category"
-								  PopupHeight="">
-			</TelerikComboBox>*@
 		<div class="mapCategoryFilter">
 			<EjsComboBox TValue="string" @bind-Value="SelectedValue"  @onchange="OnChangeFilterCategory" Placeholder="Select a category" DataSource="@FilterCategoryValues">
 				<ComboBoxFieldSettings Text="Label" Value="Value"></ComboBoxFieldSettings>
@@ -27,7 +19,7 @@
 </div>
 <div class="row">
 	<div class="col-lg-12">
-		<SVGMap SelectedCategory="@SelectedValue" OnSelectZone="SelectMapZone"></SVGMap>
+		<VisitMap SelectedCategory="@SelectedValue" OnSelectZone="SelectMapZone"></VisitMap>
 	</div>
 </div>
 

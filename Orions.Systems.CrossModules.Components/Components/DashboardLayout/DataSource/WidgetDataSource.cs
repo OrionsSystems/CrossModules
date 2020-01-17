@@ -23,7 +23,7 @@ namespace Orions.Systems.CrossModules.Components
 			var result = await OnGenerateFilteredReportResultAsync(context);
 
 			if (this.Mapping != null)
-				result.MapNames(this.Mapping);
+				result?.MapNames(this.Mapping);
 
 			return result;
 		}

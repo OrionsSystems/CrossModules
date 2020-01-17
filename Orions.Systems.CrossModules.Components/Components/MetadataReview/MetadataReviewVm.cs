@@ -11,17 +11,24 @@ namespace Orions.Systems.CrossModules.Components
 {
     public class MetadataReviewVm : BlazorVm
     {
-        private NetStore _store;
         private HyperDocumentId _metadataSetId;
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 
+		public MetadataReviewVm()
+		{
+
+		}
+
+        public IHyperArgsSink Store { get; set; }
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
 		public UniFilterData Filter { get; private set; }
         public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
         public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
+		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
+		public int ColumnsNumber { get; set; } = 4;
 
 		public List<int> PageSizeOptions	
 		{
@@ -41,31 +48,39 @@ namespace Orions.Systems.CrossModules.Components
         public string PlayerUri { get; set; }
         public string PlayerId { get; set; }
 
-		public async Task Initialize(NetStore store, string metadataSetId, int smallestPageSize)
+		public async Task Initialize(IHyperArgsSink store, string metadataSetId, int smallestPageSize)
         {
-            this._store = store;
+            this.Store = store;
 
-            //_metadataSetId = new HyperDocumentId("101fa54d-361c-4631-8540-dde128e08205", typeof(HyperMetadataSet));
             _metadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
             var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(_metadataSetId));
-			this._smallestPageSize = smallestPageSize;
 
-			PageSize = smallestPageSize;
+			if(metadataSetFilter != null)
+			{
+				this._smallestPageSize = smallestPageSize;
 
-            this._metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
-			this.DashApiPort = await GetDashApiUrl();
+				PageSize = smallestPageSize;
 
-            await LoadTotalPages();
-            await LoadHyperTags();
+				this._metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
+				this.DashApiPort = await GetDashApiPort();
+
+				await LoadTotalPages();
+				await LoadHyperTags();
+			}
+			else
+			{
+				MetadataSetLoadFailed.Value = true;
+			}
+
         }
 
-		private async Task<int> GetDashApiUrl()
+		private async Task<int> GetDashApiPort()
 		{
-			var hlsPort = 8585;
+			var streamingPort = 8585;
 			var retrieveConfigurationArgs = new RetrieveConfigurationArgs();
 
-			var result = await _store.ExecuteAsync(retrieveConfigurationArgs);
+			var result = await Store.ExecuteAsync(retrieveConfigurationArgs);
 
 			foreach (var item in result)
 			{
@@ -73,11 +88,11 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					var config = new StandardsBasedNetStoreServerConfig();
 					JsonHelper.Populate(item.Json, config);
-					if (config.HttpPort.HasValue) hlsPort = config.HttpPort.Value;
+					if (config.HttpPort.HasValue) streamingPort = config.HttpPort.Value;
 				}
 			}
 
-			return hlsPort + 1;
+			return streamingPort;
 		}
 
 		public async Task FilterTags(UniFilterData filter)
@@ -122,10 +137,10 @@ namespace Orions.Systems.CrossModules.Components
         {
             var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
-            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(_store, this._metadataSet);
+            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
             countArgs.DescriptorConditions.AddCondition(conditions);
 
-            var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this._store, countArgs);
+            var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
 
             TotalPages.Value = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1;
 
@@ -138,12 +153,12 @@ namespace Orions.Systems.CrossModules.Components
 
             var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
-            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(_store, _metadataSet);
+            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
             findArgs.DescriptorConditions.AddCondition(conditions);
             findArgs.Skip = PageSize * (PageNumber - 1);
             findArgs.Limit = PageSize;
 
-            var docs = await _store.ExecuteAsync(findArgs);
+            var docs = await Store.ExecuteAsync(findArgs);
 
             var hyperTags = new List<HyperTag>();
             foreach (var doc in docs)

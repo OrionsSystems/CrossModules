@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
 		public int ColumnsNumber { get; set; } = 4;
 
 		[Parameter]
-        public NetStore HyperStore { get; set; }
+        public IHyperArgsSink HyperStore { get; set; }
 
 		[Parameter]
 		public int DashApiPort { get; set; }

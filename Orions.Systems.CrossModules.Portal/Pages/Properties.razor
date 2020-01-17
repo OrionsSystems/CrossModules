@@ -1,0 +1,444 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/properties"
+
+@inherits PortalBaseComponent
+
+<div class="container-fluid">
+
+
+	@if (IsSelected)
+	{
+		<div id="selected-property" class="row">
+			<div class="col-8 property-banner">
+				<img src="/images/TheGrove.jpg">
+			</div>
+			<div class="col-4">
+				<div class="property-container">
+					<span class="separator"></span>
+					<div class="col-12 property-title"><span>The Grove</span></div>
+					<span class="separator"></span>
+					<div class="property-visitors mt-3">
+						<span class="icon visitors-icon"><img src="/icons/shoe.png"></span>
+						<span class="stat-progress" style="width: 75%;"></span>
+						<span class="stat-value opacity-medium">75%</span>
+					</div>
+					<div class="property-users mt-2">
+						<span class="icon users-icon"><img src="/icons/girl.png"></span>
+						<span class="stat-progress" style="width: 95%;"></span>
+						<span class="stat-value opacity-medium">95%</span>
+					</div>
+					<div class="property-hour-clock max-hour-clock mt-3">
+						<div>
+							<span class="icon max-hour-icon"><img src="/icons/clock-plus.png"></span>
+							<span class="icon day-icon"><img src="/icons/calander.png"></span>
+							<span class="stat-value opacity-medium">[3:30 PM, 5:00 PM]</span>
+						</div>
+						<div>
+							<span class="icon"></span>
+							<span class="icon week-icon"><img src="/icons/week.png"></span>
+							<span class="stat-value opacity-medium">[WED, FRI, SAT]</span>
+						</div>
+						<div>
+							<span class="icon"></span>
+							<span class="icon month-icon"><img src="/icons/month.png"></span>
+							<span class="stat-value opacity-medium">[2ND, 4TH]</span>
+						</div>
+					</div>
+					<div class="property-hour-clock min-hour-clock mt-2">
+						<div>
+							<span class="icon min-hour-icon"><img src="/icons/clock-minus.png"></span>
+							<span class="icon day-icon"><img src="/icons/calander.png"></span>
+							<span class="stat-value opacity-medium">[9:10 AM, 1:00 PM, 7:45 PM]</span>
+						</div>
+						<div>
+							<span class="icon"></span>
+							<span class="icon week-icon"><img src="/icons/week.png"></span>
+							<span class="stat-value opacity-medium">[MON, WED]</span>
+						</div>
+						<div>
+							<span class="icon"></span>
+							<span class="icon month-icon"><img src="/icons/month.png"></span>
+							<span class="stat-value opacity-medium">[3RD]</span>
+						</div>
+					</div>
+					<div class="property-notification mt-3">
+						<span class="icon notification-icon"><img src="/icons/bell.png"></span>
+						<span class="stat-value small-text opacity-medium">None</span>
+					</div>
+					<div class="property-updated mt-2">
+						<span class="icon updated-icon"><img src="/icons/clock.png"></span>
+						<span class="stat-value opacity-medium">Last Modified: 12:27 PM</span>
+					</div>
+					<div class="property-action">
+						<a href="/dashboard/grove" class="btn btn-outline-light"> More</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	}
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="row">
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Miramar Beach Resort<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/MiramarBeachResort.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Palisades Village<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/PalisadesVillage.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container" @onclick="@(ev => { IsSelected = true; })">
+						<div class="property-title">
+							<a href="#" class="text-white">The Grove<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/TheGrove.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">The Americana At Brand<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/TheAmericanaAtBrand.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Americana Luxury Apartments<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/AmericanaLuxuryApartments.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">8500<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/8500.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">The Commons At Calabasas<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/TheCommonsAtCalabasas.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Encino Marketplace<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/EncinoMarketplace.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Excelsior<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/Excelsior.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">The Laskes At Thousand Oaks<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/TheLaskesAtThousandOaks.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">The Masonic Temple<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/TheMasonicTemple.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">The Promenade At Westlake<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/ThePromenadeAtWestlake.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">252 South Brand Blvd.<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/252SouthBrandBlvd.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Village At Moorpark<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/VillageAtMoorpark.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+				<div class="col-3 property-card">
+					<div class="property-container">
+						<div class="property-title">
+							<a href="#" class="text-white">Waterside At Marina Del Rey<span></span></a>
+						</div>
+						<div class="property-banner">
+							<img src="/images/WatersideAtMarinaDelRey.jpg">
+						</div>
+						<div class="coming-soon"><span>Coming Soon</span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code{
+
+	public bool IsSelected { get; set; }
+
+}
+
+
+<style>
+
+
+		#selected-property {
+			 margin-top: 20px;
+			 font-size: 14px;
+			 text-transform: uppercase;
+		}
+
+		#selected-property .property-banner {
+			 /*width: 100%;*/
+		}
+
+		#selected-property .property-banner img {
+			 width: 100%;
+			 margin: 0 20px;
+			 border: 1px solid #858484;
+			 padding: 10px;
+		}
+
+		#selected-property .property-container {
+			 letter-spacing: 1px;
+			 margin: 0 25px;
+		}
+
+		#selected-property .property-container .property-title {
+			 display: flex;
+			 padding-top: 8px;
+		}
+
+		#selected-property .property-container .property-title span {
+			 display: inline-flex;
+			 margin: auto;
+			 margin-bottom: 11px;
+			 text-transform: uppercase;
+			 color: #bebebe;
+			 font-size: 23px;
+		}
+
+
+		#selected-property .property-container .property-visitors,
+		#selected-property .property-container .property-users {
+			 margin: 0px 4px;
+		}
+
+		#selected-property .property-container .icon {
+			 display: inline-flex;
+			 width: 16px;
+			 vertical-align: middle;
+		}
+
+		#selected-property .property-container .icon img {
+			 width: 16px;
+		}
+
+		#selected-property .property-container .stat-progress {
+			 background-color: #bcc0cc;
+			 display: inline-flex;
+			 height: 6px;
+			 border-radius: 10px;
+			 vertical-align: middle;
+			 margin-left: 4px;
+			 max-width: 85%;
+		}
+
+		#selected-property .property-container .stat-value {
+			 vertical-align: middle;
+		}
+
+		#selected-property .property-container .property-hour-clock {
+			 line-height: 20px;
+			 margin: 0px 4px;
+		}
+
+
+		#selected-property .property-action {
+			 margin: 20px 10px;
+		}
+
+		.property-card .day-icon img {
+			 content: url("/icons/calander copy@5x.png");
+		}
+		.property-card .active-property .day-icon img {
+			 content: url("/icons/calander@5x.png");
+		}
+
+		.property-card .week-icon img {
+			 content: url("/icons/week icon@5x.png");
+		}
+		.property-card .active-property .week-icon img {
+			 content: url("/icons/week icon@5x.png");
+		}
+
+		.property-card .month-icon img {
+			 content: url("/icons/month icon copy 2@5x.png");
+		}
+		.property-card .active-property .month-icon img {
+			 content: url("/icons/month icon@5x.png");
+		}
+
+		.property-card .min-hour-icon img {
+			 content: url("/icons/min hour clock@5x.png");
+		}
+		.property-card .active-property .min-hour-icon img {
+			 content: url("/icons/min hour clock@5x.png");
+		}
+
+		#selected-property .property-container .property-notification {
+			 margin: 0px 4px;
+		}
+
+		#selected-property .property-container .property-notification .warning {
+			 font-size: 14px;
+			 vertical-align: middle;
+		}
+
+		#selected-property .property-container .small-text {
+			 font-size: 10px;
+		}
+
+		#selected-property .property-container .property-updated {
+			 margin: 0px 4px;
+			 padding-bottom: 8px;
+		}
+
+
+
+	.property-card {
+		margin-top: 60px;
+		letter-spacing: 2px;
+		text-transform: uppercase;
+		font-size: 10px;
+	}
+
+		.property-card .property-container {
+			margin: 0px 20px;
+			cursor: pointer;
+			/*box-shadow: 0 8px 6px -6px rgba(163,163,163,1);*/
+		}
+
+			.property-card .property-container .property-title {
+				display: flex;
+				padding-top: 8px;
+			}
+
+				.property-card .property-container .property-title a {
+					margin: 0 auto;
+					text-align: center;
+					text-decoration: none;
+					font-size: .6rem;
+				}
+
+		.property-card .active-property .property-title a {
+			color: #365c7e !important;
+			/*font: caption;*/
+		}
+
+		.property-card .property-container .property-title a span {
+			display: flex;
+			width: 40%;
+			border-top: solid 0.06rem;
+			margin: 0 auto;
+			margin-top: 10px;
+		}
+
+		.property-card .property-container .property-banner {
+			padding-top: 16px;
+		}
+
+			.property-card .property-container .property-banner img {
+				width: 100%;
+			}
+
+	.coming-soon {
+		display: flex;
+		padding: 4px;
+		opacity: .5;
+	}
+
+		.coming-soon span {
+			display: inline-flex;
+			margin: auto;
+		}
+</style>
