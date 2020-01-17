@@ -1,6 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 @inherits MetadataReviewBase
 
+
 <div class="metadatareview-component">
 	@if(Vm.MetadataSetLoadFailed == false)
 	{
@@ -25,6 +26,7 @@
 						var prevPageNumber = this.DataContext.PageNumber - 1;
 						var nextPageNumber = this.DataContext.PageNumber + 1;
 					}
+
 					@if (prevPageNumber > 0)
 					{
 						<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(prevPageNumber); }">@prevPageNumber</a></li>

@@ -10,18 +10,31 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class MetadataReviewBase : BaseBlazorComponent<MetadataReviewVm>
-    {
-        protected NetStore _store;
+	public class MetadataReviewBase : BaseBlazorComponent<MetadataReviewVm>
+	{
+		[Parameter]
+		public HyperDocumentId? MetadataSetId { get; set; }
 
-		protected override bool AutoCreateVm => false;
+		[Parameter]
+		public UniFilterData Filter { get; set; }
+
+		[Parameter]
+		public int ColumnsNumber { get; set; }
 
 		[Parameter]
 		public new MetadataReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
 
-		protected override async Task OnInitializedAsync()
-        {
-			await base.OnInitializedAsync();
-        }
-    }
+		protected override bool AutoCreateVm => false;
+
+		protected override async Task OnParametersSetAsync()
+		{
+			if (Filter != null)
+				await this.Vm.FilterTags(Filter);
+
+			await this.Vm.Initialize(MetadataSetId.Value, ColumnsNumber * 2);
+
+			await base.OnParametersSetAsync();
+		}
+
+	}
 }

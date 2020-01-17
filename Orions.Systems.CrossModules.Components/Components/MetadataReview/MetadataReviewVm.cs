@@ -15,11 +15,6 @@ namespace Orions.Systems.CrossModules.Components
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 
-		public MetadataReviewVm()
-		{
-
-		}
-
 		public IHyperArgsSink Store { get; set; }
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
@@ -27,6 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
 		public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
+
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
 
@@ -43,16 +39,21 @@ namespace Orions.Systems.CrossModules.Components
 				};
 			}
 		}
+
 		public bool PlayerOpened { get; set; } = false;
 		public bool TagsAreBeingLoaded { get; set; } = false;
 		public string PlayerUri { get; set; }
 		public string PlayerId { get; set; }
 
-		public async Task Initialize(IHyperArgsSink store, string metadataSetId, int smallestPageSize)
+		public MetadataReviewVm()
+		{
+		}
+
+		public async Task Initialize(IHyperArgsSink store, HyperDocumentId metadataSetId, int smallestPageSize)
 		{
 			this.Store = store;
 
-			_metadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
+			_metadataSetId = metadataSetId;
 
 			var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(_metadataSetId));
 
@@ -72,7 +73,6 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				MetadataSetLoadFailed.Value = true;
 			}
-
 		}
 
 		private async Task<int> GetDashApiPort()
@@ -154,6 +154,7 @@ namespace Orions.Systems.CrossModules.Components
 			var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
 			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
+
 			findArgs.DescriptorConditions.AddCondition(conditions);
 			findArgs.Skip = PageSize * (PageNumber - 1);
 			findArgs.Limit = PageSize;
