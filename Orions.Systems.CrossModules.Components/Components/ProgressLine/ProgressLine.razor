@@ -13,7 +13,7 @@
 	}
 
 	<span class="stat-progress" style="width: @(Progress)%;"></span>
-	<span class="stat-value opacity-medium">@Value</span>
+	<span class="stat-value">@Value %</span>
 </div>
 
 @code {
@@ -28,7 +28,7 @@
 	public int Progress { get; set; }
 
 	[Parameter]
-	public string Value { get; set; }
+	public int Value { get; set; }
 
 	public string ImageBase64Url
 	{
@@ -66,9 +66,6 @@
 
 	.progress-line .stat-value {
 		vertical-align: middle;
-	}
-
-	.opacity-medium {
-		opacity: .5;
+		font-weight:bold;
 	}
 </style>
