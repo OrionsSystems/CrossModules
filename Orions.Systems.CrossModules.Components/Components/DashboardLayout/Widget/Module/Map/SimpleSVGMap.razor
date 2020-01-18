@@ -9,28 +9,37 @@
 		<h3>@Widget.Label</h3>
 	}
 
-	<SVGMap Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
+	<SVGMap @ref="map" Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
 
 	<div style="text-align:center;">@SelectZoneMsg</div>
 
 </div>
 
 @code {
-
+	private SVGMap map;
 	private string SelectZoneMsg;
 
-	private void OnSelectZone(string zone) {
+	private async Task OnSelectZone(string zone) {
 		SelectZoneMsg = $"Selected zone is {zone}";
+
+		await map.UpdateZone(Widget.Zone, zone);
+		Widget.Zone = zone;
+		StateHasChanged();
 	}
 }
 
 <style>
+
+	.st20, .st21, .st22 {
+		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColor) ? "#cc0000" : Widget.ZoneColor ); 
+	}
+
 	.hide-zone {
 		fill: #159c7000;
 	}
 
 	.zone-over{
-		fill: #13513A !important;
+		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColorOver) ? "#13513A" : Widget.ZoneColorOver ) !important;
 	}
 
 	.st0 {
