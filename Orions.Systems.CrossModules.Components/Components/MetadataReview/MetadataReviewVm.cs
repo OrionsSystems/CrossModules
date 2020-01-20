@@ -4,6 +4,7 @@ using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -132,7 +133,14 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (filter is TextFilterData textFilterData)
 			{
-				this._metadataSet.TextFilters = textFilterData.LabelsArray;
+				this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it=> 
+				{ 
+					var elements = it.Split(":");
+					if (elements.Count() == 0)
+						return String.Empty;
+					else
+						return elements[elements.Count() - 1];
+				}).ToArray();
 			}
 		}
 
