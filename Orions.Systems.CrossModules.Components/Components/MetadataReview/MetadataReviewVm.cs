@@ -2,6 +2,7 @@
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
+using Orions.Systems.CrossModules.Components.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,29 +11,32 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class MetadataReviewVm : BlazorVm
-	{
-		private HyperDocumentId _metadataSetId;
-
-		public HyperDocumentId MetadataSetId => _metadataSetId;
-
+    public class MetadataReviewVm : BlazorVm
+    {
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
+		private MasksHeatmapRenderer _renderer;
 
+		public MetadataReviewVm()
+		{
+		}
+
+		public HyperDocumentId MetadataSetId { get; private set; }
 		public IHyperArgsSink Store { get; set; }
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
 		public UniFilterData Filter { get; private set; }
-		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
+        public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
-		public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
-
+        public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
+		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
+		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 
-		public List<int> PageSizeOptions
+		public List<int> PageSizeOptions	
 		{
-			get
+			get 
 			{
 				return new List<int>()
 				{
@@ -43,25 +47,20 @@ namespace Orions.Systems.CrossModules.Components
 				};
 			}
 		}
-
 		public bool PlayerOpened { get; set; } = false;
-		public bool TagsAreBeingLoaded { get; set; } = false;
-		public string PlayerUri { get; set; }
-		public string PlayerId { get; set; }
+        public bool TagsAreBeingLoaded { get; set; } = false;
+        public string PlayerUri { get; set; }
+        public string PlayerId { get; set; }
 
-		public MetadataReviewVm()
-		{
-		}
+		public async Task Initialize(IHyperArgsSink store, string metadataSetId, int smallestPageSize)
+        {
+            this.Store = store;
 
-		public async Task Initialize(IHyperArgsSink store, HyperDocumentId metadataSetId, int smallestPageSize)
-		{
-			this.Store = store;
+            MetadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
-			_metadataSetId = metadataSetId;
+            var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(MetadataSetId));
 
-			var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(_metadataSetId));
-
-			if (metadataSetFilter != null)
+			if(metadataSetFilter != null)
 			{
 				this._smallestPageSize = smallestPageSize;
 
@@ -77,6 +76,11 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				MetadataSetLoadFailed.Value = true;
 			}
+		}
+
+		private void ImageProp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(_renderer.ImageProp.Value)}";
 		}
 
 		private async Task<int> GetDashApiPort()
@@ -106,6 +110,22 @@ namespace Orions.Systems.CrossModules.Components
 
 			await LoadHyperTags();
 			await LoadTotalPages();
+		}
+
+		public void ShowHeatmap()
+		{
+			_renderer = new MasksHeatmapRenderer(this.Store, this._metadataSet, new MasksHeatmapRenderer.HeatmapSettings());
+			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
+			IsVmShowingHeatmapProp.Value = true;
+			Task.Run(_renderer.RunGenerationAsync);
+		}
+
+		public void CloseHeatmap()
+		{
+			_renderer.ImageProp.PropertyChanged -= ImageProp_PropertyChanged;
+			_renderer.CancelGeneration();
+			IsVmShowingHeatmapProp.Value = false;
+			HeatmapImgProp.Value = null;
 		}
 
 		private void FitlerMetadataSet(IUniFilterData filter)
@@ -145,45 +165,44 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		public async Task LoadTotalPages()
-		{
-			var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
+        {
+            var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
-			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
-			countArgs.DescriptorConditions.AddCondition(conditions);
+            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
+            countArgs.DescriptorConditions.AddCondition(conditions);
 
-			var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
+            var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
 
-			TotalPages.Value = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1;
+            TotalPages.Value = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1;
 
 			RaiseNotify(nameof(TotalPages));
-		}
+        }
 
-		public async Task LoadHyperTags()
-		{
-			TagsAreBeingLoaded = true;
+        public async Task LoadHyperTags()
+        {
+            TagsAreBeingLoaded = true;
 
-			var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+            var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
-			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
+            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
+            findArgs.DescriptorConditions.AddCondition(conditions);
+            findArgs.Skip = PageSize * (PageNumber - 1);
+            findArgs.Limit = PageSize;
 
-			findArgs.DescriptorConditions.AddCondition(conditions);
-			findArgs.Skip = PageSize * (PageNumber - 1);
-			findArgs.Limit = PageSize;
+            var docs = await Store.ExecuteAsync(findArgs);
 
-			var docs = await Store.ExecuteAsync(findArgs);
+            var hyperTags = new List<HyperTag>();
+            foreach (var doc in docs)
+            {
+                hyperTags.Add(doc.GetPayload<HyperTag>());
+            }
 
-			var hyperTags = new List<HyperTag>();
-			foreach (var doc in docs)
-			{
-				hyperTags.Add(doc.GetPayload<HyperTag>());
-			}
+            HyperTags.Value = hyperTags;
 
-			HyperTags.Value = hyperTags;
-
-			TagsAreBeingLoaded = false;
+            TagsAreBeingLoaded = false;
 
 			RaiseNotify(nameof(HyperTags));
-		}
+        }
 
 		public async Task ChangePageSize(int pageSize)
 		{
@@ -193,13 +212,13 @@ namespace Orions.Systems.CrossModules.Components
 			await LoadTotalPages();
 		}
 
-		public async Task ChangePage(int pageNumber)
-		{
-			PageNumber.Value = pageNumber;
+        public async Task ChangePage(int pageNumber)
+        {
+            PageNumber.Value = pageNumber;
 
-			HyperTags.Value = new List<HyperTag>();
+            HyperTags.Value = new List<HyperTag>();
 
-			await LoadHyperTags();
-		}
-	}
+            await LoadHyperTags();
+        }
+    }
 }
