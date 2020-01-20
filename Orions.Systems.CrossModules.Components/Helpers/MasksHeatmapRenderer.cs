@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			[HelpText("Used only if custom normalization is enabled. Any number of overlaps that is equal to this or higher than this considered to be the hottest possible value.")]
 			public uint MaximumNumberOfOverlaps { get; set; } = 100;
-			public int NumberOfBatchesToProcess { get; set; } = 5;
+			public int NumberOfBatchesToProcess { get; set; } = int.MaxValue;
 		}
 
 		public void CancelGeneration()
