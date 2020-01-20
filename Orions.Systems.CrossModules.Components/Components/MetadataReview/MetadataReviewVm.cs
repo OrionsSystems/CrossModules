@@ -2,6 +2,7 @@
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
+using Orions.Systems.CrossModules.Components.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,10 +15,10 @@ namespace Orions.Systems.CrossModules.Components
         private HyperDocumentId _metadataSetId;
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
+		private MasksHeatmapRenderer _renderer;
 
 		public MetadataReviewVm()
 		{
-
 		}
 
         public IHyperArgsSink Store { get; set; }
@@ -29,6 +30,8 @@ namespace Orions.Systems.CrossModules.Components
         public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
+		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
+		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 
 		public List<int> PageSizeOptions	
 		{
@@ -72,8 +75,12 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				MetadataSetLoadFailed.Value = true;
 			}
+		}
 
-        }
+		private void ImageProp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(_renderer.ImageProp.Value)}";
+		}
 
 		private async Task<int> GetDashApiPort()
 		{
@@ -102,6 +109,22 @@ namespace Orions.Systems.CrossModules.Components
 
 			await LoadHyperTags();
 			await LoadTotalPages();
+		}
+
+		public void ShowHeatmap()
+		{
+			_renderer = new MasksHeatmapRenderer(this.Store, this._metadataSet, new MasksHeatmapRenderer.HeatmapSettings());
+			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
+			IsVmShowingHeatmapProp.Value = true;
+			Task.Run(_renderer.RunGenerationAsync);
+		}
+
+		public void CloseHeatmap()
+		{
+			_renderer.ImageProp.PropertyChanged -= ImageProp_PropertyChanged;
+			_renderer.CancelGeneration();
+			IsVmShowingHeatmapProp.Value = false;
+			HeatmapImgProp.Value = null;
 		}
 
 		private void FitlerMetadataSet(IUniFilterData filter)
