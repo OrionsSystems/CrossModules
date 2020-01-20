@@ -31,7 +31,7 @@ namespace Orions.Systems.CrossModules.Components
 			if (Filter != null)
 				await this.Vm.FilterTags(Filter);
 
-			await this.Vm.Initialize(MetadataSetId.Value, ColumnsNumber * 2);
+			await this.Vm.Initialize(Vm.Store, MetadataSetId.Value, ColumnsNumber * 2);
 
 			await base.OnParametersSetAsync();
 		}
