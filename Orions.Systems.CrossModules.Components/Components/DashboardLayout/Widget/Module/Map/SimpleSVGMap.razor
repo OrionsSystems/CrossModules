@@ -2,6 +2,8 @@
 
 @inherits DashboardComponent<SimpleSVGMapVm, SimpleSVGMapWidget>
 
+@inject NavigationManager NavigationManager
+
 <div class="widget-content-report">
 
 	@if (Widget.ShowTitle)
@@ -11,27 +13,38 @@
 
 	<SVGMap @ref="map" Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
 
-	<div style="text-align:center;">@SelectZoneMsg</div>
-
 </div>
 
 @code {
-	private SVGMap map;
-	private string SelectZoneMsg;
 
-	private async Task OnSelectZone(string zone) {
-		SelectZoneMsg = $"Selected zone is {zone}";
+	private SVGMap map;
+
+	private async Task OnSelectZone(string zone)
+	{
+		if (string.IsNullOrWhiteSpace(zone)) return;
 
 		await map.UpdateZone(Widget.Zone, zone);
 		Widget.Zone = zone;
-		StateHasChanged();
+
+		//var isTagDashboardExist = await IsDashboardExist(zone);
+		
+		var uri = $"/dashboard/{zone}";
+		NavigationManager.NavigateTo(uri, true);
 	}
+
+	private async Task<bool> IsDashboardExist(string tag)
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
+
+		return datas.Where(it => it.Option.Tag == tag).Any();
+	}
+
 }
 
 <style>
 
 	.st20, .st21, .st22 {
-		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColor) ? "#cc0000" : Widget.ZoneColor ); 
+		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColor) ? "#cc0000" : Widget.ZoneColor );
 	}
 
 	.hide-zone {

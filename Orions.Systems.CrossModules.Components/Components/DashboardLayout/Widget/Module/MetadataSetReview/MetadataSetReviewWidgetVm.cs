@@ -21,7 +21,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		{
 			var filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
 
-			await this.MetadataReviewVm.Value.FilterTags(filter);
+			await this.MetadataReviewVm.Value. FilterTags(filter);
 		}
 	}
 }

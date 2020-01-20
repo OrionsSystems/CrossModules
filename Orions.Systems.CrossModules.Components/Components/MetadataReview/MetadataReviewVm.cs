@@ -31,6 +31,7 @@ namespace Orions.Systems.CrossModules.Components
         public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
+		public int InitialRowsNumber { get; set; } = 2;
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 

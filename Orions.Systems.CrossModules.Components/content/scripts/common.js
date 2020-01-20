@@ -59,6 +59,16 @@ window.Orions.JwPlayer = {
    }
 };
 
+window.Orions.MetadataReviewComponent = {
+	init: function() {
+		document.querySelector(".metadatareview-page-controls input").addEventListener("keypress", function (evt) {
+			if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {
+				evt.preventDefault();
+			}
+		});
+	}
+}
+
 window.Orions.KendoTreemap = {
 
    init: function (id, data) {

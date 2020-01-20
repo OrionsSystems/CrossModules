@@ -13,6 +13,12 @@
          public int Hispanic { get; set; }
 
          public int NativeAmerican { get; set; }
+
+         public int MiddleEasterner { get; set; }
+
+         public int MixRace { get; set; }
+
+         public int Other { get; set; }
       }
 
       public Etnicity Data { get; set; } = new Etnicity();
