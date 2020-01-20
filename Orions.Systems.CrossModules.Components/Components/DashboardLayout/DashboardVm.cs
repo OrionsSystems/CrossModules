@@ -169,6 +169,13 @@ namespace Orions.Systems.CrossModules.Components
 			dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
 		}
 
+		public void ClearFilters(string group)
+		{
+			var data = ObtainFilterData(group);
+
+			data.Clear();
+		}
+
 		public void SetStringFilters(string group, string[] filters, ReportInstruction.Targets filterTarget)
 		{
 			var data = ObtainFilterData(group);

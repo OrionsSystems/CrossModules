@@ -31,15 +31,18 @@
 		@if (Vm.Widget.ShowDateTimeSelection)
 		{
 			<div class="control-styles">
-					<EjsDateRangePicker @ref="DateRangePicker" StartDate="@StartDate" EndDate="@EndDate" Placeholder="Select Time Range"></EjsDateRangePicker>
+				<EjsDateRangePicker @ref="DateRangePicker" StartDate="@StartDate" EndDate="@EndDate" Placeholder="Select Time Range"></EjsDateRangePicker>
 			</div>
 		}
 
-		<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
-			<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
-				<ProgressButtonEvents></ProgressButtonEvents>
-			</EjsProgressButton>
-		</div>
+	<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
+		<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
+			<ProgressButtonEvents></ProgressButtonEvents>
+		</EjsProgressButton>
+		<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear (All)" IsPrimary="true">
+			<ProgressButtonEvents></ProgressButtonEvents>
+		</EjsProgressButton>
+	</div>
 
 	</div>
 
@@ -54,6 +57,8 @@
 
 	public EjsProgressButton ProgressButton;
 
+	public EjsProgressButton ClearButton;
+
 	public EjsMultiSelect<string[]> MultiSelect;
 
 	public EjsDateRangePicker DateRangePicker { get; set; }
@@ -66,13 +71,20 @@
 	public DateTime? StartDate => Widget.StartDate;
 	public DateTime? EndDate => Widget.EndDate;
 
+	public async Task OnClear(MouseEventArgs args)
+	{
+		await Vm.ClearFilters();
+		await ClearButton.ProgressComplete(); // Mark completion.
+	}
+
 	public async Task OnApply(MouseEventArgs args)
 	{
 		// There is a bug when using Value and we remove the last item, so using this is more reliable.
 		string text = MultiSelect.Text;
-		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { }; 
+		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { };
 
-		await Vm.ApplyAsync(filters, DateRangePicker.StartDate, DateRangePicker.EndDate);
+		if (DateRangePicker != null)
+			await Vm.ApplyAsync(filters, DateRangePicker.StartDate, DateRangePicker.EndDate);
 
 		await ProgressButton.ProgressComplete(); // Mark completion.
 	}

@@ -28,6 +28,12 @@ namespace Orions.Systems.CrossModules.Components
 			//await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 
+		public async Task ClearFilters()
+		{
+			this.DashboardVm.ClearFilters(this.Widget.FilterGroup);
+			await this.DashboardVm.UpdateDynamicWidgetsAsync();
+		}
+
 		public async Task ApplyAsync(string[] filters, DateTime? startTime, DateTime? endTime)
 		{
 			this.Widget.Filters = filters;
