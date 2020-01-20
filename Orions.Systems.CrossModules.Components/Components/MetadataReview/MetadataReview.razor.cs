@@ -25,16 +25,5 @@ namespace Orions.Systems.CrossModules.Components
 		public new MetadataReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
 
 		protected override bool AutoCreateVm => false;
-
-		protected override async Task OnParametersSetAsync()
-		{
-			if (Filter != null)
-				await this.Vm.FilterTags(Filter);
-
-			await this.Vm.Initialize(Vm.Store, Vm.MetadataSetId.Id, Vm.ColumnsNumber * 2);
-
-			await base.OnParametersSetAsync();
-		}
-
 	}
 }

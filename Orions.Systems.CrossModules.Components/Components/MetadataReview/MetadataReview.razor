@@ -11,7 +11,7 @@
 				}
 				else
 				{
-					<TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@DataContext.Store" ColumnsNumber="@Vm.ColumnsNumber" DashApiPort="@Vm.DashApiPort" />
+					<TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@DataContext.Store" ColumnsNumber="@Vm.ColumnsNumber" RowsNumber="@Vm.InitialRowsNumber" DashApiPort="@Vm.DashApiPort" />
 				}
 			</div>
 
@@ -34,7 +34,7 @@
 						{
 							<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(nextPageNumber); }">@nextPageNumber</a></li>
 						}
-						@if (nextPageNumber == 2)
+						@if (nextPageNumber == 2 && Vm.TotalPages > 2)
 						{
 							<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(3); }">3</a></li>
 						}
@@ -55,7 +55,7 @@
 
 					<div class="go-to-page-control">
 						<span>Go to page: </span>
-						<input type="number" class="form-control" value="@Vm.PageNumber.Value" @onchange="async (e) => await Vm.ChangePage(int.Parse(e.Value as string))" />
+						<input type="number" min="1" max="@Vm.PageNumber" class="form-control" value="@Vm.PageNumber.Value" @onchange="async (e) => await Vm.ChangePage(int.Parse(e.Value as string))" />
 					</div>
 
 					<div class="total-pages">Total pages: @DataContext.TotalPages.Value</div>
