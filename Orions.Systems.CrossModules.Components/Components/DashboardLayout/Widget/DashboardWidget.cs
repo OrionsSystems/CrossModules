@@ -1,4 +1,5 @@
 ﻿using Orions.Common;
+using Orions.Infrastructure.Reporting;
 using Orions.Node.Common;
 using System;
 
@@ -14,6 +15,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		[HelpText("Group of filters this widget belongs to")]
 		public string FilterGroup { get; set; }
+
+		//public ReportInstruction.Targets FilterGroupTarget { get; set; } = ReportInstruction.Targets.Default;
 
 		public DashboardWidget()
 		{

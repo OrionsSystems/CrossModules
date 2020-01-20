@@ -12,7 +12,6 @@ namespace Orions.Systems.CrossModules.Components
 {
     public class MetadataReviewVm : BlazorVm
     {
-        private HyperDocumentId _metadataSetId;
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 		private MasksHeatmapRenderer _renderer;
@@ -21,7 +20,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-        public IHyperArgsSink Store { get; set; }
+		public HyperDocumentId MetadataSetId { get; private set; }
+		public IHyperArgsSink Store { get; set; }
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
 		public UniFilterData Filter { get; private set; }
@@ -55,9 +55,9 @@ namespace Orions.Systems.CrossModules.Components
         {
             this.Store = store;
 
-            _metadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
+            MetadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
-            var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(_metadataSetId));
+            var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(MetadataSetId));
 
 			if(metadataSetFilter != null)
 			{

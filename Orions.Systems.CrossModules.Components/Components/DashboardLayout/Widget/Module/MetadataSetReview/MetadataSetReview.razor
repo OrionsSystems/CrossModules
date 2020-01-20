@@ -24,7 +24,7 @@
 		var store = this.HyperStore;
 
 		this.Vm.MetadataReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
-		await this.Vm.MetadataReviewVm.Value.Initialize(store, Widget.MetadataSetId, Widget.ColumnsNumber * 2);
+		await this.Vm.MetadataReviewVm.Value.Initialize(store, Widget.MetadataSetId.Value.Id, Widget.ColumnsNumber * 2);
 	}
 }
 

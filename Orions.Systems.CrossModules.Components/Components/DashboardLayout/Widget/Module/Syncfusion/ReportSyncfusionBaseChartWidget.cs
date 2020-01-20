@@ -3,7 +3,7 @@ using Syncfusion.EJ2.Blazor.Charts;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class ReportSyncfusionBaseChartWidget : ReportBaseWidget, IDashboardWidget
+	public abstract class ReportSyncfusionBaseChartWidget : ReportChartWidget, IDashboardWidget
 	{
 		public class LegendDefinition
 		{
