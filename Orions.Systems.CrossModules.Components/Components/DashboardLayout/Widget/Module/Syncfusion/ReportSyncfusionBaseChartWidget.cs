@@ -33,7 +33,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public LegendDefinition LegendSettings { get; set; } = new LegendDefinition();
 
-		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Column;
+		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.StackingColumn;
 
 		public bool IsShowMarker { get; set; } = false;
 
