@@ -143,14 +143,14 @@
 		fill: none;
 	}
 
-.dashboard-widget-add > a {
+dashboard-widget-add > a {
 	cursor: pointer;
 	border: solid;
 	display: inline-block;
 	height: 50px;
 	width: 50px;
-	line-height: 38px;
-	font-size: 40px;
+	line-height: 29px;
+	font-size: 37px;
 	border-radius: 50px;
 	border-width: 1px;
 	border-color: #888888;
