@@ -8,7 +8,7 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class SVGMapBase : BaseOrionsComponent, IDisposable
 	{
-		private string _removeElementCSS = "hide-zone";
+		private string _hideElementCSS = "hide-zone";
 		private string _classNameOnMouseOver = "zone-over";
 		private string _zoneAreaId = "Zones";
 
@@ -30,10 +30,21 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (!string.IsNullOrEmpty(Zone))
 			{
-				await JsInterop.InvokeAsync<object>("Orions.MapZone.RemoveClassById", new object[] { Zone, _removeElementCSS });
+				await JsInterop.InvokeAsync<object>("Orions.MapZone.RemoveClassById", new object[] { Zone, _hideElementCSS });
 			}
 
 			await base.OnInitializedAsync();
+		}
+
+		public async Task UpdateZone(string oldZone, string newZone) {
+			if (!string.IsNullOrWhiteSpace(oldZone)) {
+				await JsInterop.InvokeAsync<object>("Orions.MapZone.AddClassById", new object[] { oldZone, _hideElementCSS });
+			}
+
+			if (!string.IsNullOrWhiteSpace(newZone))
+			{
+				await JsInterop.InvokeAsync<object>("Orions.MapZone.RemoveClassById", new object[] { newZone, _hideElementCSS });
+			}
 		}
 
 		[JSInvokable]
