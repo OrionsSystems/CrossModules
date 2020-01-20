@@ -12,6 +12,9 @@ namespace Orions.Systems.CrossModules.Components
 	public class MetadataReviewVm : BlazorVm
 	{
 		private HyperDocumentId _metadataSetId;
+
+		public HyperDocumentId MetadataSetId => _metadataSetId;
+
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 

@@ -7,6 +7,7 @@ using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.MetadataSetReview
 {
+   [Compatibility("MetadataTagReviewWidget")]
    public class MetadataSetReviewWidget : DashboardWidget, IDashboardWidget
    {
       [HelpText("The Id of the metadata set to use", HelpTextAttribute.Priorities.Mandatory)]
