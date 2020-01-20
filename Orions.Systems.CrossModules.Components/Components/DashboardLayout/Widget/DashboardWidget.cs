@@ -9,9 +9,9 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public string Label { get; set; }
 
-		public bool ShowTitle { get; set; } = true;
+		public bool ShowTitle { get; set; } = false;
 
-		public bool ShowFooter { get; set; } = true;
+		public bool ShowFooter { get; set; } = false;
 
 		[HelpText("Group of filters this widget belongs to")]
 		public string FilterGroup { get; set; }

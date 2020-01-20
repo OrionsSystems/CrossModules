@@ -35,7 +35,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.Column;
 
-		public bool IsShowMarker { get; set; } = true;
+		public bool IsShowMarker { get; set; } = false;
 
 		public string ChartBackground { get; set; } = "transparent";
 
