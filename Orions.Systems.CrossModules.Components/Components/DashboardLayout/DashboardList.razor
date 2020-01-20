@@ -21,6 +21,7 @@
 							<th scope="col"></th>
 							<th class="w-75" scope="col">Name</th>
 							<th scope="col">Home</th>
+							<th scope="col">Tag</th>
 							<th class="w-25" scope="col"></th>
 						</tr>
 					</thead>
@@ -33,6 +34,7 @@
 								<td>@rowIndex</td>
 								<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
 								<td>@(item.Option.IsDefault == true ? "True" : "")</td>
+								<td>@item.Option.Tag</td>
 								<td class="text-center">
 									<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 									<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
