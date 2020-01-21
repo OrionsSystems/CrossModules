@@ -30,7 +30,6 @@ namespace Orions.Systems.CrossModules.Components
         public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
         public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
-		public ViewModelProperty<string> PageNumberRawValue { get; set; } = new ViewModelProperty<string>("1");
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
 		public int InitialRowsNumber { get; set; } = 2;
@@ -110,6 +109,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			this.Filter = filter;
 			FitlerMetadataSet(filter);
+
+			PageNumber.Value = 1;
 
 			await LoadHyperTags();
 			await LoadTotalPages();
@@ -209,11 +210,28 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task ChangePageSize(int pageSize)
 		{
+			CalculatePageNumberForNewPageSize(pageSize);
 			PageSize.Value = pageSize;
 
 			await LoadHyperTags();
 			await LoadTotalPages();
 		}
+
+		private void CalculatePageNumberForNewPageSize(int newPageSize)
+		{
+			var currentFirstItemIndex = this.PageSize * (this.PageNumber - 1) + 1;
+			var pageNumber = currentFirstItemIndex / newPageSize + 1;
+
+			PageNumber.Value = pageNumber;
+		}
+
+		//private void CalculatePageNumberForNewPageSize()
+		//{
+		//	var currentFirstItemIndex = this.PageSize * (this.PageNumber - 1) + 1;
+		//	var pageNumber = currentFirstItemIndex / newPageSize + 1;
+
+		//	return pageNumber;
+		//}
 
 		public async Task ChangePage(string pageNumberStr)
         {
@@ -229,11 +247,12 @@ namespace Orions.Systems.CrossModules.Components
 				pageNumber = TotalPages.Value;
 			}
 
-            PageNumber.Value = pageNumber;
-
-			HyperTags.Value = new List<HyperTag>();
-
-			await LoadHyperTags();
+			if(pageNumber != PageNumber.Value)
+			{
+				PageNumber.Value = pageNumber;
+				HyperTags.Value = new List<HyperTag>();
+				await LoadHyperTags();
+			}
 		}
     }
 }
