@@ -1,0 +1,187 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<BodyTypeVm, BodyTypeWidget>
+
+<div class="widget-content-report">
+	@if (Widget.ShowTitle)
+	{
+		<h3>@Widget.Label</h3>
+	}
+
+<div class="widget-content-report-view">
+	<div class="row widget-content-report-body-status">
+		<div class="col-lg-12">
+
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Anorexic">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" 
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="Anorexis">
+							<path class="st1" d="M91.3,37.1c0,10.2-8.2,18.4-18.4,18.4c-10.2,0-18.4-8.2-18.4-18.4c0-10.2,8.2-18.4,18.4-18.4
+						C83.1,18.7,91.3,26.9,91.3,37.1z" />
+							<path class="st0" d="M77.9,74.2c0-2.8-2.2-5-5-5c-2.8,0-5,2.2-5,5v50.2h10.1V74.2z" />
+							<rect x="67.9" y="124.4" class="st0" width="10.1" height="14.1" />
+						</g>
+			</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.Anorexic" Value="@Widget.Data.Anorexic"></ProgressLine>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Slim">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" 
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="Slim">
+							<path class="st1" d="M92.4,36.5c0,10-8.1,18.1-18.1,18.1c-10,0-18.1-8.1-18.1-18.1c0-10,8.1-18.1,18.1-18.1
+						C84.3,18.4,92.4,26.5,92.4,36.5z" />
+							<path class="st0" d="M84.2,78c0-5.5-4.4-9.9-9.9-9.9c-5.5,0-9.9,4.4-9.9,9.9v44.5h19.8V78z" />
+							<rect x="64.4" y="122.4" class="st0" width="19.8" height="16" />
+						</g>
+					</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.Slim" Value="@Widget.Data.Slim"></ProgressLine>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Slim Fit">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="SlimFit">
+							<path class="st1" d="M88.3,36.9c0,10.1-8.2,18.3-18.3,18.3C60,55.2,51.8,47,51.8,36.9c0-10.1,8.2-18.3,18.3-18.3
+								C80.2,18.7,88.3,26.8,88.3,36.9z"/>
+							<path class="st0" d="M85,83.7c0-8.3-6.7-15-15-15s-15,6.7-15,15v39.8H85V83.7z"/>
+							<rect x="55.1" y="123.5" class="st0" width="29.9" height="15"/>
+						</g>
+					</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.SlimFit" Value="@Widget.Data.SlimFit"></ProgressLine>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Average">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="Average">
+								<path class="st1" d="M92.2,36.9c0,10.1-8.2,18.2-18.2,18.2c-10.1,0-18.2-8.2-18.2-18.2c0-10.1,8.2-18.2,18.2-18.2
+									C84,18.7,92.2,26.8,92.2,36.9z"/>
+								<path class="st0" d="M93.9,88.6c0-11-8.9-19.9-19.9-19.9S54,77.6,54,88.6v34.8h39.9V88.6z"/>
+								<rect x="54" y="123.4" class="st0" width="39.9" height="15.1"/>
+							</g>
+						</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.Average" Value="@Widget.Data.Average"></ProgressLine>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Average Fit">
+					<svg class="widget-content-report-body-status-svg" version="1.1"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="AverageFit">
+								<path class="st1" d="M93.3,36.6c0,10.1-8.2,18.3-18.3,18.3c-10.1,0-18.3-8.2-18.3-18.3c0-10.1,8.2-18.3,18.3-18.3
+									C85.1,18.4,93.3,26.5,93.3,36.6z"/>
+								<path class="st0" d="M100,94.4c0-13.8-11.2-25-25-25s-25,11.2-25,25v28.8H100V94.4z"/>
+								<rect x="50" y="123.3" class="st0" width="49.9" height="15.2"/>
+							</g>
+						</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.AverageFit" Value="@Widget.Data.AverageFit"></ProgressLine>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Mild Overweight">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="MildOverweight">
+								<path class="st1" d="M92.3,36.7c0,10.1-8.2,18.3-18.3,18.3c-10.1,0-18.3-8.2-18.3-18.3c0-10.1,8.2-18.3,18.3-18.3
+									C84.1,18.4,92.3,26.6,92.3,36.7z"/>
+								<path class="st0" d="M104,99.8c0-16.6-13.5-30.1-30.1-30.1S43.9,83.2,43.9,99.8v23.9H104V99.8z"/>
+								<polygon class="st0" points="103.7,138.5 104,123.7 43.9,123.7 43.5,138.5 		"/>
+							</g>
+						</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.MildOverweight" Value="@Widget.Data.MildOverweight"></ProgressLine>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Overweight">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="Overweight">
+								<path class="st1" d="M93.3,36.8c0,10.1-8.2,18.3-18.3,18.3c-10.1,0-18.3-8.2-18.3-18.3c0-10.1,8.2-18.3,18.3-18.3
+									C85.1,18.5,93.3,26.7,93.3,36.8z"/>
+								<path class="st0" d="M115,108.8c0-22.1-17.9-40-40-40s-40,17.9-40,40v14.9H115V108.8z"/>
+								<rect x="35" y="123.7" class="st0" width="80.1" height="14.8"/>
+							</g>
+						</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.Overweight" Value="@Widget.Data.Overweight"></ProgressLine>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="col-md-3 widget-content-report-body-status-icon" title="Very Overweight">
+					<svg class="widget-content-report-body-status-svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+						  viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+						<g id="VeryOverweight">
+								<path class="st1" d="M93.7,36.5c0,10-8.1,18.2-18.2,18.2c-10,0-18.2-8.1-18.2-18.2c0-10,8.1-18.2,18.2-18.2
+									C85.6,18.4,93.7,26.5,93.7,36.5z"/>
+								<path class="st0" d="M125.2,118.9c0-27.4-22.2-49.7-49.7-49.7s-49.7,22.2-49.7,49.7v3.8h99.4V118.9z"/>
+								<rect x="25.9" y="122.7" class="st0" width="99.4" height="15.7"/>
+							</g>
+						</svg>
+				</div>
+				<div class="col-md-9 widget-content-report-body-status-progress">
+					<ProgressLine Progress="@Widget.Data.VeryOverweight" Value="@Widget.Data.VeryOverweight"></ProgressLine>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</div>
+</div>
+
+@code {
+}
+
+
+<style type="text/css">
+	.st0 {
+		fill: #5aafff;
+	}
+
+	.st1 {
+		fill: none;
+		stroke: #5aafff;
+		stroke-miterlimit: 10;
+	}
+
+	.widget-content-report-body-status-icon {
+		 /*transform: scale(0.9);*/
+		 text-align: center;
+	}
+
+	.widget-content-report-body-status-progress {
+		 padding: 18px;
+		 margin: auto;
+	}
+
+	.progress-line .stat-progress {
+		background-color: #bcbec4;
+	}
+
+	.widget-content-report-body-status-svg {
+		 width: 100px;
+		 padding: 10px 10px;
+	}
+</style>
+
+
