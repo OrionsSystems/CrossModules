@@ -4,6 +4,7 @@ using Syncfusion.EJ2.Blazor.Charts;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -16,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public void HandlePointOnclick(IPointEventArgs args)
+		public async Task HandlePointOnclick(IPointEventArgs args)
 		{
 			var series = this.ReportChartData.Series[(int)args.SeriesIndex];
 			var category = series.Name;
@@ -49,7 +50,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			if (this.Widget.InteractiveModeCategoryFiltering || this.Widget.InteractiveModeDateTimeFiltering)
-				this.DashboardVm.UpdateDynamicWidgetsAsync();
+				await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 	}
 }

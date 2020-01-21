@@ -59,7 +59,7 @@ window.Orions.JwPlayer = {
    }
 };
 
-window.Orions.MetadataReviewComponent = {
+window.Orions.TagReviewComponent = {
 	init: function() {
 		document.querySelector(".metadatareview-page-controls .page-number-input").addEventListener("keypress", function (evt) {
 			if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57) {

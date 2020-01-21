@@ -38,9 +38,9 @@ namespace Orions.Systems.CrossModules.Portal
 
 			services.AddTelerikBlazor();
 
-			services.AddSyncfusionBlazor();
-
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
+
+			services.AddSyncfusionBlazor();
 
 			services.AddProtectedBrowserStorage();
 
