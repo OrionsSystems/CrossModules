@@ -1,6 +1,7 @@
-﻿@inherits DashboardComponent<MetadataSetReviewWidgetVm, MetadataSetReviewWidget>
+﻿@inherits DashboardComponent<TagReviewWidgetVm, TagReviewWidget>
 @using Orions.Common;
 @using Orions.Infrastructure.HyperMedia;
+@using Orions.Systems.CrossModules.Components;
 
 <div class="metadata-review-widget">
 	@if (Widget.ShowTitle)
@@ -9,7 +10,7 @@
 	}
 	@if (Widget.MetadataSetId != null && Vm != null)
 	{
-		<MetadataReview Vm="@Vm.MetadataReviewVm" />
+		<TagReviewComponent Vm="@Vm.TagReviewVm.Value" />
 	}
 	else
 	{
@@ -23,9 +24,9 @@
 
 		var store = this.HyperStore;
 
-		this.Vm.MetadataReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
-		this.Vm.MetadataReviewVm.Value.InitialRowsNumber = this.Widget.InitialRowsNumber;
-		await this.Vm.MetadataReviewVm.Value.Initialize(store, Widget.MetadataSetId.Value.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
+		this.Vm.TagReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
+		this.Vm.TagReviewVm.Value.InitialRowsNumber = this.Widget.InitialRowsNumber;
+		await this.Vm.TagReviewVm.Value.Initialize(store, Widget.MetadataSetId.Value.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
 
 		await this.JsInterop.InvokeAsync<object>("window.Orions.MetadataReviewComponent.init", new object[0]);
 	}

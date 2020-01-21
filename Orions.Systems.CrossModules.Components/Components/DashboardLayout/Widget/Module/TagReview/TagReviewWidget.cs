@@ -5,10 +5,10 @@ using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 
-namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.MetadataSetReview
+namespace Orions.Systems.CrossModules.Components
 {
 	[Compatibility("MetadataTagReviewWidget")]
-	public class MetadataSetReviewWidget : DashboardWidget, IDashboardWidget
+	public class TagReviewWidget : DashboardWidget, IDashboardWidget
 	{
 		[HelpText("The Id of the metadata set to use", HelpTextAttribute.Priorities.Mandatory)]
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataSet))]
@@ -18,7 +18,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public int InitialRowsNumber { get; set; } = 2;
 
-		public MetadataSetReviewWidget()
+		public TagReviewWidget()
 		{
 			this.Label = "Metadata Review Widget";
 		}

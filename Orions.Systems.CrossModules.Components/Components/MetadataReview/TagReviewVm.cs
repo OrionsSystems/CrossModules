@@ -8,16 +8,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class MetadataReviewVm : BlazorVm
+    public class TagReviewVm : BlazorVm
     {
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 		private MasksHeatmapRenderer _renderer;
 
-		public MetadataReviewVm()
+		public TagReviewVm()
 		{
 		}
 
@@ -28,7 +29,8 @@ namespace Orions.Systems.CrossModules.Components
 		public UniFilterData Filter { get; private set; }
         public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
-        public ViewModelProperty<long> TotalPages { get; set; } = new ViewModelProperty<long>();
+        public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
+		public ViewModelProperty<string> PageNumberRawValue { get; set; } = new ViewModelProperty<string>("1");
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
 		public int InitialRowsNumber { get; set; } = 2;
@@ -174,7 +176,7 @@ namespace Orions.Systems.CrossModules.Components
 
             var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
 
-            TotalPages.Value = totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1;
+            TotalPages.Value = (int)(totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1);
 
 			RaiseNotify(nameof(TotalPages));
         }
@@ -213,13 +215,25 @@ namespace Orions.Systems.CrossModules.Components
 			await LoadTotalPages();
 		}
 
-        public async Task ChangePage(int pageNumber)
+		public async Task ChangePage(string pageNumberStr)
         {
+			int pageNumber = 1;
+			int.TryParse(pageNumberStr, out pageNumber);
+
+			if(pageNumber < 1)
+			{
+				pageNumber = 1;
+			}
+			if(pageNumber > TotalPages.Value)
+			{
+				pageNumber = TotalPages.Value;
+			}
+
             PageNumber.Value = pageNumber;
 
-            HyperTags.Value = new List<HyperTag>();
+			HyperTags.Value = new List<HyperTag>();
 
-            await LoadHyperTags();
-        }
+			await LoadHyperTags();
+		}
     }
 }

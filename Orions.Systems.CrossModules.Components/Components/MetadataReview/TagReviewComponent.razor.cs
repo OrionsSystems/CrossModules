@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class MetadataReviewBase : BaseBlazorComponent<MetadataReviewVm>
+	public class TagReviewComponentBase : BaseBlazorComponent<TagReviewVm>
 	{
 		//[Parameter]
 		//public HyperDocumentId? MetadataSetId { get; set; }
@@ -22,7 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 		//public int ColumnsNumber { get; set; }
 
 		[Parameter]
-		public new MetadataReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
+		public new TagReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
 
 		protected override bool AutoCreateVm => false;
 	}
