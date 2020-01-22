@@ -60,7 +60,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			Report = reportResult;
 
-			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',').Select(it => it.Trim()).ToArray());
+			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
 
 			IsLoadedReportResult = true;
 
