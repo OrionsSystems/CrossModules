@@ -7,20 +7,21 @@ using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	[Compatibility("MetadataTagReviewWidget")]
+	[HelpText("Helps visualize the individual tags from the selected MetadataSet + runtime filtering range")]
+	[Compatibility("MetadataTagReviewWidget", "MetadataSetReviewWidget")]
 	public class TagReviewWidget : DashboardWidget, IDashboardWidget
 	{
 		[HelpText("The Id of the metadata set to use", HelpTextAttribute.Priorities.Mandatory)]
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataSet))]
 		public HyperDocumentId? MetadataSetId { get; set; }
 
-		public int ColumnsNumber { get; set; } = 4;
+		public int ColumnsNumber { get; set; } = 6;
 
-		public int InitialRowsNumber { get; set; } = 2;
+		public int InitialRowsNumber { get; set; } = 3;
 
 		public TagReviewWidget()
 		{
-			this.Label = "Metadata Review Widget";
+			this.Label = "Tag Review Widget";
 		}
 	}
 }
