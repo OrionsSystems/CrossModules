@@ -163,10 +163,27 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var data = ObtainFilterData(group);
 
-			var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
-			dateTimeFilterData.StartTime = startTime;
-			dateTimeFilterData.EndTime = endTime;
-			dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+			if (startTime.HasValue == false && endTime.HasValue == false)
+			{
+				data.Elements = data.Elements.Where(it => it is DateTimeFilterData == false).ToArray(); // Remove all time filters.
+			}
+			else
+			{
+				var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
+				dateTimeFilterData.StartTime = startTime;
+				dateTimeFilterData.EndTime = endTime;
+				dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+			}
+		}
+
+		public void ClearAllFilters()
+		{
+			lock (_syncRoot)
+			{
+				foreach (var g in _dynamicFiltersByGroup)
+					g.Value.Clear();
+			}
+
 		}
 
 		public void ClearFilters(string group)
@@ -180,12 +197,19 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var data = ObtainFilterData(group);
 
-			var textFilterData = data.ObtainElement<TextFilterData>();
+			if (filters == null || filters.Length == 0)
+			{
+				data.Elements = data.Elements.Where(it => it is TextFilterData == false).ToArray(); // Remove all string filters.
+			}
+			else
+			{
+				var textFilterData = data.ObtainElement<TextFilterData>();
 
-			textFilterData.LabelsArray = filters;
-			textFilterData.Mode = AndOr.Or;
-			textFilterData.StringCompareMode = StringComparisonMode.Contains;
-			textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+				textFilterData.LabelsArray = filters;
+				textFilterData.Mode = AndOr.Or;
+				textFilterData.StringCompareMode = StringComparisonMode.Contains;
+				textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+			}
 		}
 
 		/// <summary>
