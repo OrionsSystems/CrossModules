@@ -39,7 +39,10 @@
 		<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
 			<ProgressButtonEvents></ProgressButtonEvents>
 		</EjsProgressButton>
-		<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear (All)" IsPrimary="true">
+		<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear" IsPrimary="true">
+			<ProgressButtonEvents></ProgressButtonEvents>
+		</EjsProgressButton>
+		<EjsProgressButton @ref="ClearAllButton" Duration="9999999" OnClick="@OnClearAll" Content="Clear (All)" IsPrimary="true">
 			<ProgressButtonEvents></ProgressButtonEvents>
 		</EjsProgressButton>
 	</div>
@@ -59,6 +62,8 @@
 
 	public EjsProgressButton ClearButton;
 
+	public EjsProgressButton ClearAllButton;
+
 	public EjsMultiSelect<string[]> MultiSelect;
 
 	public EjsDateRangePicker DateRangePicker { get; set; }
@@ -70,6 +75,12 @@
 
 	public DateTime? StartDate => Widget.StartDate;
 	public DateTime? EndDate => Widget.EndDate;
+
+	public async Task OnClearAll(MouseEventArgs args)
+	{
+		await Vm.ClearAllFilters();
+		await ClearAllButton.ProgressComplete(); // Mark completion.
+	}
 
 	public async Task OnClear(MouseEventArgs args)
 	{
