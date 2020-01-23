@@ -1,9 +1,9 @@
-﻿using Orions.Common;
-using Orions.Node.Common;
-using Orions.SDK;
-using System;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Orions.Common;
+using Orions.Infrastructure.Common;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -120,10 +120,11 @@ namespace Orions.Systems.CrossModules.Components
 				var item = Utility.CreatorItems?.FirstOrDefault();
 				await Utility.RunCreatorFor(item);
 			}
-			else {
+			else
+			{
 				await Utility.RunCreatorFor(SelectedCreatorItemProp.Value);
 			}
-			
+
 			RaisePropertyChanged("OnCreatorCreate");
 		}
 
@@ -135,7 +136,8 @@ namespace Orions.Systems.CrossModules.Components
 		private async Task OnCustomExpand_Aggregate(DefaultCommand command, object parameter)
 		{
 			var itemVm = parameter as PropertyGridItemVm;
-			if (itemVm != null) {
+			if (itemVm != null)
+			{
 				await Utility.SetMainDataAdvanced(itemVm.DataProp.Value, true);
 				//RaiseNotify(nameof(itemVm.DataProp.Value));
 			}

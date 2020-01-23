@@ -3,6 +3,7 @@
 @inherits PropertyGridComponent
 
 @using Orions.SDK;
+@using Orions.Infrastructure.Common;
 @using Orions.Node.Common;
 @using Orions.Common;
 @using System.IO
@@ -126,12 +127,12 @@
 									}
 
 									<VanillaColorPicker ParentId="customId"
-															  Class="form-control popup-parent"
-															  Color="@rgbColor"
-															  Popup="bottom"
-															  Value="@rgbColor"
-															  OnDone="(color => ChangeColor(data.DataProp.Value, color))"
-															  EditorFormat="rgb">
+														Class="form-control popup-parent"
+														Color="@rgbColor"
+														Popup="bottom"
+														Value="@rgbColor"
+														OnDone="(color => ChangeColor(data.DataProp.Value, color))"
+														EditorFormat="rgb">
 									</VanillaColorPicker>
 								</a>
 								break;
