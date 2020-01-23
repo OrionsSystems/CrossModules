@@ -4,14 +4,14 @@
 
 @if (Data != null)
 {
-    <div class="widget-content-report">
-        <DashboardLayout HyperStore="@HyperStore"
-                         Data="@Data"
-                         EnableBetweenBox="true"
-                         IsPreviewMode="true"
-                         DisableModeOption="true">
-        </DashboardLayout>
-    </div>
+    <DashboardLayout HyperStore="@HyperStore"
+                        Data="@Data"
+                        EnableBetweenBox="true"
+                        IsPreviewMode="true"
+                        DisableModeOption="true"
+                        HideModeOption ="true"
+                        IsHideTitle ="true">
+    </DashboardLayout>
 }
 
 @code {

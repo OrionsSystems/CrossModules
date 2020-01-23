@@ -14,14 +14,14 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task<DashboardData> SetSelectedDashboard()
 		{
-			if (string.IsNullOrWhiteSpace(this.Widget.DashboardElementName))
+			if (string.IsNullOrWhiteSpace(this.Widget.Dashboard?.Id))
 			{
 				return null;
 			}
 
 			var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-			var data = datas.FirstOrDefault(it => it.Name == this.Widget.DashboardElementName);
+			var data = datas.FirstOrDefault(it => it.Id == this.Widget.Dashboard?.Id);
 
 			if (data == null)
 				return null;
