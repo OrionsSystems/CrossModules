@@ -1,4 +1,5 @@
 ﻿using Orions.Common;
+using Orions.Infrastructure.Common;
 using Orions.SDK;
 
 namespace Orions.Systems.CrossModules.Components
