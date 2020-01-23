@@ -12,23 +12,23 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public async Task<DashboardData> SetSelectedDashboard()
+		public async Task<DashboardData> SetDashboardAsync()
 		{
 			if (string.IsNullOrWhiteSpace(this.Widget.Dashboard?.Id))
 			{
 				return null;
 			}
 
-			var datas = await HyperStore.FindAllAsync<DashboardData>();
+			var dashboards = await HyperStore.FindAllAsync<DashboardData>();
 
-			var data = datas.FirstOrDefault(it => it.Id == this.Widget.Dashboard?.Id);
+			var dashboard = dashboards.FirstOrDefault(it => it.Id == this.Widget.Dashboard?.Id);
 
-			if (data == null)
+			if (dashboard == null)
 				return null;
 
-			(this.ParentVm as DashboardVm).Source = data;
+			(this.ParentVm as DashboardVm).Source = dashboard;
 
-			return data;
+			return dashboard;
 		}
 	}
 }

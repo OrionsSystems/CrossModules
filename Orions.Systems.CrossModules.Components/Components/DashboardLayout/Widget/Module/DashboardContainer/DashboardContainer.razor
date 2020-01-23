@@ -2,10 +2,10 @@
 
 @inherits DashboardComponent<DashboardContainerVm, DashboardContainerWidget>
 
-@if (Data != null)
+@if (Dashboard != null)
 {
     <DashboardLayout HyperStore="@HyperStore"
-                        Data="@Data"
+                        Data="@Dashboard"
                         EnableBetweenBox="true"
                         IsPreviewMode="true"
                         DisableModeOption="true"
@@ -16,13 +16,13 @@
 
 @code {
 
-    private DashboardData Data { get; set; }
+    private DashboardData Dashboard { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
 
-        Data = await (this.Vm as DashboardContainerVm).SetSelectedDashboard();
+        Dashboard = await (this.Vm as DashboardContainerVm).SetDashboardAsync();
     }
 
 }
