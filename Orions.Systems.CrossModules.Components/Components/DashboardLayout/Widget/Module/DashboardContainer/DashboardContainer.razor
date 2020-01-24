@@ -22,7 +22,7 @@
     {
         await base.OnInitializedAsync();
 
-        Dashboard = await (this.Vm as DashboardContainerVm).SetDashboardAsync();
+        Dashboard = await this.Vm.SetDashboardAsync();
     }
 
 }
