@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Orions.Common;
+﻿using Orions.Common;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -7,7 +7,9 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public DashboardLayout DashboardLayout;
 
-		public string DashboardElementName { get; set; }
+		[HelpText("The Id of the dashboard to use", HelpTextAttribute.Priorities.Mandatory)]
+		[HyperDocumentId.DocumentType(typeof(DashboardData))]
+		public HyperDocumentId? Dashboard { get; set; }
 
 		public DashboardContainerWidget()
 		{

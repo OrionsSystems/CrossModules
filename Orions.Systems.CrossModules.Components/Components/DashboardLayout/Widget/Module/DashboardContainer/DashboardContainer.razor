@@ -1,0 +1,28 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<DashboardContainerVm, DashboardContainerWidget>
+
+@if (Dashboard != null)
+{
+    <DashboardLayout HyperStore="@HyperStore"
+                        Data="@Dashboard"
+                        EnableBetweenBox="true"
+                        IsPreviewMode="true"
+                        DisableModeOption="true"
+                        HideModeOption ="true"
+                        IsHideTitle ="true">
+    </DashboardLayout>
+}
+
+@code {
+
+    private DashboardData Dashboard { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        Dashboard = await this.Vm.SetDashboardAsync();
+    }
+
+}
