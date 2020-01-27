@@ -20,7 +20,7 @@
 					<ChartSeries Type="ChartSeriesType.Pie"
 									 Data="@TagData"
 									 VisibleInLegendField="@nameof(ReportPieChartData.ShouldShowInLegend)"
-									 Field="@nameof(ReportPieChartData.Count)"
+									 Field="@nameof(ReportPieChartData.Value)"
 									 CategoryField="@nameof(ReportPieChartData.Label)"
 									 ExplodeField="@nameof(ReportPieChartData.Explode)">
 						<ChartSeriesLabels Visible="@showPieCharLabel"></ChartSeriesLabels>
@@ -79,15 +79,15 @@
 		if (Vm.Report == null)
 			return;
 
-		var labels = Vm.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-		var rowData = Vm.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToUInt16(it.ToString())).ToList();
+		var labels =Vm.ReportChartData.Categories;
+		var rowData = Vm.ReportChartData.Series.Select(it => Convert.ToDouble(it.Data.FirstOrDefault()?.Value)).ToArray();
 
-		for (var i = 0; i < labels.Count; i++)
+		for (var i = 0; i < labels.Count(); i++)
 		{
 			TagData.Add(new ReportPieChartData
 			{
 				Label = labels[i],
-				Count = rowData[i]
+				Value = rowData[i]
 			});
 		}
 	}

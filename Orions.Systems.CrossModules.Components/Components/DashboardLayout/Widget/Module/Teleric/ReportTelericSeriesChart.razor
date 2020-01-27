@@ -35,7 +35,7 @@
 											 VisibleInLegend="@Widget.IsLegenedVisible"
 											 Style="@Widget.ChartSeriesStyle"
 											 CategoryField="@nameof(ReportSeriesChartDataItem.DatePosition)"
-											 Field="@nameof(ReportSeriesChartDataItem.Count)">
+											 Field="@nameof(ReportSeriesChartDataItem.Value)">
 								<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible" Template="@CustomSeriesTemplate" Background="transparent"></ChartSeriesLabels>
 								<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
 							</ChartSeries>
@@ -60,8 +60,8 @@
 											 VisibleInLegend="@Widget.IsLegenedVisible"
 											 Name="@ser.Name"
 											 Style="@Widget.ChartSeriesStyle"
-											 CategoryField="@nameof(ReportSeriesChartDataItem.Time)"
-											 Field="@nameof(ReportSeriesChartDataItem.Count)">
+											 CategoryField="@nameof(ReportSeriesChartDataItem.Label)"
+											 Field="@nameof(ReportSeriesChartDataItem.Value)">
 								<ChartSeriesLabels Visible="@Widget.IsChartSeriesLabelsVisible"></ChartSeriesLabels>
 								<ChartSeriesStack Enabled="@Widget.IsChartSeriesStackEnabled"></ChartSeriesStack>
 							</ChartSeries>
