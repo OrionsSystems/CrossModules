@@ -22,30 +22,31 @@
 					<thead>
 						<tr>
 							<th scope="col"></th>
-							@foreach (var column in Vm.Report.Data.ColumnsDefinitions)
+							@foreach (var category in Vm.ReportChartData.Categories)
 							{
-								<th scope="col">@column.Title</th>
+								<th scope="col">@category</th>
 							}
 						</tr>
 					</thead>
 					<tbody>
-						@foreach (var rows in Vm.Report.Data.RowsCells)
+						@for(int i=0; i< Vm.ReportChartData.Series.FirstOrDefault().Data.Count(); i++)
 						{
-							var rowDef = Vm.Report.Data.RowsDefinitions[rowIndex];
-							var rowTitle = rowDef.Title;
-							var rowDate = ReportData.ParseTimePosition(rowTitle);
-							rowIndex++;
-
-							@if (rowDate.HasValue)
+						<tr>
+							@if ( Vm.ReportChartData.Series.FirstOrDefault().Data[0].DatePosition.HasValue)
 							{
-							<tr>
-								<td>@rowDate.Value.ToString("dd MMM HH:mm")</td>
-								@foreach (var row in rows)
-								{
-									<td>@row.ToString()</td>
-								}
-							</tr>
+								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].DatePosition?.ToString("dd MMM HH:mm")</td>
 							}
+							else
+							{
+								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].Label</td>
+							}
+							@foreach (var item in Vm.ReportChartData.Series)
+							{
+
+								<td>@item.Data[i].Value</td>
+
+							}
+						</tr>
 						}
 					</tbody>
 				</table>

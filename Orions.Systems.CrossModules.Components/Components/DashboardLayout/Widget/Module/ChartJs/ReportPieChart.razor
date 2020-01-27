@@ -10,54 +10,81 @@
 @using ChartJs.Blazor.ChartJS.Common.Properties
 @using ChartJs.Blazor.Util
 
-<div class="widget-content-report-piechart">
+	<div class="widget-content-report-piechart">
 
-	@if (Vm.Report != null && Vm.IsLoadedReportResult)
-	{
-
-		@if (Widget.ShowTitle && Vm.ReportHasName)
+		@if (Vm.Report != null && Vm.IsLoadedReportResult)
 		{
-			<h3>@Vm.ReportName</h3>
-		}
 
-		<div class="widget-content-report-piechart-view">
-			<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
+			@if (Widget.ShowTitle && Vm.ReportHasName)
+			{
+				<h3>@Vm.ReportName</h3>
+			}
+
+			@if (Showing)
+			{
+				<div class="widget-content-report-piechart-view">
+					<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
+				</div>
+			}
+
+				@if (Widget.ShowFooter)
+				{
+					<div class="widget-content-report-piechart-footer">
+						<div class="">Created at @Vm.Report.CreatedAtUTC</div>
+					</div>
+				}
+			}
+		
+
+			@if (Vm.Report == null && Vm.IsLoadedReportResult)
+			{
+				<div class="widget-missing-report-data">
+					Missing report data!
+				</div>
+			}
+
+			@if (!Vm.IsLoadedReportResult)
+			{
+				<div style="position:relative;">
+					<div class="loading-bar"></div>
+				</div>
+			}
 		</div>
-
-		@if (Widget.ShowFooter)
-		{
-			<div class="widget-content-report-piechart-footer">
-				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
-			</div>
-		}
-	}
-
-	@if (Vm.Report == null && Vm.IsLoadedReportResult)
-	{
-		<div class="widget-missing-report-data">
-			Missing report data!
-		</div>
-	}
-
-	@if (!Vm.IsLoadedReportResult)
-	{
-		<div style="position:relative;">
-			<div class="loading-bar"></div>
-		</div>
-	}
-</div>
 
 @code {
 	private PieConfig _pieConfig;
 	private ChartJsPieChart _pieChartJs;
+	public bool Showing { get; set; } = true;
 
 	protected override async Task OnInitializedAsync()
 	{
+		Vm.OnReportResultChanged += OnChangeDataSource;
 		await Vm.RefreshReportResultData();
-
-		SetPieConfiguration();
-
+		
+		
+		
 		await base.OnInitializedAsync();
+	}
+
+		private void OnChangeDataSource()
+	{
+		this.Showing = false;
+		this.StateHasChanged();
+		SetPieConfiguration();
+		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
+		Task.Factory.StartNew(() => 
+		{
+			this.InvokeAsync(() =>
+			{
+				this.Showing = true;
+				this.StateHasChanged();
+			});
+		});
+	}
+
+	protected override void OnStateHasChanged()
+	{
+		base.OnStateHasChanged();
 	}
 
 	private void SetPieConfiguration()
@@ -85,7 +112,7 @@
 
 		_pieConfig.Options.Legend.Position = Position.Bottom;
 
-		var labels = Vm.Report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
+		var labels = Vm.ReportChartData.Categories;
 		_pieConfig.Data.Labels.AddRange(labels);
 
 		var pieSet = new PieDataset
@@ -96,9 +123,9 @@
 			//HoverBorderWidth = 1,
 			BorderColor = "#ffffff",
 		};
-		pieSet.BackgroundColor = RandomBackgroudColors(labels.Count);
+		pieSet.BackgroundColor = RandomBackgroudColors(labels.Count());
 
-		var rowData = Vm.Report.Data.RowsCells.FirstOrDefault().Select(it => Convert.ToDouble(it.ToString())).ToList();
+		var rowData = Vm.ReportChartData.Series.Select(it=> Convert.ToDouble(it.Data.FirstOrDefault()?.Value)).ToList();
 		pieSet.Data.AddRange(rowData);
 		_pieConfig.Data.Datasets.Add(pieSet);
 	}
