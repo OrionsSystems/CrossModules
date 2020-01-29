@@ -85,6 +85,13 @@ html, body, table, .btn-outline-dark {
 	fill: white !important;
 }
 
+
+/* menu */
+header {
+	background: #424242;
+}
+
+
 /* END DARK THEME FIX */
 
 
