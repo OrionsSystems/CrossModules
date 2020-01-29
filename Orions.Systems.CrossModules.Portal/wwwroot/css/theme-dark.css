@@ -1,0 +1,90 @@
+/* DARK THEME FIX */
+
+html, body, table, .btn-outline-dark {
+	/*background-color: #161616;*/
+	color: white !important;
+}
+
+.table-hover > tbody > tr:hover {
+	color: white !important;
+}
+
+.mdc-nav-li > a:hover {
+	text-decoration: none !important;
+}
+
+.btn-outline-dark {
+	border-color: #c3c3c3;
+}
+
+
+
+.dashboard-element-container {
+	border: 1px dashed #f8f8f8;
+	background-color: #403f3f;
+}
+
+.dashboard-element-commands > a:hover {
+	background-color: transparent !important;
+	-webkit-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+	-moz-box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+	box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+}
+
+.dashboard-dragbar rect, .dashboard-dragbar polygon {
+	fill: #888888 !important;
+}
+
+
+.dashboard-swap-column path, .dashboard-swap-column line {
+	stroke: #888888;
+}
+
+.dashboard-content-next polygon, .dashboard-content-prev polygon {
+	stroke: #888888;
+}
+
+.dashboard-widget-add > a {
+	border: 1px solid #888888;
+}
+
+	.dashboard-widget-add > a:hover {
+		-webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+		-moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+		box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+	}
+
+.dashboard-swap-row path, .dashboard-swap-row line {
+	stroke: #888888;
+}
+
+.dashboard-modal-widget-element {
+	-webkit-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+	-moz-box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+	box-shadow: 3px 3px 4px 0px rgba(0,0,0,0.25);
+}
+
+.dashboard-shadow {
+	-webkit-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+	-moz-box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+	box-shadow: 3px 3px 12px 1px rgba(0,0,0,0.25);
+}
+
+
+.e-btn.e-primary, .e-css.e-btn.e-primary {
+	background-color: #e0e1e1 !important;
+}
+
+/* Syncfusion legend */
+
+.widget-syncfusion svg > text {
+	fill: white !important;
+}
+
+.widget-syncfusion g > text {
+	fill: white !important;
+}
+
+/* END DARK THEME FIX */
+
+
