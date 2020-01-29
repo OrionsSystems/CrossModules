@@ -1,0 +1,58 @@
+﻿@namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
+@using  Orions.Systems.CrossModules.Components.Components.SVGMapEditor
+@inherits DashboardComponent<EditableMapWidgetVm, EditableMapWidget>
+
+@if (Widget.ShowTitle)
+{
+	<h3>@Widget.Label</h3>
+}
+
+<SVGMapEditor @DataContext="@EditorVm">
+	<SampleMap/>
+</SVGMapEditor>
+
+@code{
+	protected SVGMapEditorVm EditorVm { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		var store = this.HyperStore;
+
+		var vm = new SVGMapEditorVm
+		{
+			Cameras = new Common.ViewModelProperty<List<CameraControl>>(new List<CameraControl>())
+		};
+
+		vm.Cameras.Value.Add(new CameraControl
+		{
+			Verteces = new List<Point>
+			{
+				new Point
+				{
+					X = 376.4621797401966,
+					Y = 238.23108987009826
+				},
+				new Point
+				{
+					X = 381.4621797401966,
+					Y = 268.23108987009823
+				},
+				new Point
+				{
+					X = 406.4621797401966,
+					Y = 268.23108987009823
+				},
+				new Point
+				{
+					X = 411.4621797401966,
+					Y = 238.23108987009826
+				}
+			}
+		});
+
+		this.EditorVm = vm;
+
+		this.StateHasChanged();
+	}
+}

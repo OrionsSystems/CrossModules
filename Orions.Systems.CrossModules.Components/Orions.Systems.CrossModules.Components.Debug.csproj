@@ -26,6 +26,7 @@
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 	</ItemGroup>
 
@@ -67,6 +68,7 @@
 		<None Remove="content\scripts\kendoComponents.js" />
 		<None Remove="content\css\styles.css" />
 		<None Remove="content\css\propertyGrid.css" />
+		<None Remove="content\scripts\svgMapEditor.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 	</ItemGroup>
 

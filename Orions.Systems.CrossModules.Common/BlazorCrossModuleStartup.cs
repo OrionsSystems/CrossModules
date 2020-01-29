@@ -22,7 +22,8 @@ namespace Orions.Systems.CrossModules.Common
 			base.ConfigureServices(services);
 
 			services.AddRazorPages();
-			services.AddServerSideBlazor();
+			services.AddServerSideBlazor()
+				.AddCircuitOptions(o => o.DetailedErrors = true);
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
 			if (!services.Any(x => x.ServiceType == typeof(HttpClient)))

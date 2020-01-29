@@ -18,6 +18,7 @@ namespace Orions.Systems.CrossModules.BlazorSample
 		public override void ConfigureServices(IServiceCollection services)
 		{
 			base.ConfigureServices(services);
+			
 			services.AddSingleton<TestService>();
 		}
 

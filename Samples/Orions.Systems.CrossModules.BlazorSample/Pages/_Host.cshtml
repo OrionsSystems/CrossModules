@@ -14,13 +14,16 @@
 </head>
 <body>
     <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+        @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
 
     <script src="/EmbeddedBlazorFile/jwplayer.js"></script>
     <script src="/EmbeddedBlazorFile/provider.hlsjs.js"></script>
     <script src="/EmbeddedBlazorFile/provider.html5.js"></script>
     <script src="/EmbeddedBlazorFile/common.js"></script>
+    <script src="/EmbeddedBlazorFile/svgMapEditor.js"></script>
+    <script src="/js/svgjs/svg.js"></script>
+    <script src="/js/svgjs/svg.draw.js"></script>
     <script src="_framework/blazor.server.js"></script>
     <script src="_content/MatBlazor/dist/matBlazor.js"></script>
     <script src="https://kendo.cdn.telerik.com/blazor/2.1.1/telerik-blazor.min.js" defer></script>
