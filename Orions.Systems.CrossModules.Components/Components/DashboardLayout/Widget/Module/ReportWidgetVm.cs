@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 	public class ReportWidgetVm<WidgetType> : WidgetVm<WidgetType>
 		where WidgetType : IDashboardWidget
 	{
-		public IReportResult Report { get; private set; }
+		public Report Report { get; private set; }
 
 		public ReportChartData ReportChartData { get; private set; }
 
@@ -58,9 +58,9 @@ namespace Orions.Systems.CrossModules.Components
 				return;
 			}
 
-			Report = reportResult;
+			Report = reportResult.FirstOrDefault();
 
-			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
+			ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
 
 			IsLoadedReportResult = true;
 
@@ -69,7 +69,7 @@ namespace Orions.Systems.CrossModules.Components
 			
 		}
 
-		public static ReportChartData LoadReportChartData(IReportResult reportResult, string[] categoryFilters)
+		public static ReportChartData LoadReportChartData(Report reportResult, string[] categoryFilters)
 		{
 			var result = new ReportChartData();
 
@@ -78,26 +78,26 @@ namespace Orions.Systems.CrossModules.Components
 
 			try
 			{
-				List<HyperMetadataReportResult> sources = new List<HyperMetadataReportResult>();
-				if (reportResult is HyperMetadataReportResult metadataReport)
+				var sources = new List<MetadataSetReport>();
+				if (reportResult is MetadataSetReport metadataReport)
 				{
 					sources.Add(metadataReport);
 				}
-				else if (reportResult is MultiReportResult multiReport)
-				{
-					if (multiReport.Data is MultiReportData multiReportData)
-						sources.AddRange(multiReportData.GetHyperReportResults());
+				// TODO: figure out how this is to be ported.
+				//else if (reportResult is MultiReportResult multiReport)
+				//{
+				//	if (multiReport.Data is MultiReportData multiReportData)
+				//		sources.AddRange(multiReportData.GetHyperReportResults());
 
-				}
+				//}
 
-				foreach (var report in sources ?? Enumerable.Empty<HyperMetadataReportResult>())
+				foreach (var report in sources ?? Enumerable.Empty<MetadataSetReport>())
 				{
-					var categories = report.ReportData.ColumnsDefinitions.Select(it => it.Title).ToList();
-					var rowsDef = report.ReportData.RowsDefinitions.ToList();
-					var rowData = report.ReportData.RowsCells;
+					var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
+					var rowsDef = report.RowsDefinitions.ToList();
+					var rowData = report.Rows;
 
 					var resultCategoryRange = new List<string>();
-
 
 					for (var i = 0; i < categories.Count; i++)
 					{
@@ -129,7 +129,7 @@ namespace Orions.Systems.CrossModules.Components
 							var reportRowEl = rowsDef[rowIndex];
 							var label = reportRowEl.Title;
 
-							var data = rowEl[i].Values.FirstOrDefault();
+							var data = rowEl.Cells[i].Values.FirstOrDefault();
 
 							ReportSeriesChartDataItem chartItem = null;
 							var existingChartItem = chartSeries.Data.FirstOrDefault(it => it.Label == label);
@@ -146,13 +146,13 @@ namespace Orions.Systems.CrossModules.Components
 									try
 									{
 
-										var position = ReportData.ParseTimePosition(label);
+										var position = Report.ParseTimePosition(label);
 										if (!position.HasValue)
 											result.IsDateAxis = false;
 										else
 										{
 											chartItem.DatePosition = position.Value;
-											chartItem.StreamPosition = ReportData.ParseStreamPosition(label);
+											chartItem.StreamPosition = Report.ParseStreamPosition(label);
 										}
 									}
 									catch (Exception ex)

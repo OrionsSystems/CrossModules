@@ -18,16 +18,16 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public async Task<IReportResult> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		public async Task<Report[]> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var result = await OnGenerateFilteredReportResultAsync(context);
 
 			if (this.Mapping != null)
 				result?.MapNames(this.Mapping);
 
-			return result;
+			return new Report[] { result };
 		}
 
-		protected abstract Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context);
+		protected abstract Task<Report> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context);
 	}
 }

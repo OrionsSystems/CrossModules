@@ -22,7 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowDateTimeSelection { get; set; } = true;
 
-      public ReportInstruction.Targets FilterTarget { get; set; }
+      public ReportFilterInstruction.Targets FilterTarget { get; set; }
 
       public SimpleFilterWidget()
       {

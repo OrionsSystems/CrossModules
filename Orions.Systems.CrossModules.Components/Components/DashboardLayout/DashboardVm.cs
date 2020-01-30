@@ -159,7 +159,7 @@ namespace Orions.Systems.CrossModules.Components
 			return result;
 		}
 
-		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime, ReportInstruction.Targets filterTarget)
+		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime, ReportFilterInstruction.Targets filterTarget)
 		{
 			var data = ObtainFilterData(group);
 
@@ -172,7 +172,7 @@ namespace Orions.Systems.CrossModules.Components
 				var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
 				dateTimeFilterData.StartTime = startTime;
 				dateTimeFilterData.EndTime = endTime;
-				dateTimeFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+				dateTimeFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
 			}
 		}
 
@@ -193,7 +193,7 @@ namespace Orions.Systems.CrossModules.Components
 			data.Clear();
 		}
 
-		public void SetStringFilters(string group, string[] filters, ReportInstruction.Targets filterTarget)
+		public void SetStringFilters(string group, string[] filters, ReportFilterInstruction.Targets filterTarget)
 		{
 			var data = ObtainFilterData(group);
 
@@ -208,7 +208,7 @@ namespace Orions.Systems.CrossModules.Components
 				textFilterData.LabelsArray = filters;
 				textFilterData.Mode = AndOr.Or;
 				textFilterData.StringCompareMode = StringComparisonMode.Contains;
-				textFilterData.Instruction = new ReportInstruction() { Target = filterTarget };
+				textFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
 			}
 		}
 
