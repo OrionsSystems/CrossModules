@@ -22,17 +22,17 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		protected override Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		protected override Task<Report> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var byteArray = this.Data;
 
 			if (byteArray == null)
-				return Task.FromResult<IReportResult>(null);
+				return Task.FromResult<Report>(null);
 
-			var reportData = new ReportData();
+			var reportData = new Report();
 
-			var rowDefList = new List<ReportRow>();
-			var colDefList = new List<ReportColumn>();
+			var rowDefList = new List<ReportRowTemplate>();
+			var colDefList = new List<ReportColumnTemplate>();
 			var dataMap = new Dictionary<int, List<string>>();
 
 			using (var stream = new MemoryStream(byteArray))
@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components
 							for (var i = 0; i < values.Length; i++)
 							{
 								if (i == 0) continue;
-								var colDef = new ReportColumn() { Title = values[i] };
+								var colDef = new ReportColumnTemplate() { Title = values[i] };
 								colDefList.Add(colDef);
 							}
 
@@ -69,7 +69,7 @@ namespace Orions.Systems.CrossModules.Components
 							{
 								if (i == 0)
 								{
-									var rowDef = new ReportRow() { Title = values[i] };
+									var rowDef = new ReportRowTemplate() { Title = values[i] };
 									rowDefList.Add(rowDef);
 									continue;
 								};
@@ -95,19 +95,17 @@ namespace Orions.Systems.CrossModules.Components
 				var rowIndex = item.Key;
 				var columnData = item.Value;
 
-				var cells = new List<ReportDataCell>();
-				var dataCell = columnData.Select(it => new ReportDataCell() { Values = new[] { it } }).ToArray();
-				reportData.AddRow(dataCell);
+				var cells = new List<ReportOutputCell>();
+
+				var dataCells = columnData.Select(it => new ReportOutputCell() { Values = new[] { it } }).ToArray();
+				reportData.AddRow(new ReportRow() { Cells = dataCells });
 			}
 
 			// We want to filter at the end, to ensure both data and definitions are synchronized filtered.
 			if (context.DynamicFilter != null)
 				reportData.FilterWith(context.DynamicFilter);
 
-			var report = new HyperMetadataReportResult();
-			report.Data = reportData;
-
-			return Task.FromResult<IReportResult>(report);
+			return Task.FromResult<Report>(reportData);
 		}
 	}
 }

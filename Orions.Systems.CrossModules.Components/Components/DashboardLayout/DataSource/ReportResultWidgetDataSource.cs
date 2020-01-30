@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 	public class ReportResultWidgetDataSource : WidgetDataSource
 	{
 		[HelpText("Add report result document", HelpTextAttribute.Priorities.Important)]
-		[HyperDocumentId.DocumentType(typeof(HyperMetadataReportResult))]
+		[HyperDocumentId.DocumentType(typeof(MetadataSetReport))]
 		public HyperDocumentId ReportResultId { get; set; }
 
 		public override bool SupportsDynamicFiltration => true;
@@ -24,7 +24,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		protected override async Task<IReportResult> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
+		protected override async Task<Report> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
 			var args = new RetrieveHyperDocumentArgs(this.ReportResultId);
 			var doc = await context.HyperStore.ExecuteAsync(args);
@@ -32,12 +32,12 @@ namespace Orions.Systems.CrossModules.Components
 			if (args.ExecutionResult.IsNotSuccess)
 				return null;
 
-			var result = doc?.GetPayload<HyperMetadataReportResult>();
+			var result = doc?.GetPayload<MetadataSetReport>();
 
 			if (result != null)
 			{
 				if (context.DynamicFilter != null)
-					result.Data.FilterWith(context.DynamicFilter);
+					result.FilterWith(context.DynamicFilter);
 			}
 
 			return result;

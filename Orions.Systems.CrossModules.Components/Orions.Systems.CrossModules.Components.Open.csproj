@@ -4,6 +4,7 @@
 		<RazorLangVersion>3.0</RazorLangVersion>
 		<AssemblyName>Orions.Systems.CrossModules.Components</AssemblyName>
 		<RootNamespace>Orions.Systems.CrossModules.Components</RootNamespace>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -64,6 +65,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
+		<PackageReference Include="MatBlazor" Version="2.0.0" />
+		<PackageReference Include="SkiaSharp" Version="1.68.1.1" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />

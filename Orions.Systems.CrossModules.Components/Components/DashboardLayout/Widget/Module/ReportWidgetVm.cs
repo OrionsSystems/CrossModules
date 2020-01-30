@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 	public class ReportWidgetVm<WidgetType> : WidgetVm<WidgetType>
 		where WidgetType : IDashboardWidget
 	{
-		public IReportResult Report { get; private set; }
+		public Report Report { get; private set; }
 
 		public ReportChartData ReportChartData { get; private set; }
 
@@ -58,90 +58,129 @@ namespace Orions.Systems.CrossModules.Components
 				return;
 			}
 
-			Report = reportResult;
+			Report = reportResult.FirstOrDefault();
 
-			ReportChartData = LoadReportChartData(reportResult, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
+			ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
 
 			IsLoadedReportResult = true;
 
-			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 			OnReportResultChanged?.Invoke();
+			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+			
 		}
 
-		public static ReportChartData LoadReportChartData(IReportResult report, string[] categoryFilters)
+		public static ReportChartData LoadReportChartData(Report reportResult, string[] categoryFilters)
 		{
 			var result = new ReportChartData();
 
-			if (report == null) 
+			if (reportResult == null)
 				return result;
 
 			try
 			{
-				var categories = report.Data.ColumnsDefinitions.Select(it => it.Title).ToList();
-				var rowsDef = report.Data.RowsDefinitions.ToList();
-
-				result.Categories.AddRange(categories);
-
-				var rowData = report.Data.RowsCells;
-
-				for (var i = 0; i < categories.Count; i++)
+				var sources = new List<MetadataSetReport>();
+				if (reportResult is MetadataSetReport metadataReport)
 				{
-					var categoryTitle = categories[i];
+					sources.Add(metadataReport);
+				}
+				// TODO: figure out how this is to be ported.
+				//else if (reportResult is MultiReportResult multiReport)
+				//{
+				//	if (multiReport.Data is MultiReportData multiReportData)
+				//		sources.AddRange(multiReportData.GetHyperReportResults());
 
-					if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
+				//}
+
+				foreach (var report in sources ?? Enumerable.Empty<MetadataSetReport>())
+				{
+					var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
+					var rowsDef = report.RowsDefinitions.ToList();
+					var rowData = report.Rows;
+
+					var resultCategoryRange = new List<string>();
+
+					for (var i = 0; i < categories.Count; i++)
 					{
-						continue;
-					}
+						var categoryTitle = categories[i];
 
-					var chartSeries = new ReportSeriesChartData();
-					chartSeries.Name = categoryTitle;
-
-					for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
-					{
-						var rowEl = rowData[rowIndex];
-
-						var reportRowEl = rowsDef[rowIndex];
-						var timeEl = reportRowEl.Title;
-
-						var data = rowEl[i].Values.FirstOrDefault();
-
-						var chartItem = new ReportSeriesChartDataItem
+						if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
 						{
-							Count = Convert.ToUInt16(data.ToString()),
-							Time = timeEl
-						};
-
-						if (result.IsDateAxis)
-						{
-							try
-							{
-
-								var position = ReportData.ParseTimePosition(timeEl);
-								if (!position.HasValue)
-									result.IsDateAxis = false;
-								else
-								{
-									chartItem.DatePosition = position.Value;
-									chartItem.StreamPosition = ReportData.ParseStreamPosition(timeEl);
-								}
-							}
-							catch (Exception ex)
-							{
-								result.IsDateAxis = false;
-							}
+							continue;
 						}
 
-						chartSeries.Data.Add(chartItem);
-					}
+						var chartSeries = new ReportSeriesChartData();
+						var existingSeries = result.Series.FirstOrDefault(it => it.Name == categoryTitle);
+						
+						if (existingSeries != null)
+						{
+							
+							chartSeries = existingSeries;
+						}
+						else
+						{
+							chartSeries.Name = categoryTitle;
+							resultCategoryRange.Add(categoryTitle);
+						}
 
-					result.Series.Add(chartSeries);
+						for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
+						{
+							var rowEl = rowData[rowIndex];
+
+							var reportRowEl = rowsDef[rowIndex];
+							var label = reportRowEl.Title;
+
+							var data = rowEl.Cells[i].Values.FirstOrDefault();
+
+							ReportSeriesChartDataItem chartItem = null;
+							var existingChartItem = chartSeries.Data.FirstOrDefault(it => it.Label == label);
+							if (chartItem == null)
+							{								
+								chartItem = new ReportSeriesChartDataItem
+								{
+									Value = Convert.ToUInt16(data.ToString()),
+									Label = label
+								};
+
+								if (result.IsDateAxis)
+								{
+									try
+									{
+
+										var position = Report.ParseTimePosition(label);
+										if (!position.HasValue)
+											result.IsDateAxis = false;
+										else
+										{
+											chartItem.DatePosition = position.Value;
+											chartItem.StreamPosition = Report.ParseStreamPosition(label);
+										}
+									}
+									catch (Exception ex)
+									{
+										result.IsDateAxis = false;
+									}
+								}
+
+								chartSeries.Data.Add(chartItem);
+							}
+							else
+							{
+								chartItem.Value += Convert.ToUInt16(data.ToString());
+							}
+
+							
+						}
+
+						result.AddCategoryRange(resultCategoryRange.ToArray());
+						result.Series.Add(chartSeries);
+					}
 				}
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.Assert(false, ex.Message);
 			}
-
+		
 			return result;
 		}
 

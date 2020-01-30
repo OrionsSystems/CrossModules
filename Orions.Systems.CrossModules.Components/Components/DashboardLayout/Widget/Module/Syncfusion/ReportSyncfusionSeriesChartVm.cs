@@ -25,7 +25,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (this.Widget.InteractiveModeCategoryFiltering)
 			{
-				this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, new string[] { category }, ReportInstruction.Targets.Column);
+				this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, new string[] { category }, ReportFilterInstruction.Targets.Column);
 			}
 
 			if (this.Widget.InteractiveModeDateTimeFiltering)
@@ -38,14 +38,14 @@ namespace Orions.Systems.CrossModules.Components
 					var prevData = series.Data[(int)args.PointIndex - 1];
 					//var prevDif = currentData.DatePosition - prevData.DatePosition;
 					//= category;
-					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, prevData.DatePosition, currentData.DatePosition, ReportInstruction.Targets.Column);
+					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, prevData.DatePosition, currentData.DatePosition, ReportFilterInstruction.Targets.Column);
 				}
 				else
 				{
 					var nextData = series.Data[(int)args.PointIndex + 1];
 					//= category;
 					//var nextDif = nextData.DatePosition - currentData.DatePosition;
-					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, currentData.DatePosition, nextData.DatePosition, ReportInstruction.Targets.Column);
+					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, currentData.DatePosition, nextData.DatePosition, ReportFilterInstruction.Targets.Column);
 				}
 			}
 

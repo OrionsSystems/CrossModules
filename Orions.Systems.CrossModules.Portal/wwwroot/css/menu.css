@@ -8,7 +8,6 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     height: 55px;
     position: relative;
-    background: #424242;
 }
 
 @font-face {
@@ -37,7 +36,7 @@ li.sidebar-item.filterHover {
 .right-content {
     float: right;
     height: 55px;
-    width: 100px;
+    /*width: 100px;*/
 }
 
 #right-sidebar {

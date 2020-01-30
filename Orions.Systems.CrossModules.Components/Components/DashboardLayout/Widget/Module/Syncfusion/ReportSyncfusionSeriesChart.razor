@@ -18,7 +18,7 @@
 
 		@if (Showing)
 		{
-			<div class="widget-content-report-view">
+			<div class="widget-content-report-view widget-syncfusion">
 
 				<EjsChart @ref="Chartobj"
 							 Title="@Widget.ChartTitle"
@@ -73,7 +73,7 @@
 								<ChartSeries DataSource="@ser.Data"
 												 Name="@ser.Name"
 												 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
-												 YName="@nameof(ReportSeriesChartDataItem.Count)"
+												 YName="@nameof(ReportSeriesChartDataItem.Value)"
 												 Type="@Widget.ChartSeriesType">
 									<ChartMarker>
 										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
@@ -84,8 +84,8 @@
 							{
 								<ChartSeries DataSource="@ser.Data"
 												 Name="@ser.Name"
-												 XName="@nameof(ReportSeriesChartDataItem.Time)"
-												 YName="@nameof(ReportSeriesChartDataItem.Count)"
+												 XName="@nameof(ReportSeriesChartDataItem.Label)"
+												 YName="@nameof(ReportSeriesChartDataItem.Value)"
 												 Type="@Widget.ChartSeriesType">
 									<ChartMarker>
 										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
@@ -178,15 +178,3 @@
 	}
 
 }
-
-<style>
-	
-
-	svg > text {
-		fill: white !important;
-	}
-
-	g > text {
-		fill: white !important;
-	}
-</style>

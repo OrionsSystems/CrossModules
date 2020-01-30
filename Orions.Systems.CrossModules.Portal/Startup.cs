@@ -48,6 +48,7 @@ namespace Orions.Systems.CrossModules.Portal
 
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
+			services.AddScoped<CustomSettingsProvider>();
 		}
 
 
