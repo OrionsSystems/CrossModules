@@ -3,7 +3,6 @@
         var doc = document;
         var rootSelector = '#' + rootElementId;
         var svg = doc.querySelector(rootSelector + ' .map-container svg');
-        var pt = svg.createSVGPoint();
         var draw = SVG(svg);
         
 
@@ -34,30 +33,49 @@
             }
         }
 
+        let circle;
         function selectCircleTool() {
+            if (circle) {
+                circle.cancelDraw()
+            }
+
             resetActiveBtns();
 
-            let circle = new SvgToolbox.CircleZone(draw, shapeCommonAttr)
+            circle = new SvgToolbox.CircleZone(draw, shapeCommonAttr)
             circle.draw();
+            circle.on('drawstop', function (ev) {
+                resetActiveBtns()
+            });
+
+            circle.setAttr({ fill: 'yellow' })
+
 
             document.querySelector(rootSelector + " .circleToolBtn").classList.add("active")
         }
 
+        let zone;
         function selectAreaTool() {
+            if (zone) {
+                zone.cancelDraw();
+            }
             resetActiveBtns();
 
             document.querySelector(rootSelector + " .areaToolBtn").classList.add("active")
 
-            let zone = new SvgToolbox.Zone(draw, shapeCommonAttr);
+            zone = new SvgToolbox.Zone(draw, shapeCommonAttr);
             zone.draw();
+            zone.on('drawstop', function (ev) {
+                resetActiveBtns()
+            });
         }
 
         function addCameraTool() {
+            resetActiveBtns();
+
             var camInst = new SvgToolbox.Camera(draw, shapeCommonAttr);
             camInst.draw();
 
             camInst.setAttr({ fill: 'green' })
         }
-
 	}
 } 

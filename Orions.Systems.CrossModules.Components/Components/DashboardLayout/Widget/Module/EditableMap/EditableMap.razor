@@ -7,7 +7,7 @@
 	<h3>@Widget.Label</h3>
 }
 
-<SVGMapEditor @DataContext="@EditorVm">
+<SVGMapEditor Vm="@EditorVm">
 	<SampleMap/>
 </SVGMapEditor>
 
@@ -16,8 +16,6 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-
-		var store = this.HyperStore;
 
 		var vm = new SVGMapEditorVm
 		{

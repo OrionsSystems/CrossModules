@@ -8,6 +8,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 	public class SVGMapEditorBase : BaseBlazorComponent<SVGMapEditorVm>
 	{
 		protected string ComponentContainerId;
+		protected override bool AutoCreateVm { get; } = false;
 
 		public SVGMapEditorBase()
 		{
@@ -22,16 +23,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		protected override async Task OnFirstAfterRenderAsync()
 		{
-		}
-
-		protected override void OnDataContextAssigned(BaseVm dataContext)
-		{
 			var thisReference = DotNetObjectReference.Create(this);
 
 			if (JsInterop != null)
 			{
-				JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, Vm.Cameras });
+				await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, Vm.Cameras });
 			}
+		}
+
+		protected override void OnDataContextAssigned(BaseVm dataContext)
+		{
+			
 
 			base.OnDataContextAssigned(dataContext);
 		}
