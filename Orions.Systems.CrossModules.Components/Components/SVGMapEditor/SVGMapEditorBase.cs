@@ -27,7 +27,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (JsInterop != null)
 			{
-				await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, Vm.Cameras });
+				// quick fix. rewrite it!
+				await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, null });
 			}
 		}
 
