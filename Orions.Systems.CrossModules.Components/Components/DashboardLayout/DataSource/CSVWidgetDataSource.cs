@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components
 							for (var i = 0; i < values.Length; i++)
 							{
 								if (i == 0) continue;
-								var colDef = new ReportColumnTemplate() { Title = values[i] };
+								var colDef = new ComputationReportColumnTemplate() { Title = values[i] };
 								colDefList.Add(colDef);
 							}
 
@@ -69,7 +69,7 @@ namespace Orions.Systems.CrossModules.Components
 							{
 								if (i == 0)
 								{
-									var rowDef = new ReportRowTemplate() { Title = values[i] };
+									var rowDef = new ComputationReportRowTemplate() { Title = values[i] };
 									rowDefList.Add(rowDef);
 									continue;
 								};
