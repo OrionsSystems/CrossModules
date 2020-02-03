@@ -2,6 +2,10 @@
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 using Orions.Common;
+using System.Collections.Generic;
+using Orions.Infrastructure.HyperMedia.MapOverlay;
+using Orions.Node.Common;
+using Orions.Infrastructure.HyperMedia;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
@@ -9,6 +13,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 	{
 		protected string ComponentContainerId;
 		protected override bool AutoCreateVm { get; } = false;
+
 
 		public SVGMapEditorBase()
 		{
@@ -18,31 +23,22 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
 
-		[Parameter]
-		public EventCallback<double[][]> OnAreaAdded { get; set; }
-
 		protected override async Task OnFirstAfterRenderAsync()
 		{
+			await this.Vm.Initialize();
+
+			this.Vm.MapOverlay.Value.PopulateTypeSpecificCollections();
+
 			var thisReference = DotNetObjectReference.Create(this);
-
-			if (JsInterop != null)
-			{
-				// quick fix. rewrite it!
-				await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, null });
-			}
-		}
-
-		protected override void OnDataContextAssigned(BaseVm dataContext)
-		{
-			
-
-			base.OnDataContextAssigned(dataContext);
+			await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, this.Vm.MapOverlay.Value });
 		}
 
 		[JSInvokable]
-		public async Task OnAreaAddedJS(double[][] areaVerticies)
+		public async Task SaveMapOverlay(MapOverlay overlay)
 		{
-			await OnAreaAdded.InvokeAsync(areaVerticies);
+			overlay.MergeEntriesIntoSingleCollection();
+			await this.Vm.SaveMapOverlay(overlay);
 		}
 	}
+
 }

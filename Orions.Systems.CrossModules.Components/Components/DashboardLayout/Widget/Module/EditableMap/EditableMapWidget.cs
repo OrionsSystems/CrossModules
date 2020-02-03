@@ -4,7 +4,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 {
 	public class EditableMapWidget : DashboardWidget, IDashboardWidget
 	{
-		public List<SVGMapEditor.CameraControl> Cameras { get; set; }
+		public string MapOverlayId { get; set; }
 
 		public EditableMapWidget()
 		{

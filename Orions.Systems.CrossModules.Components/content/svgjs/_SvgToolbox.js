@@ -27,6 +27,10 @@
                 }
 
                 controlInstance.isSelected = false
+
+                if (controlInstance.isEditingName) {
+                    controlInstance.isEditingName.set(false)
+                }
             }
             else {
                 for (let i = 0; i < editControls.length; i++) {
@@ -40,7 +44,7 @@
 
     function addDeletionEventListener(controlInstance) {
         document.addEventListener('keydown', function (ev) {
-            if (ev.keyCode == 46 && controlInstance.isSelected) {
+            if (ev.keyCode == 46 && controlInstance.isSelected && !controlInstance.isEditingName) {
                 controlInstance.remove()
             }
         })
@@ -83,6 +87,30 @@
         return svgP;
     }
 
+    class ViewModelProperty{
+        constructor(value){
+            this.value = value;
+            this.changeHandlers = []
+        }
+
+        onChange(callback){
+            this.changeHandlers.push(callback)
+        }
+
+        set(newValue){
+            let oldValue = this.value;
+            this.changeHandlers.forEach(h => {
+                h(oldValue, newValue)
+            })
+
+            this.value = newValue;
+        }
+
+        get(){
+            return this.value;
+        }
+    }
+
     class BaseControl {
         setAttr(attr) {
             this.attr = {
@@ -99,15 +127,23 @@
     }
 
     class Camera extends BaseControl {
-        constructor(svgNode, attr) {
+        constructor({ svgNode, attr, isDefaultPosition, points, transformMatrix }) {
             super()
             this.svgNode = svgNode;
             this.attr = attr || {}
-        }
 
-        draw() {
-            this.cameraPolygon = this.svgNode.polygon('5,25 10,55 35,55 40,25').x(100).y(100).attr(this.attr);
-            this.initCameraControls(this.cameraPolygon);
+            if (isDefaultPosition) {
+                this.polygon = this.svgNode.polygon('5,25 10,55 35,55 40,25').x(100).y(100).attr(this.attr);
+            }
+            else {
+                this.polygon = this.svgNode.polygon();
+                this.polygon.plot(points.map(p => [p.x, p.y]))
+            }
+            this.initCameraControls();
+
+            if (transformMatrix) {
+                this.transform(transformMatrix)
+            }
         }
 
         move(x, y) {
@@ -115,11 +151,16 @@
         }
 
         rotate(angle) {
-            var rotationCenter = getMiddlePoint(this.cameraPolygon.array()[1], this.cameraPolygon.array()[2])
+            var rotationCenter = getMiddlePoint(this.polygon.array()[1], this.polygon.array()[2])
             this.cameraControlsGroup.rotate(angle, rotationCenter[0], rotationCenter[1])
         }
 
-        initCameraControls(camera) {
+        transform(matrix) {
+            this.controlGroup.transform(matrix)
+        }
+
+        initCameraControls() {
+            let camera = this.polygon;
             const { svgNode } = this;
 
             let controlGroup = svgNode.group();
@@ -142,11 +183,8 @@
                 rotateControl.on('mousedown', function (ev) {
                     controlGroup.draggable(false)
 
-                    //let prevRotateControlPos = getSvgPoint(ev.clientX, ev.clientY, self.cameraControlsGroup.node)
                     let prevRotateControlPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
-                    console.log(prevRotateControlPos)
-
-                    // let line
+                    
                     let mouseMove = function (ev, isMouseDown) {
                         var rotationCenter = getMiddlePoint(camera.array()[1], camera.array()[2])
                         let p = new SVG.Point(rotationCenter[0], rotationCenter[1]);
@@ -158,10 +196,6 @@
                         var oldPoint = transposeCoords(prevRotateControlPos, self.svgNode.node.viewBox.baseVal)
                         var newPoint = transposeCoords([currentMouseSvgPoint.x, currentMouseSvgPoint.y], self.svgNode.node.viewBox.baseVal)
                         var cameraPointTransposed = transposeCoords(transformedCenter, self.svgNode.node.viewBox.baseVal)
-
-
-                        // if (line) line.remove()
-                        // line = self.svgNode.line(transformedCenter[0], transformedCenter[1], prevRotateControlPos[0], prevRotateControlPos[1]).stroke({ color: '#f06', width: 1, linecap: 'round' })
 
                         var newAngle = Math.atan((newPoint[0] - cameraPointTransposed[0]) / (newPoint[1] - cameraPointTransposed[1]));
                         var oldAngle = Math.atan((oldPoint[0] - cameraPointTransposed[0]) / (oldPoint[1] - cameraPointTransposed[1]));
@@ -231,10 +265,44 @@
     }
 
     class Zone extends BaseControl {
-        constructor(svgNode, attr) {
+        constructor({ svgNode, attr, points, startUserDrawing, name }) {
             super()
+            this.resizeControlWidth = 4
             this.svgNode = svgNode;
             this.attr = attr || {}
+            this.isEditingName = new ViewModelProperty(false);
+            this.name = new ViewModelProperty(name || 'Zone Name')
+
+            this.polygon = this.svgNode.polygon().attr(this.attr);
+
+            let self = this;
+            if (startUserDrawing) {
+                this.polygon.draw();
+
+                function drawEndEventListener(e) {
+                    if (e.keyCode == 13) {
+                        self.polygon.draw('done');
+                        self.polygon.off('drawstart');
+                    }
+                }
+                this.polygon.on('drawstart', function (e) {
+                    document.addEventListener('keydown', drawEndEventListener);
+                });
+
+                this.polygon.on('drawstop', function () {
+                    document.removeEventListener('keydown', drawEndEventListener)
+                    self.initZoneControls()
+                    //polygon.draw('done')
+                });
+            }
+            else {
+                if (points) {
+                    this.polygon.plot(points.map(p => [p.x, p.y]))
+                }
+                this.initZoneControls()
+            }
+
+            this.mainShape = this.polygon;
         }
 
         cancelDraw() {
@@ -245,57 +313,95 @@
             this.polygon.on(eventName, callback)
         }
 
-        draw() {
+        initZoneControls() {
             let self = this;
-            this.polygon = this.svgNode.polygon().attr(this.attr).draw();
-            let polygon = this.polygon;
+            let polygon = self.polygon;
+            let controlGroup = self.svgNode.group();
 
-            function drawEndEventListener(e) {
-                if (e.keyCode == 13) {
-                    self.polygon.draw('done');
-                    self.polygon.off('drawstart');
-                }
+            controlGroup.node.classList.add('zone-control-group')
+            controlGroup.add(polygon)
+
+            // init resize controls
+            var verticesArr = polygon.array();
+            for (let i = 0; i < verticesArr.length; i++) {
+                let vertex = verticesArr[i]
+                let resizeControl = self.svgNode
+                    .rect(self.resizeControlWidth, self.resizeControlWidth)
+                    .move(vertex[0] - self.resizeControlWidth / 2, vertex[1] - self.resizeControlWidth / 2)
+                    .attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
+                resizeControl.attr({ mapObjectType: 'edit-control' })
+                resizeControl.draggable();
+                controlGroup.add(resizeControl);
+                resizeControl.on('dragmove', function (ev) {
+                    let vIndex = i;
+                    let newVertArray = polygon.array();
+                    newVertArray[vIndex] = [ev.detail.box.x + 2, ev.detail.box.y + 2];
+                    polygon.plot(newVertArray);
+                })
             }
-            polygon.on('drawstart', function (e) {
-                document.addEventListener('keydown', drawEndEventListener);
+
+            // init text name control
+            let zoneName = this.name.get();
+            let nameLabel = self.svgNode.text(zoneName);
+            let nameDrawPoint = { x: self.polygon.cx() - nameLabel.bbox().width / 2, y: self.polygon.cy() - nameLabel.bbox().height / 2 };
+            nameLabel.move(nameDrawPoint.x, nameDrawPoint.y);
+            let nameInput = self.svgNode.foreignObject(nameLabel.bbox().width, nameLabel.bbox().height).move(nameDrawPoint.x, nameDrawPoint.y)
+            var htmlInput = document.createElement('input');
+            htmlInput.setAttribute('type', 'text')
+            htmlInput.setAttribute('value', zoneName)
+            nameInput.attr('style', 'visibility:collapse');
+            nameInput.add(htmlInput);
+            this.name.onChange((oldValue, newValue) => {
+                nameLabel.text(newValue)
+            })
+            htmlInput.addEventListener('change', function(ev){
+                self.name.set(ev.target.value);
             });
-
-            polygon.on('drawstop', function () {
-                document.removeEventListener('keydown', drawEndEventListener)
-                polygon.draw('done')
-
-                let controlGroup = self.svgNode.group();
-                controlGroup.add(polygon)
-
-                var verticesArr = polygon.array();
-                for (let i = 0; i < verticesArr.length; i++) {
-                    let vertex = verticesArr[i]
-                    let resizeControl = self.svgNode.rect(4, 4).move(vertex[0] - 2, vertex[1] - 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
-                    resizeControl.attr({ mapObjectType: 'edit-control' })
-                    resizeControl.draggable();
-                    controlGroup.add(resizeControl);
-                    resizeControl.on('dragmove', function (ev) {
-                        let vIndex = i;
-                        let newVertArray = polygon.array();
-                        newVertArray[vIndex] = [ev.detail.box.x + 2, ev.detail.box.y + 2];
-                        polygon.plot(newVertArray);
-                    })
+            nameLabel.on('click', function(){
+                self.isEditingName.set(true);
+                nameLabel.attr('style', 'visibility:collapse');
+                nameInput.attr('style', 'visibility:visible');
+                htmlInput.setAttribute('style', 'background:none');
+                htmlInput.focus()
+            })
+            self.isEditingName.onChange((oldValue, newValue) =>{
+                if(newValue === false){
+                    nameLabel.attr('style', 'visibility:visible');
+                    nameInput.attr('style', 'visibility:collapse');
                 }
+            })
+            controlGroup.add(nameInput);
+            controlGroup.add(nameLabel)
 
-                controlGroup.draggable();
-                self.controlGroup = controlGroup;
 
-                addSelectionEventListener(controlGroup, polygon, self)
-                addDeletionEventListener(self);
-            });
+            controlGroup.draggable();
+            self.controlGroup = controlGroup;
+
+            addSelectionEventListener(controlGroup, polygon, self)
+            addDeletionEventListener(self);
         }
     }
 
     class CircleZone extends BaseControl {
-        constructor(svgNode, attr) {
+        constructor({ svgNode, attr, center, size, startUserDrawing }) {
             super()
             this.svgNode = svgNode;
             this.attr = attr || {}
+            this.circle = this.svgNode.circle().attr(this.attr);
+            this.mainShape = this.circle;
+
+            let self = this;
+            if (startUserDrawing) {
+                this.circle.draw();
+                this.circle.on('drawstop', function () {
+                    self.initializeControls();
+                })
+            }
+            else {
+                this.circle.width(size);
+                this.circle.center(center.x, center.y);
+                this.initializeControls();
+            }
         }
 
         remove() {
@@ -310,73 +416,66 @@
             this.circle.on(eventName, callback)
         }
 
-        draw() {
-            //let circle = this.svgNode.circle(10).attr(this.attr).draw();
+        initializeControls() {
             let self = this;
-            let circle = this.svgNode.circle().attr(this.attr).draw();
-            this.circle = circle;
+            let circle = self.circle;
+            self.isSelected = true;
+            let controlGroup = self.svgNode.group()
+            controlGroup.add(circle);
 
-            this.mainShape = circle;
+            let r = circle.rx()
+            var verticesArr = [[circle.cx() - r, circle.cy()], [circle.cx(), circle.cy() - r], [circle.cx() + r, circle.cy()], [circle.cx(), circle.cy() + r]]
+            let resizeControls = []
+            for (let i = 0; i < verticesArr.length; i++) {
+                let vertex = verticesArr[i]
+                let resizeControl = self.svgNode.rect(4, 4).move(vertex[0] - 2, vertex[1] - 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
+                resizeControl.attr({ mapObjectType: 'edit-control' })
 
-            circle.on('drawstop', function () {
-                self.isSelected = true;
-                let controlGroup = self.svgNode.group()
-                controlGroup.add(circle);
+                controlGroup.add(resizeControl);
+                resizeControls.push(resizeControl)
 
-                let r = circle.rx()
-                var verticesArr = [[circle.cx() - r, circle.cy()], [circle.cx(), circle.cy() - r], [circle.cx() + r, circle.cy()], [circle.cx(), circle.cy() + r]]
-                let resizeControls = []
-                for (let i = 0; i < verticesArr.length; i++) {
-                    let vertex = verticesArr[i]
-                    let resizeControl = self.svgNode.rect(4, 4).move(vertex[0] - 2, vertex[1] - 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
-                    resizeControl.attr({ mapObjectType: 'edit-control' })
+                resizeControl.on('mousedown', function (ev) {
+                    controlGroup.draggable(false)
 
-                    controlGroup.add(resizeControl);
-                    resizeControls.push(resizeControl)
+                    let prevPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
+                    let mouseMove = function (ev, isMouseDown) {
+                        let currentPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
 
-                    resizeControl.on('mousedown', function (ev) {
-                        controlGroup.draggable(false)
-
-                        let prevPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
-                        let mouseMove = function (ev, isMouseDown) {
-                            let currentPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
-
-                            let radiusChange
-                            if (i == 0)
-                                radiusChange = prevPos.x - currentPos.x
-                            else if (i == 2)
-                                radiusChange = currentPos.x - prevPos.x
-                            else if (i == 3)
-                                radiusChange = currentPos.y - prevPos.y
-                            else {
-                                radiusChange = prevPos.y - currentPos.y
-                            }
-                            circle.radius(circle.rx() + radiusChange)
-                            prevPos = currentPos
-
-                            resizeControls[0].dx(-radiusChange)
-                            resizeControls[1].dy(-radiusChange)
-                            resizeControls[2].dx(radiusChange)
-                            resizeControls[3].dy(radiusChange)
+                        let radiusChange
+                        if (i == 0)
+                            radiusChange = prevPos.x - currentPos.x
+                        else if (i == 2)
+                            radiusChange = currentPos.x - prevPos.x
+                        else if (i == 3)
+                            radiusChange = currentPos.y - prevPos.y
+                        else {
+                            radiusChange = prevPos.y - currentPos.y
                         }
-                        window.addEventListener('mousemove', mouseMove)
+                        circle.radius(circle.rx() + radiusChange)
+                        prevPos = currentPos
 
-                        let mouseUpListener = function () {
-                            window.removeEventListener('mousemove', mouseMove)
-                            window.removeEventListener('mouseup', mouseUpListener)
-                            controlGroup.draggable(true)
-                        }
-                        window.addEventListener('mouseup', mouseUpListener)
-                    })
-                }
+                        resizeControls[0].dx(-radiusChange)
+                        resizeControls[1].dy(-radiusChange)
+                        resizeControls[2].dx(radiusChange)
+                        resizeControls[3].dy(radiusChange)
+                    }
+                    window.addEventListener('mousemove', mouseMove)
 
-                controlGroup.draggable()
-                self.controlGroup = controlGroup
+                    let mouseUpListener = function () {
+                        window.removeEventListener('mousemove', mouseMove)
+                        window.removeEventListener('mouseup', mouseUpListener)
+                        controlGroup.draggable(true)
+                    }
+                    window.addEventListener('mouseup', mouseUpListener)
+                })
+            }
 
-                addSelectionEventListener(controlGroup, circle, self)
+            controlGroup.draggable()
+            self.controlGroup = controlGroup
 
-                addDeletionEventListener(self);
-            })
+            addSelectionEventListener(controlGroup, circle, self)
+
+            addDeletionEventListener(self);
         }
     }
 

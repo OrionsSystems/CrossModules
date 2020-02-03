@@ -12,6 +12,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		protected virtual bool AutoCreateVm => true;
 
+		[Parameter]
 		public VmType Vm
 		{
 			get

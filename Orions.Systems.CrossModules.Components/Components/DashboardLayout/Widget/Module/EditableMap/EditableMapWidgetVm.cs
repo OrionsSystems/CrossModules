@@ -7,5 +7,9 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 	[Config(typeof(EditableMapWidget))]
 	public class EditableMapWidgetVm : WidgetVm<EditableMapWidget>
 	{
+		public void test()
+		{
+			//this.HandleFiltersChangedAsync
+		}
 	}
 }

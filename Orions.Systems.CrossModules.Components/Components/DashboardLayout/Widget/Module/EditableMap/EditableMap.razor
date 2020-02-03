@@ -16,41 +16,17 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		var vm = new SVGMapEditorVm();
 
-		var vm = new SVGMapEditorVm
+		vm.HyperArgsSink = this.HyperStore;
+		vm.MapOverlayId = this.Widget.MapOverlayId;
+
+		EditorVm = vm;
+
+		vm.OnMapOverlayIdSet = async (string id) =>
 		{
-			Cameras = new Common.ViewModelProperty<List<CameraControl>>(new List<CameraControl>())
+			this.Widget.MapOverlayId = id;
+			await this.DashboardVm.SaveChangesAsync();
 		};
-
-		vm.Cameras.Value.Add(new CameraControl
-		{
-			Verteces = new List<Point>
-			{
-				new Point
-				{
-					X = 376.4621797401966,
-					Y = 238.23108987009826
-				},
-				new Point
-				{
-					X = 381.4621797401966,
-					Y = 268.23108987009823
-				},
-				new Point
-				{
-					X = 406.4621797401966,
-					Y = 268.23108987009823
-				},
-				new Point
-				{
-					X = 411.4621797401966,
-					Y = 238.23108987009826
-				}
-			}
-		});
-
-		this.EditorVm = vm;
-
-		this.StateHasChanged();
 	}
 }
