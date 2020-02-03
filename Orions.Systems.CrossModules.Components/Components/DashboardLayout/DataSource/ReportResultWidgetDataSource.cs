@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 	public class ReportResultWidgetDataSource : WidgetDataSource
 	{
 		[HelpText("Add report result document", HelpTextAttribute.Priorities.Important)]
-		[HyperDocumentId.DocumentType(typeof(MetadataSetReport))]
+		[HyperDocumentId.DocumentType(typeof(Report))]
 		public HyperDocumentId ReportResultId { get; set; }
 
 		public override bool SupportsDynamicFiltration => true;
@@ -32,7 +32,7 @@ namespace Orions.Systems.CrossModules.Components
 			if (args.ExecutionResult.IsNotSuccess)
 				return null;
 
-			var result = doc?.GetPayload<MetadataSetReport>();
+			var result = doc?.GetPayload<Report>();
 
 			if (result != null)
 			{

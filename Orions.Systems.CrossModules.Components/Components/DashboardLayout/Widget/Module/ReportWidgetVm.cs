@@ -78,8 +78,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			try
 			{
-				var sources = new List<MetadataSetReport>();
-				if (reportResult is MetadataSetReport metadataReport)
+				var sources = new List<Report>();
+				if (reportResult is Report metadataReport)
 				{
 					sources.Add(metadataReport);
 				}
@@ -91,7 +91,7 @@ namespace Orions.Systems.CrossModules.Components
 
 				//}
 
-				foreach (var report in sources ?? Enumerable.Empty<MetadataSetReport>())
+				foreach (var report in sources ?? Enumerable.Empty<Report>())
 				{
 					var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
 					var rowsDef = report.RowsDefinitions.ToList();

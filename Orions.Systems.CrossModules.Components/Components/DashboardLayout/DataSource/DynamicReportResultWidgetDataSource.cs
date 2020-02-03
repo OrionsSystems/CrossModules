@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
 	public class DynamicReportResultWidgetDataSource : WidgetDataSource
 	{
 		[HelpText("The Report to use as a template for this source", HelpTextAttribute.Priorities.Mandatory)]
-		[HyperDocumentId.DocumentType(typeof(MetadataSetReport))]
+		[HyperDocumentId.DocumentType(typeof(Report))]
 		public HyperDocumentId? ReportId { get; set; }
 
 		[HelpText("The Metadata set to use as a source", HelpTextAttribute.Priorities.Mandatory)]
@@ -38,7 +38,7 @@ namespace Orions.Systems.CrossModules.Components
 			if (this.MetadataSetId.HasValue == false)
 				throw new OrionsException($"No {nameof(MetadataSetId)} assigned");
 
-			var reportTemplate = await context.HyperStore.RetrieveAsync<MetadataSetReport>(this.ReportId.Value);
+			var reportTemplate = await context.HyperStore.RetrieveAsync<Report>(this.ReportId.Value);
 			var metadataSet = await context.HyperStore.RetrieveAsync<HyperMetadataSet>(this.MetadataSetId.Value);
 
 			throw new NotImplementedException();
