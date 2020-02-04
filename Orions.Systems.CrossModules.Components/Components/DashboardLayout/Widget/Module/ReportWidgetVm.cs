@@ -93,6 +93,9 @@ namespace Orions.Systems.CrossModules.Components
 
 				foreach (var report in sources ?? Enumerable.Empty<Report>())
 				{
+					if (report.ColumnsDefinitions == null)
+						continue;
+
 					var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
 					var rowsDef = report.RowsDefinitions.ToList();
 					var rowData = report.Rows;
