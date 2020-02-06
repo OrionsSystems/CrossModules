@@ -23,14 +23,25 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
 
+		protected override void OnInitialized()
+		{
+			base.OnInitialized();
+		}
+
 		protected override async Task OnFirstAfterRenderAsync()
 		{
-			await this.Vm.Initialize();
+			this.Vm.JsRuntime = JsInterop;
+			await this.Vm.Initialize(ComponentContainerId);
 
 			this.Vm.MapOverlay.Value.PopulateTypeSpecificCollections();
 
 			var thisReference = DotNetObjectReference.Create(this);
-			await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, this.Vm.MapOverlay.Value });
+			await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, this.Vm.MapOverlay.Value, this.Vm.IsReadOnly });
+
+			Task.Run(async () =>
+			{
+				await Vm.TestLiveUpdate();
+			});
 		}
 
 		[JSInvokable]

@@ -46,6 +46,10 @@ namespace Orions.Systems.CrossModules.Portal
 
 			services.AddBlazoredLocalStorage();
 
+			services.AddSignalR(e => {
+				e.MaximumReceiveMessageSize = 102400000;
+			});
+
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 			services.AddScoped<CustomSettingsProvider>();

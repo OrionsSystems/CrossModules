@@ -1,32 +1,32 @@
 ﻿@namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
 @using  Orions.Systems.CrossModules.Components.Components.SVGMapEditor
+@using  Orions.Node.Common
 @inherits DashboardComponent<EditableMapWidgetVm, EditableMapWidget>
+@*@inherits EditableMapWidgetBase*@
 
 @if (Widget.ShowTitle)
 {
 	<h3>@Widget.Label</h3>
 }
 
-<SVGMapEditor Vm="@EditorVm">
-	<SampleMap/>
-</SVGMapEditor>
+<div class="widget-svg-map-editor-container">
+	<SVGMapEditor Vm="@Vm.EditorVm">
+		@((MarkupString)Vm.SvgHtmlString)
+	</SVGMapEditor>
+</div>
+
+<style>
+	.widget-svg-map-editor-container {
+		height: 800px;
+		width: 100%;
+	}
+</style>
 
 @code{
-	protected SVGMapEditorVm EditorVm { get; set; }
-
 	protected override async Task OnInitializedAsync()
 	{
-		var vm = new SVGMapEditorVm();
+		await this.Vm.Initialize();
 
-		vm.HyperArgsSink = this.HyperStore;
-		vm.MapOverlayId = this.Widget.MapOverlayId;
-
-		EditorVm = vm;
-
-		vm.OnMapOverlayIdSet = async (string id) =>
-		{
-			this.Widget.MapOverlayId = id;
-			await this.DashboardVm.SaveChangesAsync();
-		};
+		await base.OnInitializedAsync();
 	}
 }
