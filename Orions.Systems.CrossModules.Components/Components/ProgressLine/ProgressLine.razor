@@ -1,20 +1,33 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-<div class="progress-line mt-1">
+	<div class="progress-line mt-1">
 
-	@if (!string.IsNullOrWhiteSpace(IconUrl)) 
-	{ 
-		<span class="icon"><img src="@IconUrl"></span>	
-	}
+		@if (IsShowTitle) { 
+			<div class="stat-title">
+				@Title
+			</div>
+		}
+		@if (!string.IsNullOrWhiteSpace(IconUrl))
+		{
+			<span class="icon"><img src="@IconUrl"></span>
+		}
 
-	@if (IconSource != null)
-	{
-		<span class="icon"><img src="@ImageBase64Url"></span>
-	}
+		@if (IconSource != null)
+		{
+			<span class="icon"><img src="@ImageBase64Url"></span>
+		}
 
-	<span class="stat-progress" style="width: @(Progress)%;"></span>
-	<span class="stat-value">@Value %</span>
-</div>
+		<span class="stat-progress" style="width: @(Progress)%;"></span>
+		@if (IsShowPercentage)
+		{
+			<span title="@Value" class="stat-value">@Progress %</span>
+		}
+		else
+		{
+			<span class="stat-value">@Value</span>
+		}
+
+	</div>
 
 @code {
 
@@ -29,6 +42,15 @@
 
 	[Parameter]
 	public int Value { get; set; }
+
+	[Parameter]
+	public bool IsShowPercentage { get; set; }
+
+	[Parameter]
+	public bool IsShowTitle { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
 
 	public string ImageBase64Url
 	{
@@ -46,6 +68,12 @@
 }
 
 <style>
+
+	.progress-line .stat-title {
+		vertical-align: middle;
+		font-weight:bold;
+	}
+
 	.progress-line .icon {
 		display: inline-flex;
 		width: 12px;
