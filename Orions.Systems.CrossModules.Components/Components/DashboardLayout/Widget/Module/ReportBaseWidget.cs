@@ -12,7 +12,7 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportBaseWidget : DashboardWidget
 	{
-		[HelpText("Add the data for this widget to use")]
+		[HelpText("Add the data for this widget to use", HelpTextAttribute.Priorities.Important)]
 		public WidgetDataSource DataSource { get; set; } = new ReportResultWidgetDataSource();
 
 		[HelpText("Add category filters separated by comma")]
