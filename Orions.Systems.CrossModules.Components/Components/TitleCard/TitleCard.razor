@@ -1,0 +1,41 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent
+
+@if (Settings.IsShow)
+{
+	<div class="title-card-container" style="@Settings.InlineStyles">@Settings.Title</div>
+}
+
+@code {
+
+	[Parameter]
+	public TitleConfiguration Settings { get; set; } = new TitleConfiguration();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+	private string GetAligmentString()
+	{
+		switch (Settings.Aligment)
+		{
+			case TitleAligment.Left:
+				return "left";
+			case TitleAligment.Right:
+				return "right";
+			default:
+				return "center";
+		}
+	}
+}
+
+<style>
+	.title-card-container {
+		font-size: 20px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		text-align: @GetAligmentString();
+	}
+</style>
