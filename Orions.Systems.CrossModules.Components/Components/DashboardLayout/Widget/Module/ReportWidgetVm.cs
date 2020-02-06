@@ -83,13 +83,6 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					sources.Add(metadataReport);
 				}
-				// TODO: figure out how this is to be ported.
-				//else if (reportResult is MultiReportResult multiReport)
-				//{
-				//	if (multiReport.Data is MultiReportData multiReportData)
-				//		sources.AddRange(multiReportData.GetHyperReportResults());
-
-				//}
 
 				foreach (var report in sources ?? Enumerable.Empty<Report>())
 				{
