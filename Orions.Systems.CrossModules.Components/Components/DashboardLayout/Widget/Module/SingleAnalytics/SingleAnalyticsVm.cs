@@ -2,11 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	[Config(typeof(SingleAnalyticsWidget))]
-	public class SingleAnalyticsVm : WidgetVm<SingleAnalyticsWidget>
+	public class SingleAnalyticsVm : ReportWidgetVm<SingleAnalyticsWidget>
 	{
 		public SingleAnalyticsVm()
 		{

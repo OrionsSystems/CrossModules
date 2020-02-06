@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class SingleAnalyticsWidget : DashboardWidget, IDashboardWidget
+   public class SingleAnalyticsWidget : ReportChartWidget, IDashboardWidget
    {
-      public class SingleAnalyticsItem 
-      {
-         public string Title { get; set; }
+      public List<SingleAnalyticsItem> CustomItems { get; set; } = new List<SingleAnalyticsItem>();
 
-         public string Value { get; set; }
-
-         public string IconHtml { get; set; }
-      }
-
-      public List<SingleAnalyticsItem> Items { get; set; } = new List<SingleAnalyticsItem>();
+      public bool IsShowCardIcons { get; set; }
 
       public SingleAnalyticsWidget()
       {
