@@ -87,7 +87,7 @@
 			var item = new SingleAnalyticsItem()
 			{
 				Title = series.Name,
-				Value = series.Data.LastOrDefault()?.Label
+				Value = series.Data.LastOrDefault()?.Value
 			};
 
 			Data.Add(item);

@@ -133,7 +133,7 @@ namespace Orions.Systems.CrossModules.Components
 							{								
 								chartItem = new ReportSeriesChartDataItem
 								{
-									Value = Convert.ToUInt16(data.ToString()),
+									Value = data.ToString(), //Convert.ToUInt16(data.ToString()),
 									Label = label
 								};
 

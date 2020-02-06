@@ -30,7 +30,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void AddCategoryRange(string[] categories)
 		{
-			foreach(var category in categories?? Enumerable.Empty<string>())
+			foreach (var category in categories ?? Enumerable.Empty<string>())
 			{
 				AddCategory(category);
 			}
@@ -52,8 +52,41 @@ namespace Orions.Systems.CrossModules.Components
 
 	public class ReportSeriesChartDataItem
 	{
-		public int Value { get; set; }
+		public string Value { get; set; }
 		public string Label { get; set; }
+
+		public int? IntValue
+		{
+			get
+			{
+				int value;
+				var result = int.TryParse(Value, out value);
+				if (!result) return null;
+				return value;
+			}
+		}
+
+		public DateTime? DateValue
+		{
+			get
+			{
+				DateTime value;
+				var result = DateTime.TryParse(Value, out value);
+				if (!result) return null;
+				return value;
+			}
+		}
+
+		public double? DoubleValue
+		{
+			get
+			{
+				double value;
+				var result = double.TryParse(Value, out value);
+				if (!result) return null;
+				return value;
+			}
+		}
 
 		public DateTime? DatePosition { get; set; }
 		public string StreamPosition { get; set; }
