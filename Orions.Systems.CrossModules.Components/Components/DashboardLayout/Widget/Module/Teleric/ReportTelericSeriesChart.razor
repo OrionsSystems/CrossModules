@@ -11,10 +11,7 @@
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
-		@if (Widget.ShowTitle)
-		{
-			<h3>@Widget.Label</h3>
-		}
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 		<div class="widget-content-report-view">
 

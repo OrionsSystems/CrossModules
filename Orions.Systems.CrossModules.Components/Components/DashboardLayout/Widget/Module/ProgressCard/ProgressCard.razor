@@ -6,10 +6,8 @@
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{
-		@if (Widget.ShowTitle)
-		{
-			<h3>@Widget.Label</h3>
-		}
+
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 		<div class="widget-content-report-view">
 			@if (Data.Any())
@@ -124,7 +122,7 @@
 	}
 
 	.widget-content-report-ethnicity-traffic-progress {
-		padding: 18px;
+		/*padding: 18px;*/
 		margin: auto;
 	}
 

@@ -15,10 +15,7 @@
 		@if (Vm.Report != null && Vm.IsLoadedReportResult)
 		{
 
-			@if (Widget.ShowTitle && Vm.ReportHasName)
-			{
-				<h3>@Vm.ReportName</h3>
-			}
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 			@if (Showing)
 			{

@@ -6,10 +6,7 @@
 
 <div class="widget-content-report">
 
-	@if (Widget.ShowTitle)
-	{
-		<h3>@Widget.Label</h3>
-	}
+	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 	<SVGMap @ref="map" Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
 

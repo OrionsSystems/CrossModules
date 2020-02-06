@@ -1,17 +1,16 @@
 ﻿using Orions.Common;
-using Orions.Infrastructure.Reporting;
-using Orions.Node.Common;
-using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget
 	{
-		public string Label { get; set; }
+		public string Label { get { return TitleSettings.Title; } set { TitleSettings.Title = value; } }
 
-		public bool ShowTitle { get; set; } = false;
+		public bool ShowTitle { get { return TitleSettings.IsShow; } set { TitleSettings.IsShow = value; } }
 
 		public bool ShowFooter { get; set; } = false;
+
+		public TitleConfiguration TitleSettings { get; set; } = new TitleConfiguration();
 
 		[HelpText("Group of filters this widget belongs to")]
 		public string FilterGroup { get; set; }

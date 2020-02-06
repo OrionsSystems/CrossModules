@@ -4,10 +4,9 @@
 @using Orions.Systems.CrossModules.Components;
 
 <div class="metadata-review-widget">
-	@if (Widget.ShowTitle)
-	{
-		<h3>@Widget.Label</h3>
-	}
+
+	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
 	@if (Widget.MetadataSetId != null && Vm != null)
 	{
 		<TagReviewComponent Vm="@Vm.TagReviewVm.Value" />

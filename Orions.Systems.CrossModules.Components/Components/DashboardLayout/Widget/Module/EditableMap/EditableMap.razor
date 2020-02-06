@@ -4,10 +4,7 @@
 @inherits DashboardComponent<EditableMapWidgetVm, EditableMapWidget>
 @*@inherits EditableMapWidgetBase*@
 
-@if (Widget.ShowTitle)
-{
-	<h3>@Widget.Label</h3>
-}
+<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 <div class="widget-svg-map-editor-container">
 	<SVGMapEditor Vm="@Vm.EditorVm">

@@ -3,10 +3,8 @@
 @inherits DashboardComponent<SimpleHtmlVm, SimpleHtmlWidget>
 
 <div class="widget-content-report">
-	@if (Widget.ShowTitle)
-	{
-		<h3>@Widget.Label</h3>
-	}
+
+	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 	<div class="widget-content-report-view">
 		<section>
@@ -20,7 +18,7 @@
 
 <style>
 		.widget-content-report-view section {
-			color: #018786;
+			/*color: #018786;*/
 			font-size: 14px;
 		}
 
