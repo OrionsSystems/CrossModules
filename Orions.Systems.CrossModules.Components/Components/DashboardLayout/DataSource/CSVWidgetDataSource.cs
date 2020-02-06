@@ -12,9 +12,9 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class CSVWidgetDataSource : WidgetDataSource
 	{
-		[UniBrowsable(UniBrowsableAttribute.EditTypes.TextFile)]
-		[HelpText("Add report result document", HelpTextAttribute.Priorities.Important)]
-		public byte[] Data { get; set; }
+		[HelpText("The CSV data to generate a report from", HelpTextAttribute.Priorities.Mandatory)]
+		[UniBrowsable(EditType = UniBrowsableAttribute.EditTypes.TextFile)]
+		public byte[] CSVData { get; set; }
 
 		public override bool SupportsDynamicFiltration => true;
 
@@ -24,7 +24,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected override Task<Report> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
-			var byteArray = this.Data;
+			var byteArray = this.CSVData;
 
 			if (byteArray == null)
 				return Task.FromResult<Report>(null);

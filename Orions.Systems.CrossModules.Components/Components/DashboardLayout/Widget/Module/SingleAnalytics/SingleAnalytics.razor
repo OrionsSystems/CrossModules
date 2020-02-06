@@ -1,0 +1,141 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<SingleAnalyticsVm, SingleAnalyticsWidget>
+
+<div class="widget-content-report">
+
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+		@if (Widget.ShowTitle)
+		{
+			<h3>@Widget.Label</h3>
+		}
+
+		<div class="widget-content-report-view">
+
+			@if (Data.Any())
+			{
+				@foreach (var item in Data)
+				{
+					<div class="widget-single-analytics-title">@item.Title</div>
+					<div class="widget-single-analytics-container">
+						@if (Widget.IsShowCardIcons)
+						{
+							<div class="widget-single-analytics-icon">
+								@if (string.IsNullOrWhiteSpace(item.IconHtml))
+								{
+									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										  width="35px" height="35px" viewBox="0 0 35 35">
+										<g>
+											<rect width="15.909" height="35" />
+											<rect x="19.091" y="12.727" width="15.909" height="9.546" />
+											<rect x="19.091" width="15.909" height="9.545" />
+											<rect x="19.091" y="25.455" width="15.909" height="9.545" />
+										</g>
+									</svg>
+								}
+								else
+								{
+									@item.IconHtml
+								}
+							</div>
+						}
+						<div class="widget-single-analytics-value">@item.Value</div>
+					</div>
+				}
+			}
+
+		</div>
+	}
+
+
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+
+
+</div>
+
+@code {
+
+	public List<SingleAnalyticsItem> Data { get; set; } = new List<SingleAnalyticsItem>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Vm.OnReportResultChanged += OnChangeDataSource;
+
+		await Vm.RefreshReportResultData();
+
+		await base.OnInitializedAsync();
+	}
+
+	private void OnChangeDataSource()
+	{
+		foreach (var series in Vm.ReportChartData.Series)
+		{
+			var item = new SingleAnalyticsItem()
+			{
+				Title = series.Name,
+				Value = series.Data.LastOrDefault()?.Label
+			};
+
+			Data.Add(item);
+		}
+
+		if (Widget.CustomItems.Any())
+			Data.AddRange(Widget.CustomItems);
+
+		StateHasChanged();
+	}
+}
+<style>
+	.widget-single-analytics-title {
+		font-size: 12px;
+		color: #365c7e;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+	}
+
+	.widget-single-analytics-container {
+		display: inline-flex;
+		vertical-align: middle;
+	}
+
+	widget-single-analytics-icon {
+		vertical-align: middle;
+	}
+
+		widget-single-analytics-icon img {
+			vertical-align: middle;
+			width: 30px;
+		}
+
+	.widget-single-analytics-icon svg {
+		width: 30px;
+		vertical-align: middle;
+		fill: rgb(57, 93, 127);
+		margin-top: 7px;
+	}
+
+	.widget-single-analytics-value {
+		margin-left: 10px;
+		display: inline-flex;
+		opacity: .5;
+		font-size: 40px;
+		vertical-align: middle;
+		margin-top: -8px;
+		letter-spacing: 6px;
+	}
+</style>
+
