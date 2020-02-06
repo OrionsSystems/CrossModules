@@ -95,9 +95,9 @@ namespace Orions.Systems.CrossModules.Components
 				var rowIndex = item.Key;
 				var columnData = item.Value;
 
-				var cells = new List<ReportOutputCell>();
+				var cells = new List<ReportRowCell>();
 
-				var dataCells = columnData.Select(it => new ReportOutputCell() { Values = new[] { it } }).ToArray();
+				var dataCells = columnData.Select(it => new ReportRowCell() { Values = new[] { it } }).ToArray();
 				reportData.AddRow(new ReportRow() { Cells = dataCells });
 			}
 
