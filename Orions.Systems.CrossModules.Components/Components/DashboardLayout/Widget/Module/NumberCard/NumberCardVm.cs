@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	[Config(typeof(SingleAnalyticsWidget))]
-	public class SingleAnalyticsVm : ReportWidgetVm<SingleAnalyticsWidget>
+	[Config(typeof(NumberCardWidget))]
+	public class NumberCardVm : ReportWidgetVm<NumberCardWidget>
 	{
-		public SingleAnalyticsVm()
+		public NumberCardVm()
 		{
 		}
 	}
