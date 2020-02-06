@@ -69,7 +69,7 @@
 
 @code {
 
-	public List<SingleAnalyticsItem> Data { get; set; } = new List<SingleAnalyticsItem>();
+	public List<CardItem> Data { get; set; } = new List<CardItem>();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -84,7 +84,7 @@
 	{
 		foreach (var series in Vm.ReportChartData.Series)
 		{
-			var item = new SingleAnalyticsItem()
+			var item = new CardItem()
 			{
 				Title = series.Name,
 				Value = series.Data.LastOrDefault()?.Value
