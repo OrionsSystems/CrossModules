@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits DashboardComponent<ReportPieChartVm, ReportPieChartWidget>
+@inherits DashboardComponent<ReportPieChartJSVm, ReportPieChartJSWidget>
 
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
@@ -51,32 +51,32 @@
 @code {
 	private PieConfig _pieConfig;
 	private ChartJsPieChart _pieChartJs;
-	public bool Showing { get; set; } = true;
+	public bool Showing { get; set; } = false;
 
 	protected override async Task OnInitializedAsync()
 	{
 		Vm.OnReportResultChanged += OnChangeDataSource;
 		await Vm.RefreshReportResultData();
-		
-		
-		
+
 		await base.OnInitializedAsync();
 	}
 
-		private void OnChangeDataSource()
+	private void OnChangeDataSource()
 	{
-		this.Showing = false;
+		//this.Showing = false;
 		this.StateHasChanged();
 		SetPieConfiguration();
+		this.Showing = true;
+
 		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
-		Task.Factory.StartNew(() => 
-		{
-			this.InvokeAsync(() =>
-			{
-				this.Showing = true;
-				this.StateHasChanged();
-			});
-		});
+		//Task.Factory.StartNew(() => 
+		//{
+		//	this.InvokeAsync(() =>
+		//	{
+		//		this.Showing = true;
+		//		this.StateHasChanged();
+		//	});
+		//});
 	}
 
 	protected override void OnStateHasChanged()
@@ -86,7 +86,7 @@
 
 	private void SetPieConfiguration()
 	{
-		if (Vm.Report == null) 
+		if (Vm.Report == null)
 			return;
 
 		_pieConfig = new PieConfig
