@@ -22,37 +22,56 @@
 							 Background="@Widget.ChartBackground"
 							 SelectionMode="SelectionMode.Series">
 
+					<ChartMargin Left="@Widget.Margin.Left" 
+									 Right="@Widget.Margin.Right" 
+									 Top="@Widget.Margin.Top" 
+									 Bottom="@Widget.Margin.Bottom"></ChartMargin>
+
 					<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
+
+					<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
+											 Minimum="@Widget.YAxisSettings.Minimum"
+											 LineStyle="@Widget.YAxisSettings.LineStyle"
+											 
+											 MajorTickLines="@Widget.YAxisSettings.TickLines"></ChartPrimaryYAxis>
 
 					@if (ChartData.IsDateAxis)
 					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
-												 LabelPlacement="@Widget.LabelPlacement"
+						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
 												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
-												 IntervalType="@Widget.IntervalType"
-												 LabelFormat="@Widget.LabelFormat"
-												 Skeleton="@Widget.Skeleton"
-												 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+												 IntervalType="@Widget.XAxisSettings.IntervalType"
+												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+												 Skeleton="@Widget.XAxisSettings.Skeleton"
+												 Interval="@Widget.XAxisSettings.Interval" 
+												 MajorGridLines="@Widget.XAxisSettings.GridLineSettings"
+												 TickPosition="@Widget.YAxisSettings.TickPosition"
+												 LabelPosition="@Widget.YAxisSettings.LabelPosition"
+												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement">
 						</ChartPrimaryXAxis>
 					}
 					else
 					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisIsIndexed"
-												 LabelPlacement="@Widget.LabelPlacement"
+						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
 												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
-												 IntervalType="@Widget.IntervalType"
-												 LabelFormat="@Widget.LabelFormat"
-												 Skeleton="@Widget.Skeleton"
-												 EdgeLabelPlacement="@Widget.EdgeLabelPlacement">
+												 IntervalType="@Widget.XAxisSettings.IntervalType"
+												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+												 Skeleton="@Widget.XAxisSettings.Skeleton"
+												 Interval="@Widget.XAxisSettings.Interval" 
+												 MajorGridLines="@Widget.XAxisSettings.GridLineSettings"
+												 TickPosition="@Widget.YAxisSettings.TickPosition"
+												 LabelPosition="@Widget.YAxisSettings.LabelPosition"
+												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement">
 						</ChartPrimaryXAxis>
 					}
 
 					<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
 
-				<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
-											Position="@Widget.LegendSettings.Position"
-									         Alignment="@Widget.LegendSettings.Alignment">
-				</ChartLegendSettings>
+					<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
+												Position="@Widget.LegendSettings.Position"
+												Alignment="@Widget.LegendSettings.Alignment">
+					</ChartLegendSettings>
 					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
 											 EnablePinchZooming="@Widget.EnablePinchZooming"
 											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
@@ -83,7 +102,7 @@
 												 Name="@ser.Name"
 												 XName="@nameof(ReportSeriesChartDataItem.Label)"
 												 YName="@nameof(ReportSeriesChartDataItem.Value)"
-												 Type="@Widget.ChartSeriesType">
+												 Type="@Widget.ChartSeriesType" CornerRadius="@Widget.CornerRadius">
 									<ChartMarker>
 										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
 									</ChartMarker>
