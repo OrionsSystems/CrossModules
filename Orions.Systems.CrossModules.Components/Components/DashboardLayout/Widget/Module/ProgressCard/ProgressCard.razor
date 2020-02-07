@@ -26,7 +26,7 @@
 										<ProgressLine IsShowTitle="true"
 														  Title="@item.Title"
 														  IsShowPercentage="Widget.IsShowPercentage" 
-														  Progress="@item.Percentage" 
+														  Percentage="@item.Percentage" 
 														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
 									</div>
 								}
@@ -36,7 +36,7 @@
 										<ProgressLine IsShowTitle="true"
 														  Title="@item.Title"
 														  IsShowPercentage="Widget.IsShowPercentage" 
-														  Progress="@item.Percentage" 
+														  Percentage="@item.Percentage" 
 														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
 									</div>
 								}
@@ -101,8 +101,9 @@
 		{
 			foreach (var item in Data)
 			{
-				var res = (item.DoubleValue / total) * 100;
-				item.Percentage = Convert.ToInt32(res);
+				if (item.DoubleValue == null && item.DoubleValue.GetValueOrDefault() != 0) continue;
+
+				item.Percentage = (item.DoubleValue.GetValueOrDefault() / total) * 100;
 			}
 		}
 
