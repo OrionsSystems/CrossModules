@@ -5,13 +5,6 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportSyncfusionBaseChartWidget : ReportChartWidget, IDashboardWidget
 	{
-		public class LegendDefinition
-		{
-			public bool Visible { get; set; } = true;
-			public LegendPosition Position { get; set; } = LegendPosition.Top;
-			public Alignment Alignment { get; set; } = Alignment.Far;
-
-		}
 		public bool IsShowChartTitle { get; set; } = false;
 
 		public string ChartTitle { get; set; }
@@ -31,7 +24,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsEnableTooltip { get; set; } = true;
 
-		public LegendDefinition LegendSettings { get; set; } = new LegendDefinition();
+		public SyncfiusionLegendDefinition LegendSettings { get; set; } = new SyncfiusionLegendDefinition();
 
 		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.StackingColumn;
 

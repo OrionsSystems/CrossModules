@@ -1,0 +1,128 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<ReportSyncfusionAccumulationChartVm, ReportSyncfusionAccumulationChartWidget>
+
+@using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Charts
+@using Syncfusion.EJ2.Blazor.SplitButtons
+
+<div class="widget-content-report">
+
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+		@if (Showing)
+		{
+			<div class="widget-content-report-view widget-syncfusion">
+
+				<EjsAccumulationChart @ref="Chartobj"
+											 Title="@Widget.ChartTitle">
+
+					<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
+
+					<AccumulationChartSeriesCollection>
+
+						@foreach (var ser in ChartData.Series)
+						{
+							<AccumulationChartSeries DataSource="@ser.Data"
+															 XName="@nameof(ReportSeriesChartDataItem.Label)"
+															 YName="@nameof(ReportSeriesChartDataItem.Value)"
+															 Name="@ser.Name"
+															 Radius="100%"
+															 InnerRadius="40%">
+
+								<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
+
+								<AccumulationDataLabelSettings Visible="@Widget.LabelSettings.Visible"
+																		 Name="@ser.Name"
+																		 Position="@Widget.LabelSettings.Position">
+								</AccumulationDataLabelSettings>
+
+							</AccumulationChartSeries>
+						}
+
+					</AccumulationChartSeriesCollection>
+
+					<AccumulationChartLegendSettings Position="@Widget.LegendSettings.Position"
+																Alignment="@Widget.LegendSettings.Alignment"
+																Visible="@Widget.LegendSettings.Visible">
+					</AccumulationChartLegendSettings>
+
+					<AccumulationChartTooltipSettings Enable="@Widget.IsEnableTooltip"></AccumulationChartTooltipSettings>
+				</EjsAccumulationChart>
+
+			</div>
+		}
+
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-footer">
+				@if (Vm.ReportHasName)
+				{
+					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+				}
+				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
+
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+</div>
+
+@code {
+
+	public EjsAccumulationChart Chartobj;
+
+	public bool Showing { get; set; } = true;
+
+	public void OnApply()
+	{
+	}
+
+	public ReportChartData ChartData => Vm.ReportChartData;
+
+	protected override async Task OnInitializedAsync()
+	{
+		Vm.OnReportResultChanged += OnChangeDataSource;
+		await Vm.RefreshReportResultData();
+
+		await base.OnInitializedAsync();
+	}
+
+	private void OnChangeDataSource()
+	{
+		this.Showing = false;
+		this.StateHasChanged();
+
+		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
+		Task.Factory.StartNew(() =>
+		{
+			this.InvokeAsync(() =>
+			{
+				this.Showing = true;
+				this.StateHasChanged();
+			});
+		});
+	}
+
+	protected override void OnStateHasChanged()
+	{
+		base.OnStateHasChanged();
+	}
+
+}
