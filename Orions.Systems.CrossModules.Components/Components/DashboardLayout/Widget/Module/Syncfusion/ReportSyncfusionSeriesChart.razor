@@ -61,7 +61,9 @@
 												 Interval="@Widget.XAxisSettings.Interval" 
 												 MajorGridLines="@Widget.XAxisSettings.GridLineSettings"
 												 TickPosition="@Widget.XAxisSettings.TickPosition"
-												 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+												 LabelPosition="@Widget.XAxisSettings.LabelPosition" 
+												 LabelRotation="@Widget.XAxisSettings.LabelRotation" 
+												 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
 												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement">
 						</ChartPrimaryXAxis>
 					}
@@ -102,7 +104,8 @@
 												 Name="@ser.Name"
 												 XName="@nameof(ReportSeriesChartDataItem.Label)"
 												 YName="@nameof(ReportSeriesChartDataItem.Value)"
-												 Type="@Widget.ChartSeriesType" CornerRadius="@Widget.CornerRadius">
+												 Type="@Widget.ChartSeriesType"
+												 CornerRadius="@Widget.CornerRadius">
 									<ChartMarker>
 										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
 									</ChartMarker>

@@ -50,6 +50,10 @@ namespace Orions.Systems.CrossModules.Components
 			public AxisPosition TickPosition { get; set; } = AxisPosition.Inside;
 
 			public AxisPosition LabelPosition { get; set; } = AxisPosition.Outside;
+
+			public double LabelRotation { get; set; }
+
+			public LabelIntersectAction LabelIntersectAction { get; set; } = LabelIntersectAction.None;
 		}
 
 		public bool IsShowChartTitle { get; set; } = false;
