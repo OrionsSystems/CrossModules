@@ -52,6 +52,7 @@ namespace Orions.Systems.CrossModules.Components
 
 	public class ReportSeriesChartDataItem
 	{
+		public string CategoryName { get; set; }
 		public string Value { get; set; }
 		public string Label { get; set; }
 

@@ -29,17 +29,23 @@
 						@foreach (var ser in ChartData.Series)
 						{
 							<AccumulationChartSeries DataSource="@ser.Data"
-															 XName="@nameof(ReportSeriesChartDataItem.Label)"
+															 XName="@nameof(ReportSeriesChartDataItem.CategoryName)"
 															 YName="@nameof(ReportSeriesChartDataItem.Value)"
-															 Name="@ser.Name"
+															 Name="@(string.IsNullOrWhiteSpace(Widget.SeriesSettings.Name) ? ser.Name : Widget.SeriesSettings.Name)"
 															 Radius="@Widget.Radius"
+															 GroupTo="@Widget.SeriesSettings.GroupTo"
+															 Explode="@Widget.SeriesSettings.Explode"
+															  ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
+															  Border="@Widget.SeriesSettings.Border"
+															 Theme="@Widget.SeriesSettings.Theme"
 															 InnerRadius="@Widget.InnerRadius">
 
 								<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
 
-								<AccumulationDataLabelSettings Visible="@Widget.LabelSettings.Visible"
+								<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
 																		 Name="@ser.Name"
-																		 Position="@Widget.LabelSettings.Position">
+																		 Font="@Widget.SeriesSettings.DataLabel.Font"
+																		 Position="@Widget.SeriesSettings.DataLabel.Position">
 								</AccumulationDataLabelSettings>
 
 							</AccumulationChartSeries>
@@ -52,7 +58,12 @@
 																Visible="@Widget.LegendSettings.Visible">
 					</AccumulationChartLegendSettings>
 
-					<AccumulationChartTooltipSettings Enable="@Widget.IsEnableTooltip"></AccumulationChartTooltipSettings>
+					<AccumulationChartTooltipSettings Enable="@Widget.TooltipSettings.Enable" 
+																 Format="@Widget.TooltipSettings.Format"
+																 Opacity="@Widget.TooltipSettings.Opacity"
+																 Duration="@Widget.TooltipSettings.Duration"
+																 Border="@Widget.TooltipSettings.Border"
+																 TextStyle="@Widget.TooltipSettings.TextStyle"></AccumulationChartTooltipSettings>
 				</EjsAccumulationChart>
 
 			</div>
@@ -90,7 +101,7 @@
 
 	public EjsAccumulationChart Chartobj;
 
-	public bool Showing { get; set; } = true;
+	public bool Showing { get; set; } = false;
 
 	public void OnApply()
 	{

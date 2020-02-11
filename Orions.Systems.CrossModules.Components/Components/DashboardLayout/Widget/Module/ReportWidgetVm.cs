@@ -122,8 +122,10 @@ namespace Orions.Systems.CrossModules.Components
 						{
 							var rowEl = rowData[rowIndex];
 
-							var reportRowEl = rowsDef[rowIndex];
-							var label = reportRowEl.Title;
+							var label = rowEl.Template.Title;
+
+							//var reportRowEl = rowsDef[rowIndex];
+							//var label = reportRowEl.Title;
 
 							var data = rowEl.Cells[i].Values.FirstOrDefault();
 
@@ -133,6 +135,7 @@ namespace Orions.Systems.CrossModules.Components
 							{								
 								chartItem = new ReportSeriesChartDataItem
 								{
+									CategoryName = categoryTitle,
 									Value = data.ToString(), //Convert.ToUInt16(data.ToString()),
 									Label = label
 								};
