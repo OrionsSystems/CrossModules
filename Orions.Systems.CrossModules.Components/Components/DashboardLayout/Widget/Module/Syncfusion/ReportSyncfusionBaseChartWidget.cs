@@ -5,6 +5,15 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportSyncfusionBaseChartWidget : ReportChartWidget, IDashboardWidget
 	{
+
+		public class TooltipConfiguration {
+			public bool IsEnable { get; set; }
+
+			public string Format { get; set; }
+
+			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
+		}
+
 		public class ChartMargin 
 		{
 			public int Top { get; set; }
@@ -13,21 +22,10 @@ namespace Orions.Systems.CrossModules.Components
 			public int Bottom { get; set; }
 		}
 
-		public class PrimaryYAxis {
-			public int Minimum { get; set; }
-
-			//public int Interval { get; set; } = 1;
-			//public int Maximum { get; set; }
-
-			public ChartAxisLineStyle LineStyle { get; set; } = new ChartAxisLineStyle();
-
-			public ChartAxisMajorTickLines TickLines { get; set; } = new ChartAxisMajorTickLines();
-
-			public ChartAxisMajorGridLines GridLineSettings { get; set; } = new ChartAxisMajorGridLines();
-		}
-
 		public class PrimaryXAxis
 		{
+			public bool Visible { get; set; } = true;
+
 			public bool XAxisIsIndexed { get; set; } = true;
 
 			public LabelPlacement LabelPlacement { get; set; } = LabelPlacement.OnTicks;
@@ -40,7 +38,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			public EdgeLabelPlacement EdgeLabelPlacement { get; set; } = EdgeLabelPlacement.Shift;
 
-			public ChartAxisMajorGridLines GridLineSettings { get; set; } = new ChartAxisMajorGridLines();
+			public ChartAxisMajorGridLines MajorGridLines { get; set; } = new ChartAxisMajorGridLines();
+
+			public ValueType ValueType { get; set; } = ValueType.Category;
 
 			//public int Minimum { get; set; }
 			//public int Maximum { get; set; }
@@ -56,13 +56,36 @@ namespace Orions.Systems.CrossModules.Components
 			public LabelIntersectAction LabelIntersectAction { get; set; } = LabelIntersectAction.None;
 		}
 
+		public class PrimaryYAxis {
+			public int Minimum { get; set; }
+
+			public bool Visible { get; set; } = true;
+
+			//public int Interval { get; set; } = 1;
+			//public int Maximum { get; set; }
+
+			public ChartAxisLineStyle LineStyle { get; set; } = new ChartAxisLineStyle();
+
+			public ChartAxisMajorTickLines MajorTickLines { get; set; } = new ChartAxisMajorTickLines();
+
+			public ChartAxisMinorTickLines MinorTickLines { get; set; } = new ChartAxisMinorTickLines();
+
+			public ChartAxisMajorGridLines GridLineSettings { get; set; } = new ChartAxisMajorGridLines();
+		}
+		
+		public string Height { get; set; }
+
+		public string Width { get; set; }
+
 		public bool IsShowChartTitle { get; set; } = false;
 
 		public string ChartTitle { get; set; }
 
 		public SelectionMode SelectionMode { get; set; } = SelectionMode.Series;
 
-		public bool IsEnableTooltip { get; set; } = true;
+		public bool IsEnableTooltip { get { return TooltipSettings.IsEnable; } set { TooltipSettings.IsEnable = value; } }
+
+		public TooltipConfiguration TooltipSettings { get; set; } = new TooltipConfiguration();
 
 		public SyncfiusionLegendDefinition LegendSettings { get; set; } = new SyncfiusionLegendDefinition();
 
@@ -92,7 +115,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ChartMargin Margin { get; set; } = new ChartMargin();
 
-		
+		public ChartAreaBorder Border { get; set; } = new ChartAreaBorder();
 
 		public ReportSyncfusionBaseChartWidget()
 		{

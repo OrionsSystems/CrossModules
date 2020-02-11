@@ -18,102 +18,113 @@
 			<div class="widget-content-report-view widget-syncfusion">
 
 				<EjsChart @ref="Chartobj"
-							 Title="@Widget.ChartTitle"
-							 Background="@Widget.ChartBackground"
+							 Height="@Widget.Height"
+							 Width="@Widget.Width"
+							 Title="@Widget.ChartTitle" 
+							 Background="@Widget.ChartBackground" 
 							 SelectionMode="SelectionMode.Series">
 
-					<ChartMargin Left="@Widget.Margin.Left" 
-									 Right="@Widget.Margin.Right" 
-									 Top="@Widget.Margin.Top" 
-									 Bottom="@Widget.Margin.Bottom"></ChartMargin>
+					<ChartArea Border="@Widget.Border"></ChartArea>
 
-					<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
+						<ChartMargin Left="@Widget.Margin.Left"
+										 Right="@Widget.Margin.Right"
+										 Top="@Widget.Margin.Top"
+										 Bottom="@Widget.Margin.Bottom"></ChartMargin>
 
-					<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
-											 Minimum="@Widget.YAxisSettings.Minimum"
-											 LineStyle="@Widget.YAxisSettings.LineStyle"
-											 
-											 MajorTickLines="@Widget.YAxisSettings.TickLines"></ChartPrimaryYAxis>
+						<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
 
-					@if (ChartData.IsDateAxis)
-					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
-												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
-												 IntervalType="@Widget.XAxisSettings.IntervalType"
-												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
-												 Skeleton="@Widget.XAxisSettings.Skeleton"
-												 Interval="@Widget.XAxisSettings.Interval" 
-												 MajorGridLines="@Widget.XAxisSettings.GridLineSettings"
-												 TickPosition="@Widget.XAxisSettings.TickPosition"
-												 LabelPosition="@Widget.XAxisSettings.LabelPosition"
-												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement">
-						</ChartPrimaryXAxis>
-					}
-					else
-					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
-												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
-												 IntervalType="@Widget.XAxisSettings.IntervalType"
-												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
-												 Skeleton="@Widget.XAxisSettings.Skeleton"
-												 Interval="@Widget.XAxisSettings.Interval" 
-												 MajorGridLines="@Widget.XAxisSettings.GridLineSettings"
-												 TickPosition="@Widget.XAxisSettings.TickPosition"
-												 LabelPosition="@Widget.XAxisSettings.LabelPosition" 
-												 LabelRotation="@Widget.XAxisSettings.LabelRotation" 
-												 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
-												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement">
-						</ChartPrimaryXAxis>
-					}
+						<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
+												 Minimum="@Widget.YAxisSettings.Minimum"
+												 LineStyle="@Widget.YAxisSettings.LineStyle"
+												 Visible="@Widget.YAxisSettings.Visible"
+												 MajorTickLines="@Widget.YAxisSettings.MajorTickLines" 
+												 MinorTickLines="@Widget.YAxisSettings.MinorTickLines"></ChartPrimaryYAxis>
 
-					<ChartTooltipSettings Enable="@Widget.IsEnableTooltip"></ChartTooltipSettings>
-
-					<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
-												Position="@Widget.LegendSettings.Position"
-												Alignment="@Widget.LegendSettings.Alignment">
-					</ChartLegendSettings>
-					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
-											 EnablePinchZooming="@Widget.EnablePinchZooming"
-											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
-											 EnablePan="@Widget.EnablePan"
-											 EnableScrollbar="true">
-					</ChartZoomSettings>
-
-					<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
-
-					<ChartSeriesCollection>
-						@foreach (var ser in ChartData.Series)
+						@if (ChartData.IsDateAxis)
 						{
-							@if (ChartData.IsDateAxis)
-							{
-								<ChartSeries DataSource="@ser.Data"
-												 Name="@ser.Name"
-												 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
-												 YName="@nameof(ReportSeriesChartDataItem.Value)"
-												 Type="@Widget.ChartSeriesType">
-									<ChartMarker>
-										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-									</ChartMarker>
-								</ChartSeries>
-							}
-							else
-							{
-								<ChartSeries DataSource="@ser.Data"
-												 Name="@ser.Name"
-												 XName="@nameof(ReportSeriesChartDataItem.Label)"
-												 YName="@nameof(ReportSeriesChartDataItem.Value)"
-												 Type="@Widget.ChartSeriesType"
-												 CornerRadius="@Widget.CornerRadius">
-									<ChartMarker>
-										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-									</ChartMarker>
-								</ChartSeries>
-							}
+							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+													 IntervalType="@Widget.XAxisSettings.IntervalType"
+													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+													 Skeleton="@Widget.XAxisSettings.Skeleton"
+													 Interval="@Widget.XAxisSettings.Interval"
+													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
+													 TickPosition="@Widget.XAxisSettings.TickPosition"
+													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
+													 Visible="@Widget.XAxisSettings.Visible">
+							</ChartPrimaryXAxis>
+						}
+						else
+						{
+							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
+													 IntervalType="@Widget.XAxisSettings.IntervalType"
+													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+													 Skeleton="@Widget.XAxisSettings.Skeleton"
+													 Interval="@Widget.XAxisSettings.Interval"
+													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
+													 TickPosition="@Widget.XAxisSettings.TickPosition"
+													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 LabelRotation="@Widget.XAxisSettings.LabelRotation"
+													 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
+													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
+													 Visible="@Widget.XAxisSettings.Visible">
+							</ChartPrimaryXAxis>
 						}
 
-					</ChartSeriesCollection>
+						<ChartTooltipSettings Format="@Widget.TooltipSettings.Format" 
+													 TextStyle="@Widget.TooltipSettings.TextStyle" 
+													 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
+
+						<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
+													Position="@Widget.LegendSettings.Position"
+													Alignment="@Widget.LegendSettings.Alignment">
+						</ChartLegendSettings>
+						<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+												 EnablePinchZooming="@Widget.EnablePinchZooming"
+												 EnableSelectionZooming="@Widget.EnableSelectionZooming"
+												 EnablePan="@Widget.EnablePan"
+												 EnableScrollbar="true">
+						</ChartZoomSettings>
+
+						<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
+
+						<ChartSeriesCollection>
+							@foreach (var ser in ChartData.Series)
+							{
+								@if (ChartData.IsDateAxis)
+								{
+									<ChartSeries DataSource="@ser.Data"
+													 Name="@ser.Name"
+													 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
+													 YName="@nameof(ReportSeriesChartDataItem.Value)" 
+													 CornerRadius="@Widget.CornerRadius"
+													 Type="@Widget.ChartSeriesType">
+										<ChartMarker>
+											<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+										</ChartMarker>
+									</ChartSeries>
+								}
+								else
+								{
+									<ChartSeries DataSource="@ser.Data"
+													 Name="@ser.Name"
+													 XName="@nameof(ReportSeriesChartDataItem.Label)"
+													 YName="@nameof(ReportSeriesChartDataItem.Value)"
+													 Type="@Widget.ChartSeriesType"
+													 CornerRadius="@Widget.CornerRadius">
+										<ChartMarker>
+											<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+										</ChartMarker>
+									</ChartSeries>
+								}
+							}
+
+						</ChartSeriesCollection>
+					
 				</EjsChart>
 
 			</div>
@@ -145,14 +156,6 @@
 		</div>
 	}
 
-
-	@* TEST BUTTON FOR TESTING CHANGING THE SERIES
-			<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
-			<EjsProgressButton Duration="99" OnClick="@OnApply" Content="Apply" IsPrimary="true">
-			</EjsProgressButton>
-		</div>
-	*@
-
 </div>
 
 @code {
@@ -169,26 +172,16 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Vm.RefreshReportResultData();
-
 		Vm.OnReportResultChanged += OnChangeDataSource;
+		await Vm.RefreshReportResultData();
+		
 		await base.OnInitializedAsync();
 	}
 
 	private void OnChangeDataSource()
 	{
-		this.Showing = false;
+		this.Showing = true;
 		this.StateHasChanged();
-
-		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
-		Task.Factory.StartNew(() => 
-		{
-			this.InvokeAsync(() =>
-			{
-				this.Showing = true;
-				this.StateHasChanged();
-			});
-		});
 	}
 
 	protected override void OnStateHasChanged()
