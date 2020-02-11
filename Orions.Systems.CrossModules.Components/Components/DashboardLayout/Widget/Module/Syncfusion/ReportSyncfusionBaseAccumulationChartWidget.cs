@@ -27,8 +27,8 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("Options for customizing the border of the series.")]
 			public AccumulationChartSeriesBorder Border { get; set; } = new AccumulationChartSeriesBorder();
 
-			[HelpText("Specifies the theme for accumulation chart.")]
-			public AccumulationTheme Theme { get; set; } = AccumulationTheme.Material;
+			//[HelpText("Specifies the theme for accumulation chart.")]
+			//public AccumulationTheme Theme { get; set; } = AccumulationTheme.Material;
 		}
 
 		public class TooltipConfiguration
