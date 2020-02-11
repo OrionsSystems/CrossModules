@@ -1,16 +1,20 @@
-﻿using Syncfusion.EJ2.Blazor;
+﻿using Orions.Common;
+using Syncfusion.EJ2.Blazor;
 using Syncfusion.EJ2.Blazor.Charts;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class ReportSyncfusionBaseChartWidget : ReportChartWidget, IDashboardWidget
 	{
-
 		public class TooltipConfiguration {
+
+			[HelpText("")]
 			public bool IsEnable { get; set; }
 
+			[HelpText("")]
 			public string Format { get; set; }
 
+			[HelpText("")]
 			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
 		}
 
@@ -33,6 +37,8 @@ namespace Orions.Systems.CrossModules.Components
 			public IntervalType IntervalType { get; set; } = IntervalType.Auto;
 
 			public string LabelFormat { get; set; } = "dd MMM HH:mm";
+
+			public ChartAxisLabelStyle LabelStyle { get; set; } = new ChartAxisLabelStyle();
 
 			public string Skeleton { get; set; } = "Ed";
 
@@ -72,14 +78,20 @@ namespace Orions.Systems.CrossModules.Components
 
 			public ChartAxisMajorGridLines GridLineSettings { get; set; } = new ChartAxisMajorGridLines();
 		}
-		
+
+		[HelpText("The height of the chart as a string accepts input both as '100px' or '100%'. If specified as '100%, chart renders to the full height of its parent element.")]
 		public string Height { get; set; }
 
+		[HelpText("The width of the chart as a string accepts input as both like '100px' or '100%'. If specified as '100%, chart renders to the full width of its parent element.")]
 		public string Width { get; set; }
 
 		public bool IsShowChartTitle { get; set; } = false;
 
+		[HelpText("Title of the chart")]
 		public string ChartTitle { get; set; }
+
+		[HelpText("To render the column series points with particular column spacing. It takes value from 0 - 1.")]
+		public double ColumnSpacing { get; set; } = 0;
 
 		public SelectionMode SelectionMode { get; set; } = SelectionMode.Series;
 

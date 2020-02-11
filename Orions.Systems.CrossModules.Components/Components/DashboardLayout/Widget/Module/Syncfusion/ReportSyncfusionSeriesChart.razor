@@ -43,7 +43,6 @@
 						@if (ChartData.IsDateAxis)
 						{
 							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
 													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
 													 IntervalType="@Widget.XAxisSettings.IntervalType"
 													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
@@ -52,6 +51,9 @@
 													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
 													 TickPosition="@Widget.XAxisSettings.TickPosition"
 													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 LabelRotation="@Widget.XAxisSettings.LabelRotation"
+													 LabelStyle="@Widget.XAxisSettings.LabelStyle"
 													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
 													 Visible="@Widget.XAxisSettings.Visible">
 							</ChartPrimaryXAxis>
@@ -59,7 +61,7 @@
 						else
 						{
 							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 
 													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
 													 IntervalType="@Widget.XAxisSettings.IntervalType"
 													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
@@ -68,8 +70,10 @@
 													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
 													 TickPosition="@Widget.XAxisSettings.TickPosition"
 													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
 													 LabelRotation="@Widget.XAxisSettings.LabelRotation"
 													 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
+													 LabelStyle="@Widget.XAxisSettings.LabelStyle"
 													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
 													 Visible="@Widget.XAxisSettings.Visible">
 							</ChartPrimaryXAxis>
@@ -101,7 +105,7 @@
 													 Name="@ser.Name"
 													 XName="@nameof(ReportSeriesChartDataItem.DatePosition)"
 													 YName="@nameof(ReportSeriesChartDataItem.Value)" 
-													 CornerRadius="@Widget.CornerRadius"
+													 CornerRadius="@Widget.CornerRadius" 
 													 Type="@Widget.ChartSeriesType">
 										<ChartMarker>
 											<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
