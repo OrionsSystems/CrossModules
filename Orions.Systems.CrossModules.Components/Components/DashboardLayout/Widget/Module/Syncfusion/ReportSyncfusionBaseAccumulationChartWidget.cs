@@ -40,7 +40,7 @@ namespace Orions.Systems.CrossModules.Components
 			public string Format { get; set; }
 
 			[HelpText("The fill color of the tooltip that accepts value in hex and rgba as a valid CSS color string.")]
-			public double Opacity { get; set; }
+			public double Opacity { get; set; } = 0.75;
 
 			[HelpText("Duration for the ToolTip animation.")]
 			public double Duration { get; set; } = 300;
