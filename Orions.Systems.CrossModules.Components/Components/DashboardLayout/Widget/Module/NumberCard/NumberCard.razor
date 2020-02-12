@@ -4,8 +4,9 @@
 
 <div class="widget-content-report">
 
-	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	@if (Vm.IsLoadedReportResult)
 	{
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 		<div class="widget-content-report-view">
@@ -41,16 +42,16 @@
 					</div>
 				}
 			}
+			else
+			{
+				<div class="widget-missing-report">
+					Missing report data!
+				</div>
+			}
 
 		</div>
-	}
 
-
-	@if (Vm.Report == null && Vm.IsLoadedReportResult)
-	{
-		<div class="widget-missing-report">
-			Missing report data!
-		</div>
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
 	}
 
 	@if (!Vm.IsLoadedReportResult)
@@ -59,8 +60,6 @@
 			<div class="loading-bar"></div>
 		</div>
 	}
-
-
 
 </div>
 

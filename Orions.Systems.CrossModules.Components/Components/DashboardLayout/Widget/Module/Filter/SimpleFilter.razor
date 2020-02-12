@@ -12,8 +12,9 @@
 
 @using Syncfusion.EJ2.Blazor.Calendars
 
-	<div class="widget-content-report-piechart">
+	<div class="widget-content-report">
 
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 		@if (Vm.Widget.ShowTextLabelSelection)
@@ -35,17 +36,19 @@
 			</div>
 		}
 
-	<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
-		<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-		<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-		<EjsProgressButton @ref="ClearAllButton" Duration="9999999" OnClick="@OnClearAll" Content="Clear (All)" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-	</div>
+		<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
+			<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
+				<ProgressButtonEvents></ProgressButtonEvents>
+			</EjsProgressButton>
+			<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear" IsPrimary="true">
+				<ProgressButtonEvents></ProgressButtonEvents>
+			</EjsProgressButton>
+			<EjsProgressButton @ref="ClearAllButton" Duration="9999999" OnClick="@OnClearAll" Content="Clear (All)" IsPrimary="true">
+				<ProgressButtonEvents></ProgressButtonEvents>
+			</EjsProgressButton>
+		</div>
+
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
 
 	</div>
 

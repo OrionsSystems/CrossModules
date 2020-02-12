@@ -7,93 +7,96 @@
 @using Syncfusion.EJ2.Blazor.Charts
 @using Syncfusion.EJ2.Blazor.SplitButtons
 
-<div class="widget-content-report">
+	<div class="widget-content-report">
 
-	@if (Vm.Report != null && Vm.IsLoadedReportResult)
-	{
-		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
-
-		@if (Showing)
+		@if (Vm.Report != null && Vm.IsLoadedReportResult)
 		{
-			<div class="widget-content-report-view widget-syncfusion">
+			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-				<EjsAccumulationChart @ref="Chartobj"
-											 Height="@Widget.Height"
-											 Width="@Widget.Width" 
-											 Theme="@Widget.Theme"
-											 Background="@Widget.Background"
-											 Title="@Widget.ChartTitle">
+			@if (Showing)
+			{
+				<div class="widget-content-report-view widget-syncfusion">
 
-					<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
+					<EjsAccumulationChart @ref="Chartobj"
+												 Height="@Widget.Height"
+												 Width="@Widget.Width"
+												 Theme="@Widget.Theme"
+												 Background="@Widget.Background"
+												 Title="@Widget.ChartTitle">
 
-					<AccumulationChartSeriesCollection>
+						<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
 
-						<AccumulationChartSeries DataSource="@Data"
-														 XName="@nameof(ReportPieChartData.Label)"
-														 YName="@nameof(ReportPieChartData.Value)"
-														 Name="@Widget.SeriesSettings.Name"
-														 Radius="@Widget.Radius"
-														 GroupTo="@Widget.SeriesSettings.GroupTo"
-														 Explode="@Widget.SeriesSettings.Explode"
-														 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
-														 Border="@Widget.SeriesSettings.Border"
-														 InnerRadius="@Widget.InnerRadius">
+						<AccumulationChartSeriesCollection>
 
-							<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
+							<AccumulationChartSeries DataSource="@Data"
+															 XName="@nameof(ReportPieChartData.Label)"
+															 YName="@nameof(ReportPieChartData.Value)"
+															 Name="@Widget.SeriesSettings.Name"
+															 Radius="@Widget.Radius"
+															 GroupTo="@Widget.SeriesSettings.GroupTo"
+															 Explode="@Widget.SeriesSettings.Explode"
+															 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
+															 Border="@Widget.SeriesSettings.Border"
+															 InnerRadius="@Widget.InnerRadius">
 
-							<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
-																	 Name="@Widget.SeriesSettings.Name"
-																	 Font="@Widget.SeriesSettings.DataLabel.Font"
-																	 Position="@Widget.SeriesSettings.DataLabel.Position">
-							</AccumulationDataLabelSettings>
+								<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
 
-						</AccumulationChartSeries>
+								<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
+																		 Name="@Widget.SeriesSettings.Name"
+																		 Font="@Widget.SeriesSettings.DataLabel.Font"
+																		 Position="@Widget.SeriesSettings.DataLabel.Position">
+								</AccumulationDataLabelSettings>
 
-					</AccumulationChartSeriesCollection>
+							</AccumulationChartSeries>
 
-					<AccumulationChartLegendSettings Position="@Widget.LegendSettings.Position"
-																Alignment="@Widget.LegendSettings.Alignment"
-																Visible="@Widget.LegendSettings.Visible">
-					</AccumulationChartLegendSettings>
+						</AccumulationChartSeriesCollection>
 
-					<AccumulationChartTooltipSettings Enable="@Widget.TooltipSettings.Enable" 
-																 Format="@Widget.TooltipSettings.Format"
-																 Opacity="@Widget.TooltipSettings.Opacity"
-																 Duration="@Widget.TooltipSettings.Duration"
-																 Border="@Widget.TooltipSettings.Border"
-																 TextStyle="@Widget.TooltipSettings.TextStyle"></AccumulationChartTooltipSettings>
-				</EjsAccumulationChart>
+						<AccumulationChartLegendSettings Position="@Widget.LegendSettings.Position"
+																	Alignment="@Widget.LegendSettings.Alignment"
+																	Visible="@Widget.LegendSettings.Visible">
+						</AccumulationChartLegendSettings>
 
+						<AccumulationChartTooltipSettings Enable="@Widget.TooltipSettings.Enable"
+																	 Format="@Widget.TooltipSettings.Format"
+																	 Opacity="@Widget.TooltipSettings.Opacity"
+																	 Duration="@Widget.TooltipSettings.Duration"
+																	 Border="@Widget.TooltipSettings.Border"
+																	 TextStyle="@Widget.TooltipSettings.TextStyle"></AccumulationChartTooltipSettings>
+					</EjsAccumulationChart>
+
+				</div>
+			}
+
+			@if (Widget.ShowFooter)
+			{
+				<div class="widget-content-report-footer">
+					@if (Vm.ReportHasName)
+					{
+						<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+					}
+					<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+				</div>
+			}
+
+			<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+		}
+
+		@if (Vm.Report == null && Vm.IsLoadedReportResult)
+		{
+			<div class="widget-missing-report">
+				Missing report data!
 			</div>
 		}
 
-		@if (Widget.ShowFooter)
+		@if (!Vm.IsLoadedReportResult)
 		{
-			<div class="widget-content-report-footer">
-				@if (Vm.ReportHasName)
-				{
-					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
-				}
-				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+			<div style="position:relative;">
+				<div class="loading-bar"></div>
 			</div>
 		}
-	}
 
-	@if (Vm.Report == null && Vm.IsLoadedReportResult)
-	{
-		<div class="widget-missing-report">
-			Missing report data!
-		</div>
-	}
-
-	@if (!Vm.IsLoadedReportResult)
-	{
-		<div style="position:relative;">
-			<div class="loading-bar"></div>
-		</div>
-	}
-
-</div>
+	</div>
 
 @code {
 

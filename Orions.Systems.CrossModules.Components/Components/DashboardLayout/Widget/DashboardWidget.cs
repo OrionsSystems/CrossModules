@@ -14,6 +14,12 @@ namespace Orions.Systems.CrossModules.Components
 
 		public TitleConfiguration TitleSettings { get; set; } = new TitleConfiguration();
 
+		[HelpText("Top separator options")]
+		public SeparatorConfiguration TopSeparator { get; set; } = new SeparatorConfiguration();
+
+		[HelpText("Bottom separator options")]
+		public SeparatorConfiguration BottomSeparator { get; set; } = new SeparatorConfiguration();
+
 		[HelpText("Group of filters this widget belongs to")]
 		public string FilterGroup { get; set; }
 
