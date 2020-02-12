@@ -20,7 +20,7 @@
 		<span class="stat-progress" style="width: @(Progress)%;"></span>
 		@if (IsShowPercentage)
 		{
-			<span title="@Value" class="stat-value">@Progress %</span>
+			<span title="@Value" class="stat-value">@PercentageString</span>
 		}
 		else
 		{
@@ -38,9 +38,6 @@
 	public string IconUrl { get; set; }
 
 	[Parameter]
-	public int Progress { get; set; }
-
-	[Parameter]
 	public int Value { get; set; }
 
 	[Parameter]
@@ -51,6 +48,19 @@
 
 	[Parameter]
 	public string Title { get; set; }
+
+	[Parameter]
+	public double Percentage { get; set; }
+
+	[Parameter]
+	public int PercentagePrecision { get; set; } = 2;
+
+	private int Progress { get { return Convert.ToInt32(Percentage); } }
+
+	private string PercentageString { get { 
+			var pr = Math.Round(Percentage, PercentagePrecision);
+			return $"{pr} %";
+		} }
 
 	public string ImageBase64Url
 	{

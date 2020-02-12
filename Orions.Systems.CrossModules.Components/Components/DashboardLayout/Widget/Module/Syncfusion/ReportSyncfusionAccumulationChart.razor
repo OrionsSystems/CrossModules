@@ -1,0 +1,150 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<ReportSyncfusionAccumulationChartVm, ReportSyncfusionAccumulationChartWidget>
+
+@using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Charts
+@using Syncfusion.EJ2.Blazor.SplitButtons
+
+<div class="widget-content-report">
+
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+		@if (Showing)
+		{
+			<div class="widget-content-report-view widget-syncfusion">
+
+				<EjsAccumulationChart @ref="Chartobj"
+											 Height="@Widget.Height"
+											 Width="@Widget.Width" 
+											 Theme="@Widget.Theme"
+											 Background="@Widget.Background"
+											 Title="@Widget.ChartTitle">
+
+					<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
+
+					<AccumulationChartSeriesCollection>
+
+						<AccumulationChartSeries DataSource="@Data"
+														 XName="@nameof(ReportPieChartData.Label)"
+														 YName="@nameof(ReportPieChartData.Value)"
+														 Name="@Widget.SeriesSettings.Name"
+														 Radius="@Widget.Radius"
+														 GroupTo="@Widget.SeriesSettings.GroupTo"
+														 Explode="@Widget.SeriesSettings.Explode"
+														 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
+														 Border="@Widget.SeriesSettings.Border"
+														 InnerRadius="@Widget.InnerRadius">
+
+							<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
+
+							<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
+																	 Name="@Widget.SeriesSettings.Name"
+																	 Font="@Widget.SeriesSettings.DataLabel.Font"
+																	 Position="@Widget.SeriesSettings.DataLabel.Position">
+							</AccumulationDataLabelSettings>
+
+						</AccumulationChartSeries>
+
+					</AccumulationChartSeriesCollection>
+
+					<AccumulationChartLegendSettings Position="@Widget.LegendSettings.Position"
+																Alignment="@Widget.LegendSettings.Alignment"
+																Visible="@Widget.LegendSettings.Visible">
+					</AccumulationChartLegendSettings>
+
+					<AccumulationChartTooltipSettings Enable="@Widget.TooltipSettings.Enable" 
+																 Format="@Widget.TooltipSettings.Format"
+																 Opacity="@Widget.TooltipSettings.Opacity"
+																 Duration="@Widget.TooltipSettings.Duration"
+																 Border="@Widget.TooltipSettings.Border"
+																 TextStyle="@Widget.TooltipSettings.TextStyle"></AccumulationChartTooltipSettings>
+				</EjsAccumulationChart>
+
+			</div>
+		}
+
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-footer">
+				@if (Vm.ReportHasName)
+				{
+					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+				}
+				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
+
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+</div>
+
+@code {
+
+	public EjsAccumulationChart Chartobj;
+
+	public bool Showing { get; set; } = false;
+
+	public List<ReportPieChartData> Data { get; set; } = new List<ReportPieChartData>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		Vm.OnReportResultChanged += OnChangeDataSource;
+		await Vm.RefreshReportResultData();
+
+		await base.OnInitializedAsync();
+	}
+
+	private void OnChangeDataSource()
+	{
+		double total = 0;
+		foreach (var series in Vm.ReportChartData.Series)
+		{
+			var item = new ReportPieChartData()
+			{
+				Label = series.Name,
+				Value = double.Parse(series.Data.LastOrDefault().Value, System.Globalization.CultureInfo.InvariantCulture)
+			};
+
+			Data.Add(item);
+
+			total += item.Value;
+		}
+
+		if (total != 0)
+		{
+			foreach (var item in Data)
+			{
+				if (item.Value == 0) continue;
+
+				item.Percentage = (item.Value / total) * 100;
+			}
+		}
+
+
+		this.Showing = true;
+		this.StateHasChanged();
+	}
+
+	protected override void OnStateHasChanged()
+	{
+		base.OnStateHasChanged();
+	}
+
+}

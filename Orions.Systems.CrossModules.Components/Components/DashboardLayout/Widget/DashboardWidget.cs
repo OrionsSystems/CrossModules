@@ -10,6 +10,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool ShowFooter { get; set; } = false;
 
+		public bool IsVisibile { get; set; } = true;
+
 		public TitleConfiguration TitleSettings { get; set; } = new TitleConfiguration();
 
 		[HelpText("Group of filters this widget belongs to")]

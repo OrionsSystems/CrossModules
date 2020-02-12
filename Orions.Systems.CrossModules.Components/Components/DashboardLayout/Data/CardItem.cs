@@ -30,7 +30,9 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public int Percentage { get; set; }
+		public double Percentage { get; set; }
+
+		public int PercentagePrecision { get; set; } = 2;
 
 		public string IconHtml { get; set; }
 	}

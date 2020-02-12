@@ -5,57 +5,66 @@
 
 @inherits BaseBlazorComponent
 
-	<div class="container-fluid">
+@inject NavigationManager MyNavigationManager
 
-		<button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+<div class="container-fluid">
 
-		@if (DataList.Any() && isLoadedDataResult)
-		{
-			var rowIndex = 0;
+	<button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+
+	@if (DataList.Any() && isLoadedDataResult)
+	{
+		var rowIndex = 0;
 
 
-			<div class="table-responsive">
-				<table class="table table-striped table-bordered table-hover">
-					<thead>
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th scope="col"></th>
+						<th class="w-75" scope="col">Name</th>
+						<th scope="col">Home</th>
+						<th scope="col">Tag</th>
+						<th class="w-25" scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in DataList)
+					{
+						rowIndex++;
+
 						<tr>
-							<th scope="col"></th>
-							<th class="w-75" scope="col">Name</th>
-							<th scope="col">Home</th>
-							<th scope="col">Tag</th>
-							<th class="w-25" scope="col"></th>
+							<td>@rowIndex</td>
+							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
+							<td>@(item.Option.IsDefault == true ? "True" : "")</td>
+							<td>
+								@if (!string.IsNullOrWhiteSpace(item.Option.Tag))
+								{
+									<a href="@(MyNavigationManager.Uri + "/" + item.Option.Tag)">
+										@item.Option.Tag
+									</a>
+								}
+							</td>
+							<td class="text-center">
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
+							</td>
 						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in DataList)
-						{
-							rowIndex++;
+					}
+				</tbody>
+			</table>
+		</div>
+	}
 
-							<tr>
-								<td>@rowIndex</td>
-								<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
-								<td>@(item.Option.IsDefault == true ? "True" : "")</td>
-								<td>@item.Option.Tag</td>
-								<td class="text-center">
-									<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
-									<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
-									<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-									<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
-								</td>
-							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
-		}
+	@if (!isLoadedDataResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
 
-		@if (!isLoadedDataResult)
-		{
-			<div style="position:relative;">
-				<div class="loading-bar"></div>
-			</div>
-		}
-
-	</div>
+</div>
 
 @if (isShowProperty)
 {
