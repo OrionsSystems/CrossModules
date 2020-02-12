@@ -225,14 +225,6 @@ namespace Orions.Systems.CrossModules.Components
 			PageNumber.Value = pageNumber;
 		}
 
-		//private void CalculatePageNumberForNewPageSize()
-		//{
-		//	var currentFirstItemIndex = this.PageSize * (this.PageNumber - 1) + 1;
-		//	var pageNumber = currentFirstItemIndex / newPageSize + 1;
-
-		//	return pageNumber;
-		//}
-
 		public async Task ChangePage(string pageNumberStr)
         {
 			int pageNumber = 1;

@@ -23,6 +23,9 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.HyperArgsSink = this.HyperStore;
 			vm.MapOverlayId = this.Widget.MapOverlayId;
 			vm.IsReadOnly = this.Widget.IsReadOnly;
+			vm.DefaultZoneColor = this.Widget.DefaultZoneColor;
+			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
+			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
 
 			EditorVm = vm;
 

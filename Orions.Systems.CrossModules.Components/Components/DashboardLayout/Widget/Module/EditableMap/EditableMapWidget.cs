@@ -15,6 +15,10 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public bool IsReadOnly { get; set; } = false;
 
+		public string DefaultZoneColor { get; set; } = "#FF0000";
+		public string DefaultCameraColor { get; set; } = "#00FF00";
+		public string DefaultCircleColor { get; set; } = "#0000FF";
+
 		public EditableMapWidget()
 		{
 			this.Label = "Editable Map Widget";

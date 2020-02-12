@@ -100,11 +100,25 @@
     }
 
     class BaseControl {
-        constructor(isReadOnly, svgNode) {
+        constructor(isReadOnly, svgNode, overlayEntry) {
+            let self = this;
+
+            if (overlayEntry) {
+                this.overlayEntry = overlayEntry;
+            }
+            else {
+                this.overlayEntry = {}
+            }
+
             this.onRemoveEventHandlers = []
+            this.onDblClickEventHandlers = []
             this.isReadOnly = isReadOnly;
             this.svgNode = svgNode;
             this.controlGroup = this.svgNode.group();
+
+            this.controlGroup.on('dblclick', function () {
+                self.onDblClickEventHandlers.forEach(h => h(self))
+            })
         }
 
         draggable(draggable) {
@@ -140,6 +154,10 @@
             this.onRemoveEventHandlers.push(callback)
         }
 
+        onDblClick(callback) {
+            this.onDblClickEventHandlers.push(callback)
+        }
+
         select(isSelected) {
             let self = this;
             let editControls = self.controlGroup.node.querySelectorAll('[mapObjectType="edit-control"]');
@@ -165,8 +183,8 @@
     }
 
     class Camera extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly }) {
-            super(isReadOnly, svgNode)
+        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry }) {
+            super(isReadOnly, svgNode, overlayEntry)
             
             this.attr = attr || {}
 
@@ -175,7 +193,7 @@
                 this.polygon = this.svgNode.polygon('5,25 10,55 35,55 40,25').x(initialPoint.x).y(initialPoint.y).attr(this.attr);
             }
             else {
-                this.polygon = this.svgNode.polygon();
+                this.polygon = this.svgNode.polygon().attr(this.attr);
                 this.polygon.plot(points.map(p => [p.x, p.y]))
             }
             this.initCameraControls();
@@ -183,6 +201,10 @@
             if (transformMatrix) {
                 this.transform(transformMatrix)
             }
+        }
+
+        updateFromOverlayEntry(entry) {
+            throw "Not implemented"
         }
 
         move(x, y) {
@@ -305,8 +327,8 @@
     }
 
     class Zone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, isReadOnly }) {
-            super(isReadOnly, svgNode)
+        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly }) {
+            super(isReadOnly, svgNode, overlayEntry)
             this.resizeControlWidth = 4
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
@@ -354,11 +376,21 @@
             this.polygon.on(eventName, callback)
         }
 
+        updateFromOverlayEntry(entry) {
+            this.overlayEntry = entry;
+
+            this.name.set(entry.name)
+            this.attr.fill = entry.color;
+            this.polygon.attr(this.attr)
+        }
+
         initZoneControls() {
             let self = this;
             let polygon = self.polygon;
 
             this.controlGroup.node.classList.add('zone-control-group')
+            this.controlGroup.node.classList.add('svg-control-group')
+
             this.controlGroup.add(polygon)
 
             // init resize controls
@@ -434,10 +466,9 @@
     }
 
     class CircleZone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, id, isReadOnly }) {
-            super(isReadOnly, svgNode)
+        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly }) {
+            super(isReadOnly, svgNode, overlayEntry)
 
-            this.id = id;
             this.attr = attr || {}
             this.circle = svgRoot.circle().attr(this.attr);
             this.mainShape = this.circle;
@@ -458,6 +489,10 @@
             }
         }
 
+        updateFromOverlayEntry(entry) {
+            this.center(entry.center.x, entry.center.y, true)
+        }
+
         cancelDraw() {
             this.circle.draw('cancel')
             this.controlGroup.remove();
@@ -472,6 +507,8 @@
             let circle = self.circle;
             self.isSelected = true;
             self.controlGroup.add(circle);
+            self.circle.node.classList.add('svg-control-group')
+            self.circle.node.classList.add('cursor-pointer')
 
             let r = circle.rx()
             var verticesArr = [[circle.cx() - r, circle.cy()], [circle.cx(), circle.cy() - r], [circle.cx() + r, circle.cy()], [circle.cx(), circle.cy() + r]]
