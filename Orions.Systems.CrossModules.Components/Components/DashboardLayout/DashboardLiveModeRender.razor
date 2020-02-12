@@ -10,7 +10,7 @@
 
     @foreach (var row in DashboardVm.Source.Rows)
     {
-        <div class="row mb-4">
+        <div class="row">
             @foreach (var column in row.Columns)
             {
                 <div @key="column.Id" class="col-lg-@column.Size">
