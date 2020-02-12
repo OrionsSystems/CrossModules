@@ -2,27 +2,42 @@
 
 @inherits DashboardComponent<DashboardContainerVm, DashboardContainerWidget>
 
-@if (Dashboard != null)
+@if (Showing)
 {
-    <DashboardLayout HyperStore="@HyperStore"
-                        Data="@Dashboard"
-                        EnableBetweenBox="true"
-                        IsPreviewMode="true"
-                        DisableModeOption="true"
-                        HideModeOption ="true"
-                        IsHideTitle ="true">
-    </DashboardLayout>
+   @if (Dashboard != null)
+   {
+      <DashboardLayout HyperStore="@HyperStore"
+                       Data="@Dashboard"
+                       EnableBetweenBox="true"
+                       IsPreviewMode="true"
+                       DisableModeOption="true"
+                       HideModeOption="true"
+                       IsHideTitle="true">
+      </DashboardLayout>
+   }
 }
+else
+{
+   <div style="position:relative;">
+      <div class="loading-bar"></div>
+   </div>
+}
+
 
 @code {
 
-    private DashboardData Dashboard { get; set; }
+   private DashboardData Dashboard { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+   public bool Showing { get; set; } = false;
 
-        Dashboard = await this.Vm.SetDashboardAsync();
-    }
+   protected override async Task OnInitializedAsync()
+   {
+      await base.OnInitializedAsync();
+
+      Dashboard = await this.Vm.SetDashboardAsync();
+
+      Showing = true;
+      StateHasChanged();
+   }
 
 }
