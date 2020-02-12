@@ -7,7 +7,7 @@
 <TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 <div class="widget-svg-map-editor-container">
-	<SVGMapEditor Vm="@Vm.EditorVm">
+	<SVGMapEditor Vm="@Vm.EditorVm" HyperStore="@HyperStore">
 		@((MarkupString)Vm.SvgHtmlString)
 	</SVGMapEditor>
 </div>

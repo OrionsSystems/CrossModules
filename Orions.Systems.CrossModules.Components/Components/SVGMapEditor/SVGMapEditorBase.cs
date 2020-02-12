@@ -14,7 +14,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		protected string ComponentContainerId;
 		protected override bool AutoCreateVm { get; } = false;
 
-
 		public SVGMapEditorBase()
 		{
 			ComponentContainerId = $"{base.Id}{nameof(SVGMapEditor)}-component-container";
@@ -22,6 +21,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
+
+		[Parameter]
+		public IHyperArgsSink HyperStore { get; set; }
 
 		protected override void OnInitialized()
 		{
@@ -31,24 +33,26 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			this.Vm.JsRuntime = JsInterop;
-			await this.Vm.Initialize(ComponentContainerId);
-
-			this.Vm.MapOverlay.Value.PopulateTypeSpecificCollections();
-
 			var thisReference = DotNetObjectReference.Create(this);
-			await JsInterop.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { ComponentContainerId, thisReference, this.Vm.MapOverlay.Value, this.Vm.IsReadOnly });
+			await this.Vm.Initialize(ComponentContainerId, thisReference);
 
-			Task.Run(async () =>
-			{
-				await Vm.TestLiveUpdate();
-			});
+			//Task.Run(async () =>
+			//{
+			//	await Vm.TestLiveUpdate();
+			//});
 		}
 
 		[JSInvokable]
-		public async Task SaveMapOverlay(MapOverlay overlay)
+		public async Task SaveMapOverlay(JsModel.MapOverlayJsModel overlay)
 		{
-			overlay.MergeEntriesIntoSingleCollection();
-			await this.Vm.SaveMapOverlay(overlay);
+			var mapOverlay = overlay.ToDomainModel();
+			await this.Vm.SaveMapOverlay(mapOverlay);
+		}
+
+		[JSInvokable]
+		public async Task OpenSvgControlProps(string id)
+		{
+			this.Vm.OpenSvgControlProps(id);
 		}
 	}
 

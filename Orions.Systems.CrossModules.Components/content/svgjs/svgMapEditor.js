@@ -1,8 +1,8 @@
 ﻿window.Orions.SvgMapEditor = {
     layoutEditors: {},
 
-    init: function (rootElementId, componentReference, mapOverlay, isReadOnly) {
-        let layoutEditor = SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly);
+    init: function (rootElementId, componentReference, mapOverlay, config) {
+        let layoutEditor = SvgMapEditor(rootElementId, componentReference, mapOverlay, config);
 
         this.layoutEditors[rootElementId] = layoutEditor;
     },
@@ -12,12 +12,14 @@
 
         layoutEditor.update(updateDetails)
     }
-} 
+}
 
-function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly) {
+function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
+    let { isReadOnly, zoneColor, circleColor, cameraColor } = config;
+
     var rootSelector = '#' + rootElementId;
     var svg = document.querySelector(rootSelector + ' .map-container svg');
-    
+
 
     svgPanZoom(svg, {
         zoomScaleSensitivity: 0.4,
@@ -34,7 +36,6 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
     let circles = []
 
     var shapeCommonAttr = {
-        fill: 'red',
         'fill-opacity': 0.5,
         'stroke-width': 0.5,
         'stroke': '#6e6e6e'
@@ -48,7 +49,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
             center: circleOverlayEntry.center,
             size: circleOverlayEntry.size,
             startUserDrawing: startUserDrawing,
-            id: circleOverlayEntry.id,
+            overlayEntry: circleOverlayEntry,
             isReadOnly
         });
         newCircle.persist = circleOverlayEntry.persist;
@@ -66,10 +67,11 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
         let newZone = new SvgToolbox.Zone({
             svgRoot: draw,
             svgNode: zonesLayer,
-            attr: getZoneAttr(),
+            attr: getZoneAttr(zoneOverlayEntry),
             points: zoneOverlayEntry.points,
             startUserDrawing: startUserDrawing,
             name: zoneOverlayEntry.name,
+            overlayEntry: zoneOverlayEntry,
             isReadOnly
         });
         newZone.persist = zoneOverlayEntry.persist;
@@ -78,6 +80,9 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
 
         newZone.onRemove((z) => {
             zones.splice(zones.findIndex(el => el == z), 1)
+        })
+        newZone.onDblClick(() => {
+            componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
 
         return newZone;
@@ -91,6 +96,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
             points: cameraOverlayEntry.points,
             transformMatrix: cameraOverlayEntry.transformMatrix,
             isDefaultPosition: isDefaultPosition,
+            overlayEntry: cameraOverlayEntry,
             isReadOnly
         });
 
@@ -105,9 +111,18 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
         return newCamera;
     }
 
-    let updateCircle = function (circleOverlayEntry) {
-        let circleControl = circles.find(c => c.id == circleOverlayEntry.id);
-        circleControl.center(circleOverlayEntry.center.x, circleOverlayEntry.center.y, true)
+    let createControlFromOverlayEntry = function(entry){
+        switch (entry.entryType) {
+            case "circle":
+                initializeCircle(entry, false)
+                break;
+            case "zone":
+                initializeZone(entry, false)
+                break;
+            case "camera":
+                initializeCamera(entry, false)
+                break;
+        }
     }
 
     function initializeMapOverlay(overlay) {
@@ -127,6 +142,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
 
         if (overlay.cameras) {
             overlay.cameras.forEach((item) => {
+                item.persist = true
                 initializeCamera(item)
             })
         }
@@ -160,7 +176,11 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
                             x: ap[0],
                             y: ap[1]
                         }
-                    })
+                    }),
+                    color: z.attr.fill,
+                    alias: z.overlayEntry.alias,
+                    fixedCameraEnhancementId: z.overlayEntry.fixedCameraEnhancementId == null ? null : z.overlayEntry.fixedCameraEnhancementId,
+                    metadataSetId: z.overlayEntry.metadataSetId == null ? null : z.overlayEntry.metadataSetId,
                 }
             }),
             circles: circles.filter(c => c.persist).map(c => {
@@ -252,44 +272,49 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, isReadOnly)
     function getCameraAttr() {
         return {
             ...shapeCommonAttr,
-            fill: 'green'
+            fill: cameraColor
         }
     }
 
-    function getZoneAttr() {
-        return shapeCommonAttr;
+    function getZoneAttr(entry) {
+        let attr = {
+            ...shapeCommonAttr,
+            fill: entry.color ? entry.color : zoneColor,
+        }
+
+        return attr;
     }
 
     function getCircleAttr() {
         let attr = {
             ...shapeCommonAttr,
-            fill: 'yellow',
-            'fill-opacity':1
+            fill: circleColor,
+            'fill-opacity': 1,
+            'stroke-width': 0.1
         }
 
         return attr;
     }
 
     let updateOverlay = function (updateDetails, persist) {
-        let updateHandlers = {}
-
-        updateHandlers.circle = function (updateDetails) {
-            switch (updateDetails.type) {
-                case 'addOrUpdate':
-                    if (circles.find(c => c.id == updateDetails.overlayEntry.id)) {
-                        updateCircle(updateDetails.overlayEntry);
-                    }
-                    else {
-                        initializeCircle(updateDetails.overlayEntry)
-                    }
-                    break;
-            }
-        }
-
         updateDetails.overlayEntry = JSON.parse(updateDetails.overlayEntry)
         updateDetails.overlayEntry.persist = persist
 
-        updateHandlers[updateDetails.entryType](updateDetails)
+        let allControls = [...circles, ...zones, ...cameras]
+        switch (updateDetails.type) {
+            case 'addOrUpdate':
+                let controlToUpdate = allControls.find(c => c.overlayEntry.entryType == updateDetails.overlayEntry.entryType
+                    && c.overlayEntry.id == updateDetails.overlayEntry.id
+                    && c.overlayEntry.id != null)
+                if (controlToUpdate) {
+                    controlToUpdate.updateFromOverlayEntry(updateDetails.overlayEntry);
+                }
+                else {
+                    createControlFromOverlayEntry(updateDetails.overlayEntry)
+                }
+                break;
+        }
+
     }
 
     initializeMapOverlay(mapOverlay)
