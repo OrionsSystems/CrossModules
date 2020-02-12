@@ -23,7 +23,7 @@
 							 Title="@Widget.ChartTitle" 
 							 Background="@Widget.ChartBackground" 
 							 SelectionMode="SelectionMode.Series">
-
+					
 					<ChartArea Border="@Widget.Border"></ChartArea>
 
 						<ChartMargin Left="@Widget.Margin.Left"
@@ -107,8 +107,14 @@
 													 YName="@nameof(ReportSeriesChartDataItem.Value)" 
 													 CornerRadius="@Widget.CornerRadius" 
 													 Type="@Widget.ChartSeriesType">
-										<ChartMarker>
-											<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+										<ChartMarker Width="@Widget.ChartMarkerSettings.Width" 
+														 Height="@Widget.ChartMarkerSettings.Height"  
+														 Border="@Widget.ChartMarkerSettings.Border">
+											<ChartDataLabel Visible="@Widget.ChartMarkerSettings.Visible" 
+																 Fill="@Widget.ChartMarkerSettings.Fill" 
+																 Opacity="@Widget.ChartMarkerSettings.Opacity"
+																 Position="@Widget.ChartMarkerSettings.Position" 
+																 Font="@Widget.ChartMarkerSettings.Font"></ChartDataLabel>
 										</ChartMarker>
 									</ChartSeries>
 								}

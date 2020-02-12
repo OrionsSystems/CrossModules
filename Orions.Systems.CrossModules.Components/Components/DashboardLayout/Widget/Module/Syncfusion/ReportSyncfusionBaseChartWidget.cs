@@ -79,6 +79,36 @@ namespace Orions.Systems.CrossModules.Components
 			public ChartAxisMajorGridLines GridLineSettings { get; set; } = new ChartAxisMajorGridLines();
 		}
 
+		public class ChartMarkerConfiguration 
+		{
+			[HelpText("The opacity of the marker.")]
+			public double Opacity { get; set; } = 1;
+
+			[HelpText("The height of the marker in pixels.")]
+			public double Height { get; set; }
+
+			[HelpText("The fill color of the marker that accepts value in hex and rgba as a valid CSS color string. By default, it will take series' color.")]
+			public string Fill { get; set; }
+
+			[HelpText("Options for customizing the border of a marker.")]
+			public ChartMarkerBorder Border { get; set; }
+
+			[HelpText("The width of the marker in pixels.")]
+			public double Width { get; set; }
+
+			[HelpText("If set to true the marker for series is rendered. This is applicable only for line and area type series.")]
+			public bool Visible { get; set; }
+
+			[HelpText("Specifies the position of the data label.")]
+			public LabelPosition Position { get; set; } = LabelPosition.Auto;
+
+			[HelpText("Option for customizing the data label text.")]
+			public ChartDataLabelFont Font { get; set; }
+		}
+
+		[HelpText("Options for chart marker")]
+		public ChartMarkerConfiguration ChartMarkerSettings { get; set; } = new ChartMarkerConfiguration();
+
 		[HelpText("The height of the chart as a string accepts input both as '100px' or '100%'. If specified as '100%, chart renders to the full height of its parent element.")]
 		public string Height { get; set; }
 
@@ -103,7 +133,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.StackingColumn;
 
-		public bool IsShowMarker { get; set; } = false;
+		public bool IsShowMarker { get { return ChartMarkerSettings.Visible; } set { ChartMarkerSettings.Visible = value; } }
 
 		public string ChartBackground { get; set; } = "transparent";
 
