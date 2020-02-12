@@ -26,9 +26,6 @@ namespace Orions.Systems.CrossModules.Components
 
 			[HelpText("Options for customizing the border of the series.")]
 			public AccumulationChartSeriesBorder Border { get; set; } = new AccumulationChartSeriesBorder();
-
-			//[HelpText("Specifies the theme for accumulation chart.")]
-			//public AccumulationTheme Theme { get; set; } = AccumulationTheme.Material;
 		}
 
 		public class TooltipConfiguration
@@ -51,6 +48,12 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("Options to customize tooltip borders.")]
 			public AccumulationChartTooltipBorder Border { get; set; } = new AccumulationChartTooltipBorder();
 		}
+
+		[HelpText("Specifies the theme for accumulation chart.")]
+		public AccumulationTheme Theme { get; set; } = AccumulationTheme.Material;
+
+		[HelpText("The background color of the chart, which accepts value in hex, rgba as a valid CSS color string.")]
+		public string Background { get; set; } = "transparent";
 
 		[HelpText("The height of the chart as a string in order to provide input as both like '100px' or '100%'. If specified as '100%, chart will render to the full height of its parent element.")]
 		public string Height { get; set; }

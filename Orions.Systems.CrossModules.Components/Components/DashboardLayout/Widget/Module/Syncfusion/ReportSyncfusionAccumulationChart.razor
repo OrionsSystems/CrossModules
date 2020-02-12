@@ -19,36 +19,35 @@
 
 				<EjsAccumulationChart @ref="Chartobj"
 											 Height="@Widget.Height"
-											 Width="@Widget.Width"
+											 Width="@Widget.Width" 
+											 Theme="@Widget.Theme"
+											 Background="@Widget.Background"
 											 Title="@Widget.ChartTitle">
 
 					<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
 
 					<AccumulationChartSeriesCollection>
 
-						@foreach (var ser in ChartData.Series)
-						{
-							<AccumulationChartSeries DataSource="@ser.Data"
-															 XName="@nameof(ReportSeriesChartDataItem.CategoryName)"
-															 YName="@nameof(ReportSeriesChartDataItem.Value)"
-															 Name="@(string.IsNullOrWhiteSpace(Widget.SeriesSettings.Name) ? ser.Name : Widget.SeriesSettings.Name)"
-															 Radius="@Widget.Radius"
-															 GroupTo="@Widget.SeriesSettings.GroupTo"
-															 Explode="@Widget.SeriesSettings.Explode"
-															 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
-															 Border="@Widget.SeriesSettings.Border"
-															 InnerRadius="@Widget.InnerRadius">
+						<AccumulationChartSeries DataSource="@Data"
+														 XName="@nameof(ReportPieChartData.Label)"
+														 YName="@nameof(ReportPieChartData.Value)"
+														 Name="@Widget.SeriesSettings.Name"
+														 Radius="@Widget.Radius"
+														 GroupTo="@Widget.SeriesSettings.GroupTo"
+														 Explode="@Widget.SeriesSettings.Explode"
+														 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
+														 Border="@Widget.SeriesSettings.Border"
+														 InnerRadius="@Widget.InnerRadius">
 
-								<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
+							<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
 
-								<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
-																		 Name="@ser.Name"
-																		 Font="@Widget.SeriesSettings.DataLabel.Font"
-																		 Position="@Widget.SeriesSettings.DataLabel.Position">
-								</AccumulationDataLabelSettings>
+							<AccumulationDataLabelSettings Visible="@Widget.SeriesSettings.DataLabel.Visible"
+																	 Name="@Widget.SeriesSettings.Name"
+																	 Font="@Widget.SeriesSettings.DataLabel.Font"
+																	 Position="@Widget.SeriesSettings.DataLabel.Position">
+							</AccumulationDataLabelSettings>
 
-							</AccumulationChartSeries>
-						}
+						</AccumulationChartSeries>
 
 					</AccumulationChartSeriesCollection>
 
@@ -102,11 +101,7 @@
 
 	public bool Showing { get; set; } = false;
 
-	public void OnApply()
-	{
-	}
-
-	public ReportChartData ChartData => Vm.ReportChartData;
+	public List<ReportPieChartData> Data { get; set; } = new List<ReportPieChartData>();
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -118,6 +113,31 @@
 
 	private void OnChangeDataSource()
 	{
+		double total = 0;
+		foreach (var series in Vm.ReportChartData.Series)
+		{
+			var item = new ReportPieChartData()
+			{
+				Label = series.Name,
+				Value = double.Parse(series.Data.LastOrDefault().Value, System.Globalization.CultureInfo.InvariantCulture)
+			};
+
+			Data.Add(item);
+
+			total += item.Value;
+		}
+
+		if (total != 0)
+		{
+			foreach (var item in Data)
+			{
+				if (item.Value == 0) continue;
+
+				item.Percentage = (item.Value / total) * 100;
+			}
+		}
+
+
 		this.Showing = true;
 		this.StateHasChanged();
 	}

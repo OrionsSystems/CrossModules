@@ -6,11 +6,11 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class ReportPieChartData
 	{
-		public double Value { get; set; }
 		public string Label { get; set; }
+		public double Value { get; set; }
+		public double Percentage { get; set; }
+		public int PercentagePrecision { get; set; } = 2;
 		public bool ShouldShowInLegend { get; set; } = true;
-		public bool Explode { get; set; }
-		public string LabelInfo { get { return $"{Label}: {Value}"; } }
 	}
 
 	public class ReportChartData
