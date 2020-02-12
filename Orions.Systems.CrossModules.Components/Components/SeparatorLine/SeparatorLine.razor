@@ -1,0 +1,50 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent
+
+@if (Settings.Visible)
+{
+	<div class="separator-line-container">
+		<div class="separator-line" style="@Settings.InlineStyles"></div>
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public SeparatorConfiguration Settings { get; set; } = new SeparatorConfiguration();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+	private string GetAligmentString()
+	{
+		switch (Settings.Aligment)
+		{
+			case SeparatorConfiguration.SeparatorAligment.Left:
+				return "left";
+			case SeparatorConfiguration.SeparatorAligment.Right:
+				return "right";
+			default:
+				return "center";
+		}
+	}
+}
+
+<style>
+	.separator-line-container {
+		width: 100%;
+		height: 0px;
+		text-align: @GetAligmentString();
+	}
+	.separator-line {
+		display: inline-block;
+		height: @Settings.GetHeightInPx();
+		background-color: @Settings.Color;
+		width: @Settings.GetPercentageWidth();
+		margin: auto;
+		
+	}
+</style>
