@@ -3,6 +3,7 @@
 @using Orions.Systems.CrossModules.Portal.Providers
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
+@using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IConfiguration Configuration
@@ -74,7 +75,16 @@
             await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).Authenticated(
                 user.Username, user.Uri, result);
 
-            NavigationManager.NavigateTo("/");
+            var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+            if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("returnUrl", out var url))
+            {
+                NavigationManager.NavigateTo(url);
+            }
+            else
+            {
+                NavigationManager.NavigateTo("/");
+            }
         }
 
         return await Task.FromResult(!loginFailed);

@@ -2,84 +2,84 @@
 @using Orions.Systems.CrossModules.Portal.Providers
 @using Syncfusion.EJ2.Blazor.SplitButtons
 @using Syncfusion.EJ2.Blazor.Navigations
+@using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject CustomSettingsProvider CustomSettingsProvider
-@using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
 @inject NavigationManager navigationManager
 
 @if (IsEmbedded)
 {
-    <div class="control-section">
-        <div class="col-lg-12 col-sm-12 col-md-12">
-            <div id="target">
-                <div class="sidebar-content">
-                    @Body
-                </div>
+<div class="control-section">
+    <div class="col-lg-12 col-sm-12 col-md-12">
+        <div id="target">
+            <div class="sidebar-content">
+                @Body
             </div>
         </div>
     </div>
+</div>
 }
 else
 {
-    <div class="control-section">
-        <div class="col-lg-12 col-sm-12 col-md-12" id="sidebar-section">
-            <div id="head">
-                <div class="header">
-                    <div class="menu">
-                        <img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
-                    </div>
-                    <div class="right-content">
-                        <EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
-                            <DropDownButtonEvents ItemSelected="OnThemeSelected"></DropDownButtonEvents>
-                            <DropDownButtonItems>
-                                <DropDownButtonItem Id="Dark" Text="Dark"></DropDownButtonItem>
-                                <DropDownButtonItem Id="White" Text="White"></DropDownButtonItem>
-                            </DropDownButtonItems>
-                        </EjsDropDownButton>
-                        <AuthorizeView>
-                            <Authorized>
-                                <EjsDropDownButton Content="@context.User.Identity.Name">
-                                    <DropDownButtonEvents ItemSelected="OnItemSelected"></DropDownButtonEvents>
-                                    <DropDownButtonItems>
-                                        <DropDownButtonItem Id="Logout" Text="Logout"></DropDownButtonItem>
-                                    </DropDownButtonItems>
-                                </EjsDropDownButton>
-                            </Authorized>
-                        </AuthorizeView>
-                    </div>
+<div class="control-section">
+    <div class="col-lg-12 col-sm-12 col-md-12" id="sidebar-section">
+        <div id="head">
+            <div class="header">
+                <div class="menu">
+                    <img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
                 </div>
-            </div>
-            <EjsSidebar ID="dockSidebar" Type="Syncfusion.EJ2.Blazor.Navigations.SidebarType.Over" Target="#target" EnableDock="true" DockSize="60px">
-                <ChildContent>
-                    <div class="content-area">
-                        <div class="dock">
-                            <NavMenu />
-                        </div>
-                    </div>
-                </ChildContent>
-            </EjsSidebar>
-            <div id="target">
-                <div class="sidebar-content">
-                    @Body
+                <div class="right-content">
+                    <EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
+                        <DropDownButtonEvents ItemSelected="OnThemeSelected"></DropDownButtonEvents>
+                        <DropDownButtonItems>
+                            <DropDownButtonItem Id="Dark" Text="Dark"></DropDownButtonItem>
+                            <DropDownButtonItem Id="White" Text="White"></DropDownButtonItem>
+                        </DropDownButtonItems>
+                    </EjsDropDownButton>
+                    <AuthorizeView>
+                        <Authorized>
+                            <EjsDropDownButton Content="@context.User.Identity.Name">
+                                <DropDownButtonEvents ItemSelected="OnItemSelected"></DropDownButtonEvents>
+                                <DropDownButtonItems>
+                                    <DropDownButtonItem Id="Logout" Text="Logout"></DropDownButtonItem>
+                                </DropDownButtonItems>
+                            </EjsDropDownButton>
+                        </Authorized>
+                    </AuthorizeView>
                 </div>
             </div>
         </div>
+        <EjsSidebar ID="dockSidebar" Type="Syncfusion.EJ2.Blazor.Navigations.SidebarType.Over" Target="#target" EnableDock="true" DockSize="60px">
+            <ChildContent>
+                <div class="content-area">
+                    <div class="dock">
+                        <NavMenu />
+                    </div>
+                </div>
+            </ChildContent>
+        </EjsSidebar>
+        <div id="target">
+            <div class="sidebar-content">
+                @Body
+            </div>
+        </div>
     </div>
+</div>
 }
 
 
 @if (CurrentTheme == CustomSettingsProvider.THEME_DARK)
 {
-    <link href="css/theme/bootstrap/bootstrap-dark.css" rel="stylesheet" />
-    <link href="css/theme/sync/material-dark.css" rel="stylesheet" />
-    <link href="css/theme/md/all.css" rel="stylesheet" />
-    <link href="css/theme/all.css" rel="stylesheet" />
-    <link href="css/theme-dark.css" rel="stylesheet" />
+<link href="css/theme/bootstrap/bootstrap-dark.css" rel="stylesheet" />
+<link href="css/theme/sync/material-dark.css" rel="stylesheet" />
+<link href="css/theme/md/all.css" rel="stylesheet" />
+<link href="css/theme/all.css" rel="stylesheet" />
+<link href="css/theme-dark.css" rel="stylesheet" />
 }
 else
 {
-    <link href="css/theme-white.css" rel="stylesheet" />
+<link href="css/theme-white.css" rel="stylesheet" />
 }
 
 @code{

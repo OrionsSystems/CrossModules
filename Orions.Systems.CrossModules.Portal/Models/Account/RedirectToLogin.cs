@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace Orions.Systems.CrossModules.Portal.Models
 {
@@ -11,9 +9,22 @@ namespace Orions.Systems.CrossModules.Portal.Models
 		[Inject]
 		protected NavigationManager NavigationManager { get; set; }
 
-		protected override void OnInitialized()
+		[CascadingParameter]
+		private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+		protected override async Task OnInitializedAsync()
 		{
-			NavigationManager.NavigateTo("login");
+			var authenticationState = await AuthenticationStateTask;
+
+			if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
+			{
+				var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+				if (string.IsNullOrWhiteSpace(returnUrl))
+					NavigationManager.NavigateTo("login", true);
+				else
+					NavigationManager.NavigateTo($"login?returnUrl={returnUrl}", true);
+			}
 		}
 	}
 }
