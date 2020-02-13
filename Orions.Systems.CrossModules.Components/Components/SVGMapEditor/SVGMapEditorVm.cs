@@ -106,7 +106,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions);
+					findArgs.DescriptorConditions.AddCondition(conditions.Result);
 
 					findArgs.Limit = tagCount;
 
