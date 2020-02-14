@@ -1,16 +1,18 @@
-﻿using Orions.Common;
+﻿using System;
 using System.Collections.Generic;
-using Orions.Infrastructure.HyperMedia.MapOverlay;
-using System.Threading.Tasks;
-using Orions.Node.Common;
-using System;
-using Orions.Infrastructure.HyperMedia;
-using Microsoft.JSInterop;
-using System.Text.Json;
 using System.Linq;
-using Orions.Infrastructure.HyperSemantic;
-using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
+using System.Text.Json;
+using System.Threading.Tasks;
 using System.Timers;
+
+using Microsoft.JSInterop;
+
+using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Infrastructure.HyperMedia.MapOverlay;
+using Orions.Infrastructure.HyperSemantic;
+using Orions.Node.Common;
+using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
@@ -154,7 +156,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions);
+					findArgs.DescriptorConditions.AddCondition(conditions.Result);
 
 					findArgs.Limit = 1;
 					findArgs.OrderByFields = new OrderByField[]
@@ -172,7 +174,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					earliestDate = (firstTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
 
 					var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
-					lastTagFindArgs.DescriptorConditions.AddCondition(conditions);
+					lastTagFindArgs.DescriptorConditions.AddCondition(conditions.Result);
 					lastTagFindArgs.OrderByFields = new OrderByField[]
 					{
 						new OrderByField()
@@ -182,7 +184,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 							FieldName = "Elements.UniversalTime"
 						}
 					};
-					
+
 					docs = await HyperArgsSink.ExecuteAsync(lastTagFindArgs);
 					var lastTag = docs[0].GetPayload<HyperTag>();
 					latestDate = (lastTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
@@ -211,7 +213,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			return sliceResult[0].Image.Data;
 		}
 
-		
+
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
 		public async Task ShowTags()
@@ -249,7 +251,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					metadataSet.ToDate = TagDateRangeFilter.CurrentMaxDate;
 
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions);
+					findArgs.DescriptorConditions.AddCondition(conditions.Result);
 					findArgs.Limit = int.MaxValue;
 
 
@@ -316,7 +318,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			this.HyperTagInfoXPos = pageX - 100;
 			this.HyperTagInfoYPos = pageY - 100;
-			this.ShowingHyperTagInfo.Value = true; 
+			this.ShowingHyperTagInfo.Value = true;
 		}
 
 		private UniPoint2f MapHomographyPoint(UniPoint2f bottomCenter, UniPoint2f[] pointsSrc, UniPoint2f[] pointsDst)
@@ -440,7 +442,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			};
 
 			updatedSliderValue = value;
-			if(timer == null)
+			if (timer == null)
 			{
 				timer = new System.Timers.Timer(1000);
 				timer.Elapsed += Timer_Elapsed;
@@ -452,7 +454,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				timer.Stop();
 				timer.Start();
 			}
-			
+
 		}
 	}
 

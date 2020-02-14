@@ -103,7 +103,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					};
 
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(_hyperStore, _metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions);
+					findArgs.DescriptorConditions.AddCondition(conditions.Result);
 
 					//hyper tag ids condition
 					var hyperTagIdscondition = new MultiScopeCondition(AndOr.Or);
@@ -444,7 +444,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		private async Task ApplyFilterConditions<T>(ScopeHyperDocumentsArgs<T> mainArgs)
 		{
 			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(_hyperStore, _metadataSet);
-			mainArgs.DescriptorConditions.AddCondition(conditions);
+			mainArgs.DescriptorConditions.AddCondition(conditions.Result);
 
 			//hyper tag ids condition
 			var hyperTagIdscondition = new MultiScopeCondition(AndOr.Or);

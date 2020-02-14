@@ -1,19 +1,18 @@
-﻿using Orions.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class TagReviewVm : BlazorVm
-    {
+	public class TagReviewVm : BlazorVm
+	{
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
 		private MasksHeatmapRenderer _renderer;
@@ -27,18 +26,18 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
 		public UniFilterData Filter { get; private set; }
-        public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
+		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
-        public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
+		public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
 		public int ColumnsNumber { get; set; } = 4;
 		public int InitialRowsNumber { get; set; } = 2;
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 
-		public List<int> PageSizeOptions	
+		public List<int> PageSizeOptions
 		{
-			get 
+			get
 			{
 				return new List<int>()
 				{
@@ -50,19 +49,19 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 		public bool PlayerOpened { get; set; } = false;
-        public bool TagsAreBeingLoaded { get; set; } = false;
-        public string PlayerUri { get; set; }
-        public string PlayerId { get; set; }
+		public bool TagsAreBeingLoaded { get; set; } = false;
+		public string PlayerUri { get; set; }
+		public string PlayerId { get; set; }
 
 		public async Task Initialize(IHyperArgsSink store, string metadataSetId, int smallestPageSize)
-        {
-            this.Store = store;
+		{
+			this.Store = store;
 
-            MetadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
+			MetadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
-            var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(MetadataSetId));
+			var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(MetadataSetId));
 
-			if(metadataSetFilter != null)
+			if (metadataSetFilter != null)
 			{
 				this._smallestPageSize = smallestPageSize;
 
@@ -98,7 +97,8 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					var config = new StandardsBasedNetStoreServerConfig();
 					JsonHelper.Populate(item.Json, config);
-					if (config.HttpPort.HasValue) streamingPort = config.HttpPort.Value;
+					if (config.HttpPort.HasValue)
+						streamingPort = config.HttpPort.Value;
 				}
 			}
 
@@ -157,8 +157,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (filter is TextFilterData textFilterData)
 			{
-				this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it=> 
-				{ 
+				this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it =>
+				{
 					var elements = it.Split(":");
 					if (elements.Count() == 0)
 						return String.Empty;
@@ -169,44 +169,44 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		public async Task LoadTotalPages()
-        {
-            var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
+		{
+			var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
-            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
-            countArgs.DescriptorConditions.AddCondition(conditions);
+			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
+			countArgs.DescriptorConditions.AddCondition(conditions.Result);
 
-            var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
+			var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
 
-            TotalPages.Value = (int)(totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1);
+			TotalPages.Value = (int)(totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1);
 
 			RaiseNotify(nameof(TotalPages));
-        }
+		}
 
-        public async Task LoadHyperTags()
-        {
-            TagsAreBeingLoaded = true;
+		public async Task LoadHyperTags()
+		{
+			TagsAreBeingLoaded = true;
 
-            var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+			var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
-            var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
-            findArgs.DescriptorConditions.AddCondition(conditions);
-            findArgs.Skip = PageSize * (PageNumber - 1);
-            findArgs.Limit = PageSize;
+			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
+			findArgs.DescriptorConditions.AddCondition(conditions.Result);
+			findArgs.Skip = PageSize * (PageNumber - 1);
+			findArgs.Limit = PageSize;
 
-            var docs = await Store.ExecuteAsync(findArgs);
+			var docs = await Store.ExecuteAsync(findArgs);
 
-            var hyperTags = new List<HyperTag>();
-            foreach (var doc in docs)
-            {
-                hyperTags.Add(doc.GetPayload<HyperTag>());
-            }
+			var hyperTags = new List<HyperTag>();
+			foreach (var doc in docs)
+			{
+				hyperTags.Add(doc.GetPayload<HyperTag>());
+			}
 
-            HyperTags.Value = hyperTags;
+			HyperTags.Value = hyperTags;
 
-            TagsAreBeingLoaded = false;
+			TagsAreBeingLoaded = false;
 
 			RaiseNotify(nameof(HyperTags));
-        }
+		}
 
 		public async Task ChangePageSize(int pageSize)
 		{
@@ -226,25 +226,25 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		public async Task ChangePage(string pageNumberStr)
-        {
+		{
 			int pageNumber = 1;
 			int.TryParse(pageNumberStr, out pageNumber);
 
-			if(pageNumber < 1)
+			if (pageNumber < 1)
 			{
 				pageNumber = 1;
 			}
-			if(pageNumber > TotalPages.Value)
+			if (pageNumber > TotalPages.Value)
 			{
 				pageNumber = TotalPages.Value;
 			}
 
-			if(pageNumber != PageNumber.Value)
+			if (pageNumber != PageNumber.Value)
 			{
 				PageNumber.Value = pageNumber;
 				HyperTags.Value = new List<HyperTag>();
 				await LoadHyperTags();
 			}
 		}
-    }
+	}
 }
