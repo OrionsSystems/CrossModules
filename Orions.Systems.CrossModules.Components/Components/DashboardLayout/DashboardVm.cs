@@ -117,6 +117,8 @@ namespace Orions.Systems.CrossModules.Components
 			return vm;
 		}
 
+		
+
 		public async Task<Response> SaveChangesAsync()
 		{
 			var doc = new HyperDocument(this.Source);
@@ -183,7 +185,6 @@ namespace Orions.Systems.CrossModules.Components
 				foreach (var g in _dynamicFiltersByGroup)
 					g.Value.Clear();
 			}
-
 		}
 
 		public void ClearFilters(string group)
@@ -448,5 +449,34 @@ namespace Orions.Systems.CrossModules.Components
 			var widget = Activator.CreateInstance(t);
 			return widget as DashboardWidget;
 		}
+
+		public bool IsDashboadContainer(IDashboardWidget widget)
+		{
+			return widget is DashboardContainerWidget;
+		}
+
+		//public async Task<DashboardData> GetDashboardContainerData(IDashboardWidget widget)
+		//{
+		//	var vm = ObtainWidgetVm(widget);
+
+		//	var containerWidget = vm.Widget as DashboardContainerWidget;
+
+		//	var documentId = containerWidget.Dashboard;
+
+		//	if (documentId != null)
+		//	{
+		//		var args = new RetrieveHyperDocumentArgs(documentId.Value);
+		//		var doc = await this.HyperStore.ExecuteAsync(args);
+
+		//		if (args.ExecutionResult.IsNotSuccess)
+		//			return null;
+
+		//		var dashboard = doc?.GetPayload<DashboardData>();
+
+		//		return dashboard;
+		//	}
+
+		//	return null;
+		//}
 	}
 }

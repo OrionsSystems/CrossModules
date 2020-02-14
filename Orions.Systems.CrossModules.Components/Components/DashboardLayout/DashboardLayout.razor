@@ -1,7 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 @using Orions.Node.Common
-@using Orions.Infrastructure.HyperMedia
 
 @inherits DashboardLayoutComponent
 
@@ -112,9 +111,20 @@
 									}
 									else
 									{
+
+										@if (Vm.IsDashboadContainer(column.Widget))
+										{
+											@*<DashboardLayout HyperStore="@HyperStore"
+																	  Data=""
+																	  EnableBetweenBox="true"
+																	  IsPreviewMode="false"
+																	  DisableModeOption="true">
+												</DashboardLayout>*@
+										}
 										<div class="dashboard-widget-label">
 											@column.Widget.Label
 										</div>
+
 									}
 
 									@if (IsEditMode && column.ShowCommands && Vm.HasNextColumn(row, column))
@@ -128,8 +138,6 @@
 											</a>
 										</div>
 									}
-
-
 								</div>
 
 								@if (IsEditMode && EnableBetweenBox && lastCoumnId != column.Id)
@@ -208,8 +216,8 @@
 					}
 
 				</div>
-						}
-						}
+			}
+		}
 
 		@if (IsEditMode)
 		{
@@ -219,11 +227,11 @@
 				</div>
 			</div>
 		}
-						}
-						else
-						{
+	}
+	else
+	{
 		<DashboardLiveModeRender DashboardVm="@Vm" />
-						}
+	}
 
 </div>
 
@@ -328,6 +336,9 @@
 	public bool IsPreviewMode { get; set; } = false;
 
 	[Parameter]
+	public string ParrentDashboardId { get; set; }
+
+	[Parameter]
 	public bool HideModeOption { get; set; }
 
 	[Parameter]
@@ -386,10 +397,7 @@
 
 	private async Task SaveDashboardChanges()
 	{
-		var doc = new HyperDocument(Data);
-
-		var args = new StoreHyperDocumentArgs(doc);
-		var res = await HyperStore.ExecuteAsync(args);
+		await this.Vm.SaveChangesAsync();
 
 		isShowRenameDashboardModal = false;
 	}
