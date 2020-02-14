@@ -203,6 +203,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 							FieldName = "Elements.UniversalTime"
 						}
 					};
+					lastTagFindArgs.Limit = 1;
 
 					docs = await HyperArgsSink.ExecuteAsync(lastTagFindArgs);
 					var lastTag = docs[0].GetPayload<HyperTag>();
@@ -210,8 +211,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				}
 			}
 
-			TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value);
-			this.RaiseNotify("TagDateRangeFilter");
+			if (mapOverlayZonesWithHomographyAssigned.Any())
+			{
+				TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value);
+				this.RaiseNotify("TagDateRangeFilter");
+
+			}
 		}
 
 		private async Task<byte[]> LoadTagImage(HyperTag tag)
@@ -330,6 +335,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task ShowTagInfo(CircleOverlayEntryJsModel circle, double pageX, double pageY)
 		{
+			this.ShowingHyperTagInfo.Value = false;
+
 			var tagToShow = _circlesToTagsMappings.Single(kv => kv.Key.Id == circle.Id).Value;
 			this.CurrentTagBeingShown.Value = tagToShow;
 
