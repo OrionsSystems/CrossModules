@@ -10,6 +10,10 @@ namespace Orions.Systems.CrossModules.Components
 			Center,
 			Right
 		}
+
+		[HelpText("CSS class name")]
+		public string CssClass { get; set; }
+
 		[HelpText("Show or hide the title")]
 		public bool Visible { get; set; } = false;
 
