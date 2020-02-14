@@ -1,33 +1,37 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-	<div class="progress-line mt-1">
+<div class="progress-line mt-1">
 
-		@if (IsShowTitle) { 
-			<div class="stat-title">
-				@Title
-			</div>
-		}
-		@if (!string.IsNullOrWhiteSpace(IconUrl))
-		{
-			<span class="icon"><img src="@IconUrl"></span>
-		}
+	@if (IsShowTitle)
+	{
+		<div class="stat-title">
+			@Title
+		</div>
+	}
+	@if (!string.IsNullOrWhiteSpace(IconUrl))
+	{
+		<span class="icon"><img src="@IconUrl"></span>
+	}
 
-		@if (IconSource != null)
-		{
-			<span class="icon"><img src="@ImageBase64Url"></span>
-		}
-
+	@if (IconSource != null)
+	{
+		<span class="icon"><img src="@ImageBase64Url"></span>
+	}
+	<div class="stat-container">
 		<span class="stat-progress" style="width: @(Progress)%;"></span>
+
 		@if (IsShowPercentage)
 		{
+
 			<span title="@Value" class="stat-value">@PercentageString</span>
 		}
 		else
 		{
 			<span class="stat-value">@Value</span>
 		}
-
 	</div>
+
+</div>
 
 @code {
 
@@ -57,10 +61,14 @@
 
 	private int Progress { get { return Convert.ToInt32(Percentage); } }
 
-	private string PercentageString { get { 
+	private string PercentageString
+	{
+		get
+		{
 			var pr = Math.Round(Percentage, PercentagePrecision);
 			return $"{pr} %";
-		} }
+		}
+	}
 
 	public string ImageBase64Url
 	{
@@ -81,12 +89,12 @@
 
 	.progress-line .stat-title {
 		vertical-align: middle;
-		font-weight:bold;
+		font-weight: bold;
 		display: inline-block;
-    min-width: 146px;
-	 font-size: 14px;
-    letter-spacing: 2px;
-    color: #807e7e;
+		min-width: 146px;
+		font-size: 14px;
+		letter-spacing: 2px;
+		color: #807e7e;
 	}
 
 	.progress-line .icon {
@@ -107,9 +115,14 @@
 		vertical-align: middle;
 	}
 
+	.progress-line .stat-container {
+		display: inline-block;
+		width: 70%;
+	}
+
 	.progress-line .stat-value {
 		vertical-align: middle;
-		font-weight:bold;
-		 color: #807e7e;
+		font-weight: bold;
+		color: #807e7e;
 	}
 </style>
