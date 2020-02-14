@@ -287,6 +287,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					}
 
 					List<MapOverlayUpdateDetails> updateDetailsBatch = new List<MapOverlayUpdateDetails>();
+					List<HyperTag> zoneTags = new List<HyperTag>();
+
 					foreach (var tag in hyperTags)
 					{
 						var tagGeometry = (tag.Elements.Single(t => t as HyperTagGeometry != null) as HyperTagGeometry).GeometryItem;
@@ -297,6 +299,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 						if (UniPolygon2f.IsInside(homographyRect.Points,
 							bottomCenter))
 						{
+							zoneTags.Add(tag);
 
 							var mapperCentrePoint = MapHomographyPoint(bottomCenter, homographyRect.Points, mapZone.Points);
 							var circle = new CircleOverlayEntryJsModel
@@ -321,7 +324,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 						}
 					}
 
-					ZoneHyperTagSets[zone] = hyperTags;
+					ZoneHyperTagSets[zone] = zoneTags;
 
 					await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
 				}
