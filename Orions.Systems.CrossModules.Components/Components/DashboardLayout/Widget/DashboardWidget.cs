@@ -23,6 +23,9 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Group of filters this widget belongs to")]
 		public string FilterGroup { get; set; }
 
+		[HelpText("Loader options")]
+		public LoaderConfiguration LoaderSettings { get; set; } = new LoaderConfiguration();
+
 		//public ReportInstruction.Targets FilterGroupTarget { get; set; } = ReportInstruction.Targets.Default;
 
 		public DashboardWidget()
