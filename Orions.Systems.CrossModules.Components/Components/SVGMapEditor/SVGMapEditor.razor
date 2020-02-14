@@ -16,12 +16,11 @@
 		@ChildContent
 	</div>
 	<div class="sliderwrap">
-		<EjsSlider 
-				   TValue="double[]" 
-				   Type="SliderType.Range" 
-				   ValueChanged="(double[] e) => Vm.SliderValueChanged(e)" 
-				   Step="@Vm.TagDateRangeFilter.Step" 
-				   Min="0" 
+		<EjsSlider TValue="double[]"
+				   Type="SliderType.Range"
+				   ValueChanged="(double[] e) => Vm.SliderValueChanged(e)"
+				   Step="@Vm.TagDateRangeFilter.Step"
+				   Min="0"
 				   Max="@Vm.TagDateRangeFilter.MaxRangeValue"></EjsSlider>
 		<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: To:@Vm.TagDateRangeFilter.CurrentMaxDate</span>
 	</div>
@@ -48,6 +47,22 @@
 		</div>
 
 		<div class="modal-backdrop fade show"></div>
+	}
+
+	@if (Vm.IsVmShowingHeatmapProp.Value)
+	{
+		<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block;">
+			<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body heatmap-img-container">
+						<img src="@Vm.HeatmapImgProp.Value" />
+					</div>
+					<div class="right-controls">
+						<input type="button" class="btn btn-dark form-control" value="Close" @onclick="Vm.CloseHeatmap" />
+					</div>
+				</div>
+			</div>
+		</div>
 	}
 
 	@if (Vm.ShowingHyperTagInfo.Value)
@@ -202,5 +217,11 @@
 
 		.svg-map-editor-container .svg-control-group.cursor-pointer {
 			cursor: pointer;
+		}
+
+		.svg-map-editor-container .heatmap-img-container img {
+			height: 100%;
+			width: 100%;
+			object-fit: contain;
 		}
 </style>

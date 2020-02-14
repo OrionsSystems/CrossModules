@@ -39,6 +39,9 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			_hyperStore = hyperStore;
 			_metadataSet = metadataSet;
 			_settings = settings;
+
+			_keepWorking = true;
+			_ctSource = new CancellationTokenSource();
 		}
 
 		public ViewModelProperty<long> TotalCountProp { get; set; } = new ViewModelProperty<long>(0);
@@ -187,9 +190,9 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
-		public async Task<UniImage> GenerateFromTags(HyperTag[] tags, HyperDocumentId fixedCameraPresetId)
+		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId)
 		{
-			if (tags == null || tags.Length < 1)
+			if (tags == null || tags.Count < 1)
 				return null;
 
 			var configuration = await RetrieveHyperDocumentArgs.RetrieveAsyncThrows<FixedCameraEnhancedData>(_hyperStore, fixedCameraPresetId);
