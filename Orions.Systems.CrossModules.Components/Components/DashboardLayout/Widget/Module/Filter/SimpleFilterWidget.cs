@@ -6,6 +6,9 @@ namespace Orions.Systems.CrossModules.Components
 {
    public class SimpleFilterWidget : ReportBaseWidget
    {
+      [HelpText("Desing options")]
+      public SimpleFilterConfiguration Settings { get; set; } = new SimpleFilterConfiguration();
+
       /// <summary>
       /// Persist the previous selection of the user.
       /// </summary>

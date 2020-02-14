@@ -6,15 +6,34 @@
 
 <div class="widget-content-report">
 
-	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+	@if (Showing)
+	{
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-	<SVGMap @ref="map" Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
+		<SVGMap @ref="map" Zone="@Widget.Zone" OnClickZone="@OnSelectZone"></SVGMap>
 
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+	}
+	else
+	{
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
+	}
 </div>
 
 @code {
 
 	private SVGMap map;
+
+	public bool Showing { get; set; } = false;
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		Showing = true;
+		StateHasChanged();
+	}
 
 	private async Task OnSelectZone(string zone)
 	{
@@ -24,7 +43,7 @@
 		Widget.Zone = zone;
 
 		//var isTagDashboardExist = await IsDashboardExist(zone);
-		
+
 		var uri = $"/dashboard/{zone}";
 		NavigationManager.NavigateTo(uri, true);
 	}
@@ -53,8 +72,8 @@
 	}
 
 	.st0 {
-		fill: #4f4e4e !important;
-	}
+    fill: #d9d9d9 !important;
+}
 
 	.st12 {
 		fill: #3f3e3e !important;

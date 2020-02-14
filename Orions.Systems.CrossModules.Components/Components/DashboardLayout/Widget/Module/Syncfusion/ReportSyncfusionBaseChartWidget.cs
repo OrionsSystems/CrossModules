@@ -8,13 +8,13 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public class TooltipConfiguration {
 
-			[HelpText("")]
-			public bool IsEnable { get; set; }
+			[HelpText("Enables / Disables the visibility of the tooltip.")]
+			public bool IsEnable { get; set; } = true;
 
-			[HelpText("")]
+			[HelpText("Format the ToolTip content.")]
 			public string Format { get; set; }
 
-			[HelpText("")]
+			[HelpText("Options to customize the ToolTip text.")]
 			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
 		}
 

@@ -1,16 +1,17 @@
-﻿using Orions.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 using System.Linq;
-using SkiaSharp;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
+
+using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
-using Orions.Node.Common;
 using Orions.Infrastructure.HyperSemantic;
+using Orions.Node.Common;
+
+using SkiaSharp;
 
 namespace Orions.Systems.CrossModules.Components.Helpers
 {
@@ -134,21 +135,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					{
 						var hyperId = grouppedBySlice.First().Key;
 
-						_lastImage = await GetImageAsync(hyperId);
-
-						if (_lastImage.Width > 0 && _lastImage.Height > 0)
-						{
-							_width = _lastImage.Width.Value;
-							_height = _lastImage.Height.Value;
-						}
-						else
-						{
-							using (var bitmap = SKBitmap.Decode(_lastImage.Data))
-							{
-								_width = bitmap.Width;
-								_height = bitmap.Height;
-							}
-						}
+						await UpdateImageDataAsync(hyperId);
 
 						_globalMatrix = new uint[_height, _width];
 
@@ -200,6 +187,87 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
+		public async Task<UniImage> GenerateFromTags(HyperTag[] tags, HyperDocumentId fixedCameraPresetId)
+		{
+			if (tags == null || tags.Length < 1)
+				return null;
+
+			var configuration = await RetrieveHyperDocumentArgs.RetrieveAsyncThrows<FixedCameraEnhancedData>(_hyperStore, fixedCameraPresetId);
+
+			if (configuration == null)
+				return null;
+
+			var tagsOrdered = tags.OrderBy(x => x.GetElement<IHyperTagHyperIds>().HyperId).ToArray();
+
+			var hyperId = tagsOrdered[0].GetElement<IHyperTagHyperIds>().HyperId;
+
+			if (!_keepWorking || _ct.IsCancellationRequested)
+				return null;
+
+			await UpdateImageDataAsync(hyperId);
+
+			_globalMatrix = new uint[_height, _width];
+
+			if (!_keepWorking || _ct.IsCancellationRequested)
+				return null;
+
+			foreach (var tag in tags)
+			{
+				ProcessMaskedTag(tag);
+			}
+
+			var result = RenderMask(_lastImage);
+
+			// Cut it
+
+			var mask = GenerateHomographyMask(configuration, _width, _height);
+
+			SKImage maskedImage;
+
+			using (var tempSurface = SKSurface.Create(new SKImageInfo(_croppedSize.Width, _croppedSize.Height)))
+			{
+				//get the drawing canvas of the surface
+				var canvas = tempSurface.Canvas;
+
+				//set background color
+				canvas.Clear(SKColors.Transparent);
+
+				canvas.DrawImage(result, SKRect.Create(_minX.Value, _minY.Value, _croppedSize.Width, _croppedSize.Height), SKRect.Create(0, 0, _croppedSize.Width, _croppedSize.Height));
+
+				canvas.DrawImage(mask, 0, 0);
+
+				// return the surface as a manageable image
+				maskedImage = tempSurface.Snapshot();
+			}
+
+			//
+
+			var image = SKImageIntoUniImage(maskedImage);
+
+			maskedImage.Dispose();
+
+			return image;
+		}
+
+		private async Task UpdateImageDataAsync(HyperId hyperId)
+		{
+			_lastImage = await GetImageAsync(hyperId);
+
+			if (_lastImage.Width > 0 && _lastImage.Height > 0)
+			{
+				_width = _lastImage.Width.Value;
+				_height = _lastImage.Height.Value;
+			}
+			else
+			{
+				using (var bitmap = SKBitmap.Decode(_lastImage.Data))
+				{
+					_width = bitmap.Width;
+					_height = bitmap.Height;
+				}
+			}
+		}
+
 		private async Task<UniImage> GetImageAsync(HyperId hyperId)
 		{
 			var args = new RetrieveFragmentFramesArgs
@@ -214,18 +282,44 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			return res.First().Image;
 		}
 
+		private UniImage SKImageIntoUniImage(SKImage skImage)
+		{
+			UniImage image;
+
+			using (skImage)
+			{
+				using (var skData = skImage.Encode(SKEncodedImageFormat.Jpeg, 70))
+				{
+					var bytes = skData.ToArray();
+					image = new UniImage(ImageFormats.Jpeg, bytes, skImage.Width, skImage.Height);
+				}
+			}
+
+			return image;
+		}
+
 		private async Task RerenderAsync()
 		{
 			StatusProp.Value = "Rendering heatmap...";
 
 			_lastImage = await GetImageAsync(_lastHyperId);
 
-			using (var skBitmap = SKBitmap.Decode(_lastImage.Data))
+			var skImage = RenderMask(_lastImage);
+
+			var image = SKImageIntoUniImage(skImage);
+
+			//SkImageProp.Value = result;
+			ImageProp.Value = image.Data;
+			StatusProp.Value = "Finished updating heatmap.";
+		}
+
+		private SKImage RenderMask(UniImage sourceImage)
+		{
+			using (var skBitmap = SKBitmap.Decode(sourceImage.Data))
 			{
-				SKImage heatmap;
 				SKImage result;
 
-				heatmap = GenerateMaskFromValuesMatrix(_globalMatrix, _width, _height,
+				var heatmap = GenerateMaskFromValuesMatrix(_globalMatrix, _width, _height,
 						_settings.UseCustomNormalizationSettings ? _settings.MinimumNumberOfOverlaps : (uint?)null,
 						_settings.UseCustomNormalizationSettings ? _settings.MaximumNumberOfOverlaps : (uint?)null);
 
@@ -250,20 +344,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					result = tempSurface.Snapshot();
 				}
 
-				UniImage image;
-
-				using (result)
-				{
-					using (var skData = result.Encode(SKEncodedImageFormat.Jpeg, 70))
-					{
-						var bytes = skData.ToArray();
-						image = new UniImage(ImageFormats.Jpeg, bytes, result.Width, result.Height);
-					}
-				}
-
-				//SkImageProp.Value = result;
-				ImageProp.Value = image.Data;
-				StatusProp.Value = "Finished updating heatmap.";
+				return result;
 			}
 		}
 
@@ -523,6 +604,104 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			return outputMap;
 		}
+
+
+		////
+		// TODO: Merge this functionality with AOI component, extract it as a helper
+		////
+
+		int? _minX = null;
+		int? _minY = null;
+		int? _maxX = null;
+		int? _maxY = null;
+		Size _croppedSize;
+
+		private SKImage GenerateHomographyMask(FixedCameraEnhancedData configuration, int sourceWidth, int sourceHeight)
+		{
+			var polygons = configuration.Layers.OfType<HyperTagFixedCameraEnhancedDataLayer>()
+					.SelectMany(x => x.Tags ?? new HyperTag[0])
+					.Select(x => ProcessHyperTag(x, sourceWidth, sourceHeight))
+					.Where(x => x != null)
+					.ToArray();
+
+			using (var tempSurface = SKSurface.Create(new SKImageInfo(sourceWidth, sourceHeight)))
+			{
+				//get the drawing canvas of the surface
+				var canvas = tempSurface.Canvas;
+
+				canvas.Clear(SKColors.Black);
+
+				var fillPaint = new SKPaint
+				{
+					Style = SKPaintStyle.Fill,
+					Color = SKColors.Transparent,
+					BlendMode = SKBlendMode.Clear
+				};
+
+				using (fillPaint)
+				{
+					var path = new SKPath();
+					foreach (var points in polygons)
+					{
+						path.MoveTo(points.First());
+						for (var i = 1; i < points.Length; i++)
+						{
+							path.LineTo(points[i]);
+						}
+					}
+
+					canvas.DrawPath(path, fillPaint);
+				}
+
+				using (var image = tempSurface.Snapshot())
+				{
+					_croppedSize = new Size(_maxX.Value - _minX.Value, _maxY.Value - _minY.Value);
+
+					var croppingRectI = SKRectI.Create(_minX.Value, _minY.Value, _croppedSize.Width, _croppedSize.Height);
+
+					var mask = image.Subset(croppingRectI);
+
+					return mask;
+				}
+			}
+		}
+
+		public SKPoint[] ProcessHyperTag(HyperTag tag, int width, int height)
+		{
+			var geometry = tag.GetElement<HyperTagGeometry>();
+			var homographyEl = tag.GetElement<HomographyTagElement>(); // Ensure this is an AOI, not something else, like measuremenet etc.
+
+			if (geometry == null || homographyEl == null)
+				return null;
+
+			var polygon = (UniPolygon2f)geometry.GeometryItem.Shape;
+
+			var convertedPoints = polygon.Points.Select(it => geometry.GeometryItem.ConvertFromXSpace(it)).Select(it => new Point((int)(it.X * width), (int)(it.Y * height))).ToArray();
+
+			// Calcuate the min and max positions of the extracted regions globally for all polygons (if many).
+			_minX = convertedPoints.Min(x => x.X);
+			_maxX = convertedPoints.Max(x => x.X);
+			_minY = convertedPoints.Min(x => x.Y);
+			_maxY = convertedPoints.Max(x => x.Y);
+
+			if (_minX.HasValue && _minX.Value % 2 == 1)
+				_minX = _minX.Value + 1;
+
+			if (_maxX.HasValue && _maxX.Value % 2 == 1)
+				_maxX = _maxX.Value + 1;
+
+			if (_minY.HasValue && _minY.Value % 2 == 1)
+				_minY = _minY.Value + 1;
+
+			if (_maxY.HasValue && _maxY.Value % 2 == 1)
+				_maxY = _maxY.Value + 1;
+
+			return convertedPoints.Select(x => new SKPoint(x.X, x.Y)).ToArray();
+		}
+
+
+		////
+
 
 		public void Dispose()
 		{

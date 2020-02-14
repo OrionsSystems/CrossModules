@@ -12,44 +12,75 @@
 
 @using Syncfusion.EJ2.Blazor.Calendars
 
-	<div class="widget-content-report-piechart">
+@if (Widget.Settings.Visible)
+{
 
+
+	<div class="widget-content-report">
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-		@if (Vm.Widget.ShowTextLabelSelection)
-		{
+		<div class="simple-filter-container">
+			<div class="simple-filter-items-container">
+				@if (Vm.Widget.ShowTextLabelSelection)
+				{
+					<div class="control-styles simple-filter-item">
+						<EjsMultiSelect @ref="MultiSelect"
+											 TValue="string[]"
+											 Value="@Values"
+											 Mode="@VisualMode.Box"
+											 AllowFiltering="true"
+											 Placeholder="Search Filters"
+											 DataSource="@Options">
 
-			<div class="control-styles">
-				<EjsMultiSelect @ref="MultiSelect" TValue="string[]" Value="@Values"
-									 Mode="@VisualMode.Box" AllowFiltering="true" Placeholder="Search Filters" DataSource="@Options">
+							<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
+						</EjsMultiSelect>
+					</div>
+				}
 
-					<MultiSelectFieldSettings GroupBy="Group" Text="Text" Value="ID"></MultiSelectFieldSettings>
-				</EjsMultiSelect>
+				@if (Vm.Widget.ShowDateTimeSelection)
+				{
+					<div class="control-styles simple-filter-item">
+						<EjsDateRangePicker @ref="DateRangePicker"
+												  StartDate="@StartDate"
+												  EndDate="@EndDate"
+												  Placeholder="Select Time Range"></EjsDateRangePicker>
+					</div>
+				}
+
 			</div>
-		}
-
-		@if (Vm.Widget.ShowDateTimeSelection)
-		{
-			<div class="control-styles">
-				<EjsDateRangePicker @ref="DateRangePicker" StartDate="@StartDate" EndDate="@EndDate" Placeholder="Select Time Range"></EjsDateRangePicker>
+			<div class="simple-filter-btn-container">
+				<EjsProgressButton @ref="ProgressButton"
+										 Duration="9999999"
+										 OnClick="@OnApply"
+										 Content="Apply"
+										 CssClass="simple-filter-btn-item">
+					<ProgressButtonEvents></ProgressButtonEvents>
+				</EjsProgressButton>
+				<EjsProgressButton @ref="ClearButton"
+										 Duration="9999999"
+										 OnClick="@OnClear"
+										 Content="Clear"
+										 CssClass="simple-filter-btn-item">
+					<ProgressButtonEvents></ProgressButtonEvents>
+				</EjsProgressButton>
+				<EjsProgressButton @ref="ClearAllButton"
+										 Duration="9999999"
+										 OnClick="@OnClearAll"
+										 Content="Clear All"
+										 CssClass="simple-filter-btn-item">
+					<ProgressButtonEvents></ProgressButtonEvents>
+				</EjsProgressButton>
 			</div>
-		}
+		</div>
 
-	<div class="col-xs-12 col-sm-12 col-lg-6 col-md-6">
-		<EjsProgressButton @ref="ProgressButton" Duration="9999999" OnClick="@OnApply" Content="Apply" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-		<EjsProgressButton @ref="ClearButton" Duration="9999999" OnClick="@OnClear" Content="Clear" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-		<EjsProgressButton @ref="ClearAllButton" Duration="9999999" OnClick="@OnClearAll" Content="Clear (All)" IsPrimary="true">
-			<ProgressButtonEvents></ProgressButtonEvents>
-		</EjsProgressButton>
-	</div>
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
 
 	</div>
+}
 
 @code {
+
 
 	public class Option
 	{
@@ -76,6 +107,12 @@
 	public DateTime? StartDate => Widget.StartDate;
 	public DateTime? EndDate => Widget.EndDate;
 
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+
 	public async Task OnClearAll(MouseEventArgs args)
 	{
 		await Vm.ClearAllFilters();
@@ -101,7 +138,7 @@
 	}
 
 	public List<Option> Options = new List<Option>()
-	{
+{
 		  new Option(){ ID= "Person", Group = "Common", Text= "Person" },
 		  new Option(){ ID= "Human", Group = "Common", Text= "Human" },
 		  new Option(){ ID= "Adult", Group = "Common", Text= "Adult" },
@@ -117,3 +154,36 @@
 	 };
 
 }
+<style>
+
+	.simple-filter-container {
+
+	}
+
+	.simple-filter-container .simple-filter-items-container {
+		display: flex;
+	}
+
+	.simple-filter-container .simple-filter-items-container .simple-filter-item {
+		flex-grow: 1;
+		min-height: 50px;
+		padding: 10px;
+		margin: 10px;
+	}
+
+	.simple-filter-container .simple-filter-btn-container {
+		display: block;
+		padding: 7px;
+		float: right;
+	}
+
+	.simple-filter-container .simple-filter-btn-container .simple-filter-btn-item {
+		display:inline-flex;
+	}
+
+	@if (Widget.Settings.Orientation == SimpleFilterConfiguration.SimpleFilterOrientation.Block)
+	{
+
+	}
+
+</style>

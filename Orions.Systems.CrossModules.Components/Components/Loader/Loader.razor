@@ -1,0 +1,21 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent
+
+@if (Settings.Visible)
+{
+	<div style="position:relative;">
+		<div class="loading-bar"></div>
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public LoaderConfiguration Settings { get; set; } = new LoaderConfiguration();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+}
