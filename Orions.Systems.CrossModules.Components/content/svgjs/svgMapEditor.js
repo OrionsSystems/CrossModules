@@ -7,10 +7,10 @@
         this.layoutEditors[rootElementId] = layoutEditor;
     },
 
-    update: function (rootElementId, updateDetails) {
+    update: function (rootElementId, updateDetails, persist, mode) {
         let layoutEditor = this.layoutEditors[rootElementId];
 
-        layoutEditor.update(updateDetails)
+        layoutEditor.update(updateDetails, persist, mode)
     }
 }
 
@@ -56,6 +56,14 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
         circles.push(newCircle);
 
+        for (var key in circleOverlayEntry.eventHandlerMappings) {
+            newCircle.on(key, function (e) {
+                let svgEvent = { clientX: e.clientX, clientY: e.clientY}
+
+                componentReference.invokeMethodAsync(circleOverlayEntry.eventHandlerMappings[key], newCircle.overlayEntry, svgEvent)
+            })
+        }
+
         newCircle.onRemove((c) => {
             circles.splice(circles.findIndex(el => el == c), 1)
         })
@@ -84,6 +92,10 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         newZone.onDblClick(() => {
             componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
+
+        newZone.onHeatmap(() => {
+            componentReference.invokeMethodAsync("OpenHeatmap", newZone.overlayEntry.id)
+        });
 
         return newZone;
     }
@@ -296,25 +308,53 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         return attr;
     }
 
-    let updateOverlay = function (updateDetails, persist) {
-        updateDetails.overlayEntry = JSON.parse(updateDetails.overlayEntry)
-        updateDetails.overlayEntry.persist = persist
+    let updateOverlay = function (updateDetails, persist, mode) {
+        if (mode == "batch") {
+            updateDetails.forEach(d => {
+                d.overlayEntry = JSON.parse(d.overlayEntry)
+                d.overlayEntry.persist = persist
+            })
+        }
+        else {
+            updateDetails.overlayEntry = JSON.parse(updateDetails.overlayEntry)
+            updateDetails.overlayEntry.persist = persist
+        }
+        
 
         let allControls = [...circles, ...zones, ...cameras]
-        switch (updateDetails.type) {
-            case 'addOrUpdate':
-                let controlToUpdate = allControls.find(c => c.overlayEntry.entryType == updateDetails.overlayEntry.entryType
-                    && c.overlayEntry.id == updateDetails.overlayEntry.id
-                    && c.overlayEntry.id != null)
-                if (controlToUpdate) {
-                    controlToUpdate.updateFromOverlayEntry(updateDetails.overlayEntry);
-                }
-                else {
-                    createControlFromOverlayEntry(updateDetails.overlayEntry)
-                }
-                break;
+
+        let updateDetailsFunc = details => {
+            switch (details.type) {
+                case 'addOrUpdate':
+                    let controlToUpdate = allControls.find(c => c.overlayEntry.entryType == details.overlayEntry.entryType
+                        && c.overlayEntry.id == details.overlayEntry.id
+                        && c.overlayEntry.id != null)
+                    if (controlToUpdate) {
+                        controlToUpdate.updateFromOverlayEntry(details.overlayEntry);
+                    }
+                    else {
+                        createControlFromOverlayEntry(details.overlayEntry)
+                    }
+                    break;
+                case 'delete':
+                    let controlToDelete = allControls.find(c => c.overlayEntry.entryType == details.overlayEntry.entryType
+                        && c.overlayEntry.id == details.overlayEntry.id
+                        && c.overlayEntry.id != null);
+                    if (controlToDelete) {
+                        controlToDelete.remove();
+                    }
+                    break;
+            }
         }
 
+        if (mode == 'batch') {
+            updateDetails.forEach(e => {
+                updateDetailsFunc(e)
+            })
+        }
+        else {
+            updateDetailsFunc(updateDetails)
+        }
     }
 
     initializeMapOverlay(mapOverlay)

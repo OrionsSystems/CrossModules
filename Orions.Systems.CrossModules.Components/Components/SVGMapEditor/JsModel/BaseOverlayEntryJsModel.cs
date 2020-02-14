@@ -12,6 +12,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 
 		public string Color { get; set; }
 
+		public Dictionary<string, string> EventHandlerMappings { get; } = new Dictionary<string, string>();
+
 		public abstract string EntryType { get; }
 
 		protected static void MapBasePropertiesFromDomainModel(OverlayEntry domain, BaseOverlayEntryJsModel model)

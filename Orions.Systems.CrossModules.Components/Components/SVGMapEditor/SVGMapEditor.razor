@@ -1,4 +1,5 @@
 ﻿@using  Microsoft.JSInterop;
+@using Syncfusion.EJ2.Blazor.Inputs;
 @inherits SVGMapEditorBase
 
 <div id="@ComponentContainerId" class="svg-map-editor-container">
@@ -14,6 +15,16 @@
 	<div class="map-container">
 		@ChildContent
 	</div>
+	<div class="sliderwrap">
+		<EjsSlider 
+				   TValue="double[]" 
+				   Type="SliderType.Range" 
+				   ValueChanged="(double[] e) => Vm.SliderValueChanged(e)" 
+				   Step="@Vm.TagDateRangeFilter.Step" 
+				   Min="0" 
+				   Max="@Vm.TagDateRangeFilter.MaxRangeValue"></EjsSlider>
+		<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: To:@Vm.TagDateRangeFilter.CurrentMaxDate</span>
+	</div>
 	@if (Vm.ShowingControlPropertyGrid)
 	{
 		<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
@@ -22,8 +33,7 @@
 					<div class="modal-body">
 						<div class="card">
 							<div class="card-body">
-								<PropertyGrid
-											  Loader="PropertyGridLoader"
+								<PropertyGrid Loader="OverlayEntryPropertyGridLoader"
 											  CancelVisible="true"
 											  HyperStore="this.HyperStore"
 											  OKVisible="true"
@@ -39,16 +49,75 @@
 
 		<div class="modal-backdrop fade show"></div>
 	}
+
+	@if (Vm.ShowingHyperTagInfo.Value)
+	{
+		@*<div style="top:@(this.Vm.HyperTagInfoYPos)px;left:@(this.Vm.HyperTagInfoXPos)px" class="tag-info-popup bg-secondary" () =>this.Vm.ShowingHyperTagInfo.Value = false>*@
+
+
+		<div style="z-index:1;top:@(this.Vm.HyperTagInfoYPos)px;left:@(this.Vm.HyperTagInfoXPos)px" class="tag-info-popup bg-secondary">
+			<div class="relative-container tag-info-popup-container">
+				<div class="controls-container">
+					<a class="btn btn-sm btn-outline-dark props-btn" title="Properties" @onclick="(e => Vm.OpenTagProperties())">P</a>
+					<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.Vm.ShowingHyperTagInfo.Value = false)">X</a>
+				</div>
+				<img src="@Vm.TagInfoImageBase64Url" />
+			</div>
+		</div>
+		@if (Vm.ShowingHyperTagProperties.Value)
+		{
+			<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block;">
+				<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-body">
+							<div class="card">
+								<div class="card-body">
+									<PropertyGrid Loader="TagPropertyGridLoader"
+												  CancelVisible="true"
+												  HyperStore="this.HyperStore"
+												  OKVisible="true"
+												  CancelCommand="async () => Vm.ShowingHyperTagProperties.Value = false"
+												  OkCommand="async () => Vm.ShowingHyperTagProperties.Value = false">
+									</PropertyGrid>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop fade show"></div>
+		}
+	}
 </div>
 
 @code{
-	public async Task<object> PropertyGridLoader()
+	public void ValueChangedTest(int[] value)
+	{
+
+	}
+
+	public void TagInfoMouseOut(MouseEventArgs e)
+	{
+		this.Vm.ShowingHyperTagInfo.Value = false;
+	}
+
+	public async Task<object> OverlayEntryPropertyGridLoader()
 	{
 		return Vm.CurrentPropertyGridObject;
+	}
+
+	public async Task<object> TagPropertyGridLoader()
+	{
+		return Vm.CurrentTagBeingShown;
 	}
 }
 
 <style>
+	.relative-container {
+		position: relative;
+	}
+
 	.svg-map-editor-container {
 		height: 100%;
 		width: 100%;
@@ -82,6 +151,36 @@
 				outline: 1px solid slategrey;
 			}
 
+		.svg-map-editor-container .tag-info-popup {
+			position: absolute;
+			width: 200px;
+			height: 300px;
+			opacity: 0.9;
+			border-radius: 6px;
+			padding: 5px;
+		}
+
+			.svg-map-editor-container .tag-info-popup .tag-info-popup-container {
+				height: 100%;
+				padding: 5px;
+			}
+
+			.svg-map-editor-container .tag-info-popup .controls-container {
+				position: absolute;
+				width: 100%;
+				text-align: right;
+			}
+
+				.svg-map-editor-container .tag-info-popup .controls-container a {
+					margin-right: 5px;
+				}
+
+			.svg-map-editor-container .tag-info-popup img {
+				height: 100%;
+				width: 100%;
+				object-fit: contain;
+			}
+
 		.svg-map-editor-container .buttons-container svg {
 			width: 35px;
 			height: 35px;
@@ -101,7 +200,7 @@
 			font-size: 0.9em;
 		}
 
-		.svg-map-editor-container .svg-control-group.cursor-pointer{
-			cursor:pointer;
+		.svg-map-editor-container .svg-control-group.cursor-pointer {
+			cursor: pointer;
 		}
 </style>
