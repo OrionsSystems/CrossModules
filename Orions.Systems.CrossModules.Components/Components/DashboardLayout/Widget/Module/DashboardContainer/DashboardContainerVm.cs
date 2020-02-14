@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -12,6 +14,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
+		public string ParrentDashboardId { get { return this.Widget.Dashboard?.Id; } }
+
 		public async Task<DashboardData> SetDashboardAsync()
 		{
 			if (string.IsNullOrWhiteSpace(this.Widget.Dashboard?.Id))
@@ -19,9 +23,14 @@ namespace Orions.Systems.CrossModules.Components
 				return null;
 			}
 
-			var dashboards = await HyperStore.FindAllAsync<DashboardData>();
+			var documentId = HyperDocumentId.Create<DashboardData>(this.Widget.Dashboard?.Id);
+			var args = new RetrieveHyperDocumentArgs(documentId);
+			var doc = await HyperStore.ExecuteAsync(args);
 
-			var dashboard = dashboards.FirstOrDefault(it => it.Id == this.Widget.Dashboard?.Id);
+			if (args.ExecutionResult.IsNotSuccess)
+				return null;
+
+			var dashboard = doc?.GetPayload<DashboardData>();
 
 			if (dashboard == null)
 				return null;
