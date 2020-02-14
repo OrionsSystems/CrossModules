@@ -18,6 +18,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
 	public class SVGMapEditorVm : BlazorVm
 	{
+		private Helpers.MasksHeatmapRenderer _renderer;
+
 		public IHyperArgsSink HyperArgsSink { get; set; }
 		public IJSRuntime JsRuntime { get; set; }
 		public HyperDocumentId? MapOverlayId { get; set; }
@@ -37,6 +39,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public double HyperTagInfoXPos { get; set; }
 		public double HyperTagInfoYPos { get; set; }
 		public ViewModelProperty<bool> ShowingHyperTagProperties { get; set; } = false;
+
+		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
+
+		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 
 		public string TagInfoImageBase64Url
 		{
@@ -75,8 +81,21 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				var metadataSetId = zone.MetadataSetId;
 				var fixedCameraEnhancementId = zone.FixedCameraEnhancementId;
 
-				// show heatmap
+				if (metadataSetId.HasValue && fixedCameraEnhancementId.HasValue && tagsForMap != null && tagsForMap.Any())
+				{
+					_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
+					IsVmShowingHeatmapProp.Value = true;
+
+					var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId.Value);
+					HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+				}
 			}
+		}
+
+		public void CloseHeatmap()
+		{
+			IsVmShowingHeatmapProp.Value = false;
+			HeatmapImgProp.Value = null;
 		}
 
 		public async Task Initialize(string componentContainerId, DotNetObjectReference<SVGMapEditorBase> thisReference)

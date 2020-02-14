@@ -416,7 +416,7 @@
                     if (p[1] < yMin || yMin == null) yMin = p[1];
                 })
 
-                return [xMin + 10, yMin + 10]
+                return [xMin, yMin -20]
             }
             let heatmapCtrlDrawPoint = getHeatmapCtrlDrawpoint();
             heatmapCtrl.move(heatmapCtrlDrawPoint[0], heatmapCtrlDrawPoint[1]);
