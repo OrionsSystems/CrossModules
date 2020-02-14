@@ -205,3 +205,11 @@ app {
 		-webkit-transform: scale(1.0)
 	}
 }
+
+.nowrap {
+	white-space: nowrap;
+}
+
+.center {
+	text-align:center;
+}

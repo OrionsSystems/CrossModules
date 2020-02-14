@@ -14,8 +14,6 @@
 
 @if (Widget.Settings.Visible)
 {
-
-
 	<div class="widget-content-report">
 		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
@@ -64,7 +62,7 @@
 										 CssClass="simple-filter-btn-item">
 					<ProgressButtonEvents></ProgressButtonEvents>
 				</EjsProgressButton>
-				<EjsProgressButton @ref="ClearAllButton"
+				<EjsProgressButton @ref="ClearAllButton" 
 										 Duration="9999999"
 										 OnClick="@OnClearAll"
 										 Content="Clear All"
