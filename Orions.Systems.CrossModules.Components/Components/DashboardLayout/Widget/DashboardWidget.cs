@@ -4,14 +4,19 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget
 	{
+		[HelpText("Title name")]
 		public string Label { get { return TitleSettings.Title; } set { TitleSettings.Title = value; } }
 
+		[HelpText("Show or hide title")]
 		public bool ShowTitle { get { return TitleSettings.IsShow; } set { TitleSettings.IsShow = value; } }
 
+		[HelpText("Show or hide footer")]
 		public bool ShowFooter { get; set; } = false;
 
+		[HelpText("Show or hide widget on render")]
 		public bool IsVisibile { get; set; } = true;
 
+		[HelpText("Title options")]
 		public TitleConfiguration TitleSettings { get; set; } = new TitleConfiguration();
 
 		[HelpText("Top separator options")]
