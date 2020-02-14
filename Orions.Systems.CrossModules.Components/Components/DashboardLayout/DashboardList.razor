@@ -20,11 +20,12 @@
 			<table class="table table-striped table-bordered table-hover">
 				<thead>
 					<tr>
-						<th scope="col"></th>
-						<th class="w-75" scope="col">Name</th>
-						<th scope="col">Home</th>
-						<th scope="col">Tag</th>
-						<th class="w-25" scope="col"></th>
+						<th width="1%" class="nowrap center"></th>
+						<th width="5%" class="nowrap center">Group</th>
+						<th>Name</th>
+						<th width="5%" class="nowrap center">Home</th>
+						<th width="5%" class="nowrap center">Tag</th>
+						<th width="30%" class="nowrap center"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -33,10 +34,11 @@
 						rowIndex++;
 
 						<tr>
-							<td>@rowIndex</td>
+							<td class="center nowrap">@rowIndex</td>
+							<td class="center">@item.Option.Group</td>
 							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
-							<td>@(item.Option.IsDefault == true ? "True" : "")</td>
-							<td>
+							<td class="center">@(item.Option.IsDefault == true ? "True" : "")</td>
+							<td class="center">
 								@if (!string.IsNullOrWhiteSpace(item.Option.Tag))
 								{
 									<a href="@(MyNavigationManager.Uri + "/" + item.Option.Tag)">
@@ -44,7 +46,7 @@
 									</a>
 								}
 							</td>
-							<td class="text-center">
+							<td class="center">
 								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
 								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
 								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>

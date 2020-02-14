@@ -4,6 +4,8 @@
 	{
 		public string Name { get; set; } = "New Dashboard";
 
+		public string Group { get; set; }
+
 		public bool IsDefault { get; set; }
 
 		public bool IsHideTitle { get; set; }
