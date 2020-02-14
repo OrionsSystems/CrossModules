@@ -22,16 +22,22 @@
 											 Height="@Widget.Height"
 											 Width="@Widget.Width"
 											 Theme="@Widget.Theme"
-											 Background="@Widget.Background"
+											 Background="@Widget.Background" 
+											 EnableSmartLabels="@Widget.EnableSmartLabels"
+											 EnableAnimation="@Widget.EnableAnimation"
+											 Center="@Widget.Center"
 											 Title="@Widget.ChartTitle">
 
 					<AccumulationChartEvents OnPointClick="@Vm.HandlePointOnclick"></AccumulationChartEvents>
 
 					<AccumulationChartSeriesCollection>
 
+						@{
+							var _yName = Widget.ShowInPercentage ? nameof(ReportPieChartData.Percentage) : nameof(ReportPieChartData.Value);	
+						}
 						<AccumulationChartSeries DataSource="@Data"
 														 XName="@nameof(ReportPieChartData.Label)"
-														 YName="@nameof(ReportPieChartData.Value)"
+														 YName="@_yName"
 														 Name="@Widget.SeriesSettings.Name"
 														 Radius="@Widget.Radius"
 														 GroupTo="@Widget.SeriesSettings.GroupTo"
@@ -39,6 +45,7 @@
 														 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
 														 Border="@Widget.SeriesSettings.Border"
 														 InnerRadius="@Widget.InnerRadius">
+
 
 							<AccumulationChartEmptyPointSettings Mode="@Widget.PointMode"></AccumulationChartEmptyPointSettings>
 
@@ -134,7 +141,8 @@
 			{
 				if (item.Value == 0) continue;
 
-				item.Percentage = (item.Value / total) * 100;
+				var percVal = (item.Value / total) * 100;
+				item.Percentage = Math.Round(percVal, Widget.PercentagePrecision);
 			}
 		}
 

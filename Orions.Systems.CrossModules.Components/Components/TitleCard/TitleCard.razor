@@ -4,7 +4,9 @@
 
 @if (Settings.IsShow)
 {
-	<div class="title-card-container" style="@Settings.InlineStyles">@Settings.Title</div>
+	<div class="title-card-container" style="@GetCardStyles()">@Settings.Title</div>
+
+	<SeparatorLine Settings="@Settings.SepratorsSettings"></SeparatorLine>
 }
 
 @code {
@@ -29,13 +31,24 @@
 				return "center";
 		}
 	}
+
+	private string GetUpperCaseStyle()
+	{
+		if (Settings.IsUppercase)
+			return "text-transform: uppercase;";
+
+		return String.Empty;
+	}
+
+	private string GetCardStyles()
+	{
+		return $"text-align: {GetAligmentString()}; letter-spacing: " +
+				$"{Settings.LetterSpacing}px; font-size: {Settings.FontSize}px; " +
+				$"{GetUpperCaseStyle()} {Settings.InlineStyles} ";
+	}
 }
 
 <style>
 	.title-card-container {
-		font-size: 20px;
-		text-transform: uppercase;
-		letter-spacing: 2px;
-		text-align: @GetAligmentString();
 	}
 </style>

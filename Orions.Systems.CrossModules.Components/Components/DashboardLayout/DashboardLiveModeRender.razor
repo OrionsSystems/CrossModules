@@ -1,12 +1,9 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@using Orions.Node.Common
-
 @inherits BaseBlazorComponent
 
 @if (DashboardVm.Source.Rows.Any())
 {
-    var firstRowId = DashboardVm.Source.Rows.FirstOrDefault()?.Id;
 
     @foreach (var row in DashboardVm.Source.Rows)
     {

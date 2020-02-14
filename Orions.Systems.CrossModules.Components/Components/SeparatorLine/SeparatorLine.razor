@@ -4,8 +4,8 @@
 
 @if (Settings.Visible)
 {
-	<div class="separator-line-container">
-		<div class="separator-line" style="@Settings.InlineStyles"></div>
+	<div class="separator-line-container @Settings.CssClass " style="text-align: @GetAligmentString();">
+		<div class="separator-line" style="@GetSeparatorLineStyles()"></div>
 	</div>
 }
 
@@ -31,20 +31,18 @@
 				return "center";
 		}
 	}
+
+	private string GetSeparatorLineStyles() {
+		return $"height: {Settings.GetHeightInPx()}; background-color: {Settings.Color}; width: {Settings.GetPercentageWidth()}; {Settings.InlineStyles}";
+	}
 }
 
 <style>
 	.separator-line-container {
 		width: 100%;
-		/*height: 0px;*/
-		text-align: @GetAligmentString();
 	}
 	.separator-line {
 		display: inline-block;
-		height: @Settings.GetHeightInPx();
-		background-color: @Settings.Color;
-		width: @Settings.GetPercentageWidth();
 		margin: auto;
-		
 	}
 </style>

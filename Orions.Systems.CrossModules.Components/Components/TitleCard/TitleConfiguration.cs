@@ -1,12 +1,16 @@
 ﻿using Orions.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public class TitleConfiguration
 	{
+		public int FontSize { get; set; } = 20;
+
+		public bool IsUppercase { get; set; } = true;
+
+		[HelpText("Letter spacing in px")]
+		public int LetterSpacing { get; set; } = 2;
+
 		[HelpText("Show or hide the title")]
 		public bool IsShow { get; set; } = false;
 
@@ -18,5 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		[HelpText("Add styles to title")]
 		public string InlineStyles { get; set; }
+
+		[HelpText("Add border line under title")]
+		public SeparatorConfiguration SepratorsSettings { get; set; } = new SeparatorConfiguration() { Height = 1 };
 	}
 }

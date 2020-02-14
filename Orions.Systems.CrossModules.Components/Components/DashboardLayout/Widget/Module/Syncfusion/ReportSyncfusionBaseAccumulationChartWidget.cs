@@ -49,6 +49,21 @@ namespace Orions.Systems.CrossModules.Components
 			public AccumulationChartTooltipBorder Border { get; set; } = new AccumulationChartTooltipBorder();
 		}
 
+		[HelpText("Show values in percentage")]
+		public bool ShowInPercentage { get; set; }
+
+		[HelpText("Show percentage with precisiion")]
+		public int PercentagePrecision { get; set; } = 2;
+
+		[HelpText("If set true, labels for the point will be placed smartly without overlapping.")]
+		public bool EnableSmartLabels { get; set; }
+
+		[HelpText("If set true, enables the animation for both chart and accumulation.")]
+		public bool EnableAnimation { get; set; } = true;
+
+		[HelpText("Center of pie")]
+		public AccumulationChartCenter Center { get; set; }
+
 		[HelpText("Specifies the theme for accumulation chart.")]
 		public AccumulationTheme Theme { get; set; } = AccumulationTheme.Material;
 
