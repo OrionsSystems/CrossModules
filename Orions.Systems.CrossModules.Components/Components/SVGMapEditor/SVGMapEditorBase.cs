@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Node.Common;
 using Orions.Infrastructure.HyperMedia;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
@@ -54,6 +55,26 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			this.Vm.OpenSvgControlProps(id);
 		}
+
+		[JSInvokable]
+		public async Task ShowTagInfo(JsModel.CircleOverlayEntryJsModel circle, SvgComponentEvent e)
+		{
+			await Vm.ShowTagInfo(circle, e.ClientX.Value, e.ClientY.Value);
+		}
+
+		[JSInvokable]
+		public async Task OpenHeatmap(string zoneId)
+		{
+			await Vm.OpenHeatmap(zoneId);
+		}
+	}
+
+	public class SvgComponentEvent
+	{
+		public double? PageX { get; set; }
+		public double? PageY { get; set; }
+		public double? ClientX { get; set; }
+		public double? ClientY { get; set; }
 	}
 
 }

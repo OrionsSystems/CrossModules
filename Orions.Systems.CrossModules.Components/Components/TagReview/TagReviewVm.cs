@@ -173,7 +173,7 @@ namespace Orions.Systems.CrossModules.Components
             var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
             var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
-            countArgs.DescriptorConditions.AddCondition(conditions.Result);
+            countArgs.DescriptorConditions.AddCondition(conditions);
 
             var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
 
@@ -189,7 +189,7 @@ namespace Orions.Systems.CrossModules.Components
             var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
             var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
-            findArgs.DescriptorConditions.AddCondition(conditions.Result);
+            findArgs.DescriptorConditions.AddCondition(conditions);
             findArgs.Skip = PageSize * (PageNumber - 1);
             findArgs.Limit = PageSize;
 

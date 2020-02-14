@@ -333,6 +333,7 @@
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
             this.name = new ViewModelProperty(name != undefined ? name : 'Zone Name')
+            this.onHeatmapHandlers = []
 
             this.polygon = svgRoot.polygon().attr(this.attr);
 
@@ -384,6 +385,17 @@
             this.polygon.attr(this.attr)
         }
 
+        onHeatmap(callback){
+            this.onHeatmapHandlers.push(callback)
+        }
+
+        raiseOnHeatmap() {
+            let self = this;
+            this.onHeatmapHandlers.forEach(h => {
+                h(self.overlayEntry);
+            })
+        }
+
         initZoneControls() {
             let self = this;
             let polygon = self.polygon;
@@ -392,6 +404,29 @@
             this.controlGroup.node.classList.add('svg-control-group')
 
             this.controlGroup.add(polygon)
+
+            // init heatmap btn
+            let heatmapCtrl = self.svgNode.text("HM");
+            let getHeatmapCtrlDrawpoint = () => {
+
+                let xMin = null;
+                let yMin = null;
+                self.polygon.array().forEach(p => {
+                    if (p[0] < xMin || xMin == null) xMin = p[0];
+                    if (p[1] < yMin || yMin == null) yMin = p[1];
+                })
+
+                return [xMin + 10, yMin + 10]
+            }
+            let heatmapCtrlDrawPoint = getHeatmapCtrlDrawpoint();
+            heatmapCtrl.move(heatmapCtrlDrawPoint[0], heatmapCtrlDrawPoint[1]);
+            self.controlGroup.add(heatmapCtrl);
+            heatmapCtrl.on('click', e => self.raiseOnHeatmap());
+
+            self.polygon.on('resize', function (ev) {
+                let p = getHeatmapCtrlDrawpoint()
+                heatmapCtrl.move(p[0], p[1]);
+            })
 
             // init resize controls
             var verticesArr = polygon.array();
