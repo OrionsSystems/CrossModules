@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Orions.Common;
+using Orions.Infrastructure.Reporting;
+
+using System;
 using System.Collections.Generic;
-using System.Text;
-using Orions.Common;
 using System.Linq;
 using System.Threading.Tasks;
-using Orions.Infrastructure.Reporting;
-using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -66,120 +65,111 @@ namespace Orions.Systems.CrossModules.Components
 
 			OnReportResultChanged?.Invoke();
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
-			
+
 		}
 
-		public static ReportChartData LoadReportChartData(Report reportResult, string[] categoryFilters)
+		public static ReportChartData LoadReportChartData(Report report, string[] categoryFilters)
 		{
 			var result = new ReportChartData();
 
-			if (reportResult == null)
+			if (report == null)
 				return result;
 
 			try
 			{
-				var sources = new List<Report>();
-				if (reportResult is Report metadataReport)
+				if (report.ColumnsDefinitions == null)
+					return result;
+
+				var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
+				var rowsDef = report.RowsDefinitions.ToList();
+				var rowData = report.Rows;
+
+				var resultCategoryRange = new List<string>();
+
+				for (var i = 0; i < categories.Count; i++)
 				{
-					sources.Add(metadataReport);
-				}
+					var categoryTitle = categories[i];
 
-				foreach (var report in sources ?? Enumerable.Empty<Report>())
-				{
-					if (report.ColumnsDefinitions == null)
-						continue;
-
-					var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
-					var rowsDef = report.RowsDefinitions.ToList();
-					var rowData = report.Rows;
-
-					var resultCategoryRange = new List<string>();
-
-					for (var i = 0; i < categories.Count; i++)
+					if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
 					{
-						var categoryTitle = categories[i];
+						continue;
+					}
 
-						if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
-						{
-							continue;
-						}
+					var chartSeries = new ReportSeriesChartData();
+					var existingSeries = result.Series.FirstOrDefault(it => it.Name == categoryTitle);
 
-						var chartSeries = new ReportSeriesChartData();
-						var existingSeries = result.Series.FirstOrDefault(it => it.Name == categoryTitle);
-						
-						if (existingSeries != null)
+					if (existingSeries != null)
+					{
+
+						chartSeries = existingSeries;
+					}
+					else
+					{
+						chartSeries.Name = categoryTitle;
+						resultCategoryRange.Add(categoryTitle);
+					}
+
+					for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
+					{
+						var rowEl = rowData[rowIndex];
+
+						var label = rowEl.Template.Title;
+
+						//var reportRowEl = rowsDef[rowIndex];
+						//var label = reportRowEl.Title;
+
+						var data = rowEl.Cells[i].Values.FirstOrDefault();
+
+						ReportSeriesChartDataItem chartItem = null;
+						var existingChartItem = chartSeries.Data.FirstOrDefault(it => it.Label == label);
+						if (chartItem == null)
 						{
-							
-							chartSeries = existingSeries;
+							chartItem = new ReportSeriesChartDataItem
+							{
+								CategoryName = categoryTitle,
+								Value = data.ToString(), //Convert.ToUInt16(data.ToString()),
+								Label = label
+							};
+
+							if (result.IsDateAxis)
+							{
+								try
+								{
+
+									var position = Report.ParseTimePosition(label);
+									if (!position.HasValue)
+										result.IsDateAxis = false;
+									else
+									{
+										chartItem.DatePosition = position.Value;
+										chartItem.StreamPosition = Report.ParseStreamPosition(label);
+									}
+								}
+								catch (Exception ex)
+								{
+									result.IsDateAxis = false;
+								}
+							}
+
+							chartSeries.Data.Add(chartItem);
 						}
 						else
 						{
-							chartSeries.Name = categoryTitle;
-							resultCategoryRange.Add(categoryTitle);
+							chartItem.Value += Convert.ToUInt16(data.ToString());
 						}
 
-						for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
-						{
-							var rowEl = rowData[rowIndex];
 
-							var label = rowEl.Template.Title;
-
-							//var reportRowEl = rowsDef[rowIndex];
-							//var label = reportRowEl.Title;
-
-							var data = rowEl.Cells[i].Values.FirstOrDefault();
-
-							ReportSeriesChartDataItem chartItem = null;
-							var existingChartItem = chartSeries.Data.FirstOrDefault(it => it.Label == label);
-							if (chartItem == null)
-							{								
-								chartItem = new ReportSeriesChartDataItem
-								{
-									CategoryName = categoryTitle,
-									Value = data.ToString(), //Convert.ToUInt16(data.ToString()),
-									Label = label
-								};
-
-								if (result.IsDateAxis)
-								{
-									try
-									{
-
-										var position = Report.ParseTimePosition(label);
-										if (!position.HasValue)
-											result.IsDateAxis = false;
-										else
-										{
-											chartItem.DatePosition = position.Value;
-											chartItem.StreamPosition = Report.ParseStreamPosition(label);
-										}
-									}
-									catch (Exception ex)
-									{
-										result.IsDateAxis = false;
-									}
-								}
-
-								chartSeries.Data.Add(chartItem);
-							}
-							else
-							{
-								chartItem.Value += Convert.ToUInt16(data.ToString());
-							}
-
-							
-						}
-
-						result.AddCategoryRange(resultCategoryRange.ToArray());
-						result.Series.Add(chartSeries);
 					}
+
+					result.AddCategoryRange(resultCategoryRange.ToArray());
+					result.Series.Add(chartSeries);
 				}
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.Assert(false, ex.Message);
 			}
-		
+
 			return result;
 		}
 
