@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Orions.Infrastructure.Common;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -41,6 +45,20 @@ namespace Orions.Systems.CrossModules.Components
 			_categories.Clear();
 			Series.Clear();
 		}
+
+		public void MapIcons(IconMapping mapping) 
+		{
+			if (mapping == null)
+				return;
+
+			foreach (var item in Series) 
+			{
+				var documentId = mapping.TryMap(item.Name);
+				if (documentId != null) {
+					item.IconDocument = documentId;
+				}
+			}
+		}
 	}
 
 	public class ReportSeriesChartData
@@ -48,6 +66,16 @@ namespace Orions.Systems.CrossModules.Components
 		public string Name { get; set; }
 		public string Stack { get; set; }
 		public List<ReportSeriesChartDataItem> Data { get; set; } = new List<ReportSeriesChartDataItem>();
+
+		public UniIconResource Icon { get; set; }
+
+		public HyperDocumentId? IconDocument { get; set; }
+
+		public string SvgIcon() {
+			if (Icon == null || Icon.Type != UniIconResource.Types.Svg) return String.Empty;
+
+			return Encoding.UTF8.GetString(Icon.Data);
+		}
 	}
 
 	public class ReportSeriesChartDataItem

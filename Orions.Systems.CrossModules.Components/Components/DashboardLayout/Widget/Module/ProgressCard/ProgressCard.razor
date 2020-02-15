@@ -2,68 +2,68 @@
 
 @inherits DashboardComponent<ProgressCardVm, ProgressCardWidget>
 
-	<div class="widget-content-report">
+<div class="widget-content-report">
 
-		@if (Vm.Report != null && Vm.IsLoadedReportResult)
-		{
-			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
-			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-			<div class="widget-content-report-view">
-				@if (Data.Any())
-				{
-					<div class="row widget-content-report-ethnicity-traffic">
-						<div class="col-lg-12">
-							@foreach (var item in Data)
-							{
-								<div class="row">
-									@if (Widget.IsShowCardIcons)
-									{
-										<div class="col-sm-2 widget-content-report-ethnicity-traffic-icon" title="@item.Title">
+		<div class="widget-content-report-view">
+			@if (Data.Any())
+			{
+				<div class="row widget-content-report-ethnicity-traffic">
+					<div class="col-lg-12">
+						@foreach (var item in Data)
+						{
+							<div class="widget-content-report-ethnicity-traffic-container">
+								@if (Widget.IsShowCardIcons)
+								{
+									<div class="widget-content-report-ethnicity-traffic-icon" title="@item.Title">
+										@((MarkupString)item.SvgIcon)
+									</div>
+									<div class="widget-content-report-ethnicity-traffic-progress">
+										<ProgressLine IsShowTitle="true"
+														  Title="@item.Title"
+														  IsShowPercentage="Widget.IsShowPercentage"
+														  Percentage="@item.Percentage"
+														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
+									</div>
+								}
+								else
+								{
+									<div class="widget-content-report-ethnicity-traffic-progress">
+										<ProgressLine IsShowTitle="true"
+														  Title="@item.Title"
+														  IsShowPercentage="Widget.IsShowPercentage"
+														  Percentage="@item.Percentage"
+														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
+									</div>
+								}
 
-										</div>
-										<div class="col-sm-10 widget-content-report-ethnicity-traffic-progress">
-											<ProgressLine IsShowTitle="true"
-															  Title="@item.Title"
-															  IsShowPercentage="Widget.IsShowPercentage"
-															  Percentage="@item.Percentage"
-															  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
-										</div>
-									}
-									else
-									{
-										<div class="col-sm-12 widget-content-report-ethnicity-traffic-progress">
-											<ProgressLine IsShowTitle="true"
-															  Title="@item.Title"
-															  IsShowPercentage="Widget.IsShowPercentage"
-															  Percentage="@item.Percentage"
-															  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
-										</div>
-									}
-
-								</div>
-							}
-						</div>
+							</div>
+						}
 					</div>
-				}
-			</div>
+				</div>
+			}
+		</div>
 
-			<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
-		}
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+	}
 
-		@if (Vm.Report == null && Vm.IsLoadedReportResult)
-		{
-			<div class="widget-missing-report">
-				Missing report data!
-			</div>
-		}
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
 
-		@if (!Vm.IsLoadedReportResult)
-		{
-			<Loader Settings="@Widget.LoaderSettings"></Loader>
-		}
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
+	}
 
-	</div>
+</div>
 
 @code {
 
@@ -86,7 +86,8 @@
 			var item = new CardItem()
 			{
 				Title = series.Name,
-				Value = series.Data.LastOrDefault()?.Value
+				Value = series.Data.LastOrDefault()?.Value,
+				SvgIcon = series.SvgIcon()
 			};
 
 			Data.Add(item);
@@ -113,18 +114,29 @@
 
 <style type="text/css">
 
-	.st0, .st2 {
+	.st0, .st1, .st2 {
 		fill: #bcbec4;
+	}
+
+	.widget-content-report-ethnicity-traffic-container {
+		display: flex;
 	}
 
 	.widget-content-report-ethnicity-traffic-icon {
 		/*transform: scale(0.9);*/
 		text-align: center;
+		width: 50px;
 	}
+
+		.widget-content-report-ethnicity-traffic-icon svg {
+			width: 50px;
+			padding: 1px;
+		}
 
 	.widget-content-report-ethnicity-traffic-progress {
 		/*padding: 18px;*/
 		margin: auto;
+		flex-grow: 1;
 	}
 
 	.progress-line .stat-progress {

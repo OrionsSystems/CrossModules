@@ -34,6 +34,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public int PercentagePrecision { get; set; } = 2;
 
-		public string IconHtml { get; set; }
+		public string SvgIcon { get; set; }
 	}
 }

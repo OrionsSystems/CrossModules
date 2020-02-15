@@ -1,4 +1,6 @@
 ﻿using Orions.Common;
+using Orions.Infrastructure.Common;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.Reporting;
 
 using System;
@@ -61,11 +63,38 @@ namespace Orions.Systems.CrossModules.Components
 
 			ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
 
+			if (ReportChartData != null) {
+				ReportChartData.MapIcons(dataSource.IconMapping);
+				await LoadAllIcons(ReportChartData);
+			}
+
 			IsLoadedReportResult = true;
 
 			OnReportResultChanged?.Invoke();
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 
+		}
+
+		private async Task LoadAllIcons(ReportChartData data) 
+		{
+			var docs = data.Series?.Where(it=>it.IconDocument != null)
+				.Select(it => it.IconDocument.Value).ToArray();
+
+			var args = new RetrieveHyperDocumentsArgs();
+			args.DocumentsIds = docs;
+			
+			var results = await this.HyperStore.ExecuteAsync(args);
+
+			if (args.ExecutionResult.IsNotSuccess)
+				return;
+
+			foreach (var item in results) {
+				var icon = item?.GetPayload<UniIconResource>();
+				if (icon != null) {
+					var chartData = data.Series.FirstOrDefault(it => it.IconDocument.GetValueOrDefault().Equals(item.Id));
+					chartData.Icon = icon;
+				}
+			}
 		}
 
 		public static ReportChartData LoadReportChartData(Report report, string[] categoryFilters)

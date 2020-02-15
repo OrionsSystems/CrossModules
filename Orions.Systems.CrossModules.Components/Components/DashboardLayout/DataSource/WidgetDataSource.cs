@@ -14,6 +14,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public DataSourceNameMapping Mapping { get; set; } = new DataSourceNameMapping();
 
+		public IconMapping IconMapping { get; set; } = new IconMapping();
+
 		public WidgetDataSource()
 		{
 		}
