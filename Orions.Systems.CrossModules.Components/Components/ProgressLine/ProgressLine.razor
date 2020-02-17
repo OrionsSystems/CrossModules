@@ -1,21 +1,23 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-<div class="progress-line mt-1">
+<div class="progress-line">
 
+		<div class="progress-line-icon-container">
+		@if (!string.IsNullOrWhiteSpace(IconUrl))
+		{
+			<span class="icon"><img src="@IconUrl"></span>
+		}
+
+		@if (IconSource != null)
+		{
+			<span class="icon"><img src="@ImageBase64Url"></span>
+		}
+	</div>
 	@if (IsShowTitle)
 	{
 		<div class="stat-title">
 			@Title
 		</div>
-	}
-	@if (!string.IsNullOrWhiteSpace(IconUrl))
-	{
-		<span class="icon"><img src="@IconUrl"></span>
-	}
-
-	@if (IconSource != null)
-	{
-		<span class="icon"><img src="@ImageBase64Url"></span>
 	}
 	<div class="stat-container">
 		<span class="stat-progress" style="width: @(Progress)%;"></span>
