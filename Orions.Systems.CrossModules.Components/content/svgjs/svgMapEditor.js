@@ -31,6 +31,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     let camerasLayer = draw.group();
     let circlesLayer = draw.group();
 
+    draw.on('click', () => document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled'))
+
     let zones = []
     let cameras = []
     let circles = []
@@ -93,9 +95,15 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
 
-        newZone.onHeatmap(() => {
-            componentReference.invokeMethodAsync("OpenHeatmap", newZone.overlayEntry.id)
-        });
+        newZone.onSelect(() => {
+            if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
+                && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
+                document.querySelector(rootSelector + " .heatmapBtn").classList.remove('disabled')
+            }
+            else {
+                document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
+            }
+        })
 
         return newZone;
     }
@@ -172,6 +180,17 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
         document.querySelector(rootSelector + " .saveBtn")
             .addEventListener("click", saveMapOverlay);
+
+        document.querySelector(rootSelector + " .heatmapBtn")
+            .addEventListener("click", openHeatmap);
+    }
+
+    function openHeatmap() {
+        zones.forEach(z => {
+            if (z.isSelected) {
+                componentReference.invokeMethodAsync("OpenHeatmap", z.overlayEntry.id)
+            }
+        })
     }
 
     function saveMapOverlay() {
@@ -268,7 +287,27 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         zone.on('drawstop', function (ev) {
             currentControlDrawing = null
             resetActiveBtns()
+
+            addNewZoneBlazorSide(zone);
         });
+    }
+
+    function addNewZoneBlazorSide(newZoneControl){
+        let newZoneOverlayEntry = {
+            points: newZoneControl.polygon.array().map(ap => {
+                return {
+                    x: ap[0],
+                    y: ap[1]
+                }
+            }),
+            color: newZoneControl.attr.fill,
+            name: newZoneControl.name.get()
+        }
+
+        componentReference.invokeMethodAsync("AddNewZoneToVm", newZoneOverlayEntry)
+            .then(resp => {
+                newZoneControl.overlayEntry = resp
+            })
     }
 
     function addCameraTool() {

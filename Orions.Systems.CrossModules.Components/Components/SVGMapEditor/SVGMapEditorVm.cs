@@ -58,6 +58,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public ViewModelProperty<byte[]> TagInfoImage { get; set; } = new ViewModelProperty<byte[]>();
+		public ViewModelProperty<bool> EnableFilterControl { get; set; } = new ViewModelProperty<bool>(false);
+
 		private Dictionary<ZoneOverlayEntry, List<HyperTag>> ZoneHyperTagSets = new Dictionary<ZoneOverlayEntry, List<HyperTag>>();
 
 
@@ -86,11 +88,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
 					IsVmShowingHeatmapProp.Value = true;
 
-					var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId.Value);
-					HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+					PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value);
 				}
 			}
 		}
+
+		private async Task PrepareHeatmap(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId)
+		{
+			var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId);
+			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+		}
+
 
 		public void CloseHeatmap()
 		{
@@ -141,19 +149,30 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await ShowTags();
 		}
 
+		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
+		{
+			var zoneDomainModel = zone.ToDomainModel();
+			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
+
+			return ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
+		}
+
 		private IEnumerable<ZoneOverlayEntry> GetMapOverlayZonesWithHomographyAssigned()
 		{
 			var zones = this.MapOverlay.Value.Entries
 				.Where(e => e.GetType() == typeof(ZoneOverlayEntry))
 				.Cast<ZoneOverlayEntry>()
 				.Where(z => z.FixedCameraEnhancementId != null && !string.IsNullOrWhiteSpace(z.Alias))
-				.Where(z => this.MetadataSetId.HasValue ? true : z.MetadataSetId != null);
+				.Where(z => this.MetadataSetId.HasValue ? true : z.MetadataSetId != null)
+				.ToList();
 
 			return zones;
 		}
 
 		private async Task InitializeTagFilter()
 		{
+			this.EnableFilterControl.Value = false;
+
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 			DateTime? latestDate = null;
 			DateTime? earliestDate = null;
@@ -217,6 +236,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.RaiseNotify("TagDateRangeFilter");
 
 			}
+
+			this.EnableFilterControl.Value = true;
 		}
 
 		private async Task<byte[]> LoadTagImage(HyperTag tag)
@@ -237,11 +258,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			return sliceResult[0].Image.Data;
 		}
 
-
-
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
 		public async Task ShowTags()
 		{
+			this.EnableFilterControl.Value = false;
+
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 
 			var circlesToRemove = _circlesToTagsMappings.Select(kv => new MapOverlayUpdateDetails
@@ -328,6 +349,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 					await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
 				}
+
+				this.EnableFilterControl.Value = true;
 			}
 		}
 
@@ -393,7 +416,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				OverlayEntry = progGridObjectSerialized
 			};
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetails, true, null });
+			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetails, true, "single" });
 
 			this.ShowingControlPropertyGrid.Value = false;
 		}
