@@ -12,18 +12,18 @@
 		<div class="widget-content-report-view">
 			@if (Data.Any())
 			{
-				<div class="row widget-content-report-ethnicity-traffic">
+				<div class="row widget-content-report-progress-line">
 					<div class="col-lg-12">
 						@foreach (var item in Data)
 						{
-							<div class="widget-content-report-ethnicity-traffic-container">
+							<div class="widget-content-report-progress-line-container">
 								@if (Widget.IsShowCardIcons)
 								{
-									<div class="widget-content-report-ethnicity-traffic-icon" title="@item.Title">
+									<div class="widget-content-report-progress-line-icon" title="@item.Title">
 										@((MarkupString)item.SvgIcon)
 									</div>
-									<div class="widget-content-report-ethnicity-traffic-progress">
-										<ProgressLine IsShowTitle="true"
+									<div class="widget-content-report-progress-line-progress">
+										<ProgressLine IsShowTitle="@Widget.ShowElementTitle"
 														  Title="@item.Title"
 														  IsShowPercentage="Widget.IsShowPercentage"
 														  Percentage="@item.Percentage"
@@ -32,8 +32,8 @@
 								}
 								else
 								{
-									<div class="widget-content-report-ethnicity-traffic-progress">
-										<ProgressLine IsShowTitle="true"
+									<div class="widget-content-report-progress-line-progress">
+										<ProgressLine IsShowTitle="@Widget.ShowElementTitle"
 														  Title="@item.Title"
 														  IsShowPercentage="Widget.IsShowPercentage"
 														  Percentage="@item.Percentage"
@@ -118,22 +118,23 @@
 		fill: #395D7F;
 	}
 
-	.widget-content-report-ethnicity-traffic-container {
+	.widget-content-report-progress-line-container {
 		display: flex;
 	}
 
-	.widget-content-report-ethnicity-traffic-icon {
-		/*transform: scale(0.9);*/
+	.widget-content-report-progress-line-icon {
+		transform: scale(0.9);
 		text-align: center;
 		width: 50px;
+		margin-right: 13px;
 	}
 
-		.widget-content-report-ethnicity-traffic-icon svg {
+		.widget-content-report-progress-line-icon svg {
 			width: 50px;
 			padding: 1px;
 		}
 
-	.widget-content-report-ethnicity-traffic-progress {
+	.widget-content-report-progress-line-progress {
 		/*padding: 18px;*/
 		margin: auto;
 		flex-grow: 1;
@@ -143,7 +144,7 @@
 		background-color: #bcbec4;
 	}
 
-	.widget-content-report-ethnicity-traffic-svg {
+	.widget-content-report-progress-line-svg {
 		width: 65px;
 		padding: 10px 10px;
 	}
