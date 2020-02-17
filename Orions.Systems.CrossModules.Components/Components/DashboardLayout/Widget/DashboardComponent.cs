@@ -16,8 +16,8 @@ namespace Orions.Systems.CrossModules.Components
 		[Parameter]
 		public DashboardVm DashboardVm
 		{
-			get => this.DataContext?.ParentVm as DashboardVm;
-			set => this.DataContext.ParentVm = value;
+			get => ((BlazorVm)this.DataContext)?.ParentVm as DashboardVm;
+			set => ((BlazorVm)this.DataContext).ParentVm = value;
 		}
 
 		[Parameter]

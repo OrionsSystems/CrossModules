@@ -91,8 +91,8 @@ namespace Orions.Systems.CrossModules.Components
 		[Parameter]
 		public BaseVm ParentVm
 		{
-			get => _dataContext?.ParentVm;
-			set => _dataContext.ParentVm = value;
+			get => (_dataContext as BlazorVm)?.ParentVm;
+			set => ((BlazorVm)_dataContext).ParentVm = value;
 		}
 
 		bool _initialized = false;
