@@ -26,6 +26,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public HyperDocumentId? MetadataSetId { get; set; }
 		public ViewModelProperty<MapOverlay> MapOverlay { get; set; } = new ViewModelProperty<MapOverlay>(new Infrastructure.HyperMedia.MapOverlay.MapOverlay());
 		public Func<HyperDocumentId?, Task> OnMapOverlayIdSet { get; set; }
+		public Func<TagDateRangeFilterOptions, Task> TagDateRangeFilterChanged { get; set; }
 
 		public string DefaultCircleColor { get; internal set; }
 		public string DefaultZoneColor { get; internal set; }
@@ -58,7 +59,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public ViewModelProperty<byte[]> TagInfoImage { get; set; } = new ViewModelProperty<byte[]>();
+		
 		public ViewModelProperty<bool> EnableFilterControl { get; set; } = new ViewModelProperty<bool>(false);
+
+		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
 
 		private Dictionary<ZoneOverlayEntry, List<HyperTag>> ZoneHyperTagSets = new Dictionary<ZoneOverlayEntry, List<HyperTag>>();
 
@@ -98,7 +102,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId);
 			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
 		}
-
 
 		public void CloseHeatmap()
 		{
@@ -149,33 +152,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await ShowTags();
 		}
 
-		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
-		{
-			var zoneDomainModel = zone.ToDomainModel();
-			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
-
-			return ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
-		}
-
-		private IEnumerable<ZoneOverlayEntry> GetMapOverlayZonesWithHomographyAssigned()
-		{
-			var zones = this.MapOverlay.Value.Entries
-				.Where(e => e.GetType() == typeof(ZoneOverlayEntry))
-				.Cast<ZoneOverlayEntry>()
-				.Where(z => z.FixedCameraEnhancementId != null && !string.IsNullOrWhiteSpace(z.Alias))
-				.Where(z => this.MetadataSetId.HasValue ? true : z.MetadataSetId != null)
-				.ToList();
-
-			return zones;
-		}
-
 		private async Task InitializeTagFilter()
 		{
 			this.EnableFilterControl.Value = false;
 
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
+
+			var earliestDateTasks = new List<Task<HyperDocument[]>>();
+			var latestDateTasks = new List<Task<HyperDocument[]>>();
+			
 			DateTime? latestDate = null;
 			DateTime? earliestDate = null;
+
+
 			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
 			{
 				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
@@ -207,9 +196,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 						}
 					};
 
-					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
-					var firstTag = docs[0].GetPayload<HyperTag>();
-					earliestDate = (firstTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
+					var docsTask = HyperArgsSink.ExecuteAsync(findArgs).AsTask();
+					earliestDateTasks.Add(docsTask);
+
+					
 
 					var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 					lastTagFindArgs.DescriptorConditions.AddCondition(conditions.Result);
@@ -224,9 +214,32 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					};
 					lastTagFindArgs.Limit = 1;
 
-					docs = await HyperArgsSink.ExecuteAsync(lastTagFindArgs);
-					var lastTag = docs[0].GetPayload<HyperTag>();
-					latestDate = (lastTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
+					docsTask = HyperArgsSink.ExecuteAsync(lastTagFindArgs).AsTask();
+					latestDateTasks.Add(docsTask);
+
+					
+				}
+			}
+
+			await Task.WhenAll(earliestDateTasks);
+			await Task.WhenAll(latestDateTasks);
+			for (int zoneIndex = 0; zoneIndex < mapOverlayZonesWithHomographyAssigned.Count; zoneIndex++)
+			{
+				var docs = earliestDateTasks[zoneIndex].Result;
+				var firstTag = docs[0].GetPayload<HyperTag>();
+				var currentEarliestDate = (firstTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
+				if (earliestDate == null || currentEarliestDate < earliestDate)
+				{
+					earliestDate = currentEarliestDate;
+				}
+
+				docs = latestDateTasks[zoneIndex].Result;
+				var lastTag = docs[0].GetPayload<HyperTag>();
+				var currentLatestDate = (lastTag.Elements.Single(e => e is HyperTagTime && (e as HyperTagTime).TimeType == HyperTagTime.TimeTypes.UniversalTime) as HyperTagTime).UniversalTime;
+
+				if (latestDate == null || currentLatestDate > latestDate)
+				{
+					latestDate = currentLatestDate;
 				}
 			}
 
@@ -237,8 +250,25 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			}
 
+			this.TagDateRangeFilter.ValueChanged += () =>
+			{
+				this.ShowTags();
+
+				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMinDate)}");
+				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
+			};
+
 			this.EnableFilterControl.Value = true;
 		}
+
+		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
+		{
+			var zoneDomainModel = zone.ToDomainModel();
+			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
+
+			return ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
+		}
+
 
 		private async Task<byte[]> LoadTagImage(HyperTag tag)
 		{
@@ -287,7 +317,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				if (metadataSetFilter != null && homographyGeometry != null)
 				{
-					var mapZone = this.MapOverlay.Value.Entries.First(z => z as ZoneOverlayEntry != null) as ZoneOverlayEntry;
 					var metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
 
 					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
@@ -297,7 +326,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
 					findArgs.DescriptorConditions.AddCondition(conditions.Result);
-					findArgs.Limit = int.MaxValue;
+					//findArgs.Limit = int.MaxValue;
+					findArgs.Limit = 1000;
 
 
 					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
@@ -322,14 +352,15 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 						{
 							zoneTags.Add(tag);
 
-							var mapperCentrePoint = MapHomographyPoint(bottomCenter, homographyRect.Points, mapZone.Points);
+							var mapperCentrePoint = MapHomographyPoint(bottomCenter, homographyRect.Points, zone.Points);
 							var circle = new CircleOverlayEntryJsModel
 							{
 								Id = Guid.NewGuid().ToString(),
 								Center = mapperCentrePoint,
-								Size = 4
+								Size = 4,
+								IsSelectable = false
 							};
-							circle.EventHandlerMappings.Add("mouseover", "ShowTagInfo");
+							circle.EventHandlerMappings.Add("click", "ShowTagInfo");
 
 							_circlesToTagsMappings.Add(circle, tag);
 
@@ -445,6 +476,18 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			return model;
 		}
 
+		private List<ZoneOverlayEntry> GetMapOverlayZonesWithHomographyAssigned()
+		{
+			var zones = this.MapOverlay.Value.Entries
+				.Where(e => e.GetType() == typeof(ZoneOverlayEntry))
+				.Cast<ZoneOverlayEntry>()
+				.Where(z => z.FixedCameraEnhancementId != null && !string.IsNullOrWhiteSpace(z.Alias))
+				.Where(z => z.MetadataSetId != null || this.MetadataSetId != null)
+				.ToList();
+
+			return zones;
+		}
+
 		public class TagDateRangeFilterOptions
 		{
 			public double Step { get; set; }
@@ -454,14 +497,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			public DateTime CurrentMinDate { get; set; }
 			public DateTime CurrentMaxDate { get; set; }
 
-			public void SliderValueChanged(double[] value)
-			{
-				var min = new DateTime((long)(MinDate.Ticks + (MaxDate.Ticks - MinDate.Ticks) * (value[0] / MaxRangeValue)));
-				var max = new DateTime((long)(MinDate.Ticks + (MaxDate.Ticks - MinDate.Ticks) * (value[1] / MaxRangeValue)));
+			public event Action ValueChanged;
 
-				CurrentMinDate = min;
-				CurrentMaxDate = max;
-			}
+			private Timer _dateFilterChangeThrottlingTimer;
+
+			private double[] updateDateFilterdSliderValue;
 
 			public void InitRangeSlider(DateTime minDate, DateTime maxDate)
 			{
@@ -472,41 +512,38 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				Step = 10;
 				MaxRangeValue = (MaxDate - MinDate).TotalSeconds;
 			}
-		}
 
-		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
-
-		private Timer timer;
-
-		private double[] updatedSliderValue;
-		public void SliderValueChanged(double[] value)
-		{
-			ElapsedEventHandler Timer_Elapsed = delegate (object sender, ElapsedEventArgs e)
+			public void SliderValueChanged(double[] value)
 			{
-				timer.Dispose();
-				timer = null;
-				this.TagDateRangeFilter.SliderValueChanged(updatedSliderValue);
+				ElapsedEventHandler Timer_Elapsed = delegate (object sender, ElapsedEventArgs e)
+				{
+					_dateFilterChangeThrottlingTimer.Dispose();
+					_dateFilterChangeThrottlingTimer = null;
 
-				RaiseNotify("TagDateRangeFilter.CurrentMinDate");
-				RaiseNotify("TagDateRangeFilter.CurrentMaxDate");
+					var min = new DateTime((long)(MinDate.Ticks + (MaxDate.Ticks - MinDate.Ticks) * (updateDateFilterdSliderValue[0] / MaxRangeValue)));
+					var max = new DateTime((long)(MinDate.Ticks + (MaxDate.Ticks - MinDate.Ticks) * (updateDateFilterdSliderValue[1] / MaxRangeValue)));
 
-				this.ShowTags();
-			};
+					CurrentMinDate = min;
+					CurrentMaxDate = max;
 
-			updatedSliderValue = value;
-			if (timer == null)
-			{
-				timer = new System.Timers.Timer(1000);
-				timer.Elapsed += Timer_Elapsed;
-				timer.AutoReset = false;
-				timer.Start();
+					this.ValueChanged?.Invoke();
+				};
+
+				updateDateFilterdSliderValue = value;
+				if (_dateFilterChangeThrottlingTimer == null)
+				{
+					_dateFilterChangeThrottlingTimer = new System.Timers.Timer(2000);
+					_dateFilterChangeThrottlingTimer.Elapsed += Timer_Elapsed;
+					_dateFilterChangeThrottlingTimer.AutoReset = false;
+					_dateFilterChangeThrottlingTimer.Start();
+				}
+				else
+				{
+					_dateFilterChangeThrottlingTimer.Stop();
+					_dateFilterChangeThrottlingTimer.Start();
+				}
+
 			}
-			else
-			{
-				timer.Stop();
-				timer.Start();
-			}
-
 		}
 	}
 

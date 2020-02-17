@@ -101,7 +101,7 @@
     }
 
     class BaseControl {
-        constructor(isReadOnly, svgNode, overlayEntry) {
+        constructor(isReadOnly, svgNode, overlayEntry, isSelectable) {
             let self = this;
 
             if (overlayEntry) {
@@ -111,6 +111,7 @@
                 this.overlayEntry = {}
             }
 
+            this.isSelectable = isSelectable;
             this.onRemoveEventHandlers = []
             this.onDblClickEventHandlers = []
             this.onSelectEventHandlers = []
@@ -121,8 +122,6 @@
             this.controlGroup.on('dblclick', function () {
                 self.onDblClickEventHandlers.forEach(h => h(self))
             })
-
-            
         }
 
         draggable(draggable) {
@@ -188,7 +187,7 @@
                     self.isEditingName.set(false)
                 }
             }
-            else if (!self.isReadOnly){
+            else if (self.isSelectable){
                 for (let i = 0; i < editControls.length; i++) {
                     editControls[i].setAttribute("style", "visibility: visible");
                 }
@@ -200,8 +199,8 @@
     }
 
     class Camera extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
             
             this.attr = attr || {}
 
@@ -344,8 +343,8 @@
     }
 
     class Zone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
             this.resizeControlWidth = 4
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
@@ -483,8 +482,8 @@
     }
 
     class CircleZone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
 
             this.attr = attr || {}
             this.circle = svgRoot.circle().attr(this.attr);

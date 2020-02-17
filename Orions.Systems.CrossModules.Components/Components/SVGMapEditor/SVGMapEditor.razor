@@ -21,7 +21,7 @@
 		<OverlayLoader IsLoading="!this.Vm.EnableFilterControl.Value">
 			<EjsSlider TValue="double[]"
 					   Type="SliderType.Range"
-					   ValueChanged="(double[] e) => Vm.SliderValueChanged(e)"
+					   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
 					   Step="@Vm.TagDateRangeFilter.Step"
 					   Min="0"
 					   Max="@Vm.TagDateRangeFilter.MaxRangeValue"></EjsSlider>
@@ -78,7 +78,7 @@
 			<div class="relative-container tag-info-popup-container">
 				<div class="controls-container">
 					<a class="btn btn-sm btn-outline-dark props-btn" title="Properties" @onclick="(e => Vm.OpenTagProperties())">P</a>
-					<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.Vm.ShowingHyperTagInfo.Value = false)">X</a>
+					<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.CloseHyperTagInfoPopup())">X</a>
 				</div>
 				<img src="@Vm.TagInfoImageBase64Url" />
 			</div>

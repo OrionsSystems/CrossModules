@@ -75,6 +75,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			await Vm.OpenHeatmap(zoneId);
 		}
+
+		[JSInvokable]
+		public async Task CloseHyperTagInfoPopup()
+		{
+			this.Vm.ShowingHyperTagInfo.Value = false;
+		}
 	}
 
 	public class SvgComponentEvent
