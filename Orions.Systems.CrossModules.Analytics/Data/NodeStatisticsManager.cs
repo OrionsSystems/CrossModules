@@ -123,9 +123,9 @@ namespace Orions.CrossModules.Data
 		private async Task ApplyFilterConditions(FindHyperDocumentsArgs mainArgs, HyperMetadataSet id)
 		{
 			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(_netStore, id);
-			if (conditions != null)
+			if (conditions.Result != null)
 			{
-				mainArgs.DescriptorConditions.AddCondition(conditions);
+				mainArgs.DescriptorConditions.AddCondition(conditions.Result);
 			}			
 		}
 
