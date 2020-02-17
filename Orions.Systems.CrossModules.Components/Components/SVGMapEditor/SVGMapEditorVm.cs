@@ -107,6 +107,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			IsVmShowingHeatmapProp.Value = false;
 			HeatmapImgProp.Value = null;
+			_renderer?.Dispose();
 		}
 
 		public async Task Initialize(string componentContainerId, DotNetObjectReference<SVGMapEditorBase> thisReference)
