@@ -25,6 +25,7 @@
             }
             else {
                 controlInstance.select(true)
+                ev.stopPropagation();
             }
         })
     }
@@ -100,7 +101,7 @@
     }
 
     class BaseControl {
-        constructor(isReadOnly, svgNode, overlayEntry) {
+        constructor(isReadOnly, svgNode, overlayEntry, isSelectable) {
             let self = this;
 
             if (overlayEntry) {
@@ -110,8 +111,10 @@
                 this.overlayEntry = {}
             }
 
+            this.isSelectable = isSelectable;
             this.onRemoveEventHandlers = []
             this.onDblClickEventHandlers = []
+            this.onSelectEventHandlers = []
             this.isReadOnly = isReadOnly;
             this.svgNode = svgNode;
             this.controlGroup = this.svgNode.group();
@@ -158,6 +161,18 @@
             this.onDblClickEventHandlers.push(callback)
         }
 
+        onSelect(callback) {
+            this.onSelectEventHandlers.push(callback)
+        }
+
+
+        raiseOnSelect() {
+            let self = this;
+            this.onSelectEventHandlers.forEach(h => {
+                h(self.overlayEntry);
+            })
+        }
+
         select(isSelected) {
             let self = this;
             let editControls = self.controlGroup.node.querySelectorAll('[mapObjectType="edit-control"]');
@@ -172,19 +187,20 @@
                     self.isEditingName.set(false)
                 }
             }
-            else if (!self.isReadOnly){
+            else if (self.isSelectable){
                 for (let i = 0; i < editControls.length; i++) {
                     editControls[i].setAttribute("style", "visibility: visible");
                 }
 
                 self.isSelected = true
+                self.raiseOnSelect();
             }
         }
     }
 
     class Camera extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
             
             this.attr = attr || {}
 
@@ -327,13 +343,12 @@
     }
 
     class Zone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
             this.resizeControlWidth = 4
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
             this.name = new ViewModelProperty(name != undefined ? name : 'Zone Name')
-            this.onHeatmapHandlers = []
 
             this.polygon = svgRoot.polygon().attr(this.attr);
 
@@ -385,17 +400,6 @@
             this.polygon.attr(this.attr)
         }
 
-        onHeatmap(callback){
-            this.onHeatmapHandlers.push(callback)
-        }
-
-        raiseOnHeatmap() {
-            let self = this;
-            this.onHeatmapHandlers.forEach(h => {
-                h(self.overlayEntry);
-            })
-        }
-
         initZoneControls() {
             let self = this;
             let polygon = self.polygon;
@@ -404,29 +408,6 @@
             this.controlGroup.node.classList.add('svg-control-group')
 
             this.controlGroup.add(polygon)
-
-            // init heatmap btn
-            let heatmapCtrl = self.svgNode.text("HM");
-            let getHeatmapCtrlDrawpoint = () => {
-
-                let xMin = null;
-                let yMin = null;
-                self.polygon.array().forEach(p => {
-                    if (p[0] < xMin || xMin == null) xMin = p[0];
-                    if (p[1] < yMin || yMin == null) yMin = p[1];
-                })
-
-                return [xMin, yMin -20]
-            }
-            let heatmapCtrlDrawPoint = getHeatmapCtrlDrawpoint();
-            heatmapCtrl.move(heatmapCtrlDrawPoint[0], heatmapCtrlDrawPoint[1]);
-            self.controlGroup.add(heatmapCtrl);
-            heatmapCtrl.on('click', e => self.raiseOnHeatmap());
-
-            self.polygon.on('resize', function (ev) {
-                let p = getHeatmapCtrlDrawpoint()
-                heatmapCtrl.move(p[0], p[1]);
-            })
 
             // init resize controls
             var verticesArr = polygon.array();
@@ -501,8 +482,8 @@
     }
 
     class CircleZone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly }) {
-            super(isReadOnly, svgNode, overlayEntry)
+        constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly, isSelectable }) {
+            super(isReadOnly, svgNode, overlayEntry, isSelectable)
 
             this.attr = attr || {}
             this.circle = svgRoot.circle().attr(this.attr);

@@ -51,6 +51,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		[JSInvokable]
+		public async Task<JsModel.ZoneOverlayEntryJsModel> AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
+		{
+			zone = Vm.AddNewZoneToVm(zone);
+
+			return zone;
+		}
+
+		[JSInvokable]
 		public async Task OpenSvgControlProps(string id)
 		{
 			this.Vm.OpenSvgControlProps(id);
@@ -65,7 +73,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		[JSInvokable]
 		public async Task OpenHeatmap(string zoneId)
 		{
-			await Vm.OpenHeatmap(zoneId);
+			await Vm.OpenHeatmapAsync(zoneId);
+		}
+
+		[JSInvokable]
+		public async Task OpenRealMasksMap(string zoneId)
+		{
+			await Vm.OpenRealMasksMapAsync(zoneId);
+		}
+
+		[JSInvokable]
+		public async Task CloseHyperTagInfoPopup()
+		{
+			this.Vm.ShowingHyperTagInfo.Value = false;
 		}
 	}
 

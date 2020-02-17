@@ -10,6 +10,8 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool IsShowPercentage { get; set; } = true;
 
+      public bool ShowElementTitle { get; set; }
+
       public string Color { get; set; } = "#c8c2c2";
 
       public ProgressCardWidget()
