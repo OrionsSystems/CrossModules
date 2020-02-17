@@ -25,6 +25,7 @@
             }
             else {
                 controlInstance.select(true)
+                ev.stopPropagation();
             }
         })
     }
@@ -112,6 +113,7 @@
 
             this.onRemoveEventHandlers = []
             this.onDblClickEventHandlers = []
+            this.onSelectEventHandlers = []
             this.isReadOnly = isReadOnly;
             this.svgNode = svgNode;
             this.controlGroup = this.svgNode.group();
@@ -119,6 +121,8 @@
             this.controlGroup.on('dblclick', function () {
                 self.onDblClickEventHandlers.forEach(h => h(self))
             })
+
+            
         }
 
         draggable(draggable) {
@@ -158,6 +162,18 @@
             this.onDblClickEventHandlers.push(callback)
         }
 
+        onSelect(callback) {
+            this.onSelectEventHandlers.push(callback)
+        }
+
+
+        raiseOnSelect() {
+            let self = this;
+            this.onSelectEventHandlers.forEach(h => {
+                h(self.overlayEntry);
+            })
+        }
+
         select(isSelected) {
             let self = this;
             let editControls = self.controlGroup.node.querySelectorAll('[mapObjectType="edit-control"]');
@@ -178,6 +194,7 @@
                 }
 
                 self.isSelected = true
+                self.raiseOnSelect();
             }
         }
     }
@@ -333,7 +350,6 @@
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
             this.name = new ViewModelProperty(name != undefined ? name : 'Zone Name')
-            this.onHeatmapHandlers = []
 
             this.polygon = svgRoot.polygon().attr(this.attr);
 
@@ -385,17 +401,6 @@
             this.polygon.attr(this.attr)
         }
 
-        onHeatmap(callback){
-            this.onHeatmapHandlers.push(callback)
-        }
-
-        raiseOnHeatmap() {
-            let self = this;
-            this.onHeatmapHandlers.forEach(h => {
-                h(self.overlayEntry);
-            })
-        }
-
         initZoneControls() {
             let self = this;
             let polygon = self.polygon;
@@ -404,29 +409,6 @@
             this.controlGroup.node.classList.add('svg-control-group')
 
             this.controlGroup.add(polygon)
-
-            // init heatmap btn
-            let heatmapCtrl = self.svgNode.text("HM");
-            let getHeatmapCtrlDrawpoint = () => {
-
-                let xMin = null;
-                let yMin = null;
-                self.polygon.array().forEach(p => {
-                    if (p[0] < xMin || xMin == null) xMin = p[0];
-                    if (p[1] < yMin || yMin == null) yMin = p[1];
-                })
-
-                return [xMin, yMin -20]
-            }
-            let heatmapCtrlDrawPoint = getHeatmapCtrlDrawpoint();
-            heatmapCtrl.move(heatmapCtrlDrawPoint[0], heatmapCtrlDrawPoint[1]);
-            self.controlGroup.add(heatmapCtrl);
-            heatmapCtrl.on('click', e => self.raiseOnHeatmap());
-
-            self.polygon.on('resize', function (ev) {
-                let p = getHeatmapCtrlDrawpoint()
-                heatmapCtrl.move(p[0], p[1]);
-            })
 
             // init resize controls
             var verticesArr = polygon.array();
