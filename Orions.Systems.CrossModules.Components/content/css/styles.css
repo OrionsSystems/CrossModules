@@ -50,6 +50,10 @@
 	background-color: #f8f8f8;
 }
 
+.dashboard-element-container-live {
+	width: 100%;
+}
+
 .dashboard-content {
 	line-height: 200px;
 	height: 200px;

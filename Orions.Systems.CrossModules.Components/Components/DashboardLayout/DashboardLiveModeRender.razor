@@ -5,38 +5,37 @@
 @if (DashboardVm.Source.Rows.Any())
 {
 
-    @foreach (var row in DashboardVm.Source.Rows)
-    {
-        <div class="row">
-            @foreach (var column in row.Columns)
-            {
-                <div @key="column.Id" class="col-lg-@column.Size">
+   @foreach (var row in DashboardVm.Source.Rows)
+   {
+      <div class="row">
+         @foreach (var column in row.Columns)
+         {
+            <div @key="column.Id" class="col-lg-@column.Size">
 
-                    <div class="dashboard-element-container-live">
-                        <div class="dashboard-content-live">
-                            @if (column.Widget != null && column.Widget.IsVisibile)
-                            {
-                                <WidgetDynamicComponent @key="column.Widget.Id" 
-                                    DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)" 
-                                    DashboardVm="DashboardVm" />
-                            }
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    }
+               <div class="dashboard-element-container-live">
+                  <div class="dashboard-content-live">
+                     @if (column.Widget != null && column.Widget.IsVisibile)
+                     {
+                        <WidgetDynamicComponent @key="column.Widget.Id"
+                                                DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)"
+                                                DashboardVm="DashboardVm" />
+                     }
+                  </div>
+               </div>
+            </div>
+         }
+      </div>
+   }
 }
 
 @code{
 
-    [Parameter]
-    public DashboardVm DashboardVm { get; set; }
+   [Parameter]
+   public DashboardVm DashboardVm { get; set; }
 
 }
 
-<style>
-    .dashboard-element-container-live {
-        width: 100%;
-    }
-</style>
+@if (DashboardVm.Source.Option.EnableStyles)
+{
+   @((MarkupString)DashboardVm.Source.Option.Styles)
+}
