@@ -343,8 +343,9 @@
     }
 
     class Zone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable }) {
+        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable, maxPointsNumber }) {
             super(isReadOnly, svgNode, overlayEntry, isSelectable)
+            this.maxPointsNumber = maxPointsNumber;
             this.resizeControlWidth = 4
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
@@ -356,6 +357,7 @@
             if (startUserDrawing) {
                 this.polygon.draw();
 
+
                 function drawEndEventListener(e) {
                     if (e.keyCode == 13) {
                         self.polygon.draw('done');
@@ -365,6 +367,17 @@
                 this.polygon.on('drawstart', function (e) {
                     document.addEventListener('keydown', drawEndEventListener);
                 });
+
+                if (this.maxPointsNumber !== undefined) {
+                    let pointsCount = 1;
+                    this.polygon.on('drawpoint', function (e) {
+                        pointsCount++;
+                        if (pointsCount == self.maxPointsNumber) {
+                            self.polygon.draw('done');
+                            self.polygon.off('drawstart');
+                        }
+                    })
+                }
 
                 this.polygon.on('drawstop', function () {
                     self.polygon.addTo(self.svgNode)
