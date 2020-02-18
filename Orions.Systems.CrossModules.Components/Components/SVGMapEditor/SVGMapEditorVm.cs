@@ -354,7 +354,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
 					findArgs.DescriptorConditions.AddCondition(conditions.Result);
 					//findArgs.Limit = int.MaxValue;
-					findArgs.Limit = 1000;
+					findArgs.Limit = 250;
 
 
 					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
