@@ -190,7 +190,14 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
-		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool cutOff = false)
+		/// <summary>
+		/// Generates a heatmap based on subset of tags using Fixed Camera Preset with homography.
+		/// </summary>
+		/// <param name="tags">Subset of tags to use.</param>
+		/// <param name="fixedCameraPresetId">Id of Fixed Camera Preset to take homography configuration from.</param>
+		/// <param name="renderAsMasks">If enabled, heatmap masks will be rendered, otherwise real pixels from corresponding frames will be rendered in overlap.</param>
+		/// <param name="cutOff">If we should cutoff the image by homography or just render a polygon line over.</param>
+		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool renderAsMasks = true, bool cutOff = false)
 		{
 			if (tags == null || tags.Count < 1)
 				return null;
@@ -200,26 +207,121 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			if (configuration == null)
 				return null;
 
-			var tagsOrdered = tags.OrderBy(x => x.GetElement<IHyperTagHyperIds>().HyperId).ToArray();
+			var tagsWithHyperId = tags.Select(x => new
+			{
+				Tag = x,
+				HyperId = x.GetElement<IHyperTagHyperIds>().HyperId
+			}).ToArray();
 
-			var hyperId = tagsOrdered[0].GetElement<IHyperTagHyperIds>().HyperId;
+			tagsWithHyperId = tagsWithHyperId.OrderBy(x => x.HyperId).ToArray();
+
+			var hyperId = tagsWithHyperId.First().HyperId;
 
 			if (!_keepWorking || _ct.IsCancellationRequested)
 				return null;
 
 			await UpdateImageDataAsync(hyperId);
 
-			_globalMatrix = new uint[_height, _width];
-
 			if (!_keepWorking || _ct.IsCancellationRequested)
 				return null;
 
-			foreach (var tag in tags)
+			SKImage maskedImage = null;
+
+			if (renderAsMasks)
 			{
-				ProcessMaskedTag(tag);
+				_globalMatrix = new uint[_height, _width];
+
+				foreach (var tag in tags)
+				{
+					ProcessMaskedTag(tag);
+				}
+
+				maskedImage = RenderMask(_lastImage);
+			}
+			else
+			{
+				var tagsBySlice = tagsWithHyperId.GroupBy(x => x.HyperId).OrderBy(x => x.Key).ToArray();
+
+				using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
+				{
+					//get the drawing canvas of the surface
+					var canvas = tempSurface.Canvas;
+
+					//set background color
+					canvas.Clear(SKColors.Transparent);
+
+					var skImage = SKImage.FromBitmap(SKBitmap.Decode(_lastImage.Data));
+
+					var skPaint = new SKPaint
+					{
+						BlendMode = SKBlendMode.Plus
+					};
+
+					canvas.DrawImage(skImage, 0, 0);
+
+					foreach (var tagsForSlice in tagsBySlice)
+					{
+						if (!_keepWorking || _ct.IsCancellationRequested)
+							return null;
+
+						var args = new RetrieveFragmentFramesArgs
+						{
+							AssetId = tagsForSlice.Key.AssetId.Value,
+							TrackId = tagsForSlice.Key.TrackId.Value,
+							FragmentId = tagsForSlice.Key.FragmentId.Value,
+							SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
+						};
+
+						var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
+
+						if (result.Length == 0)
+							continue;
+
+						var frame = result[0].Image;
+						var frameSkBitmap = SKBitmap.Decode(frame.Data);
+
+						_globalMatrix = new uint[_height, _width];
+
+						foreach (var tag in tagsForSlice.Select(x => x.Tag))
+						{
+							if (!_keepWorking || _ct.IsCancellationRequested)
+								return null;
+
+							ProcessMaskedTag(tag);
+						}
+
+						//using (var image = SKImage.FromBitmap(frameSkBitmap))
+						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
+						//{
+						//	// save the data to a stream
+						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
+						//	{
+						//		data.SaveTo(stream);
+						//	}
+						//}
+
+						GenerateMaskFromValuesMatrix(frameSkBitmap, _globalMatrix);
+
+						//using (var image = SKImage.FromBitmap(frameSkBitmap))
+						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
+						//{
+						//	// save the data to a stream
+						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
+						//	{
+						//		data.SaveTo(stream);
+						//	}
+						//}
+
+						canvas.DrawBitmap(frameSkBitmap, 0, 0, skPaint);
+					}
+
+					// return the surface as a manageable image
+					maskedImage = tempSurface.Snapshot();
+				}
 			}
 
-			var maskedImage = RenderMask(_lastImage);
+			if (maskedImage == null)
+				return null;
 
 			if (cutOff)
 			{
@@ -478,6 +580,12 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
+		private class ExtractedTagImage
+		{
+			public SKImage Image { get; set; }
+			public Point TopLeftPoint { get; set; }
+		}
+
 		/// <summary>
 		/// Tries to duplicate metadata set object to avoid modifying original one with local changes.
 		/// </summary>
@@ -592,16 +700,40 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			skBitmap.Dispose();
 
-			//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-			//{
-			//	// save the data to a stream
-			//	using (var stream = File.OpenWrite(@"C:/temp/mask.png"))
-			//	{
-			//		data.SaveTo(stream);
-			//	}
-			//}
-
 			return image;
+		}
+
+		public static void GenerateMaskFromValuesMatrix(SKBitmap sourceImage, uint[,] matrix)
+		{
+			var pixelsAddr = sourceImage.GetPixels();
+
+			unsafe
+			{
+				byte* ptr = (byte*)pixelsAddr.ToPointer();
+
+				for (int row = 0; row < sourceImage.Height; row++)
+					for (int col = 0; col < sourceImage.Width; col++)
+					{
+						var originalValue = matrix[row, col];
+
+						if (originalValue == 0)
+						{
+							// Replace pixel with transparency
+							*ptr++ = 0;   // blue
+							*ptr++ = 0;             // green
+							*ptr++ = 0;   // red
+							*ptr++ = 0;          // alpha
+						}
+						else
+						{
+							// Just move 4 bytes forward, remain original pixel data
+							++*ptr;
+							++*ptr;
+							++*ptr;
+							++*ptr;
+						}
+					}
+			}
 		}
 
 		public class GradientStop

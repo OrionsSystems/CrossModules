@@ -73,7 +73,13 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		[JSInvokable]
 		public async Task OpenHeatmap(string zoneId)
 		{
-			await Vm.OpenHeatmap(zoneId);
+			await Vm.OpenHeatmapAsync(zoneId);
+		}
+
+		[JSInvokable]
+		public async Task OpenRealMasksMap(string zoneId)
+		{
+			await Vm.OpenRealMasksMapAsync(zoneId);
 		}
 
 		[JSInvokable]
