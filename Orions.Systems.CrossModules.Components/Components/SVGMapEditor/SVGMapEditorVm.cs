@@ -60,7 +60,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public ViewModelProperty<byte[]> TagInfoImage { get; set; } = new ViewModelProperty<byte[]>();
-		
+
 		public ViewModelProperty<bool> EnableFilterControl { get; set; } = new ViewModelProperty<bool>(false);
 
 		public bool TagDateFilterInitialized { get; set; } = false;
@@ -76,7 +76,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 		}
 
-		public async Task OpenHeatmap(string zoneId)
+		public async Task OpenHeatmapAsync(string zoneId)
+		{
+			await OpenPopupMap(zoneId, true);
+		}
+
+		public async Task OpenRealMasksMapAsync(string zoneId)
+		{
+			await OpenPopupMap(zoneId, false);
+		}
+
+		private async Task OpenPopupMap(string zoneId, bool heatmapMode)
 		{
 			var zoneOverlayEntry = this.MapOverlay.Value.Entries.Single(z => z.Id == zoneId);
 
@@ -94,21 +104,26 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
 					IsVmShowingHeatmapProp.Value = true;
 
-					PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value);
+					PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
 				}
 			}
 		}
 
-		private async Task PrepareHeatmap(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId)
+		private async Task PrepareHeatmap(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
-			var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId);
-			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+			var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode, false);
+
+			if (img != null)
+			{
+				HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+			}
 		}
 
 		public void CloseHeatmap()
 		{
 			IsVmShowingHeatmapProp.Value = false;
 			HeatmapImgProp.Value = null;
+			_renderer?.Dispose();
 		}
 
 		public async Task Initialize(string componentContainerId, DotNetObjectReference<SVGMapEditorBase> thisReference)
@@ -183,6 +198,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			var earliestDateTasks = new List<Task<HyperDocument[]>>();
 			var latestDateTasks = new List<Task<HyperDocument[]>>();
+
 			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
 			{
 				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
@@ -217,7 +233,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					var docsTask = HyperArgsSink.ExecuteAsync(findArgs).AsTask();
 					earliestDateTasks.Add(docsTask);
 
-					
+
 
 					var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 					lastTagFindArgs.DescriptorConditions.AddCondition(conditions.Result);
@@ -235,7 +251,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					docsTask = HyperArgsSink.ExecuteAsync(lastTagFindArgs).AsTask();
 					latestDateTasks.Add(docsTask);
 
-					
+
 				}
 			}
 			await Task.WhenAll(earliestDateTasks);

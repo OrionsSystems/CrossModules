@@ -33,6 +33,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
     draw.on('click', () => {
         document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
+        document.querySelector(rootSelector + " .realMasksMapBtn").classList.add('disabled')
         componentReference.invokeMethodAsync("CloseHyperTagInfoPopup")
     })
 
@@ -104,9 +105,11 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
                 && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
                 document.querySelector(rootSelector + " .heatmapBtn").classList.remove('disabled')
+                document.querySelector(rootSelector + " .realMasksMapBtn").classList.remove('disabled')
             }
             else {
                 document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
+                document.querySelector(rootSelector + " .realMasksMapBtn").classList.add('disabled')
             }
         })
 
@@ -189,12 +192,23 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
         document.querySelector(rootSelector + " .heatmapBtn")
             .addEventListener("click", openHeatmap);
+
+        document.querySelector(rootSelector + " .realMasksMapBtn")
+            .addEventListener("click", openRealMasksMap);
     }
 
     function openHeatmap() {
         zones.forEach(z => {
             if (z.isSelected) {
                 componentReference.invokeMethodAsync("OpenHeatmap", z.overlayEntry.id)
+            }
+        })
+    }
+
+    function openRealMasksMap() {
+        zones.forEach(z => {
+            if (z.isSelected) {
+                componentReference.invokeMethodAsync("OpenRealMasksMap", z.overlayEntry.id)
             }
         })
     }
