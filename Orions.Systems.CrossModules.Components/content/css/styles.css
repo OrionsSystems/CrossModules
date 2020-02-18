@@ -22,7 +22,7 @@
 
 
 .common-text {
-	color:white;
+	color: white;
 }
 
 .common-table-border {
@@ -147,9 +147,14 @@
 		fill: none;
 	}
 
-dashboard-widget-add > a {
+
+.dashboard-widget-add-icon svg {
+	width: 45px;
+}
+
+.dashboard-widget-add > a {
 	cursor: pointer;
-	border: solid;
+	/*border: solid;
 	display: inline-block;
 	height: 50px;
 	width: 50px;
@@ -157,14 +162,22 @@ dashboard-widget-add > a {
 	font-size: 37px;
 	border-radius: 50px;
 	border-width: 1px;
-	border-color: #888888;
+	border-color: #888888;*/
 }
 
-	.dashboard-widget-add > a:hover {
-		-webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
-		-moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
-		box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
-	}
+.dashboard-widget-add > a:hover {
+	/*-webkit-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+	-moz-box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);
+	box-shadow: 5px 5px 15px 2px rgba(0,0,0,0.25);*/
+}
+
+.dashboard-widget-add .dashboad-svg-icon {
+	fill: #939393;
+}
+
+.dashboard-widget-add > a:hover .dashboad-svg-icon {
+	fill: #447ABE;
+}
 
 .dashboard-between-row {
 	position: absolute;
@@ -233,6 +246,8 @@ dashboard-widget-add > a {
 	cursor: pointer;
 }
 
+
+
 /*   START WIDGET DASHBOARD  */
 .widget-content-report {
 	padding: 15px;
@@ -294,7 +309,7 @@ dashboard-widget-add > a {
 	vertical-align: middle;
 	font-weight: bold;
 	display: inline-block;
-	min-width: 146px;
+	min-width: 50px;
 	font-size: 14px;
 	letter-spacing: 2px;
 	color: #807e7e;
@@ -344,3 +359,17 @@ dashboard-widget-add > a {
 
 /*    END DASHBOARD LAYOUT COMPONENT */
 
+/* Icons */
+
+.bodyTypeStHead {
+	fill: none;
+	stroke: #3A5D7F;
+	stroke-width: 3;
+	stroke-miterlimit: 10;
+}
+
+.bodyTypeStBody {
+	fill: #395D7F;
+}
+
+/* End Icons */
