@@ -50,6 +50,10 @@
 	background-color: #f8f8f8;
 }
 
+.dashboard-element-container-live {
+	width: 100%;
+}
+
 .dashboard-content {
 	line-height: 200px;
 	height: 200px;
@@ -254,6 +258,86 @@ dashboard-widget-add > a {
 .widget-missing-report {
 	text-align: center;
 }
+
+.widget-content-report-progress-line-container {
+	display: flex;
+}
+
+.widget-content-report-progress-line-icon {
+	transform: scale(0.9);
+	text-align: center;
+	width: 50px;
+	margin-right: 13px;
+}
+
+	.widget-content-report-progress-line-icon svg {
+		width: 50px;
+		padding: 1px;
+	}
+
+.widget-content-report-progress-line-progress {
+	/*padding: 18px;*/
+	margin: auto;
+	flex-grow: 1;
+}
+
+.progress-line .stat-progress {
+	background-color: #bcbec4;
+}
+
+.widget-content-report-progress-line-svg {
+	width: 65px;
+	padding: 10px 10px;
+}
+
+.progress-line .stat-title {
+	vertical-align: middle;
+	font-weight: bold;
+	display: inline-block;
+	min-width: 146px;
+	font-size: 14px;
+	letter-spacing: 2px;
+	color: #807e7e;
+}
+
+.progress-line .icon {
+	display: inline-flex;
+	width: 12px;
+	vertical-align: middle;
+}
+
+	.progress-line .icon img {
+		width: 12px;
+	}
+
+.progress-line .stat-progress {
+	background-color: #bcc0cc;
+	display: inline-flex;
+	height: 6px;
+	border-radius: 10px;
+	vertical-align: middle;
+}
+
+.progress-line .stat-container {
+	display: inline-block;
+	width: 70%;
+}
+
+.progress-line .stat-value {
+	vertical-align: middle;
+	font-weight: bold;
+	color: #807e7e;
+}
+
+.separator-line-container {
+	width: 100%;
+}
+
+.separator-line {
+	display: inline-block;
+	margin: auto;
+}
+
 
 /*    END WIDGET DASHBOARD  */
 

@@ -343,8 +343,9 @@
     }
 
     class Zone extends BaseControl {
-        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable }) {
+        constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isSelectable, maxPointsNumber }) {
             super(isReadOnly, svgNode, overlayEntry, isSelectable)
+            this.maxPointsNumber = maxPointsNumber;
             this.resizeControlWidth = 4
             this.attr = attr || {}
             this.isEditingName = new ViewModelProperty(false);
@@ -356,6 +357,7 @@
             if (startUserDrawing) {
                 this.polygon.draw();
 
+
                 function drawEndEventListener(e) {
                     if (e.keyCode == 13) {
                         self.polygon.draw('done');
@@ -365,6 +367,17 @@
                 this.polygon.on('drawstart', function (e) {
                     document.addEventListener('keydown', drawEndEventListener);
                 });
+
+                if (this.maxPointsNumber !== undefined) {
+                    let pointsCount = 1;
+                    this.polygon.on('drawpoint', function (e) {
+                        pointsCount++;
+                        if (pointsCount == self.maxPointsNumber) {
+                            self.polygon.draw('done');
+                            self.polygon.off('drawstart');
+                        }
+                    })
+                }
 
                 this.polygon.on('drawstop', function () {
                     self.polygon.addTo(self.svgNode)
@@ -440,7 +453,7 @@
                 var htmlInput = document.createElement('input');
                 htmlInput.setAttribute('type', 'text')
                 htmlInput.setAttribute('value', zoneName)
-                nameInput.attr('style', 'visibility:collapse');
+                nameInput.node.style.visibility = 'collapse';
                 nameInput.add(htmlInput);
                 self.name.onChange((oldValue, newValue) => {
                     nameLabel.text(newValue)
@@ -457,16 +470,27 @@
                 })
                 self.isEditingName.onChange((oldValue, newValue) =>{
                     if(newValue === false){
-                        nameLabel.attr('style', 'visibility:visible');
-                        nameInput.attr('style', 'visibility:collapse');
+                        nameLabel.node.style.visibility ='visible';
+                        nameInput.node.style.visibility = 'collapse';
                     }
                 })
+
+                let getNameLabelFontSize = () => {
+                    var height = self.polygon.height();
+
+                    var fontSize = height / 8
+
+                    return `${fontSize}px`;
+                }
+                nameLabel.node.style.fontSize = getNameLabelFontSize();
+
                 self.controlGroup.add(nameInput);
                 self.controlGroup.add(nameLabel)
 
                 self.polygon.on('resize', function (ev) {
                     let nameDrawPoint = { x: self.polygon.cx() - nameLabel.bbox().width / 2, y: self.polygon.cy() - nameLabel.bbox().height / 2 };
                     nameLabel.move(nameDrawPoint.x, nameDrawPoint.y);
+                    nameLabel.node.style.fontSize = getNameLabelFontSize();
                 })
             }
 

@@ -21,17 +21,22 @@
 	<div class="map-container">
 		@ChildContent
 	</div>
-	<div class="sliderwrap">
-		<OverlayLoader IsLoading="!this.Vm.EnableFilterControl.Value">
-			<EjsSlider TValue="double[]"
-					   Type="SliderType.Range"
-					   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
-					   Step="@Vm.TagDateRangeFilter.Step"
-					   Min="0"
-					   Max="@Vm.TagDateRangeFilter.MaxRangeValue"></EjsSlider>
-			<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: To:@Vm.TagDateRangeFilter.CurrentMaxDate</span>
-		</OverlayLoader>
-	</div>
+	@if (Vm.HomographiesDetected.Value)
+	{
+		<div class="sliderwrap">
+			<OverlayLoader IsLoading="!this.Vm.EnableFilterControl.Value">
+				<EjsSlider TValue="double[]"
+						   Type="SliderType.Range"
+						   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
+						   Step="@Vm.TagDateRangeFilter.Step"
+						   Min="0"
+						   Max="@Vm.TagDateRangeFilter.MaxRangeValue"
+						   Value=@Vm.TagDateRangeFilter.Value>
+				</EjsSlider>
+				<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: To:@Vm.TagDateRangeFilter.CurrentMaxDate</span>
+			</OverlayLoader>
+		</div>
+	}
 	@if (Vm.ShowingControlPropertyGrid)
 	{
 		<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">

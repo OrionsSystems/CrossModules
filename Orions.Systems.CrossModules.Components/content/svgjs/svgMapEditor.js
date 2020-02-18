@@ -88,7 +88,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             name: zoneOverlayEntry.name,
             overlayEntry: zoneOverlayEntry,
             isReadOnly,
-            isSelectable: zoneOverlayEntry.isSelectable ?? true
+            isSelectable: zoneOverlayEntry.isSelectable ?? true,
+            maxPointsNumber: 4
         });
         newZone.persist = zoneOverlayEntry.persist;
 
