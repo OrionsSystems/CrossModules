@@ -54,7 +54,7 @@
 
 			@foreach (var row in Data.Rows)
 			{
-				<div class="row mb-4">
+				<div @key="row.Id" class="row mb-4">
 
 					@{
 						var lastCoumnId = row.Columns.Last.Value.Id;
@@ -68,7 +68,7 @@
 
 								<div class="dashboard-content" @onmouseover="(e => Vm.ShowCommands(e, column))" @onmouseout="(e => Vm.HideCommands(e, column))">
 
-									@if (IsEditMode && column.ShowCommands)
+									@if (true || IsEditMode && column.ShowCommands)
 									{
 										<div class="dashboard-element-commands">
 
@@ -105,7 +105,12 @@
 										@if (IsEditMode)
 										{
 											<div class="dashboard-widget-add">
-												<a class="btn" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, column))">&#43;</a>
+												<a class="dashboard-widget-add-icon" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, column))">
+													<svg version="1.1" id="AddWidgetIconId" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 150 150" style="enable-background:new 0 0 150 150;" xml:space="preserve">
+														<polygon class="dashboad-svg-icon" points="137.6,45.9 105.1,45.9 105.1,11.4 95.8,11.4 95.8,45.9 63.4,45.9 63.4,55 95.8,55 95.8,86.8 105.1,86.8 105.1,55 137.6,55 " />
+														<polygon class="dashboad-svg-icon" points="128.6,128.7 21.4,128.7 21.4,21.5 60.2,21.5 60.2,11.7 11.5,11.7 11.5,138.6 138.5,138.6 138.5,88.4 128.6,88.4 " />
+													</svg>
+												</a>
 											</div>
 										}
 									}
