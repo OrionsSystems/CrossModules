@@ -1,6 +1,7 @@
 ﻿using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Node.Common;
 using System;
+using static Orions.Systems.CrossModules.Components.Components.SVGMapEditor.SVGMapEditorVm;
 
 namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
 {
@@ -15,6 +16,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public bool IsReadOnly { get; set; } = false;
 
+		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; }
 		public string DefaultZoneColor { get; set; } = "#FF0000";
 		public string DefaultCameraColor { get; set; } = "#00FF00";
 		public string DefaultCircleColor { get; set; } = "#0000FF";
