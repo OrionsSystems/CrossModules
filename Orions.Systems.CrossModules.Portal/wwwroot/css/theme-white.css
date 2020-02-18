@@ -1,6 +1,8 @@
 /* WHITE THEME FIX */
 
 
-
+.property-title a {
+	color: black;
+}
 
 
