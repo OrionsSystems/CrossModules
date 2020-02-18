@@ -250,98 +250,95 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				var tagsBySlice = tagsWithHyperId.GroupBy(x => x.HyperId).OrderBy(x => x.Key).ToArray();
 
-				using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
+				var sourceBitmap = SKBitmap.Decode(_lastImage.Data);
+
+				foreach (var tagsForSlice in tagsBySlice.Take(tagGroupsLimit))
 				{
-					//get the drawing canvas of the surface
-					var canvas = tempSurface.Canvas;
+					if (!_keepWorking || _ct.IsCancellationRequested)
+						return null;
 
-					//set background color
-					canvas.Clear(SKColors.Transparent);
-
-					var skImage = SKBitmap.Decode(_lastImage.Data);
-
-					var skPaint = new SKPaint
+					var args = new RetrieveFragmentFramesArgs
 					{
-						BlendMode = SKBlendMode.Multiply
+						AssetId = tagsForSlice.Key.AssetId.Value,
+						TrackId = tagsForSlice.Key.TrackId.Value,
+						FragmentId = tagsForSlice.Key.FragmentId.Value,
+						SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
 					};
 
-					//using (var data = skImage.Encode(SKEncodedImageFormat.Png, 80))
-					//{
-					//	// save the data to a stream
-					//	using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__1.png"))
-					//	{
-					//		data.SaveTo(stream);
-					//	}
-					//}
+					var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
 
-					canvas.DrawBitmap(skImage, 0, 0);
+					if (result.Length == 0)
+						continue;
 
-					foreach (var tagsForSlice in tagsBySlice.Take(tagGroupsLimit))
+					var frame = result[0].Image;
+					var frameSkBitmap = SKBitmap.Decode(frame.Data);
+
+					_globalMatrix = new uint[_height, _width];
+
+					foreach (var tag in tagsForSlice.Select(x => x.Tag))
 					{
 						if (!_keepWorking || _ct.IsCancellationRequested)
 							return null;
 
-						var args = new RetrieveFragmentFramesArgs
+						var tagExtraction = ProcessMaskedTag(tag);
+						if (tagExtraction != null)
 						{
-							AssetId = tagsForSlice.Key.AssetId.Value,
-							TrackId = tagsForSlice.Key.TrackId.Value,
-							FragmentId = tagsForSlice.Key.FragmentId.Value,
-							SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
-						};
-
-						var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
-
-						if (result.Length == 0)
-							continue;
-
-						var frame = result[0].Image;
-						var frameSkBitmap = SKBitmap.Decode(frame.Data);
-
-						_globalMatrix = new uint[_height, _width];
-
-						foreach (var tag in tagsForSlice.Select(x => x.Tag))
-						{
-							if (!_keepWorking || _ct.IsCancellationRequested)
-								return null;
-
-							var tagExtraction = ProcessMaskedTag(tag);
-							if (tagExtraction != null)
-							{
-								ProcessMaskTransparencyIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
-							}
+							ProcessMaskTransparencyIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
 						}
-
-						//using (var data = SKImage.FromBitmap(frameSkBitmap).Encode(SKEncodedImageFormat.Png, 80))
-						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__2.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
-						//}
-
-						GenerateMaskFromTransparencyMatrix(frameSkBitmap, _globalMatrix);
-
-						//using (var data = SKImage.FromBitmap(frameSkBitmap).Encode(SKEncodedImageFormat.Png, 80))
-						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__3.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
-						//}
-
-						//foreach (var blendMode in Enum.GetValues(typeof(SKBlendMode)).Cast<SKBlendMode>())
-						//{
-						//	BlendTwoImages(skImage, frameSkBitmap, blendMode);
-						//}
-
-						canvas.DrawBitmap(frameSkBitmap, 0, 0, skPaint);
 					}
 
-					// return the surface as a manageable image
-					maskedImage = tempSurface.Snapshot();
+					var sourcePixelsAddr = sourceBitmap.GetPixels();
+					var destPixelsAddr = frameSkBitmap.GetPixels();
+
+					byte MixColors(byte color1, byte color2, byte transparencyValue)
+					{
+						var transparency2 = (double)1 / 255 * transparencyValue;
+						var transparency1 = 1 - transparency2;
+
+						var result = (byte)((color1 * transparency1) + (color2 * transparency2));
+						return result;
+					}
+
+					unsafe
+					{
+						byte* sourcePtr = (byte*)sourcePixelsAddr.ToPointer();
+						byte* destPtr = (byte*)destPixelsAddr.ToPointer();
+
+						for (int row = 0; row < sourceBitmap.Height; row++)
+							for (int col = 0; col < sourceBitmap.Width; col++)
+							{
+								var transpValue = _globalMatrix[row, col];
+
+								if (transpValue == 0) // Do not modify anything
+								{
+									sourcePtr += 4;
+									destPtr += 4;
+								}
+								else
+								{
+									var destBlue = *destPtr++; // blue
+									var destGreen = *destPtr++; // green
+									var destRed = *destPtr++; // red
+									destPtr++; // skip alpha
+
+									var sourceBlue = *sourcePtr;
+									var sourceGreen = *(sourcePtr + 1);
+									var sourceRed = *(sourcePtr + 2);
+
+									var mixedBlue = MixColors(sourceBlue, destBlue, (byte)transpValue);
+									var mixedGreen = MixColors(sourceGreen, destGreen, (byte)transpValue);
+									var mixedRed = MixColors(sourceRed, destRed, (byte)transpValue);
+
+									*sourcePtr++ = mixedBlue; // blue
+									*sourcePtr++ = mixedGreen; // green
+									*sourcePtr++ = mixedRed; // red
+									sourcePtr++; // skip alpha
+								}
+							}
+					}
 				}
+
+				maskedImage = SKImage.FromBitmap(sourceBitmap);
 			}
 
 			if (maskedImage == null)
