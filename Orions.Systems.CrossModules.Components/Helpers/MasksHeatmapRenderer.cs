@@ -254,7 +254,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 					var skPaint = new SKPaint
 					{
-						BlendMode = SKBlendMode.Plus
+						BlendMode = SKBlendMode.SrcATop
 					};
 
 					canvas.DrawImage(skImage, 0, 0);
@@ -290,26 +290,11 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 							ProcessMaskedTag(tag);
 						}
 
-						//using (var image = SKImage.FromBitmap(frameSkBitmap))
-						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
-						//}
-
 						GenerateMaskFromValuesMatrix(frameSkBitmap, _globalMatrix);
 
-						//using (var image = SKImage.FromBitmap(frameSkBitmap))
-						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
+						//foreach(var blendMode in Enum.GetValues(typeof(SKBlendMode)).Cast<SKBlendMode>())
 						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
+						//	BlendTwoImages(skImage, frameSkBitmap, blendMode);
 						//}
 
 						canvas.DrawBitmap(frameSkBitmap, 0, 0, skPaint);
@@ -330,6 +315,39 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			else
 			{
 				return RenderWithNoCutoff(maskedImage, configuration);
+			}
+		}
+
+		private void BlendTwoImages(SKImage image1, SKBitmap image2, SKBlendMode blendMode)
+		{
+			using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
+			{
+				//get the drawing canvas of the surface
+				var canvas = tempSurface.Canvas;
+
+				//set background color
+				canvas.Clear(SKColors.Transparent);
+
+				var skPaint = new SKPaint
+				{
+					BlendMode = blendMode
+				};
+
+				canvas.DrawImage(image1, 0, 0);
+
+				canvas.DrawBitmap(image2, 0, 0, skPaint);
+
+				// return the surface as a manageable image
+				var res = tempSurface.Snapshot();
+
+				using (var data = res.Encode(SKEncodedImageFormat.Png, 80))
+				{
+					// save the data to a stream
+					using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__{(blendMode.ToString())}.png"))
+					{
+						data.SaveTo(stream);
+					}
+				}
 			}
 		}
 
@@ -727,10 +745,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 						else
 						{
 							// Just move 4 bytes forward, remain original pixel data
-							++*ptr;
-							++*ptr;
-							++*ptr;
-							++*ptr;
+							ptr += 4;
 						}
 					}
 			}
