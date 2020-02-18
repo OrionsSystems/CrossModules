@@ -440,7 +440,7 @@
                 var htmlInput = document.createElement('input');
                 htmlInput.setAttribute('type', 'text')
                 htmlInput.setAttribute('value', zoneName)
-                nameInput.attr('style', 'visibility:collapse');
+                nameInput.node.style.visibility = 'collapse';
                 nameInput.add(htmlInput);
                 self.name.onChange((oldValue, newValue) => {
                     nameLabel.text(newValue)
@@ -457,16 +457,27 @@
                 })
                 self.isEditingName.onChange((oldValue, newValue) =>{
                     if(newValue === false){
-                        nameLabel.attr('style', 'visibility:visible');
-                        nameInput.attr('style', 'visibility:collapse');
+                        nameLabel.node.style.visibility ='visible';
+                        nameInput.node.style.visibility = 'collapse';
                     }
                 })
+
+                let getNameLabelFontSize = () => {
+                    var height = self.polygon.height();
+
+                    var fontSize = height / 8
+
+                    return `${fontSize}px`;
+                }
+                nameLabel.node.style.fontSize = getNameLabelFontSize();
+
                 self.controlGroup.add(nameInput);
                 self.controlGroup.add(nameLabel)
 
                 self.polygon.on('resize', function (ev) {
                     let nameDrawPoint = { x: self.polygon.cx() - nameLabel.bbox().width / 2, y: self.polygon.cy() - nameLabel.bbox().height / 2 };
                     nameLabel.move(nameDrawPoint.x, nameDrawPoint.y);
+                    nameLabel.node.style.fontSize = getNameLabelFontSize();
                 })
             }
 
