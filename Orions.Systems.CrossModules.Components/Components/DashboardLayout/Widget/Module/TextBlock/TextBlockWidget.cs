@@ -2,14 +2,14 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class SimpleHtmlWidget : DashboardWidget, IDashboardWidget
+   public class TextBlockWidget : DashboardWidget, IDashboardWidget
    {
       [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
       public string RawHtml { get; set; }
 
-      public SimpleHtmlWidget()
+      public TextBlockWidget()
       {
-         this.Label = "Simple Html Widget";
+         this.Label = "Text Block Widget";
       }
    }
 }
