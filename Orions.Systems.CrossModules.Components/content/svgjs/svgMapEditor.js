@@ -11,6 +11,10 @@
         let layoutEditor = this.layoutEditors[rootElementId];
 
         layoutEditor.update(updateDetails, persist, mode)
+    },
+
+    makePopupDraggable: function(rootElementId) {
+        $('#' + rootElementId + ' .draggable-popup .modal-dialog').draggable()
     }
 }
 
@@ -31,7 +35,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     let camerasLayer = draw.group();
     let circlesLayer = draw.group();
 
-    draw.on('click', () => {
+    document.addEventListener('click', () => {
         document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
         document.querySelector(rootSelector + " .realMasksMapBtn").classList.add('disabled')
         componentReference.invokeMethodAsync("CloseHyperTagInfoPopup")
@@ -222,6 +226,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             name: mapOverlay.name,
             zones: zones.filter(z => z.persist).map(z => {
                 return {
+                    id: z.overlayEntry.id,
                     name: z.name.get(),
                     points: z.polygon.array().map(ap => {
                         return {
@@ -237,12 +242,14 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             }),
             circles: circles.filter(c => c.persist).map(c => {
                 return {
+                    id: z.overlayEntry.id,
                     center: { x: c.circle.cx(), y: c.circle.cy() },
                     size: c.circle.width()
                 }
             }),
             cameras: cameras.filter(c => c.persist).map(c => {
                 return {
+                    id: z.overlayEntry.id,
                     points: c.polygon.array().map(ap => {
                         return {
                             x: ap[0],

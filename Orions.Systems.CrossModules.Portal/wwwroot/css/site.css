@@ -213,3 +213,206 @@ app {
 .center {
 	text-align:center;
 }
+
+
+/* Property page*/
+#selected-property {
+	margin-top: 20px;
+	font-size: 14px;
+	text-transform: uppercase;
+}
+
+	#selected-property .property-banner {
+		/*width: 100%;*/
+	}
+
+		#selected-property .property-banner img {
+			width: 100%;
+			margin: 0 20px;
+			border: 1px solid #858484;
+			padding: 10px;
+		}
+
+	#selected-property .property-container {
+		letter-spacing: 1px;
+		margin: 0 25px;
+	}
+
+		#selected-property .property-container .property-title {
+			display: flex;
+			padding-top: 8px;
+		}
+
+			#selected-property .property-container .property-title span {
+				display: inline-flex;
+				margin: auto;
+				margin-bottom: 11px;
+				text-transform: uppercase;
+				color: #bebebe;
+				font-size: 23px;
+			}
+
+		#selected-property .property-container .collapse-prop {
+			position: absolute;
+			height: 20px;
+			width: 20px;
+			right: 0px;
+			cursor: pointer;
+		}
+
+			#selected-property .property-container .collapse-prop polyline {
+				fill: #bebebe;
+			}
+
+
+		#selected-property .property-container .property-visitors,
+		#selected-property .property-container .property-users {
+			margin: 0px 4px;
+		}
+
+		#selected-property .property-container .icon {
+			display: inline-flex;
+			width: 16px;
+			height: 16px;
+			vertical-align: middle;
+		}
+
+			#selected-property .property-container .icon img {
+				width: 16px;
+				height: 16px;
+			}
+
+		#selected-property .property-container .stat-progress {
+			background-color: #bcc0cc;
+			display: inline-flex;
+			height: 6px;
+			border-radius: 10px;
+			vertical-align: middle;
+			margin-left: 4px;
+			max-width: 85%;
+		}
+
+		#selected-property .property-container .stat-value {
+			vertical-align: middle;
+		}
+
+		#selected-property .property-container .property-hour-clock {
+			line-height: 20px;
+			margin: 0px 4px;
+		}
+
+
+	#selected-property .property-action {
+		margin: 20px 10px;
+	}
+
+.property-card .day-icon img {
+	content: url("/icons/calander copy@5x.png");
+}
+
+.property-card .active-property .day-icon img {
+	content: url("/icons/calander@5x.png");
+}
+
+.property-card .week-icon img {
+	content: url("/icons/week icon@5x.png");
+}
+
+.property-card .active-property .week-icon img {
+	content: url("/icons/week icon@5x.png");
+}
+
+.property-card .month-icon img {
+	content: url("/icons/month icon copy 2@5x.png");
+}
+
+.property-card .active-property .month-icon img {
+	content: url("/icons/month icon@5x.png");
+}
+
+.property-card .min-hour-icon img {
+	content: url("/icons/min hour clock@5x.png");
+}
+
+.property-card .active-property .min-hour-icon img {
+	content: url("/icons/min hour clock@5x.png");
+}
+
+#selected-property .property-container .property-notification {
+	margin: 0px 4px;
+}
+
+	#selected-property .property-container .property-notification .warning {
+		font-size: 14px;
+		vertical-align: middle;
+	}
+
+#selected-property .property-container .small-text {
+	font-size: 10px;
+}
+
+#selected-property .property-container .property-updated {
+	margin: 0px 4px;
+	padding-bottom: 8px;
+}
+
+
+
+.property-card {
+	margin-top: 60px;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	font-size: 10px;
+}
+
+	.property-card .property-container {
+		margin: 0px 20px;
+		cursor: pointer;
+		/*box-shadow: 0 8px 6px -6px rgba(163,163,163,1);*/
+	}
+
+		.property-card .property-container .property-title {
+			display: flex;
+			padding-top: 8px;
+		}
+
+			.property-card .property-container .property-title a {
+				margin: 0 auto;
+				text-align: center;
+				text-decoration: none;
+				font-size: .6rem;
+			}
+
+	.property-card .active-property .property-title a {
+		color: #365c7e !important;
+		/*font: caption;*/
+	}
+
+	.property-card .property-container .property-title a span {
+		display: flex;
+		width: 40%;
+		border-top: solid 0.06rem;
+		margin: 0 auto;
+		margin-top: 10px;
+	}
+
+	.property-card .property-container .property-banner {
+		padding-top: 16px;
+	}
+
+		.property-card .property-container .property-banner img {
+			width: 100%;
+		}
+
+.coming-soon {
+	display: flex;
+	padding: 4px;
+	opacity: .5;
+}
+
+	.coming-soon span {
+		display: inline-flex;
+		margin: auto;
+	}
+
+/* End Property page*/

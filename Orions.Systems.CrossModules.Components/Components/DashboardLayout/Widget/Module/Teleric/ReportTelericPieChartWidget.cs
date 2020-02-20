@@ -6,7 +6,7 @@ namespace Orions.Systems.CrossModules.Components
     {
       public ReportTelericPieChartWidget()
       {
-         Label = "Report Pie Chart (Teleric)";
+         Label = "Pie Chart Teleric";
       }
     }
 }

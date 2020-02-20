@@ -1,6 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 @using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor.Popups
 
 @inherits DashboardLayoutComponent
 
@@ -54,7 +55,7 @@
 
 			@foreach (var row in Data.Rows)
 			{
-				<div class="row mb-4">
+				<div @key="row.Id" class="row dashboard-row-container mb-4">
 
 					@{
 						var lastCoumnId = row.Columns.Last.Value.Id;
@@ -66,85 +67,94 @@
 
 							<div class="dashboard-element-container dashboard-shadow">
 
-								<div class="dashboard-content" @onmouseover="(e => Vm.ShowCommands(e, column))" @onmouseout="(e => Vm.HideCommands(e, column))">
-
-									@if (IsEditMode && column.ShowCommands)
+								<div class="dashboard-content">
+									@if (IsEditMode)
 									{
-										<div class="dashboard-element-commands">
-
-											@if (column.Widget != null)
-											{
-												<a class="btn btn-sm btn-outline-dark" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">Clean</a>
-
-												<a class="btn btn-sm btn-outline-dark" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, column))">P</a>
-											}
-
-											@if (column.Size > 1)
-											{
-												<a class="btn btn-sm btn-outline-dark" title=" Split column" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">||</a>
-											}
-											<a class="btn btn-sm btn-outline-dark" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">X</a>
-										</div>
-									}
-
-									@if (IsEditMode && column.ShowCommands && Vm.HasPreviousColumn(row, column))
-									{
-										<div class="dashboard-content-prev" title="Increase size into left">
-											<a @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
-												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-													  viewBox="0 0 30 30">
-													<polygon points="2.72,15 13.24,27.62 13.24,20.18 26.75,20.18 26.75,9.74 13.24,9.74 13.24,2.38 " />
-												</svg>
-											</a>
-										</div>
-									}
-
-
-									@if (column.Widget == null)
-									{
-										@if (IsEditMode)
+									<div class="dashboard-element-commands">
+										@if (column.Size > 1)
 										{
-											<div class="dashboard-widget-add">
-												<a class="btn" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, column))">&#43;</a>
+											<a class="dashboard-element-commands-split-horisontal" title=" Split column" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
+												<IconSplitHorisontal></IconSplitHorisontal>
+											</a>
+										}
+										<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+											<IconClose></IconClose>
+										</a>
+									</div>
+									}
+
+									<div class="clearfix"></div>
+									<div class="dashboard-widget-container">
+										@if (IsEditMode && Vm.HasPreviousColumn(row, column))
+										{
+											<div class="dashboard-content-prev" title="Increase size into left">
+												<a @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
+													<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+														  viewBox="0 0 30 30">
+														<polygon points="2.72,15 13.24,27.62 13.24,20.18 26.75,20.18 26.75,9.74 13.24,9.74 13.24,2.38 " />
+													</svg>
+												</a>
 											</div>
 										}
-									}
-									else
-									{
-
-										@if (Vm.IsDashboadContainer(column.Widget))
+										@if (column.Widget == null)
 										{
-											@*<DashboardLayout HyperStore="@HyperStore"
-																	  Data=""
-																	  EnableBetweenBox="true"
-																	  IsPreviewMode="false"
-																	  DisableModeOption="true">
-												</DashboardLayout>*@
+											@if (IsEditMode)
+											{
+												<div class="dashboard-widget-add">
+													<EjsTooltip Content="@("Add widget")">
+														<a class="dashboard-widget-add-icon" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, column))">
+															<svg version="1.1" id="AddWidgetIconId" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 150 150">
+																<polygon class="dashboad-svg-icon" points="137.6,45.9 105.1,45.9 105.1,11.4 95.8,11.4 95.8,45.9 63.4,45.9 63.4,55 95.8,55 95.8,86.8 105.1,86.8 105.1,55 137.6,55 " />
+																<polygon class="dashboad-svg-icon" points="128.6,128.7 21.4,128.7 21.4,21.5 60.2,21.5 60.2,11.7 11.5,11.7 11.5,138.6 138.5,138.6 138.5,88.4 128.6,88.4 " />
+															</svg>
+														</a>
+													</EjsTooltip>
+												</div>
+											}
 										}
-										<div class="dashboard-widget-label">
-											@column.Widget.Label
-										</div>
-
-									}
-
-									@if (IsEditMode && column.ShowCommands && Vm.HasNextColumn(row, column))
-									{
-										<div class="dashboard-content-next" title="Increase size into right">
-											<a @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-													  viewBox="0 0 30 30">
-													<polygon points="26.75,15 16.23,2.38 16.23,9.82 2.72,9.82 2.72,20.26 16.23,20.26 16.23,27.62 " />
+										else
+										{
+											<div class="dashboard-widget-icon">
+												<svg version="1.1" id="AddWidgetIconId" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 150 150">
+													<polygon class="dashboad-svg-icon" points="137.6,45.9 105.1,45.9 105.1,11.4 95.8,11.4 95.8,45.9 63.4,45.9 63.4,55 95.8,55 95.8,86.8 105.1,86.8 105.1,55 137.6,55 " />
+													<polygon class="dashboad-svg-icon" points="128.6,128.7 21.4,128.7 21.4,21.5 60.2,21.5 60.2,11.7 11.5,11.7 11.5,138.6 138.5,138.6 138.5,88.4 128.6,88.4 " />
 												</svg>
-											</a>
-										</div>
-									}
+											</div>
+											<div class="dashboard-widget-data-container">
+												<div class="dashboard-widget-label">
+													@column.Widget.Label
+												</div>
+												<div class="dashboard-widget-commands">
+													<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
+														<IconClean></IconClean>
+													</a>
+													<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, column))">
+														<IconSettings></IconSettings>
+													</a>
+												</div>
+
+											</div>
+
+										}
+										@if (IsEditMode && Vm.HasNextColumn(row, column))
+										{
+											<div class="dashboard-content-next" title="Increase size into right">
+												<a @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
+													<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+														  viewBox="0 0 30 30">
+														<polygon points="26.75,15 16.23,2.38 16.23,9.82 2.72,9.82 2.72,20.26 16.23,20.26 16.23,27.62 " />
+													</svg>
+												</a>
+											</div>
+										}
+									</div>
 								</div>
 
 								@if (IsEditMode && EnableBetweenBox && lastCoumnId != column.Id)
 								{
 									<div class="dashboard-between-content" @onmouseover="(e => { column.ShowBetweenCommands = true; })" @onmouseout="(e => { column.ShowBetweenCommands = false; })">
 
-										@if (column.ShowBetweenCommands)
+										@if (true || column.ShowBetweenCommands)
 										{
 											<div class="dashboard-swap-column" @onclick="(e => Vm.OnSwapColumns(e, row, column))">
 												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -190,7 +200,7 @@
 					{
 						<div class="dashboard-between-row" @onmouseover="(e => { row.ShowCommands = true; })" @onmouseout="(e => { row.ShowCommands = false; })">
 
-							@if (row.ShowCommands)
+							@if (true || row.ShowCommands)
 							{
 								<div class="dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
 									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -239,7 +249,7 @@
 @if (Vm.IsShowModalWidget)
 {
 	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
-		<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header dashboard-modal-widget-header">
 					<h5 class="modal-title">Available Widgets</h5>
@@ -248,18 +258,24 @@
 					</button>
 				</div>
 				<div class="modal-body dashboard-modal-widget-body">
-					<div class="container-fluid">
-						@foreach (var widgetType in Vm.AvailableWidgets)
-						{
-							<div class="row dashboard-modal-widget-element">
-								<div class="col-md-9">
-									<span>@widgetType.Name</span>
-								</div>
-								<div class="col-sm-1">
-									<button class="btn btn-sm btn-outline-dark" @onclick="(e => Vm.AddSelectedWidget(e, widgetType))">Add</button>
-								</div>
-							</div>
-						}
+					<div class="modal-dashboard-widget-container">
+						<ul>
+							@foreach (var widgetType in Vm.AvailableWidgets)
+							{
+								var widget = Vm.LoadWidget(widgetType);
+
+								<li class="modal-dashboard-widget-element-list" @onclick="(e => Vm.AddSelectedWidget(e, widgetType))">
+									<div class="modal-dashboard-widget-element-container">
+										<div class="dashboard-modal-widget-element-icon">
+											@((MarkupString)widget.GetIcon())
+										</div>
+										<div class="dashboard-modal-widget-element-label">
+											@widget.Label
+										</div>
+									</div>
+								</li>
+							}
+						</ul>
 					</div>
 				</div>
 			</div>

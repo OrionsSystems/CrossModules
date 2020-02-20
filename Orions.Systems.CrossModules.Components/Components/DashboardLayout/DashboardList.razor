@@ -23,7 +23,7 @@
 						<th width="1%" class="nowrap center"></th>
 						<th width="5%" class="nowrap center">Group</th>
 						<th>Name</th>
-						<th width="5%" class="nowrap center">Home</th>
+						<th width="5%" class="nowrap center">Published</th>
 						<th width="5%" class="nowrap center">Tag</th>
 						<th width="30%" class="nowrap center"></th>
 					</tr>
@@ -37,7 +37,11 @@
 							<td class="center nowrap">@rowIndex</td>
 							<td class="center">@item.Option.Group</td>
 							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
-							<td class="center">@(item.Option.IsDefault == true ? "True" : "")</td>
+							<td class="center">
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" checked="@item.Option.Published" disabled>
+								</div>
+							</td>
 							<td class="center">
 								@if (!string.IsNullOrWhiteSpace(item.Option.Tag))
 								{

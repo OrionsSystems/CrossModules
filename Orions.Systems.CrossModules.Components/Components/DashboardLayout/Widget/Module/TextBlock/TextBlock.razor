@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
-@inherits DashboardComponent<SimpleHtmlVm, SimpleHtmlWidget>
+@inherits DashboardComponent<TextBlockVm, TextBlockWidget>
 
 <div class="widget-content-report">
 
@@ -14,15 +14,9 @@
 </div>
 
 @code {
+	protected override async Task OnInitializedAsync()
+	{
+
+		await base.OnInitializedAsync();
+	}
 }
-
-<style>
-		.widget-content-report-view section {
-			/*color: #018786;*/
-			font-size: 14px;
-		}
-
-		.widget-content-report-view p {
-			text-align: justify;
-		}
-</style>

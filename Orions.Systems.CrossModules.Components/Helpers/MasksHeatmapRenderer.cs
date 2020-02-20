@@ -164,7 +164,11 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 							foreach (var tag in sliceTags)
 							{
-								ProcessMaskedTag(tag);
+								var tagExtraction = ProcessMaskedTag(tag);
+								if (tagExtraction != null)
+								{
+									ProcessMaskOverlapsIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
+								}
 							}
 						}
 
@@ -197,7 +201,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		/// <param name="fixedCameraPresetId">Id of Fixed Camera Preset to take homography configuration from.</param>
 		/// <param name="renderAsMasks">If enabled, heatmap masks will be rendered, otherwise real pixels from corresponding frames will be rendered in overlap.</param>
 		/// <param name="cutOff">If we should cutoff the image by homography or just render a polygon line over.</param>
-		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool renderAsMasks = true, bool cutOff = false)
+		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool renderAsMasks = true, bool cutOff = false, int tagGroupsLimit = 30)
 		{
 			if (tags == null || tags.Count < 1)
 				return null;
@@ -233,7 +237,11 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 				foreach (var tag in tags)
 				{
-					ProcessMaskedTag(tag);
+					var tagExtraction = ProcessMaskedTag(tag);
+					if (tagExtraction != null)
+					{
+						ProcessMaskOverlapsIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
+					}
 				}
 
 				maskedImage = RenderMask(_lastImage);
@@ -242,82 +250,95 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				var tagsBySlice = tagsWithHyperId.GroupBy(x => x.HyperId).OrderBy(x => x.Key).ToArray();
 
-				using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
+				var sourceBitmap = SKBitmap.Decode(_lastImage.Data);
+
+				foreach (var tagsForSlice in tagsBySlice.Take(tagGroupsLimit))
 				{
-					//get the drawing canvas of the surface
-					var canvas = tempSurface.Canvas;
+					if (!_keepWorking || _ct.IsCancellationRequested)
+						return null;
 
-					//set background color
-					canvas.Clear(SKColors.Transparent);
-
-					var skImage = SKImage.FromBitmap(SKBitmap.Decode(_lastImage.Data));
-
-					var skPaint = new SKPaint
+					var args = new RetrieveFragmentFramesArgs
 					{
-						BlendMode = SKBlendMode.Plus
+						AssetId = tagsForSlice.Key.AssetId.Value,
+						TrackId = tagsForSlice.Key.TrackId.Value,
+						FragmentId = tagsForSlice.Key.FragmentId.Value,
+						SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
 					};
 
-					canvas.DrawImage(skImage, 0, 0);
+					var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
 
-					foreach (var tagsForSlice in tagsBySlice)
+					if (result.Length == 0)
+						continue;
+
+					var frame = result[0].Image;
+					var frameSkBitmap = SKBitmap.Decode(frame.Data);
+
+					_globalMatrix = new uint[_height, _width];
+
+					foreach (var tag in tagsForSlice.Select(x => x.Tag))
 					{
 						if (!_keepWorking || _ct.IsCancellationRequested)
 							return null;
 
-						var args = new RetrieveFragmentFramesArgs
+						var tagExtraction = ProcessMaskedTag(tag);
+						if (tagExtraction != null)
 						{
-							AssetId = tagsForSlice.Key.AssetId.Value,
-							TrackId = tagsForSlice.Key.TrackId.Value,
-							FragmentId = tagsForSlice.Key.FragmentId.Value,
-							SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
-						};
-
-						var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
-
-						if (result.Length == 0)
-							continue;
-
-						var frame = result[0].Image;
-						var frameSkBitmap = SKBitmap.Decode(frame.Data);
-
-						_globalMatrix = new uint[_height, _width];
-
-						foreach (var tag in tagsForSlice.Select(x => x.Tag))
-						{
-							if (!_keepWorking || _ct.IsCancellationRequested)
-								return null;
-
-							ProcessMaskedTag(tag);
+							ProcessMaskTransparencyIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
 						}
-
-						//using (var image = SKImage.FromBitmap(frameSkBitmap))
-						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
-						//}
-
-						GenerateMaskFromValuesMatrix(frameSkBitmap, _globalMatrix);
-
-						//using (var image = SKImage.FromBitmap(frameSkBitmap))
-						//using (var data = image.Encode(SKEncodedImageFormat.Png, 80))
-						//{
-						//	// save the data to a stream
-						//	using (var stream = System.IO.File.OpenWrite(@"C:\temp\__xz.png"))
-						//	{
-						//		data.SaveTo(stream);
-						//	}
-						//}
-
-						canvas.DrawBitmap(frameSkBitmap, 0, 0, skPaint);
 					}
 
-					// return the surface as a manageable image
-					maskedImage = tempSurface.Snapshot();
+					var sourcePixelsAddr = sourceBitmap.GetPixels();
+					var destPixelsAddr = frameSkBitmap.GetPixels();
+
+					byte MixColors(byte color1, byte color2, byte transparencyValue)
+					{
+						var transparency2 = (double)1 / 255 * transparencyValue;
+						var transparency1 = 1 - transparency2;
+
+						var result = (byte)((color1 * transparency1) + (color2 * transparency2));
+						return result;
+					}
+
+					unsafe
+					{
+						byte* sourcePtr = (byte*)sourcePixelsAddr.ToPointer();
+						byte* destPtr = (byte*)destPixelsAddr.ToPointer();
+
+						for (int row = 0; row < sourceBitmap.Height; row++)
+							for (int col = 0; col < sourceBitmap.Width; col++)
+							{
+								var transpValue = _globalMatrix[row, col];
+
+								if (transpValue == 0) // Do not modify anything
+								{
+									sourcePtr += 4;
+									destPtr += 4;
+								}
+								else
+								{
+									var destBlue = *destPtr++; // blue
+									var destGreen = *destPtr++; // green
+									var destRed = *destPtr++; // red
+									destPtr++; // skip alpha
+
+									var sourceBlue = *sourcePtr;
+									var sourceGreen = *(sourcePtr + 1);
+									var sourceRed = *(sourcePtr + 2);
+
+									var mixedBlue = MixColors(sourceBlue, destBlue, (byte)transpValue);
+									var mixedGreen = MixColors(sourceGreen, destGreen, (byte)transpValue);
+									var mixedRed = MixColors(sourceRed, destRed, (byte)transpValue);
+
+									*sourcePtr++ = mixedBlue; // blue
+									*sourcePtr++ = mixedGreen; // green
+									*sourcePtr++ = mixedRed; // red
+									sourcePtr++; // skip alpha
+								}
+							}
+					}
 				}
+
+				maskedImage = SKImage.FromBitmap(sourceBitmap);
 			}
 
 			if (maskedImage == null)
@@ -330,6 +351,39 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			else
 			{
 				return RenderWithNoCutoff(maskedImage, configuration);
+			}
+		}
+
+		private void BlendTwoImages(SKImage image1, SKBitmap image2, SKBlendMode blendMode)
+		{
+			using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
+			{
+				//get the drawing canvas of the surface
+				var canvas = tempSurface.Canvas;
+
+				//set background color
+				canvas.Clear(SKColors.Transparent);
+
+				var skPaint = new SKPaint
+				{
+					BlendMode = blendMode
+				};
+
+				canvas.DrawImage(image1, 0, 0);
+
+				canvas.DrawBitmap(image2, 0, 0, skPaint);
+
+				// return the surface as a manageable image
+				var res = tempSurface.Snapshot();
+
+				using (var data = res.Encode(SKEncodedImageFormat.Png, 80))
+				{
+					// save the data to a stream
+					using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__{(blendMode.ToString())}.png"))
+					{
+						data.SaveTo(stream);
+					}
+				}
 			}
 		}
 
@@ -521,13 +575,19 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
-		private void ProcessMaskedTag(HyperTag tag)
+		private class TagMaskExtraction
+		{
+			public SKBitmap Image { get; set; }
+			public UniRectangle2f Rect { get; set; }
+		}
+
+		private TagMaskExtraction ProcessMaskedTag(HyperTag tag)
 		{
 			var geometry = tag.GetElement<HyperTagGeometry>();
 			var geometryMask = tag.GetElement<HyperTagGeometryMask>();
 
 			if (geometryMask == null)
-				return;
+				return null;
 
 			var classification = tag.GetElements<HyperTagLabel>().Where(x => x.Type == HyperTagLabel.Types.Classification).Select(x => x.Label).FirstOrDefault();
 
@@ -551,6 +611,11 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 				skBitmap = newSkBitmap;
 			}
 
+			return new TagMaskExtraction { Image = skBitmap, Rect = rect };
+		}
+
+		private void ProcessMaskOverlapsIntoMatrix(SKBitmap skBitmap, UniRectangle2f rect)
+		{
 			IntPtr pixelsAddr = skBitmap.GetPixels();
 
 			var topOffset = rect.Top;
@@ -575,6 +640,42 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 							var realX = col + (int)bottomOffset;
 
 							_globalMatrix[realY, realX]++;
+						}
+					}
+			}
+		}
+
+		private void ProcessMaskTransparencyIntoMatrix(SKBitmap skBitmap, UniRectangle2f rect)
+		{
+			IntPtr pixelsAddr = skBitmap.GetPixels();
+
+			var topOffset = rect.Top;
+			var bottomOffset = rect.Left;
+
+			unsafe
+			{
+				byte* ptr = (byte*)pixelsAddr.ToPointer();
+				//uint* ptr = (uint*)pixelsAddr.ToPointer();
+
+				for (int row = 0; row < skBitmap.Height; row++)
+					for (int col = 0; col < skBitmap.Width; col++)
+					{
+						//var pixel = *ptr++;
+						var blue = *ptr++;   // blue
+						var green = *ptr++;             // green
+						var red = *ptr++;   // red
+						var alpha = *ptr++;          // alpha
+						if (!(alpha == 255 && blue == 0 && green == 0 && red == 0) || alpha == 0 /*pixel != 0*/)
+						{
+							var realY = row + (int)topOffset;
+							var realX = col + (int)bottomOffset;
+
+							if (alpha != 0)
+							{
+								alpha = blue;
+							}
+
+							_globalMatrix[realY, realX] = alpha;
 						}
 					}
 			}
@@ -703,7 +804,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			return image;
 		}
 
-		public static void GenerateMaskFromValuesMatrix(SKBitmap sourceImage, uint[,] matrix)
+		public static void GenerateMaskFromTransparencyMatrix(SKBitmap sourceImage, uint[,] matrix)
 		{
 			var pixelsAddr = sourceImage.GetPixels();
 
@@ -716,22 +817,9 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					{
 						var originalValue = matrix[row, col];
 
-						if (originalValue == 0)
-						{
-							// Replace pixel with transparency
-							*ptr++ = 0;   // blue
-							*ptr++ = 0;             // green
-							*ptr++ = 0;   // red
-							*ptr++ = 0;          // alpha
-						}
-						else
-						{
-							// Just move 4 bytes forward, remain original pixel data
-							++*ptr;
-							++*ptr;
-							++*ptr;
-							++*ptr;
-						}
+						ptr += 3;
+
+						*ptr++ = (byte)originalValue;
 					}
 			}
 		}

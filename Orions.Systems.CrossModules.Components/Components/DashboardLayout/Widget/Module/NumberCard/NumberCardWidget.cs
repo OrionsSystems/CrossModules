@@ -14,7 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public NumberCardWidget()
       {
-         this.Label = "Number Card Widget";
+         this.Label = "Number Card";
       }
    }
 }

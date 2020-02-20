@@ -24,13 +24,14 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.HyperArgsSink = this.HyperStore;
 			vm.MapOverlayId = this.Widget.MapOverlayId;
 			vm.IsReadOnly = this.Widget.IsReadOnly;
+			vm.TagRequestMaxCountLimit = this.Widget.TagRequestMaxCountLimit;
 			vm.DefaultZoneColor = this.Widget.DefaultZoneColor;
 			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
 			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
 			if(this.Widget.TagDateRangeFilter != null)
 			{
 				vm.TagDateRangeFilter = this.Widget.TagDateRangeFilter;
-				vm.TagDateFilterInitialized = true;
+				vm.TagDateFilterPreInitialized = true;
 			}
 
 			EditorVm = vm;
