@@ -326,7 +326,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				Type = MapOverlayUpdateDetails.DeleteUpdateType,
 				OverlayEntry = JsonSerializer.Serialize(kv.Key, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
-			});
+			}).ToArray();
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
 
