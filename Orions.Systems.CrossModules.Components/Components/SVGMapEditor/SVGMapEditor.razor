@@ -17,6 +17,12 @@
 		<svg class="realMasksMapBtn popupMap btn btn-dark disabled" viewBox="0 0 20 20">
 			<path fill="#000000" d="M15.573,11.624c0.568-0.478,0.947-1.219,0.947-2.019c0-1.37-1.108-2.569-2.371-2.569s-2.371,1.2-2.371,2.569c0,0.8,0.379,1.542,0.946,2.019c-0.253,0.089-0.496,0.2-0.728,0.332c-0.743-0.898-1.745-1.573-2.891-1.911c0.877-0.61,1.486-1.666,1.486-2.812c0-1.79-1.479-3.359-3.162-3.359S4.269,5.443,4.269,7.233c0,1.146,0.608,2.202,1.486,2.812c-2.454,0.725-4.252,2.998-4.252,5.685c0,0.218,0.178,0.396,0.395,0.396h16.203c0.218,0,0.396-0.178,0.396-0.396C18.497,13.831,17.273,12.216,15.573,11.624 M12.568,9.605c0-0.822,0.689-1.779,1.581-1.779s1.58,0.957,1.58,1.779s-0.688,1.779-1.58,1.779S12.568,10.427,12.568,9.605 M5.06,7.233c0-1.213,1.014-2.569,2.371-2.569c1.358,0,2.371,1.355,2.371,2.569S8.789,9.802,7.431,9.802C6.073,9.802,5.06,8.447,5.06,7.233 M2.309,15.335c0.202-2.649,2.423-4.742,5.122-4.742s4.921,2.093,5.122,4.742H2.309z M13.346,15.335c-0.067-0.997-0.382-1.928-0.882-2.732c0.502-0.271,1.075-0.429,1.686-0.429c1.828,0,3.338,1.385,3.535,3.161H13.346z" style="fill: currentColor"></path>
 		</svg>
+		@{
+			var playBtnDisabledClass = (this.Vm.IsAutoPlayOn || this.Vm.TagsAreBeingLoaded.Value) ? "disabled" : "";
+			var stopBtnDisabledClass = !this.Vm.IsAutoPlayOn ? "disabled" : "";
+		}
+		<svg @onclick=@Vm.RunPlayback aria-hidden="true" focusable="false" data-prefix="far" data-icon="play-circle" class="@playBtnDisabledClass btn btn-dark svg-inline--fa fa-play-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"></path></svg>
+		<svg @onclick=@Vm.StopPlayback aria-hidden="true" focusable="false" data-prefix="far" data-icon="stop-circle" class="@stopBtnDisabledClass btn btn-dark svg-inline--fa fa-stop-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm296-80v160c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16z"></path></svg>
 	</div>
 	<div class="map-container">
 		@ChildContent
@@ -24,7 +30,7 @@
 	@if (Vm.HomographiesDetected.Value)
 	{
 		<div class="sliderwrap">
-			<OverlayLoader IsLoading="!this.Vm.EnableFilterControl.Value">
+			<OverlayLoader IsLoading="this.Vm.TagsAreBeingLoaded.Value">
 				<EjsSlider TValue="double[]"
 						   Type="SliderType.Range"
 						   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
@@ -33,7 +39,7 @@
 						   Max="@Vm.TagDateRangeFilter.MaxRangeValue"
 						   Value=@Vm.TagDateRangeFilter.Value>
 				</EjsSlider>
-				<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: To:@Vm.TagDateRangeFilter.CurrentMaxDate</span>
+				<span>From: @Vm.TagDateRangeFilter.CurrentMinDate To: @Vm.TagDateRangeFilter.CurrentMaxDate</span>
 			</OverlayLoader>
 		</div>
 	}
@@ -64,7 +70,7 @@
 
 	@if (Vm.IsVmShowingHeatmapProp.Value)
 	{
-		<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block;">
+		<div class="draggable-popup modal fade show view-popup" tabindex="-1" role="dialog" style="display: block;">
 			<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 				<div class="modal-content">
 					<div class="modal-body heatmap-img-container">

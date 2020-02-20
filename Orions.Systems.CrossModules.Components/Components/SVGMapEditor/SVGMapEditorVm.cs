@@ -34,6 +34,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public string DefaultCameraColor { get; internal set; }
 		public bool IsReadOnly { get; set; }
 
+		private int _tagRequestMaxCountLimit = 250;
+		public int TagRequestMaxCountLimit { get { return _tagRequestMaxCountLimit; } set { if (value > 0) _tagRequestMaxCountLimit = value; } } 
+
 		public ViewModelProperty<bool> ShowingControlPropertyGrid { get; set; } = false;
 		public OverlayEntry CurrentPropertyGridObject { get; set; }
 		public ViewModelProperty<bool> ShowingHyperTagInfo { get; set; } = false;
@@ -45,6 +48,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
 
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
+		public ZoneDataSet CurrentlyShownHeatmapZoneDataSet { get; set; }
 
 		public string TagInfoImageBase64Url
 		{
@@ -61,14 +65,15 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public ViewModelProperty<byte[]> TagInfoImage { get; set; } = new ViewModelProperty<byte[]>();
 
-		public ViewModelProperty<bool> EnableFilterControl { get; set; } = new ViewModelProperty<bool>(false);
+		public ViewModelProperty<bool> TagsAreBeingLoaded { get; set; } = new ViewModelProperty<bool>(false);
 
-		public bool TagDateFilterInitialized { get; set; } = false;
+		public bool TagDateFilterPreInitialized { get; set; } = false;
 		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
 		public ViewModelProperty<bool> HomographiesDetected { get; set; } = false;
+		public ViewModelProperty<bool> IsAutoPlayOn { get; set; } = false;
 		#endregion // Properties
 
-		private Dictionary<ZoneOverlayEntry, List<HyperTag>> ZoneHyperTagSets = new Dictionary<ZoneOverlayEntry, List<HyperTag>>();
+		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
 
 		private string _componentContainerId;
 
@@ -76,9 +81,13 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 		}
 
+		#region Methods
+		#region Heatmap
 		public async Task OpenHeatmapAsync(string zoneId)
 		{
 			await OpenPopupMap(zoneId, true);
+
+			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.makePopupDraggable", new object[] { _componentContainerId });
 		}
 
 		public async Task OpenRealMasksMapAsync(string zoneId)
@@ -90,21 +99,28 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			var zoneOverlayEntry = this.MapOverlay.Value.Entries.Single(z => z.Id == zoneId);
 
-			if (ZoneHyperTagSets.Any(kv => kv.Key.Id == zoneId))
+			if (ZoneDataSets.Any(ds => ds.Zone.Id == zoneId))
 			{
-				var zoneSetKv = this.ZoneHyperTagSets.SingleOrDefault(kv => kv.Key.Id == zoneId);
-				var zone = zoneSetKv.Key;
+				var zoneDataSet = ZoneDataSets.Single(z => z.Zone.Id == zoneId);
+				this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet;
 
-				var tagsForMap = zoneSetKv.Value;
-				var metadataSetId = zone.MetadataSetId;
-				var fixedCameraEnhancementId = zone.FixedCameraEnhancementId;
+				var tagsForMap = zoneDataSet.Tags;
+				var metadataSetId = zoneDataSet.Zone.MetadataSetId;
+				var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
 
 				if (metadataSetId.HasValue && fixedCameraEnhancementId.HasValue && tagsForMap != null && tagsForMap.Any())
 				{
-					_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
 					IsVmShowingHeatmapProp.Value = true;
+					if (this.IsAutoPlayOn && zoneDataSet.Heatmap != null)
+					{
+						this.HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(zoneDataSet.Heatmap.Data)}" ;
+					}
+					else
+					{
+						_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
 
-					PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
+						PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
+					}
 				}
 			}
 		}
@@ -125,7 +141,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			HeatmapImgProp.Value = null;
 			_renderer?.Dispose();
 		}
+		#endregion // Heatmap
 
+		#region Initializing
 		public async Task Initialize(string componentContainerId, DotNetObjectReference<SVGMapEditorBase> thisReference)
 		{
 			this._componentContainerId = componentContainerId;
@@ -167,7 +185,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
 			if (this.HomographiesDetected)
 			{
-				if (this.TagDateFilterInitialized)
+				if (this.TagDateFilterPreInitialized)
 				{
 					InitializeTagFilter();
 				}
@@ -182,16 +200,18 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private async Task InitializeTagFilter()
 		{
-			this.EnableFilterControl.Value = this.TagDateFilterInitialized;
-			//this.EnableFilterControl.Value = false;
+			this.TagsAreBeingLoaded.Value = this.TagDateFilterPreInitialized;
 
 			this.TagDateRangeFilter.ValueChanged += () =>
 			{
-				this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
-				this.ShowTags();
+				if (!this.IsAutoPlayOn)
+				{
+					this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
+					this.ShowTags();
 
-				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMinDate)}");
-				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
+					this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMinDate)}");
+					this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
+				}
 			};
 
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
@@ -281,12 +301,157 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (mapOverlayZonesWithHomographyAssigned.Any())
 			{
-				TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value, this.TagDateFilterInitialized);
+				TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value, this.TagDateFilterPreInitialized);
 				this.RaiseNotify("TagDateRangeFilter");
 			}
 
 			this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
-			this.EnableFilterControl.Value = true;
+			this.TagsAreBeingLoaded.Value = true;
+		}
+		#endregion //Initializing
+
+		#region AutoPlay
+		private Timer _playbackTimer;
+		private object _playbackLock = new object();
+		public async Task RunPlayback()
+		{
+			if (this.IsAutoPlayOn)
+			{
+				return;
+			}
+
+			this.IsAutoPlayOn.Value = true;
+
+			_playbackTimer = new Timer(7000);
+			_playbackTimer.AutoReset = true;
+
+			var dateSegmentSize = (this.TagDateRangeFilter.MaxDate - this.TagDateRangeFilter.MinDate) / 10;
+			var currentMinDate = this.TagDateRangeFilter.MinDate;
+			var currentMaxDate = this.TagDateRangeFilter.MinDate + dateSegmentSize;
+			var nextMaxDate = currentMaxDate + dateSegmentSize;
+
+			var currentTagSets = await GetTagsForDateRange(currentMinDate, currentMaxDate);
+			var heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
+			foreach (var ts in currentTagSets) 
+			{
+				if (ts.Zone.FixedCameraEnhancementId.HasValue)
+				{
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
+				}
+			}
+			var nextTagSets = await GetTagsForDateRange(currentMaxDate, nextMaxDate);
+			foreach (var ts in nextTagSets)
+			{
+				if (ts.Zone.FixedCameraEnhancementId.HasValue)
+				{
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
+				}
+			}
+
+			ZoneDataSets = currentTagSets;
+
+			this.TagDateRangeFilter.CurrentMinDate = currentMinDate;
+			this.TagDateRangeFilter.CurrentMaxDate = currentMaxDate;
+
+			this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMinDate)}");
+			this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
+
+			ShowTagsForCurrentTagSets();
+			_playbackTimer.Start();
+			_playbackTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
+			{
+				lock (_playbackLock)
+				{
+					ZoneDataSets = nextTagSets;
+
+					ShowTagsForCurrentTagSets();
+
+					if (currentMaxDate >= this.TagDateRangeFilter.MaxDate)
+					{
+						StopPlayback();
+					}
+					else
+					{
+						currentMinDate = currentMaxDate;
+						currentMaxDate = currentMaxDate + dateSegmentSize;
+						nextMaxDate = currentMaxDate + dateSegmentSize;
+						
+						this.TagDateRangeFilter.CurrentMinDate = currentMinDate;
+						this.TagDateRangeFilter.CurrentMaxDate = currentMaxDate;
+
+						if (this.IsVmShowingHeatmapProp)
+						{
+							CurrentlyShownHeatmapZoneDataSet = ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
+							HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(CurrentlyShownHeatmapZoneDataSet.Heatmap.Data)}";
+						}
+
+						this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMinDate)}");
+						this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
+						
+						nextTagSets = GetTagsForDateRange(currentMaxDate, nextMaxDate).Result;
+						foreach (var ts in nextTagSets)
+						{
+							if (ts.Zone.FixedCameraEnhancementId.HasValue)
+							{
+								ts.Heatmap = heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false).Result;
+							}
+						}
+					}
+				}
+			};
+		}
+
+		public async Task StopPlayback()
+		{
+			if (_playbackTimer != null && _playbackTimer.Enabled)
+			{
+				_playbackTimer.Stop();
+				this.IsAutoPlayOn.Value = false;
+			}
+		}
+		#endregion
+
+		private async Task<List<ZoneDataSet>> GetTagsForDateRange(DateTime from, DateTime to)
+		{
+			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
+			var zonesHypZoneHyperTagSets = new List<ZoneDataSet>();
+
+			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
+			{
+				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
+				var metadataSetFilter = await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(metadataSetId.Value));
+
+				var homographyGeometry = await GetHomographyGeometryByCamEnhancementId(zone.FixedCameraEnhancementId.Value, zone.Alias);
+
+				if (metadataSetFilter != null && homographyGeometry != null)
+				{
+					var metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
+
+					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+
+					metadataSet.FromDate = from;
+					metadataSet.ToDate = to;
+
+					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
+					findArgs.DescriptorConditions.AddCondition(conditions.Result);
+					//findArgs.Limit = int.MaxValue;
+					findArgs.Limit = this.TagRequestMaxCountLimit;
+
+
+					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
+					var hyperTags = new List<HyperTag>();
+					foreach (var doc in docs)
+					{
+						hyperTags.Add(doc.GetPayload<HyperTag>());
+					}
+
+					List<HyperTag> zoneTags = FilterTagsByHomographyArea(hyperTags, homographyGeometry, zone);
+
+					zonesHypZoneHyperTagSets.Add(new ZoneDataSet { Tags = zoneTags, Zone = zone });
+				}
+			}
+
+			return zonesHypZoneHyperTagSets;
 		}
 
 		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
@@ -316,10 +481,20 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
+		
 		public async Task ShowTags()
 		{
-			this.EnableFilterControl.Value = false;
+			this.TagsAreBeingLoaded.Value = true;
 
+			ZoneDataSets = await GetTagsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
+
+			await ShowTagsForCurrentTagSets();
+
+			this.TagsAreBeingLoaded.Value = false;
+		}
+
+		private async Task ShowTagsForCurrentTagSets()
+		{
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 
 			var circlesToRemove = _circlesToTagsMappings.Select(kv => new MapOverlayUpdateDetails
@@ -330,86 +505,78 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
 
-
 			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
 			{
-				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
-				var metadataSetFilter = await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(metadataSetId.Value));
-
-				var camEnhancementId = zone.FixedCameraEnhancementId.Value;
-				var enhancement = (await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(camEnhancementId))).GetPayload<FixedCameraEnhancedData>();
-				var fixedCameraEnhancedDataLayer = enhancement.Layers.SingleOrDefault(l => (l as HyperTagFixedCameraEnhancedDataLayer) != null) as HyperTagFixedCameraEnhancedDataLayer;
-				var homographyGeometry = fixedCameraEnhancedDataLayer.Tags.SingleOrDefault(t => t.Elements.Any(e => e is HomographyTagElement && (e as HomographyTagElement).Alias == zone.Alias))
-					?.Elements.Single(e => e is HyperTagGeometry) as HyperTagGeometry;
-
-				if (metadataSetFilter != null && homographyGeometry != null)
-				{
-					var metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
-
-					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
-
-					metadataSet.FromDate = TagDateRangeFilter.CurrentMinDate;
-					metadataSet.ToDate = TagDateRangeFilter.CurrentMaxDate;
-
-					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions.Result);
-					//findArgs.Limit = int.MaxValue;
-					findArgs.Limit = 250;
-
-
-					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
-					var hyperTags = new List<HyperTag>();
-					foreach (var doc in docs)
-					{
-						hyperTags.Add(doc.GetPayload<HyperTag>());
-					}
-
-					List<MapOverlayUpdateDetails> updateDetailsBatch = new List<MapOverlayUpdateDetails>();
-					List<HyperTag> zoneTags = new List<HyperTag>();
-
-					foreach (var tag in hyperTags)
-					{
-						var tagGeometry = (tag.Elements.Single(t => t as HyperTagGeometry != null) as HyperTagGeometry).GeometryItem;
-
-						var rect = (UniRectangle2f)tagGeometry.Shape;
-						var bottomCenter = tagGeometry.Transformation.Transform(new UniPoint2f(((rect.BottomRight + rect.BottomLeft) / 2).X, rect.BottomLeft.Y));
-						var homographyRect = (UniPolygon2f)homographyGeometry.GeometryItem.Shape;
-						if (UniPolygon2f.IsInside(homographyRect.Points,
-							bottomCenter))
-						{
-							zoneTags.Add(tag);
-
-							var mapperCentrePoint = MapHomographyPoint(bottomCenter, homographyRect.Points, zone.Points);
-							var circle = new CircleOverlayEntryJsModel
-							{
-								Id = Guid.NewGuid().ToString(),
-								Center = mapperCentrePoint,
-								Size = 4,
-								IsSelectable = false
-							};
-							circle.EventHandlerMappings.Add("click", "ShowTagInfo");
-
-							_circlesToTagsMappings.Add(circle, tag);
-
-							var circleSerialized = JsonSerializer.Serialize(circle, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-
-							var updateDetails = new MapOverlayUpdateDetails()
-							{
-								Type = MapOverlayUpdateDetails.AddOrUpdateUpdateType,
-								OverlayEntry = circleSerialized,
-							};
-
-							updateDetailsBatch.Add(updateDetails);
-						}
-					}
-
-					ZoneHyperTagSets[zone] = zoneTags;
-
-					await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
-				}
-
-				this.EnableFilterControl.Value = true;
+				var homographyGeometry = await GetHomographyGeometryByCamEnhancementId(zone.FixedCameraEnhancementId.Value, zone.Alias);
+				await UpdateSvgMapZone(zone, homographyGeometry);
 			}
+		}
+
+		private async Task<HyperTagGeometry> GetHomographyGeometryByCamEnhancementId(HyperDocumentId camEnhancementId, string zoneAlias)
+		{
+			var enhancement = (await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(camEnhancementId))).GetPayload<FixedCameraEnhancedData>();
+			var fixedCameraEnhancedDataLayer = enhancement.Layers.SingleOrDefault(l => (l as HyperTagFixedCameraEnhancedDataLayer) != null) as HyperTagFixedCameraEnhancedDataLayer;
+			var homographyGeometry = fixedCameraEnhancedDataLayer.Tags.SingleOrDefault(t => t.Elements.Any(e => e is HomographyTagElement && (e as HomographyTagElement).Alias == zoneAlias))
+				?.Elements.Single(e => e is HyperTagGeometry) as HyperTagGeometry;
+
+			return homographyGeometry;
+		}
+
+		private async Task UpdateSvgMapZone(ZoneOverlayEntry zone, HyperTagGeometry homographyGeometry)
+		{
+			List<MapOverlayUpdateDetails> updateDetailsBatch = new List<MapOverlayUpdateDetails>();
+			var zoneTags = ZoneDataSets.Single(ds => ds.Zone.Id == zone.Id).Tags;
+
+			foreach (var tag in zoneTags)
+			{
+				var tagGeometry = (tag.Elements.Single(t => t as HyperTagGeometry != null) as HyperTagGeometry).GeometryItem;
+				var rect = (UniRectangle2f)tagGeometry.Shape;
+				var homographyRect = (UniPolygon2f)homographyGeometry.GeometryItem.Shape;
+				var bottomCenter = tagGeometry.Transformation.Transform(new UniPoint2f(((rect.BottomRight + rect.BottomLeft) / 2).X, rect.BottomLeft.Y));
+				var mapperCentrePoint = MapHomographyPoint(bottomCenter, homographyRect.Points, zone.Points);
+				var circle = new CircleOverlayEntryJsModel
+				{
+					Id = Guid.NewGuid().ToString(),
+					Center = mapperCentrePoint,
+					Size = 4,
+					IsSelectable = false
+				};
+				circle.EventHandlerMappings.Add("click", "ShowTagInfo");
+
+				_circlesToTagsMappings.Add(circle, tag);
+
+				var circleSerialized = JsonSerializer.Serialize(circle, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+
+				var updateDetails = new MapOverlayUpdateDetails()
+				{
+					Type = MapOverlayUpdateDetails.AddOrUpdateUpdateType,
+					OverlayEntry = circleSerialized,
+				};
+
+				updateDetailsBatch.Add(updateDetails);
+			}
+
+			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
+		}
+
+		private List<HyperTag> FilterTagsByHomographyArea(IEnumerable<HyperTag> tags, HyperTagGeometry homographyGeometry, ZoneOverlayEntry zone)
+		{
+			List<HyperTag> zoneTags = new List<HyperTag>();
+			foreach (var tag in tags)
+			{
+				var tagGeometry = (tag.Elements.Single(t => t as HyperTagGeometry != null) as HyperTagGeometry).GeometryItem;
+
+				var rect = (UniRectangle2f)tagGeometry.Shape;
+				var bottomCenter = tagGeometry.Transformation.Transform(new UniPoint2f(((rect.BottomRight + rect.BottomLeft) / 2).X, rect.BottomLeft.Y));
+				var homographyRect = (UniPolygon2f)homographyGeometry.GeometryItem.Shape;
+				if (UniPolygon2f.IsInside(homographyRect.Points,
+					bottomCenter))
+				{
+					zoneTags.Add(tag);
+				}
+			}
+
+			return zoneTags;
 		}
 
 		public void OpenTagProperties()
@@ -445,12 +612,38 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task SaveMapOverlay(MapOverlay overlay)
 		{
-			MapOverlay.Value = overlay;
+			// Update map overlay state
+			//foreach (var entry in overlay.Entries)
+			//{
+			//	var oldStateEntry = MapOverlay.Value.Entries.SingleOrDefault(e => e.Id == entry.Id);
 
+			//	// Add new entries
+			//	if (oldStateEntry == null) 
+			//	{
+			//		MapOverlay.Value.Entries.Add(entry);
+			//	}
+			//	// Update existed before
+			//	else
+			//	{
+			//		oldStateEntry.UpdateFrom(entry);
+			//	}
+			//}
+
+			//// remove deleted entries
+			//var entriesToDelete = new List<OverlayEntry>();
+			//foreach (var entry in this.MapOverlay.Value.Entries) 
+			//{
+			//	if(overlay.Entries.Any(e => e.Id == entry.Id) == false)
+			//	{
+			//		entriesToDelete.Add(entry);
+			//	}
+			//}
+			//this.MapOverlay.Value.Entries.RemoveAll(e => entriesToDelete.Contains(e));
+			this.MapOverlay.Value = overlay;
+
+			// Save Hyper doc
 			var doc = new HyperDocument(MapOverlay.Value);
-
 			var storeDocArgs = new StoreHyperDocumentArgs(doc);
-
 			await this.HyperArgsSink.ExecuteAsync(storeDocArgs);
 		}
 
@@ -514,6 +707,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			return zones;
 		}
+		#endregion // Methods
+
+		#region Inner classes
 
 		public class TagDateRangeFilterOptions
 		{
@@ -522,14 +718,38 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			public double MaxRangeValue { get; set; }
 			public DateTime MinDate { get; set; }
 			public DateTime MaxDate { get; set; }
-			public DateTime CurrentMinDate { get; set; }
-			public DateTime CurrentMaxDate { get; set; }
+
+			private DateTime _currentMinDate;
+			public DateTime CurrentMinDate
+			{
+				get
+				{
+					return _currentMinDate;
+				}
+				set
+				{
+					Value = new double[] { (double)((value - MinDate).TotalSeconds), (double)((CurrentMaxDate - MinDate).TotalSeconds) };
+					_currentMinDate = value;
+				}
+			}
+
+			private DateTime _currentMaxDate;
+			public DateTime CurrentMaxDate
+			{
+				get
+				{
+					return _currentMaxDate;
+				}
+				set
+				{
+					Value = new double[] { (double)((CurrentMinDate - MinDate).TotalSeconds), (double)((value - MinDate).TotalSeconds) };
+					_currentMaxDate = value;
+				}
+			}
 
 			public event Action ValueChanged;
 
 			private Timer _dateFilterChangeThrottlingTimer;
-
-			private double[] updatedDateFilterdSliderValue;
 
 			public void InitRangeSlider(DateTime minDate, DateTime maxDate, bool keepCurrentValues = false)
 			{
@@ -539,11 +759,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				if (keepCurrentValues)
 				{
-					if(CurrentMinDate < MinDate)
+					if (CurrentMinDate < MinDate)
 					{
 						CurrentMinDate = MinDate;
 					}
-					if(CurrentMaxDate > MaxDate)
+					if (CurrentMaxDate > MaxDate)
 					{
 						CurrentMaxDate = MaxDate;
 					}
@@ -555,10 +775,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					Step = 10;
 				}
 
-				Value = new double[] { (double)((CurrentMinDate - MinDate).TotalSeconds), (double)((CurrentMaxDate - MinDate).TotalSeconds) };
+				//Value = new double[] { (double)((CurrentMinDate - MinDate).TotalSeconds), (double)((CurrentMaxDate - MinDate).TotalSeconds) };
 			}
 
-			private static object _dateFilterLock = new object();
+			private object _dateFilterLock = new object();
 			public void SliderValueChanged(double[] value)
 			{
 				ElapsedEventHandler Timer_Elapsed = delegate (object sender, ElapsedEventArgs e)
@@ -594,6 +814,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			}
 		}
+		public class ZoneDataSet
+		{
+			public ZoneOverlayEntry Zone { get; set; }
+			public List<HyperTag> Tags { get; set; }
+			public UniImage Heatmap { get; set; }
+		}
+
+		#endregion // Inner classes
 	}
 
 	public class MapOverlayUpdateDetails
