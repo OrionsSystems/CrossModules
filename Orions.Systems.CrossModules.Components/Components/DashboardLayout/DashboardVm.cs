@@ -224,12 +224,23 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		#region Dashboad Desing Operations
+
 		public void OnAddRow()
 		{
 			var row = new DashboardRow();
 			row.Columns.AddLast(new DashboardColumn { Size = 12 });
 			Source.Rows.AddLast(row);
 		}
+
+		//SplitElementVerical
+
+
+		public void SplitElementVerical(MouseEventArgs e, DashboardRow row, DashboardColumn column) 
+		{
+			var elem = row.Columns.Find(column);
+		}
+
 
 		public void SplitColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
 		{
@@ -398,10 +409,7 @@ namespace Orions.Systems.CrossModules.Components
 			_startClientX = e.ClientX;
 		}
 
-		public void OnMouseMoveDraging(
-			MouseEventArgs e,
-			DashboardRow row,
-			DashboardColumn column)
+		public void OnMouseMoveDraging(MouseEventArgs e, DashboardRow row, DashboardColumn column)
 		{
 			var x = e.ClientX;
 			var dif = x - _startClientX;
@@ -433,6 +441,8 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		#endregion
+
 		private void LoadAvailableWidget()
 		{
 			var availableTypes = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(IDashboardWidget));
@@ -444,7 +454,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		private DashboardWidget LoadWidget(Type t)
+		public DashboardWidget LoadWidget(Type t)
 		{
 			var widget = Activator.CreateInstance(t);
 			return widget as DashboardWidget;

@@ -42,5 +42,13 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			return $"Widget : {Label}";
 		}
+
+		public virtual string GetIcon()
+		{
+			return "<svg class=\"icon-block-chain\" enable-background=\"new 0 0 512 512\" viewBox=\"0 0 512 512\" xmlns=\"http://www.w3.org/2000/svg\"><g>" +
+				"<path d=\"m256.002 242.913 210.412-121.43-210.412-121.483-210.416 121.483z\"/>" +
+				"<path d=\"m240.949 268.986-210.415-121.429v242.96l210.415 121.483z\"/>" +
+				"<path d=\"m271.056 268.986v243.014l210.41-121.483v-242.96z\"/></g></svg>";
+		}
 	}
 }

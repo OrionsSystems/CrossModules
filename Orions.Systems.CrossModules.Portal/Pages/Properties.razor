@@ -277,24 +277,45 @@
 	private string GroveRedirectTag = "Escalator";
 	public bool IsSelected { get; set; }
 
+	List<Stories> LocalData = new List<Stories>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		if (HyperStore != null)
+		{
+			await LoadPublishedDashboards();
+		}
+	}
+
+	private async Task LoadPublishedDashboards()
+	{
+		var datas = await HyperStore.FindAllAsync<DashboardData>();
+
+		var data = datas.Where(it => it.Option.Published == true && !string.IsNullOrWhiteSpace(it.Option.Tag)).ToList();
+
+
+		foreach (var item in data)
+		{
+			var story = new Stories()
+			{
+				ID = item.Option.Tag,
+				Text = item.Name
+			};
+			LocalData.Add(story);
+		}
+	}
+
 	public class Stories
 	{
 		public string ID { get; set; }
 		public string Text { get; set; }
 	}
 
-	List<Stories> LocalData = new List<Stories> {
-	 //new Stories() { ID= "Escalator", Text= "Escalator" },
-	 //new Stories() { ID= "MainParking", Text= "MainParking" },
-	 //new Stories() { ID= "ProjectZone", Text= "ProjectZone" },
-	 //new Stories() { ID= "CrateAndBarrel", Text= "Crate & Barrel" },
-	 new Stories() { ID= "CarDisplay", Text= "Concierge" },
-	 new Stories() { ID= "LicencePlates", Text= "LicencePlates" },
-  };
-
 	private void OnSelectStory(string data)
 	{
-		var address = MyNavigationManager.BaseUri + "/dashboard/" + data;
+		var address = MyNavigationManager.BaseUri + "dashboard/" + data;
 		MyNavigationManager.NavigateTo(address, true);
 	}
 }

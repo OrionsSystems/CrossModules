@@ -8,7 +8,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public ReportTelericSeriesChartWidget()
 		{
-			Label = "Teleric Report Series Chart";
+			Label = "Teleric Series Chart";
 		}
 	}
 }
