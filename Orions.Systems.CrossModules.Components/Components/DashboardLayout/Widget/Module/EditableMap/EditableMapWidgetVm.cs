@@ -28,6 +28,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.DefaultZoneColor = this.Widget.DefaultZoneColor;
 			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
 			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
+			vm.PlaybackCache = this.Widget.MapPlaybackCache;
+			if (this.Widget.MapPlaybackOptions != null) vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
 			if(this.Widget.TagDateRangeFilter != null)
 			{
 				vm.TagDateRangeFilter = this.Widget.TagDateRangeFilter;
@@ -45,6 +47,12 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.TagDateRangeFilterChanged = async (TagDateRangeFilterOptions options) =>
 			{
 				this.Widget.TagDateRangeFilter = options;
+				await this.DashboardVm.SaveChangesAsync();
+			};
+
+			vm.OnMapPlayebackCacheUpdated = async (MapPlaybackCache cache) =>
+			{
+				this.Widget.MapPlaybackCache = cache;
 				await this.DashboardVm.SaveChangesAsync();
 			};
 		}
