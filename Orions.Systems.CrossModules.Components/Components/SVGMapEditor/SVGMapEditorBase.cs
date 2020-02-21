@@ -7,10 +7,11 @@ using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Node.Common;
 using Orions.Infrastructure.HyperMedia;
 using Microsoft.AspNetCore.Components.Web;
+using System;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
-	public class SVGMapEditorBase : BaseBlazorComponent<SVGMapEditorVm>
+	public class SVGMapEditorBase : BaseBlazorComponent<SVGMapEditorVm>, IDisposable
 	{
 		protected string ComponentContainerId;
 		protected override bool AutoCreateVm { get; } = false;
@@ -81,6 +82,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public async Task CloseHyperTagInfoPopup()
 		{
 			this.Vm.ShowingHyperTagInfo.Value = false;
+		}
+
+		public void Dispose()
+		{
+			Vm.Dispose();
 		}
 	}
 

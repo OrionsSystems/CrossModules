@@ -18,7 +18,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
 	public class SVGMapEditorVm : BlazorVm
 	{
-		private Helpers.MasksHeatmapRenderer _renderer;
+		private Helpers.MasksHeatmapRenderer _heatmapRenderer;
 
 		#region Properties
 		public IHyperArgsSink HyperArgsSink { get; set; }
@@ -75,6 +75,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<bool> IsAutoPlayOn { get; set; } = false;
 		public MapPlaybackOptions PlaybackOptions { get; set; }
 		public ViewModelProperty<MapPlaybackCache> PlaybackCache { get; set; }
+		public ViewModelProperty<bool> PlaybackCacheBeingUpdated { get; set; } = false;
 		#endregion // Properties
 
 		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
@@ -107,49 +108,56 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private async Task OpenPopupMap(string zoneId, bool heatmapMode)
 		{
-			var zoneOverlayEntry = this.MapOverlay.Value.Entries.Single(z => z.Id == zoneId);
+			var zoneDataSet = GetZoneDataSetForCurrentShownZone(zoneId);
+			this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet; // remember requested zoneId dataset to enable live heatmap refresh while autoplayback is on
 
-			if (ZoneDataSets.Any(ds => ds.Zone.Id == zoneId))
+			var tagsForMap = zoneDataSet.Tags;
+			var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
+			
+			if (zoneDataSet.Heatmap != null)
 			{
-				var zoneDataSet = this.IsAutoPlayOn ? this.PlaybackCache.Value.Steps.Single(s => s.From == this.AutoplayTagDateRangeFilter.CurrentMinDate && s.To == this.AutoplayTagDateRangeFilter.CurrentMaxDate).ZoneDataSets.Single(ds => ds.Zone.Id == zoneId) : ZoneDataSets.Single(z => z.Zone.Id == zoneId);
-				this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet;
-
-				var tagsForMap = zoneDataSet.Tags;
-				var metadataSetId = zoneDataSet.Zone.MetadataSetId;
-				var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
-
-				if (metadataSetId.HasValue && fixedCameraEnhancementId.HasValue && tagsForMap != null && tagsForMap.Any())
-				{
-					IsVmShowingHeatmapProp.Value = true;
-					if (this.IsAutoPlayOn && zoneDataSet.Heatmap != null)
-					{
-						this.HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(zoneDataSet.Heatmap.Data)}";
-					}
-					else
-					{
-						_renderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
-
-						PrepareHeatmap(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
-					}
-				}
+				this.HeatmapImgProp.Value = zoneDataSet.Heatmap.DataBase64Link;
 			}
+			else
+			{
+				PrepareHeatmapAsyncFunc(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
+			}
+
+			IsVmShowingHeatmapProp.Value = true;
 		}
 
-		private async Task PrepareHeatmap(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
+		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
-			var img = await _renderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode, false);
+			_heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
+			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode, false);
 
 			if (img != null)
 			{
-				HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(img.Data)}";
+				HeatmapImgProp.Value = img.DataBase64Link;
 			}
+		}
+
+		private ZoneDataSet GetZoneDataSetForCurrentShownZone(string zoneId)
+		{
+			ZoneDataSet zoneDataSet;
+			if (this.IsAutoPlayOn && this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache)
+			{
+
+				zoneDataSet = this.PlaybackCache.Value.Steps.SingleOrDefault(s => s.From == this.AutoplayTagDateRangeFilter.CurrentMinDate && s.To == this.AutoplayTagDateRangeFilter.CurrentMaxDate)?.ZoneDataSets.SingleOrDefault(ds => ds.Zone.Id == zoneId);
+			}
+			else
+			{
+				zoneDataSet = ZoneDataSets.SingleOrDefault(z => z.Zone.Id == zoneId);
+			}
+
+			return zoneDataSet;
 		}
 
 		public void CloseHeatmap()
 		{
 			IsVmShowingHeatmapProp.Value = false;
 			HeatmapImgProp.Value = null;
-			_renderer?.Dispose();
+			_heatmapRenderer?.Dispose();
 		}
 		#endregion // Heatmap
 
@@ -331,7 +339,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		#region AutoPlay
 		private Timer _playbackTimer;
-		private object _playbackLock = new object();
 		public async Task RunPlayback()
 		{
 			if (this.IsAutoPlayOn)
@@ -340,58 +347,45 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 
 			this.IsAutoPlayOn.Value = true;
-			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
 
+			// Initialize playback timer
 			_playbackTimer = new Timer(this.PlaybackOptions.PlayDuration.TotalMilliseconds);
 			_playbackTimer.AutoReset = false;
 
+			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
+
+			// Initalize dates for the first two segments
 			var dateRangeFilter = this.AutoplayTagDateRangeFilter;
 			var dateSegmentSize = this.PlaybackOptions.PlayStep;
-			var currentMinDate = dateRangeFilter.MinDate;
-			var currentMaxDate = (currentMinDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentMinDate + dateSegmentSize) : dateRangeFilter.MaxDate;
-			var nextMaxDate = (currentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
+			var currentSegmentMinDate = dateRangeFilter.MinDate;
+			var currentSegmentMaxDate = (currentSegmentMinDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMinDate + dateSegmentSize) : dateRangeFilter.MaxDate;
+			var nextSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
 
-			var heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
+			// Initialize data sets for the first two segments
 			List<ZoneDataSet> currentTagSets;
 			List<ZoneDataSet> nextTagSets;
 			if (isCacheMode)
 			{
-				currentTagSets = await GetTagsForDateRangeFromCache(currentMinDate, currentMaxDate);
-				nextTagSets = await GetTagsForDateRangeFromCache(currentMaxDate, nextMaxDate);
+				currentTagSets = await GetTagsForDateRangeFromCache(currentSegmentMinDate, currentSegmentMaxDate);
+				nextTagSets = await GetTagsForDateRangeFromCache(currentSegmentMaxDate, nextSegmentMaxDate);
 			}
 			else
 			{
-				currentTagSets = await GetTagsForDateRange(currentMinDate, currentMaxDate);
-
-				foreach (var ts in currentTagSets)
-				{
-					if (ts.Zone.FixedCameraEnhancementId.HasValue)
-					{
-						ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
-					}
-				}
-
-				nextTagSets = await GetTagsForDateRange(currentMaxDate, nextMaxDate);
-				foreach (var ts in nextTagSets)
-				{
-					if (ts.Zone.FixedCameraEnhancementId.HasValue)
-					{
-						ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
-					}
-				}
+				currentTagSets = await GetZoneDataSetsForDateRange(currentSegmentMinDate, currentSegmentMaxDate);
+				nextTagSets = await GetZoneDataSetsForDateRange(currentSegmentMinDate, nextSegmentMaxDate);
 			}
 
 			ZoneDataSets = currentTagSets;
 
-			dateRangeFilter.CurrentMinDate = currentMinDate;
-			dateRangeFilter.CurrentMaxDate = currentMaxDate;
-
+			// Run first step outside the timer
+			dateRangeFilter.CurrentMinDate = currentSegmentMinDate;
+			dateRangeFilter.CurrentMaxDate = currentSegmentMaxDate;
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
-
 			await ShowTagsForCurrentTagSets();
+			
+			// Start timer 
 			_playbackTimer.Start();
-			var startDate = DateTime.Now;
 			_playbackTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
 			{
 				if (!this.IsAutoPlayOn)
@@ -400,79 +394,65 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					return;
 				}
 
-				lock (_playbackLock)
+				ZoneDataSets = nextTagSets;
+
+				dateRangeFilter.CurrentMinDate = currentSegmentMinDate;
+				dateRangeFilter.CurrentMaxDate = currentSegmentMaxDate;
+				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
+				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
+				ShowTagsForCurrentTagSets().Wait();
+
+				currentSegmentMinDate = currentSegmentMaxDate;
+				currentSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
+				nextSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
+
+				if (currentSegmentMaxDate >= dateRangeFilter.MaxDate)
 				{
-					LogDateOffset(startDate, "Entered timer elapsed handler");
-					ZoneDataSets = nextTagSets;
-
-					LogDateOffset(startDate, "Entered ShowTagsForCurrentTagSets");
-					ShowTagsForCurrentTagSets().Wait();
-					LogDateOffset(startDate, "Exited ShowTagsForCurrentTagSets");
-
-					if (currentMaxDate >= dateRangeFilter.MaxDate)
+					StopPlayback();
+				}
+				else
+				{
+					if (this.IsVmShowingHeatmapProp)
 					{
-						StopPlayback();
-					}
-					else
-					{
-						currentMinDate = currentMaxDate;
-						currentMaxDate = (currentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
-						nextMaxDate = (currentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
-
-						dateRangeFilter.CurrentMinDate = currentMinDate;
-						dateRangeFilter.CurrentMaxDate = currentMaxDate;
-
-						if (this.IsVmShowingHeatmapProp)
-						{
-							if (isCacheMode)
-							{
-								CurrentlyShownHeatmapZoneDataSet = this.PlaybackCache.Value.Steps
-									.Single(s => s.From == currentMinDate && s.To == currentMaxDate).ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
-							}
-							else
-							{
-								CurrentlyShownHeatmapZoneDataSet = ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
-							}
-							HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(CurrentlyShownHeatmapZoneDataSet.Heatmap.Data)}";
-						}
-
-						this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
-						this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
-
 						if (isCacheMode)
 						{
-							LogDateOffset(startDate, "Entered GetTagsForDateRangeFromCache");
-							nextTagSets = GetTagsForDateRangeFromCache(currentMaxDate, nextMaxDate).Result;
-							LogDateOffset(startDate, "Exited GetTagsForDateRangeFromCache");
+							CurrentlyShownHeatmapZoneDataSet = this.PlaybackCache.Value.Steps
+								.Single(s => s.From == currentSegmentMinDate && s.To == currentSegmentMaxDate).ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
 						}
 						else
 						{
-							nextTagSets = GetTagsForDateRange(currentMaxDate, nextMaxDate).Result;
-
-							foreach (var ts in nextTagSets)
-							{
-								if (ts.Zone.FixedCameraEnhancementId.HasValue)
-								{
-									ts.Heatmap = heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false).Result;
-								}
-							}
+							CurrentlyShownHeatmapZoneDataSet = ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
 						}
+
+						HeatmapImgProp.Value = CurrentlyShownHeatmapZoneDataSet.Heatmap.DataBase64Link;
 					}
 
-					LogDateOffset(startDate, "Exited timer elapsed handler");
-
-					if (this.IsAutoPlayOn)
+					if (isCacheMode)
 					{
-						_playbackTimer.Start();
+						nextTagSets = GetTagsForDateRangeFromCache(currentSegmentMaxDate, nextSegmentMaxDate).Result;
 					}
+					else
+					{
+						nextTagSets = GetZoneDataSetsForDateRange(currentSegmentMaxDate, nextSegmentMaxDate).Result;
+					}
+				}
+
+				if (this.IsAutoPlayOn)
+				{
+					_playbackTimer.Start();
 				}
 			};
 		}
 
-		private void LogDateOffset(DateTime startDate, string message)
+		private async Task PopulateZoneDataSetsWithHeatmaps(List<ZoneDataSet> currentTagSets, Helpers.MasksHeatmapRenderer heatmapRenderer)
 		{
-			var startOffset = (DateTime.Now - startDate);
-			System.Diagnostics.Debug.WriteLine($"{message} {startOffset}");
+			foreach (var ts in currentTagSets)
+			{
+				if (ts.Zone.FixedCameraEnhancementId.HasValue)
+				{
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
+				}
+			}
 		}
 
 		public async Task StopPlayback()
@@ -487,6 +467,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task RefreshMapDataCache()
 		{
+			this.PlaybackCacheBeingUpdated = true;
+
 			var mapCache = new MapPlaybackCache();
 
 			var dateSegmentSize = this.PlaybackOptions.PlayStep;
@@ -514,7 +496,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var stepToDatasetMappings = new Dictionary<PlaybackStepCache, Task<List<ZoneDataSet>>>();
 			foreach (var step in mapCache.Steps)
 			{
-				var task = GetTagsForDateRange(step.From, step.To);
+				var task = GetZoneDataSetsForDateRange(step.From, step.To);
 				stepTasks.Add(task);
 				stepToDatasetMappings[step] = task;
 			}
@@ -528,12 +510,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				foreach (var ds in zoneDataSets)
 				{
-					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.FixedCameraEnhancementId.Value, true, false);
+					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, true, false);
 				}
 			}
 
 			this.PlaybackCache.Value = mapCache;
 			await this.OnMapPlayebackCacheUpdated?.Invoke(mapCache);
+
+			this.PlaybackCacheBeingUpdated.Value = false;
 		}
 
 		private async Task<List<ZoneDataSet>> GetTagsForDateRangeFromCache(DateTime from, DateTime to)
@@ -552,7 +536,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 		#endregion
 
-		private async Task<List<ZoneDataSet>> GetTagsForDateRange(DateTime from, DateTime to)
+		private async Task<List<ZoneDataSet>> GetZoneDataSetsForDateRange(DateTime from, DateTime to, bool populateWithHeatmaps = false)
 		{
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 			var zonesHypZoneHyperTagSets = new List<ZoneDataSet>();
@@ -561,34 +545,33 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
 				var metadataSetFilter = await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(metadataSetId.Value));
-
 				var homographyGeometry = await GetHomographyGeometryByCamEnhancementId(zone.FixedCameraEnhancementId.Value, zone.Alias);
+				var metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
 
-				if (metadataSetFilter != null && homographyGeometry != null)
+				var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+				metadataSet.FromDate = from;
+				metadataSet.ToDate = to;
+				var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
+				findArgs.DescriptorConditions.AddCondition(conditions.Result);
+				findArgs.Limit = this.TagRequestMaxCountLimit;
+
+				var docs = await HyperArgsSink.ExecuteAsync(findArgs);
+				var hyperTags = new List<HyperTag>();
+				foreach (var doc in docs)
 				{
-					var metadataSet = metadataSetFilter.GetPayload<HyperMetadataSet>();
+					hyperTags.Add(doc.GetPayload<HyperTag>());
+				}
 
-					var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+				List<HyperTag> zoneTags = FilterTagsByHomographyArea(hyperTags, homographyGeometry, zone);
+				var zoneDataSet = new ZoneDataSet { Tags = zoneTags, Zone = zone, HomographyGeometry = homographyGeometry };
+				zonesHypZoneHyperTagSets.Add(zoneDataSet);
+			}
 
-					metadataSet.FromDate = from;
-					metadataSet.ToDate = to;
-
-					var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperArgsSink, metadataSet);
-					findArgs.DescriptorConditions.AddCondition(conditions.Result);
-					//findArgs.Limit = int.MaxValue;
-					findArgs.Limit = this.TagRequestMaxCountLimit;
-
-
-					var docs = await HyperArgsSink.ExecuteAsync(findArgs);
-					var hyperTags = new List<HyperTag>();
-					foreach (var doc in docs)
-					{
-						hyperTags.Add(doc.GetPayload<HyperTag>());
-					}
-
-					List<HyperTag> zoneTags = FilterTagsByHomographyArea(hyperTags, homographyGeometry, zone);
-
-					zonesHypZoneHyperTagSets.Add(new ZoneDataSet { Tags = zoneTags, Zone = zone, HomographyGeometry = homographyGeometry, FixedCameraEnhancementId = zone.FixedCameraEnhancementId });
+			if (populateWithHeatmaps)
+			{
+				using (var heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings()))
+				{
+					await PopulateZoneDataSetsWithHeatmaps(zonesHypZoneHyperTagSets, heatmapRenderer);
 				}
 			}
 
@@ -622,12 +605,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
-		private object _showTagsLock = new object();
 		public async Task ShowTags()
 		{
 			this.TagsAreBeingLoaded.Value = true;
 
-			ZoneDataSets = await GetTagsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
+			ZoneDataSets = await GetZoneDataSetsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
 
 			await ShowTagsForCurrentTagSets();
 
@@ -850,6 +832,20 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				.ToList();
 
 			return zones;
+		}
+
+		public override void Dispose()
+		{
+			if(_playbackTimer != null)
+			{
+				this._playbackTimer.Stop();
+				this._playbackTimer.Close();
+			}
+
+			if(_heatmapRenderer != null)
+			{
+				_heatmapRenderer.Dispose();
+			}
 		}
 		#endregion // Methods
 
