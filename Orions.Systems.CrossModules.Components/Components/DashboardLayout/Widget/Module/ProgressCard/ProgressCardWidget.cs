@@ -16,7 +16,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public ProgressCardWidget()
       {
-         this.Label = "Progress Card Widget";
+         this.Label = "Progress Card";
       }
    }
 }

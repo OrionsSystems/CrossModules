@@ -4,7 +4,7 @@
    {
       public ReportSyncfusionAccumulationChartWidget()
       {
-         this.Label = "Report Stacked Accumulation Chart (Syncfusion)";
+         this.Label = "Accumulation Chart";
       }
    }
 }

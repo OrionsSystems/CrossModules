@@ -21,7 +21,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public TagReviewWidget()
 		{
-			this.Label = "Tag Review Widget";
+			this.Label = "Tag Review";
 		}
 	}
 }

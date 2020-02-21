@@ -18,7 +18,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public SimpleSVGMapWidget()
       {
-         this.Label = "Simple SVG Map Widget";
+         this.Label = "Simple Map";
       }
    }
 }

@@ -6,7 +6,7 @@ namespace Orions.Systems.CrossModules.Components
    {
       public ReportSyncfusionSeriesChartWidget()
       {
-         this.Label = "Report Stacked Series Chart (Syncfusion)";
+         this.Label = "Series Chart";
       }
    }
 }

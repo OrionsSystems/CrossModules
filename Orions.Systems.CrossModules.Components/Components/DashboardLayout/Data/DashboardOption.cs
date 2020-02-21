@@ -10,7 +10,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public string Group { get; set; }
 
-		public bool IsDefault { get; set; }
+		[HelpText("Enable client access to dashboard")]
+		public bool Published { get; set; }
 
 		public bool IsHideTitle { get; set; }
 

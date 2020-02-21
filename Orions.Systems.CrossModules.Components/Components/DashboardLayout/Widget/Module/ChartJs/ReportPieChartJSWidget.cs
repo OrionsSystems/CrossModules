@@ -10,7 +10,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public ReportPieChartJSWidget()
       {
-         Label = "Report Pie ChartJS";
+         Label = "Pie Chart JS";
       }
    }
 }
