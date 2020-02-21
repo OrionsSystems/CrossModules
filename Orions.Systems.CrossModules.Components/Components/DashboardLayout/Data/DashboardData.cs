@@ -1,20 +1,38 @@
 ﻿using Orions.Common;
+using System;
 using System.Collections.Generic;
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class DashboardData : IdUnifiedBlob, IName
+   public class DashboardData : IdUnifiedBlob, IName, IGroup
    {
       [DocumentDescriptor]
-      public string Name { get { return Option.Name; } set { value = Option.Name; } } 
+      public string Name { get; set; } = "New Dashboard";
 
-      public DashboardOption Option { get; set; } = new DashboardOption();
+      [DocumentDescriptor]
+      public string Group { get; set; }
 
-      public LinkedList<DashboardRow> Rows { get; set; }
+      [HelpText("Enable client access to dashboard")]
+      [DocumentDescriptor]
+      public bool Published { get; set; }
+
+      [DocumentDescriptor]
+      public bool IsHideTitle { get; set; }
+
+      [DocumentDescriptor]
+      public string Tag { get; set; }
+
+      [HelpText("Apply css styles to the bottom of the page")]
+      [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
+      public string Styles { get; set; }
+
+      [DocumentDescriptor]
+      public bool EnableStyles { get; set; } = true;
+
+      public LinkedList<DashboardRow> Rows { get; set; } = new LinkedList<DashboardRow>();
 
       public DashboardData()
       {
-         Rows = new LinkedList<DashboardRow>();
       }
 
       public override string ToString()

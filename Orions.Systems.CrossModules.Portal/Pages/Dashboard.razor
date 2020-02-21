@@ -24,7 +24,7 @@
 										  EnableBetweenBox="true"
 										  IsPreviewMode="true"
 										  HideModeOption="true"
-										  IsHideTitle="data.Option.IsHideTitle">
+										  IsHideTitle="data.IsHideTitle">
 					</DashboardLayout>
 				}
 			</div>
@@ -109,7 +109,7 @@ else
 	{
 		var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-		TaggedDashboardList = datas.Where(it => it.Option.Tag == tag).ToList();
+		TaggedDashboardList = datas.Where(it => it.Tag == tag).ToList();
 
 		isLoadedTaggedDashboard = true;
 	}
