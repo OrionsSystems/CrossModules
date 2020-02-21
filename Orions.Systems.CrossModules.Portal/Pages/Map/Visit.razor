@@ -32,7 +32,7 @@
 								  EnableBetweenBox="true"
 								  IsPreviewMode="true"
 								  HideModeOption="true"
-								  IsHideTitle="data.Option.IsHideTitle"
+								  IsHideTitle="data.IsHideTitle"
 								  HyperStore="@HyperStore">
 			</DashboardLayout>
 		}
@@ -73,7 +73,7 @@
 	{
 		var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-		SelectedZoneDashboardList = datas.Where(it => it.Option.Tag == tag).ToList();
+		SelectedZoneDashboardList = datas.Where(it => it.Tag == tag).ToList();
 	}
 
 	private void OnChangeFilterCategory(ChangeEventArgs arg) {
