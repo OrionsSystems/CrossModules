@@ -69,6 +69,7 @@
 		<None Remove="content\css\styles.css" />
 		<None Remove="content\css\propertyGrid.css" />
 		<None Remove="content\scripts\svgMapEditor.js" />
+		<None Remove="content\svgjs\jquery.ui.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 	</ItemGroup>
 

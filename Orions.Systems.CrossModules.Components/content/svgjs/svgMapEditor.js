@@ -36,8 +36,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     let circlesLayer = draw.group();
 
     document.addEventListener('click', () => {
-        document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
-        document.querySelector(rootSelector + " .realMasksMapBtn").classList.add('disabled')
+        document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
+        document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
         componentReference.invokeMethodAsync("CloseHyperTagInfoPopup")
     })
 
@@ -109,12 +109,12 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         newZone.onSelect(() => {
             if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
                 && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
-                document.querySelector(rootSelector + " .heatmapBtn").classList.remove('disabled')
-                document.querySelector(rootSelector + " .realMasksMapBtn").classList.remove('disabled')
+                document.querySelector(rootSelector + " .heatmapBtn").removeAttribute('disabled')
+                document.querySelector(rootSelector + " .realMasksMapBtn").removeAttribute('disabled')
             }
             else {
-                document.querySelector(rootSelector + " .heatmapBtn").classList.add('disabled')
-                document.querySelector(rootSelector + " .realMasksMapBtn").classList.add('disabled')
+                document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
+                document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
             }
         })
 
