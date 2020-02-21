@@ -26,6 +26,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			[HelpText("Options for customizing the border of the series.")]
 			public AccumulationChartSeriesBorder Border { get; set; } = new AccumulationChartSeriesBorder();
+
+			[HelpText("Palette for series points.")]
+			public string[] Palettes { get; set; }
 		}
 
 		public class TooltipConfiguration
