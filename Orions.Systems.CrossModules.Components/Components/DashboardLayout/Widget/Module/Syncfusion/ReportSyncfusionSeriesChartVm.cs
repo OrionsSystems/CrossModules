@@ -23,34 +23,37 @@ namespace Orions.Systems.CrossModules.Components
 			var category = series.Name;
 			var currentData = series.Data[(int)args.PointIndex];
 
-			if (this.Widget.InteractiveModeCategoryFiltering)
-			{
-				this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, new string[] { category }, ReportFilterInstruction.Targets.Column);
-			}
+			throw new NotImplementedException(); // Figure out how this relates to the new filtering system.
 
-			if (this.Widget.InteractiveModeDateTimeFiltering)
-			{
-				if (series.Data.Count <= 1)
-					return;
+			//if (this.Widget.InteractiveModeCategoryFiltering)
+			//{
+			//	this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, new string[] { category }, ReportFilterInstruction.Targets.Column);
+			//}
 
-				if (series.Data.Count == args.PointIndex + 1)
-				{
-					var prevData = series.Data[(int)args.PointIndex - 1];
-					//var prevDif = currentData.DatePosition - prevData.DatePosition;
-					//= category;
-					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, prevData.DatePosition, currentData.DatePosition, ReportFilterInstruction.Targets.Column);
-				}
-				else
-				{
-					var nextData = series.Data[(int)args.PointIndex + 1];
-					//= category;
-					//var nextDif = nextData.DatePosition - currentData.DatePosition;
-					this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, currentData.DatePosition, nextData.DatePosition, ReportFilterInstruction.Targets.Column);
-				}
-			}
+			//if (this.Widget.InteractiveModeDateTimeFiltering)
+			//{
+			//	if (series.Data.Count <= 1)
+			//		return;
 
-			if (this.Widget.InteractiveModeCategoryFiltering || this.Widget.InteractiveModeDateTimeFiltering)
-				await this.DashboardVm.UpdateDynamicWidgetsAsync();
+			//	if (series.Data.Count == args.PointIndex + 1)
+			//	{
+			//		var prevData = series.Data[(int)args.PointIndex - 1];
+
+			//		//var prevDif = currentData.DatePosition - prevData.DatePosition;
+			//		//= category;
+			//		this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, prevData.DatePosition, currentData.DatePosition);
+			//	}
+			//	else
+			//	{
+			//		var nextData = series.Data[(int)args.PointIndex + 1];
+			//		//= category;
+			//		//var nextDif = nextData.DatePosition - currentData.DatePosition;
+			//		this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, currentData.DatePosition, nextData.DatePosition);
+			//	}
+			//}
+
+			//if (this.Widget.InteractiveModeCategoryFiltering || this.Widget.InteractiveModeDateTimeFiltering)
+			//	await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 	}
 }

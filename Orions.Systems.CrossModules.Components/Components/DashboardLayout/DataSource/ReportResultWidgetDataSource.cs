@@ -34,11 +34,11 @@ namespace Orions.Systems.CrossModules.Components
 
 			var result = doc?.GetPayload<Report>();
 
-			if (result != null)
-			{
-				if (context.DynamicFilter != null)
-					result.FilterWith(context.DynamicFilter);
-			}
+			//if (result != null)
+			//{
+			//	if (context.DynamicFilter != null)
+			//		result.FilterWith(context.DynamicFilter);
+			//}
 
 			return result;
 		}

@@ -1,58 +1,99 @@
-﻿using Orions.Common;
+﻿using Microsoft.AspNetCore.Components.Web;
+using Orions.Common;
+using Orions.Infrastructure.Reporting;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
-
-using Syncfusion.EJ2.Blazor.DropDowns;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	[Config(typeof(SimpleFilterWidget))]
 	public class SimpleFilterVm : WidgetVm<SimpleFilterWidget>
 	{
+		public PeriodDefinition[] AvailablePeriods { get; set; } = new PeriodDefinition[]
+			{
+				new PeriodDefinition() { Period = TimePeriods.Minute, PeriodsCount = 15 },
+				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 1 },
+				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 4 },
+				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 12 },
+				new PeriodDefinition() { Period = TimePeriods.Day, PeriodsCount = 1 },
+			};
+
+		public class Option
+		{
+			public string ID { get; set; }
+			public string Group { get; set; }
+			public string Text { get; set; }
+		}
+
+		public Option[] Options = new Option[]
+		{
+			  new Option(){ ID= "Person", Group = "Common", Text= "Person" },
+			  new Option(){ ID= "Human", Group = "Common", Text= "Human" },
+			  new Option(){ ID= "Adult", Group = "Common", Text= "Adult" },
+			  new Option(){ ID= "Male", Group = "Common", Text= "Male" },
+			  new Option(){ ID= "Female", Group = "Common", Text= "Female" },
+			  new Option(){ ID= "Child", Group = "Common", Text= "Child" },
+			  new Option(){ ID= "Father", Group = "Common", Text= "Father" },
+			  new Option(){ ID= "Mother", Group = "Common", Text= "Mother" },
+			  new Option(){ ID= "Son", Group = "Common", Text= "Son" },
+			  new Option(){ ID= "Daughter", Group = "Common", Text= "Daughter" },
+			  new Option(){ ID= "Car", Group = "Common", Text= "Car" },
+			  new Option(){ ID= "Head", Group = "Body parts", Text= "Head" },
+		 };
+
 		public SimpleFilterVm()
 		{
+		}
+
+		public void OnPeriodClick(PeriodDefinition period)
+		{
+			var filterGroup = this.DashboardVm.ObtainFilterData(this.Widget.FilterGroup);
+			if (filterGroup == null)
+				return;
+
+			filterGroup.Period = period;
 		}
 
 		protected override void OnSetParentVm(BaseVm parentVm)
 		{
 			base.OnSetParentVm(parentVm);
-
-			if (this.DashboardVm != null && this.Widget.Filters?.Length > 0)
-				this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, this.Widget.Filters, this.Widget.FilterTarget);
-
-			if (this.DashboardVm != null && this.Widget.StartDate.HasValue && this.Widget.EndDate.HasValue)
-				this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, this.Widget.StartDate, this.Widget.EndDate, this.Widget.FilterTarget);
-
-			//await this.DashboardVm.UpdateDynamicWidgetsAsync();
+			this.ApplyAsync(false).GetAwaiter().GetResult();
 		}
 
 		public async Task ClearAllFilters()
 		{
-			this.DashboardVm.ClearAllFilters();
+			this.DashboardVm.ClearAllFilterGroups();
 			await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 
 		public async Task ClearFilters()
 		{
-			this.DashboardVm.ClearFilters(this.Widget.FilterGroup);
+			this.DashboardVm.ClearFilterGroup(this.Widget.FilterGroup);
 			await this.DashboardVm.UpdateDynamicWidgetsAsync();
 		}
 
-		public async Task ApplyAsync(string[] filters, DateTime? startTime, DateTime? endTime)
+		public async Task ApplyAsync(bool updateDashboard = true)
 		{
-			this.Widget.Filters = filters;
-			this.Widget.StartDate = startTime;
-			this.Widget.EndDate = endTime;
+			var filterGroup = this.DashboardVm.ObtainFilterData(this.Widget.FilterGroup);
+			if (filterGroup == null)
+				return;
 
-			this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, filters, this.Widget.FilterTarget);
+			if (this.Widget.Period != null)
+				filterGroup.Period = this.Widget.Period;
 
-			this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, this.Widget.StartDate, this.Widget.EndDate, this.Widget.FilterTarget);
+			filterGroup.FilterLabels = this.Widget.Filters;
+			filterGroup.FilterTarget = this.Widget.FilterTarget;
+			
+			filterGroup.StartTime = this.Widget.StartDate;
+			filterGroup.EndTime = this.Widget.EndDate;
 
-			await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
-
-			await this.DashboardVm.UpdateDynamicWidgetsAsync();
+			if (updateDashboard)
+			{
+				await this.DashboardVm.UpdateDynamicWidgetsAsync();
+				await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
+			}
 		}
 	}
 }

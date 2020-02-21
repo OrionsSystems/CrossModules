@@ -7,21 +7,21 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    [Config(typeof(TagReviewWidget))]
-    public class TagReviewWidgetVm : WidgetVm<TagReviewWidget>
-    {
-		public TagReviewWidgetVm()
-        {
-		}
-
-
+	[Config(typeof(TagReviewWidget))]
+	public class TagReviewWidgetVm : WidgetVm<TagReviewWidget>
+	{
 		public ViewModelProperty<TagReviewVm> TagReviewVm { get; set; } = new ViewModelProperty<TagReviewVm>(new TagReviewVm());
+
+		public TagReviewWidgetVm()
+		{
+		}
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			var filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
+			throw new NotImplementedException();
 
-			await this.TagReviewVm.Value. FilterTags(filter);
+			//DashboardGroupData filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
+			//await this.TagReviewVm.Value.FilterTags(filter);
 		}
 	}
 }

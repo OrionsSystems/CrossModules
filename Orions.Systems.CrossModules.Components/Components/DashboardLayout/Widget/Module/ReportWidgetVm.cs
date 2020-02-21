@@ -49,13 +49,14 @@ namespace Orions.Systems.CrossModules.Components
 			var context = new WidgetDataSourceContext();
 			context.HyperStore = this.HyperStore;
 
-			context.DynamicFilter = this.DashboardVm?.GetFilterGroup(widget.FilterGroup);
+			context.GroupFilterData = this.DashboardVm?.ObtainFilterData(widget.FilterGroup);
 
 			var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
 			if (reportResult == null)
 			{
 				Logger.Instance.Error("Cannot load report result");
 				IsLoadedReportResult = true;
+
 				return;
 			}
 

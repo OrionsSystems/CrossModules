@@ -6,13 +6,15 @@ namespace Orions.Systems.CrossModules.Components
 {
    public class SimpleFilterWidget : ReportBaseWidget
    {
-      [HelpText("Desing options")]
+      [HelpText("Design options")]
       public SimpleFilterConfiguration Settings { get; set; } = new SimpleFilterConfiguration();
 
-      /// <summary>
-      /// Persist the previous selection of the user.
-      /// </summary>
-      [UniBrowsable(false)]
+		#region DATA
+
+		/// <summary>
+		/// Persist the previous selection of the user.
+		/// </summary>
+		[UniBrowsable(false)]
       public string[] Filters { get; set; }
 
       [UniBrowsable(false)]
@@ -21,7 +23,12 @@ namespace Orions.Systems.CrossModules.Components
       [UniBrowsable(false)]
       public DateTime? EndDate { get; set; }
 
-      public bool ShowTextLabelSelection { get; set; } = true;
+      [UniBrowsable(false)]
+      public PeriodDefinition Period { get; set; }
+
+		#endregion
+
+		public bool ShowTextLabelSelection { get; set; } = true;
 
       public bool ShowDateTimeSelection { get; set; } = true;
 

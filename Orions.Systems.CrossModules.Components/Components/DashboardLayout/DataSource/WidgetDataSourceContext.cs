@@ -1,5 +1,6 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Infrastructure.Reporting;
 using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,10 @@ namespace Orions.Systems.CrossModules.Components
 	/// </summary>
 	public class WidgetDataSourceContext
 	{
-		public UniFilterData DynamicFilter { get; set; }
+		/// <summary>
+		/// Instructions, filtering etc. for the dashboard group we are in.
+		/// </summary>
+		public DashboardGroupData GroupFilterData { get; set; } 
 
 		public IHyperArgsSink HyperStore { get; set; }
 

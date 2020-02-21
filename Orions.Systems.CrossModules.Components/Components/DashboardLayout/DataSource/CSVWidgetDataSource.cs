@@ -101,9 +101,9 @@ namespace Orions.Systems.CrossModules.Components
 				reportData.AddRow(new ReportRow() { Cells = dataCells });
 			}
 
-			// We want to filter at the end, to ensure both data and definitions are synchronized filtered.
-			if (context.DynamicFilter != null)
-				reportData.FilterWith(context.DynamicFilter);
+			//// We want to filter at the end, to ensure both data and definitions are synchronized filtered.
+			//if (context.DynamicFilter != null)
+			//	reportData.FilterWith(context.DynamicFilter);
 
 			return Task.FromResult<Report>(reportData);
 		}

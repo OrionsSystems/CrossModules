@@ -22,5 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Valid CSS color string")]
 		public string Color { get; set; } = "#365c7e";
 
+		public SimpleFilterConfiguration()
+		{
+		}
 	}
 }

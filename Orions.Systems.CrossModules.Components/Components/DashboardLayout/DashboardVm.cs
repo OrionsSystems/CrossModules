@@ -37,7 +37,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
-		Dictionary<string, MultiFilterData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, MultiFilterData>();
+		Dictionary<string, DashboardGroupData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, DashboardGroupData>();
 
 		/// <summary>
 		/// The Propertyy grid has its own Vm, but we assign it one from here, to make sure it uses this one, so we can control it.
@@ -129,17 +129,17 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
-		MultiFilterData ObtainFilterData(string group)
+		public DashboardGroupData ObtainFilterData(string group)
 		{
 			if (group == null)
 				group = "";
 
-			MultiFilterData data;
+			DashboardGroupData data;
 			lock (_syncRoot)
 			{
 				if (_dynamicFiltersByGroup.TryGetValue(group, out data) == false)
 				{
-					data = new MultiFilterData();
+					data = new DashboardGroupData();
 					_dynamicFiltersByGroup[group] = data;
 				}
 			}
@@ -147,38 +147,38 @@ namespace Orions.Systems.CrossModules.Components
 			return data;
 		}
 
-		public MultiFilterData GetFilterGroup(string group)
-		{
-			if (group == null)
-				group = "";
+		//public DashboardGroupData GetFilterGroup(string group)
+		//{
+		//	if (group == null)
+		//		group = "";
 
-			MultiFilterData result = null;
-			lock (_syncRoot)
-			{
-				_dynamicFiltersByGroup.TryGetValue(group, out result);
-			}
+		//	DashboardGroupData result = null;
+		//	lock (_syncRoot)
+		//	{
+		//		_dynamicFiltersByGroup.TryGetValue(group, out result);
+		//	}
 
-			return result;
-		}
+		//	return result;
+		//}
 
-		public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime, ReportFilterInstruction.Targets filterTarget)
-		{
-			var data = ObtainFilterData(group);
+		//public void SetDateTimeFilters(string group, DateTime? startTime, DateTime? endTime)
+		//{
+		//	DashboardGroupData data = ObtainFilterData(group);
 
-			if (startTime.HasValue == false && endTime.HasValue == false)
-			{
-				data.Elements = data.Elements.Where(it => it is DateTimeFilterData == false).ToArray(); // Remove all time filters.
-			}
-			else
-			{
-				var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
-				dateTimeFilterData.StartTime = startTime;
-				dateTimeFilterData.EndTime = endTime;
-				dateTimeFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
-			}
-		}
+		//	//if (startTime.HasValue == false && endTime.HasValue == false)
+		//	//{
+		//	//	data.Elements = data.Elements.Where(it => it is DateTimeFilterData == false).ToArray(); // Remove all time filters.
+		//	//}
+		//	//else
+		//	//{
+		//	//	var dateTimeFilterData = data.ObtainElement<DateTimeFilterData>();
+		//	//	dateTimeFilterData.StartTime = startTime;
+		//	//	dateTimeFilterData.EndTime = endTime;
+		//	//	dateTimeFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
+		//	//}
+		//}
 
-		public void ClearAllFilters()
+		public void ClearAllFilterGroups()
 		{
 			lock (_syncRoot)
 			{
@@ -187,31 +187,31 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public void ClearFilters(string group)
+		public void ClearFilterGroup(string group)
 		{
 			var data = ObtainFilterData(group);
 
 			data.Clear();
 		}
 
-		public void SetStringFilters(string group, string[] filters, ReportFilterInstruction.Targets filterTarget)
-		{
-			var data = ObtainFilterData(group);
+		//public void SetStringFilters(string group, string[] filters, ReportFilterInstruction.Targets filterTarget)
+		//{
+		//	var data = ObtainFilterData(group);
 
-			if (filters == null || filters.Length == 0)
-			{
-				data.Elements = data.Elements.Where(it => it is TextFilterData == false).ToArray(); // Remove all string filters.
-			}
-			else
-			{
-				var textFilterData = data.ObtainElement<TextFilterData>();
+		//	//if (filters == null || filters.Length == 0)
+		//	//{
+		//	//	data.Elements = data.Elements?.Where(it => it is TextFilterData == false).ToArray(); // Remove all string filters.
+		//	//}
+		//	//else
+		//	//{
+		//	//	var textFilterData = data.ObtainElement<TextFilterData>();
 
-				textFilterData.LabelsArray = filters;
-				textFilterData.Mode = AndOr.Or;
-				textFilterData.StringCompareMode = StringComparisonMode.Contains;
-				textFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
-			}
-		}
+		//	//	textFilterData.LabelsArray = filters;
+		//	//	textFilterData.Mode = AndOr.Or;
+		//	//	textFilterData.StringCompareMode = StringComparisonMode.Contains;
+		//	//	textFilterData.Instruction = new ReportFilterInstruction() { Target = filterTarget };
+		//	//}
+		//}
 
 		/// <summary>
 		/// Run this to update dynamic filter widgets, so they can pick up changed filter values.
