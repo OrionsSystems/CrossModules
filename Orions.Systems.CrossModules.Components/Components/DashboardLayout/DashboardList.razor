@@ -3,15 +3,15 @@
 @using Orions.Node.Common
 @using Orions.Infrastructure.HyperMedia
 
-@inherits BaseBlazorComponent
+@inherits BaseBlazorComponent<DashboardListVm>
 
 @inject NavigationManager MyNavigationManager
 
 <div class="container-fluid">
 
-	<button class="btn btn-outline-dark mb-2" @onclick="@(ev=> { SelectDashboard(new DashboardData()); })">Create</button>
+	<button class="btn btn-outline-dark mb-2" @onclick="@(async ev => { await Vm.SelectDashboardAsync(new DashboardData(), false, true); })">Create</button>
 
-	@if (DataList.Any() && isLoadedDataResult)
+	@if (Vm.DataList.Any() && Vm.IsLoadedDataResult)
 	{
 		var rowIndex = 0;
 
@@ -29,32 +29,32 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var item in DataList)
+					@foreach (var item in Vm.DataList)
 					{
 						rowIndex++;
 
 						<tr>
 							<td class="center nowrap">@rowIndex</td>
-							<td class="center">@item.Option.Group</td>
-							<td class="dashboard-list-name" @onclick="@(ev => EditName(item))">@item.Option.Name</td>
+							<td class="center">@item.Group</td>
+							<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>
 							<td class="center">
 								<div class="form-check">
-									<input type="checkbox" class="form-check-input" checked="@item.Option.Published" disabled>
+									<input type="checkbox" class="form-check-input" checked="@item.Published" disabled>
 								</div>
 							</td>
 							<td class="center">
-								@if (!string.IsNullOrWhiteSpace(item.Option.Tag))
+								@if (!string.IsNullOrWhiteSpace(item.Tag))
 								{
-									<a href="@(MyNavigationManager.Uri + "/" + item.Option.Tag)">
-										@item.Option.Tag
+									<a href="@(MyNavigationManager.Uri + "/" + item.Tag)">
+										@item.Tag
 									</a>
 								}
 							</td>
 							<td class="center">
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item); })"> Design</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { SelectDashboard(item, true); })"> View</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await DeleteDashboard(item); })"> Delete</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(e => { OpenPropertyGrid(item); })"> Edit</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })"> Design</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })"> View</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.DeleteDashboard(item); })"> Delete</button>
+								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })"> Edit</button>
 							</td>
 						</tr>
 					}
@@ -63,7 +63,7 @@
 		</div>
 	}
 
-	@if (!isLoadedDataResult)
+	@if (!Vm.IsLoadedDataResult)
 	{
 		<div style="position:relative;">
 			<div class="loading-bar"></div>
@@ -72,7 +72,7 @@
 
 </div>
 
-@if (isShowProperty)
+@if (Vm.IsShowProperty)
 {
 	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -81,12 +81,12 @@
 					<div class="card">
 						<div class="card-body">
 							<PropertyGrid @ref="propGrid"
-											  Loader="LoadDashboardOption"
+											  Loader="Vm.LoadDashboard"
 											  CancelVisible="true"
 											  HyperStore="HyperStore"
 											  OKVisible="true"
-											  CancelCommand="OnCancelProperty"
-											  OkCommand="OnOkProperty">
+											  CancelCommand="Vm.OnCancelProperty"
+											  OkCommand="Vm.OnOkProperty">
 							</PropertyGrid>
 						</div>
 					</div>
@@ -99,14 +99,14 @@
 }
 
 
-@if (isShowRenameDashboardModal)
+@if (Vm.IsShowRenameDashboardModal)
 {
 	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header dashboard-modal-widget-header">
 					<h5 class="modal-title">Rename Dashboard Name</h5>
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { isShowRenameDashboardModal = false; } )">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.IsShowRenameDashboardModal = false; })">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
@@ -115,14 +115,14 @@
 						<div class="card-body">
 							<div class="form-group">
 								<label for="dashboardName">Name</label>
-								<input type="text" class="form-control" id="dashboardName" @bind="@SelectedDashboard.Option.Name" />
+								<input type="text" class="form-control" id="dashboardName" @bind="@Vm.SelectedDashboard.Name" />
 							</div>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { isShowRenameDashboardModal = false; } )">Close</button>
-					<button type="button" class="btn btn-primary" @onclick="(async e => { await SaveChanges(); } )">Save changes</button>
+					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { Vm.IsShowRenameDashboardModal = false; })">Close</button>
+					<button type="button" class="btn btn-primary" @onclick="(async e => { await Vm.SaveChanges(); })">Save changes</button>
 				</div>
 			</div>
 		</div>
@@ -133,109 +133,42 @@
 
 @code{
 
-	PropertyGrid propGrid;
-
-	private bool isShowRenameDashboardModal;
-	private bool isShowProperty;
-	private bool isLoadedDataResult;
-	private DashboardData SelectedDashboard;
-
-	private List<DashboardData> DataList = new List<DashboardData>();
-
-	[Parameter]
-	public IHyperArgsSink HyperStore { get; set; }
-
-	[Parameter]
-	public EventCallback<DashboardData> OnSelectDesign { get; set; }
-
-	[Parameter]
-	public EventCallback<DashboardData> OnSelectView { get; set; }
-
-	protected override async Task OnInitializedAsync()
+	PropertyGrid _propGrid;
+	PropertyGrid propGrid
 	{
-		await base.OnInitializedAsync();
+		get => _propGrid;
+		set
+		{
+			_propGrid = value;
+			Vm.PropertyGridVm = value.Vm;
+		}
+	}
+
+	[Parameter]
+	public IHyperArgsSink HyperStore
+	{
+		get => Vm.HyperStore;
+		set => Vm.HyperStore = value;
+	}
+
+	[Parameter]
+	public EventCallback<DashboardData> OnSelectDesign
+	{
+		get => Vm.OnSelectDesign;
+		set => Vm.OnSelectDesign = value;
+	}
+
+	[Parameter]
+	public EventCallback<DashboardData> OnSelectView
+	{
+		get => Vm.OnSelectView;
+		set => Vm.OnSelectView = value;
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if (HyperStore != null)
-		{
-			await LoadDashboarList();
-		}
+		await Vm.InitAsync();
 	}
 
-	public async Task<object> LoadDashboardOption()
-	{
-		return SelectedDashboard.Option;
-	}
 
-	private async Task LoadDashboarList()
-	{
-		var datas = await HyperStore.FindAllAsync<DashboardData>();
-
-		DataList = datas.ToList();
-
-		isLoadedDataResult = true;
-
-		StateHasChanged();
-	}
-
-	private void SelectDashboard(DashboardData data, bool showView = false)
-	{
-		if (showView)
-		{
-			OnSelectView.InvokeAsync(data);
-			return;
-		}
-
-		OnSelectDesign.InvokeAsync(data);
-	}
-
-	private async Task SaveChanges()
-	{
-		var doc = new HyperDocument(SelectedDashboard);
-
-		var args = new StoreHyperDocumentArgs(doc);
-		var res = await HyperStore.ExecuteAsync(args);
-
-		isShowRenameDashboardModal = false;
-	}
-
-	private async Task DeleteDashboard(DashboardData data)
-	{
-		var doc = new HyperDocument(data);
-		var args = new DeleteHyperDocumentArgs(doc.Id);
-		var isDeleteSuccessful = await HyperStore.ExecuteAsync(args);
-
-		if (isDeleteSuccessful)
-		{
-			DataList.RemoveAll(it => it.Id == data.Id);
-		}
-	}
-
-	private void EditName(DashboardData data)
-	{
-		isShowRenameDashboardModal = true;
-		SelectedDashboard = data;
-	}
-
-	private void OpenPropertyGrid(DashboardData data)
-	{
-		isShowProperty = true;
-		SelectedDashboard = data;
-	}
-
-	public void OnCancelProperty()
-	{
-		propGrid.Vm.CleanSourceCache();
-		isShowProperty = false;
-	}
-
-	public async Task OnOkProperty()
-	{
-		propGrid.Vm.CleanSourceCache();
-		isShowProperty = false;
-
-		await SaveChanges();
-	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
@@ -34,6 +35,15 @@ namespace Orions.Systems.CrossModules.Portal.Domain
 					Token = claimToken.Value
 				}
 			};
+
+			try
+			{
+				// Verify connection is correct.
+				await HyperStore.ExecuteAsyncThrows(new RetrieveAssetsIdsArgs() { Limit = 1 });
+			}
+			catch (Exception ex)
+			{// Handle failed login here.
+			}
 
 			await base.OnInitializedAsync();
 		}

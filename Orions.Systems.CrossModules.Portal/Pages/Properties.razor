@@ -5,12 +5,14 @@
 
 @inject NavigationManager MyNavigationManager
 
+@using Orions.Infrastructure.HyperMedia
+
 @using Syncfusion.EJ2.Blazor.DropDowns
 
-	<div class="container-fluid">
+<div class="container-fluid">
 
 
-		@if (IsSelected)
+	@if (IsSelected)
 	{
 		<div id="selected-property" class="row">
 			<div class="col-md-8 property-banner">
@@ -22,8 +24,9 @@
 					<div class="col-12 property-title">
 						<span>The Grove</span>
 						<div @onclick="@(ev => { IsSelected = false; })" class="collapse-prop">
-							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
+							<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve">
 							<polyline points="2.8,6.8 17.6,6.8 10.2,14.1 2.8,6.9 " />
+
 							</svg>
 						</div>
 					</div>
@@ -95,182 +98,182 @@
 		</div>
 	}
 
-		<div class="row">
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Miramar Beach Resort<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/MiramarBeachResort.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
+	<div class="row">
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Miramar Beach Resort<span></span></a>
 				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Palisades Village<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/PalisadesVillage.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
+				<div class="property-banner">
+					<img src="/images/MiramarBeachResort.jpg" />
 				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
 			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container" @onclick="@(ev => { IsSelected = true; })">
-					<div class="property-title">
-						<a href="#">The Grove<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/TheGrove.jpg" />
-					</div>
-					<div class="coming-soon"></div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Palisades Village<span></span></a>
 				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">The Americana At Brand<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/TheAmericanaAtBrand.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
+				<div class="property-banner">
+					<img src="/images/PalisadesVillage.jpg" />
 				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
 			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container" @onclick="@(ev => { IsSelected = true; })">
+				<div class="property-title">
+					<a href="#">The Grove<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/TheGrove.jpg" />
+				</div>
+				<div class="coming-soon"></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">The Americana At Brand<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/TheAmericanaAtBrand.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
 
-		</div>
-		<div class="row">
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Americana Luxury Apartments<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/AmericanaLuxuryApartments.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">8500<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/8500.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">The Commons At Calabasas<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/TheCommonsAtCalabasas.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Encino Marketplace<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/EncinoMarketplace.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Excelsior<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/Excelsior.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">The Laskes At Thousand Oaks<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/TheLaskesAtThousandOaks.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">The Masonic Temple<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/TheMasonicTemple.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">The Promenade At Westlake<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/ThePromenadeAtWestlake.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">252 South Brand Blvd.<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/252SouthBrandBlvd.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Village At Moorpark<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/VillageAtMoorpark.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-			<div class="col-lg-3 property-card">
-				<div class="property-container">
-					<div class="property-title">
-						<a href="#">Waterside At Marina Del Rey<span></span></a>
-					</div>
-					<div class="property-banner">
-						<img src="/images/WatersideAtMarinaDelRey.jpg" />
-					</div>
-					<div class="coming-soon"><span>Coming Soon</span></div>
-				</div>
-			</div>
-		</div>
-		
 	</div>
+	<div class="row">
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Americana Luxury Apartments<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/AmericanaLuxuryApartments.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">8500<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/8500.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">The Commons At Calabasas<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/TheCommonsAtCalabasas.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Encino Marketplace<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/EncinoMarketplace.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Excelsior<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/Excelsior.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">The Laskes At Thousand Oaks<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/TheLaskesAtThousandOaks.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">The Masonic Temple<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/TheMasonicTemple.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">The Promenade At Westlake<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/ThePromenadeAtWestlake.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">252 South Brand Blvd.<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/252SouthBrandBlvd.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Village At Moorpark<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/VillageAtMoorpark.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+		<div class="col-lg-3 property-card">
+			<div class="property-container">
+				<div class="property-title">
+					<a href="#">Waterside At Marina Del Rey<span></span></a>
+				</div>
+				<div class="property-banner">
+					<img src="/images/WatersideAtMarinaDelRey.jpg" />
+				</div>
+				<div class="coming-soon"><span>Coming Soon</span></div>
+			</div>
+		</div>
+	</div>
+
+</div>
 
 @code{
 
@@ -291,16 +294,20 @@
 
 	private async Task LoadPublishedDashboards()
 	{
-		var datas = await HyperStore.FindAllAsync<DashboardData>();
+		// Pull only the descriptor versions - make sure Published property id descriptor available.
+		var findArgs = new FindHyperDocumentsArgs(false);
+		findArgs.SetDocumentType(typeof(DashboardData));
+		findArgs.DescriptorConditions.AddCondition(nameof(DashboardData.Published), true);
 
-		var data = datas.Where(it => it.Option.Published == true && !string.IsNullOrWhiteSpace(it.Option.Tag)).ToList();
+		var datas = await findArgs.ExecuteAsync<DashboardData>(HyperStore);
 
+		var data = datas.Where(it => it != null && it.Published == true && !string.IsNullOrWhiteSpace(it.Tag)).ToList();
 
 		foreach (var item in data)
 		{
 			var story = new Stories()
 			{
-				ID = item.Option.Tag,
+				ID = item.Tag,
 				Text = item.Name
 			};
 			LocalData.Add(story);

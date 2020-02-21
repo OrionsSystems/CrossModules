@@ -52,7 +52,7 @@
 	{
 		var datas = await HyperStore.FindAllAsync<DashboardData>();
 
-		return datas.Where(it => it.Option.Tag == tag).Any();
+		return datas.Where(it => it.Tag == tag).Any();
 	}
 
 }
