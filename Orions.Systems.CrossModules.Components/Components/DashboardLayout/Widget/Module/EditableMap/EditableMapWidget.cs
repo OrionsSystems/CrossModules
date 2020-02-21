@@ -22,6 +22,9 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public string DefaultCameraColor { get; set; } = "#00FF00";
 		public string DefaultCircleColor { get; set; } = "#0000FF";
 
+		public MapPlaybackCache MapPlaybackCache { get; set; }
+		public MapPlaybackOptions MapPlaybackOptions { get; set; }
+
 		public EditableMapWidget()
 		{
 			this.Label = "Editable Map Widget";

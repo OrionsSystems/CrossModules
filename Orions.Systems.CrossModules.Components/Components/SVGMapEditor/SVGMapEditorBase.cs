@@ -36,11 +36,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.Vm.JsRuntime = JsInterop;
 			var thisReference = DotNetObjectReference.Create(this);
 			await this.Vm.Initialize(ComponentContainerId, thisReference);
-
-			//Task.Run(async () =>
-			//{
-			//	await Vm.TestLiveUpdate();
-			//});
 		}
 
 		[JSInvokable]
