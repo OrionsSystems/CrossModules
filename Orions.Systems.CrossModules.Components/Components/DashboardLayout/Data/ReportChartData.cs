@@ -1,5 +1,6 @@
 ﻿using Orions.Infrastructure.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Infrastructure.Reporting;
 using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
@@ -117,7 +118,15 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public DateTime? DatePosition { get; set; }
-		public string StreamPosition { get; set; }
+		public ReportRowTemplate RowTemplate { get; set; }
+		public ReportColumnTemplate ColumnTemplate { get; set; }
+
+		public ReportRowCell Cell { get; set; }
+
+		public DateTime? StartTime => RowTemplate.StartDateTime;
+		public DateTime? EndTime => RowTemplate.EndDateTime;
+
+		//public DateTime? DatePosition { get; set; }
+		//public string StreamPosition { get; set; }
 	}
 }

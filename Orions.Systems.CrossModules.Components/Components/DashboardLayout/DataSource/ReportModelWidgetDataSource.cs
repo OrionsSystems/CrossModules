@@ -15,17 +15,14 @@ namespace Orions.Systems.CrossModules.Components
 	/// A data source based off of a Report result.
 	/// </summary>
 	[Compatibility("DynamicReportResultWidgetDataSource")]
-	public class ReportModelWidgetDataSource : WidgetDataSource
+	public class ReportModelWidgetDataSource : ActiveFilterWidgetDataSource
 	{
 		[HelpText("The Report to use as a template for this source", HelpTextAttribute.Priorities.Mandatory)]
-		[HyperDocumentId.DocumentType(typeof(ReportModelConfig))]
+		[HyperDocumentId.DocumentType(typeof(ReportModelConfig), RetrievePayload = false)]
 		public HyperDocumentId? ReportModelId { get; set; }
 
-		//[HelpText("The Metadata set to use as a source", HelpTextAttribute.Priorities.Mandatory)]
-		//[HyperDocumentId.DocumentType(typeof(HyperMetadataSet))]
-		//public HyperDocumentId? MetadataSetId { get; set; }
-
-		public override bool SupportsDynamicFiltration => true;
+		[HelpText("Execute the report as a job on the server; recommended to use, unless specific reasons against, as it is MUCH faster")]
+		public bool JobMode { get; set; } = true;
 
 		public ReportModelWidgetDataSource()
 		{
@@ -44,14 +41,18 @@ namespace Orions.Systems.CrossModules.Components
 			if (context.GroupFilterData?.Period != null)
 				reportModelConfig.TrySetPeriod(context.GroupFilterData.Period);
 
-			var startJobArgs = new StartHyperJobArgs(typeof(ReportModelJob), 
-				new ReportModelJobConfig() { ModelConfig = reportModelConfig }) { WaitForResult = true };
+			if (context.GroupFilterData?.FilterLabels?.Length > 0)
+				reportModelConfig.TrySetLabels(context.GroupFilterData?.FilterLabels, context.GroupFilterData.FilterTarget);
 
-			var result = await context.HyperStore.ExecuteAsync(startJobArgs);
-
-			var executionResult = (ExecutionResult<Report>)result.JobResult;
-
-			return executionResult.Value;
+			var helper = new ReportModelHelper();
+			if (this.JobMode)
+			{
+				return await helper.ExecuteJobModeAsync(context.HyperStore, reportModelConfig, null, context.CancellationToken, "");
+			}
+			else
+			{
+				return await helper.ExecuteLocalModeAsync(context.HyperStore, reportModelConfig, null, "", context.Logger, context.CancellationToken);
+			}
 		}
 
 	}

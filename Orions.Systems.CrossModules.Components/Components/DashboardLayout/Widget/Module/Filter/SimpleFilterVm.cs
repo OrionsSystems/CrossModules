@@ -65,13 +65,13 @@ namespace Orions.Systems.CrossModules.Components
 		public async Task ClearAllFilters()
 		{
 			this.DashboardVm.ClearAllFilterGroups();
-			await this.DashboardVm.UpdateDynamicWidgetsAsync();
+			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 
 		public async Task ClearFilters()
 		{
 			this.DashboardVm.ClearFilterGroup(this.Widget.FilterGroup);
-			await this.DashboardVm.UpdateDynamicWidgetsAsync();
+			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 
 		public async Task ApplyAsync(bool updateDashboard = true)
@@ -91,7 +91,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (updateDashboard)
 			{
-				await this.DashboardVm.UpdateDynamicWidgetsAsync();
+				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 				await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
 			}
 		}

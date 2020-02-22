@@ -8,8 +8,6 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class WidgetDataSource : UnifiedBlob
 	{
-		public virtual bool SupportsDynamicFiltration => false;
-
 		public DataSourceNameMapping Mapping { get; set; } = new DataSourceNameMapping();
 
 		public IconMapping IconMapping { get; set; } = new IconMapping();

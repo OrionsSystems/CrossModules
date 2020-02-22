@@ -129,6 +129,11 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
+		public DashboardGroupData ObtainFilterData(IDashboardWidget widget)
+		{
+			return this.ObtainFilterData(widget.FilterGroup);
+		}
+
 		public DashboardGroupData ObtainFilterData(string group)
 		{
 			if (group == null)
@@ -216,7 +221,7 @@ namespace Orions.Systems.CrossModules.Components
 		/// <summary>
 		/// Run this to update dynamic filter widgets, so they can pick up changed filter values.
 		/// </summary>
-		public async Task UpdateDynamicWidgetsAsync()
+		public async Task UpdateDynamicWidgetsFilteringAsync()
 		{
 			foreach (var widgetVm in _widgetsVms.Select(it => it.Value))
 			{

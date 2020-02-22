@@ -29,14 +29,16 @@
 						@for(int i=0; i< Vm.ReportChartData.Series.FirstOrDefault().Data.Count(); i++)
 						{
 						<tr>
-							@if ( Vm.ReportChartData.Series.FirstOrDefault().Data[0].DatePosition.HasValue)
+
+							@*@if ( Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].StartTime.HasValue)
 							{
-								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].DatePosition?.ToString("dd MMM HH:mm")</td>
+								<td>@Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].Label.StartTime?.ToString("dd MMM HH:mm")</td>
 							}
 							else
-							{
+							{*@
 								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].Label</td>
-							}
+@*							}*@
+
 							@foreach (var item in Vm.ReportChartData.Series)
 							{
 

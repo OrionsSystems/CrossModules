@@ -18,8 +18,6 @@ namespace Orions.Systems.CrossModules.Components
 		[HyperDocumentId.DocumentType(typeof(Report))]
 		public HyperDocumentId ReportResultId { get; set; }
 
-		public override bool SupportsDynamicFiltration => true;
-
 		public ReportResultWidgetDataSource()
 		{
 		}

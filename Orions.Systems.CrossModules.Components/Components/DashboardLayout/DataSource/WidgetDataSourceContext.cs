@@ -3,6 +3,7 @@ using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.Reporting;
 using Orions.Node.Common;
 using System;
+using System.Threading;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,6 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 		public IHyperArgsSink HyperStore { get; set; }
 
 		public ILogger Logger { get; set; } = Orions.Common.Logger.Instance;
+
+		public CancellationToken CancellationToken { get; set; } = default(CancellationToken);
 
 		public WidgetDataSourceContext()
 		{

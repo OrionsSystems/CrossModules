@@ -16,8 +16,6 @@ namespace Orions.Systems.CrossModules.Components
 		[UniBrowsable(EditType = UniBrowsableAttribute.EditTypes.TextFile)]
 		public byte[] CSVData { get; set; }
 
-		public override bool SupportsDynamicFiltration => true;
-
 		public CSVWidgetDataSource()
 		{
 		}
@@ -43,7 +41,7 @@ namespace Orions.Systems.CrossModules.Components
 				while (!reader.EndOfStream)
 				{
 					string line = reader.ReadLine();
-					Console.WriteLine(line);
+					System.Diagnostics.Debug.WriteLine(line);
 
 					if (!String.IsNullOrWhiteSpace(line))
 					{

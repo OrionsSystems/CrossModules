@@ -36,20 +36,24 @@ namespace Orions.Systems.CrossModules.Components
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			await RefreshReportResultData();
+			if (this.Widget	is ActiveFilterReportChartWidget active && active.AllowFiltrationTarget)
+				await RefreshReportResultData();
 		}
 
 		public async Task RefreshReportResultData()
 		{
 			var widget = this.Widget as ReportBaseWidget;
 			var dataSource = widget?.DataSource;
+
 			if (dataSource == null)
 				return;
 
 			var context = new WidgetDataSourceContext();
 			context.HyperStore = this.HyperStore;
 
-			context.GroupFilterData = this.DashboardVm?.ObtainFilterData(widget.FilterGroup);
+			// Only if we are allowed as a active filtering target, do we set the filters.
+			if (widget is ActiveFilterReportChartWidget activeReportWidget && activeReportWidget.AllowFiltrationTarget)
+				context.GroupFilterData = this.DashboardVm?.ObtainFilterData(widget.FilterGroup); 
 
 			var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
 			if (reportResult == null)
@@ -73,7 +77,6 @@ namespace Orions.Systems.CrossModules.Components
 
 			OnReportResultChanged?.Invoke();
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
-
 		}
 
 		private async Task LoadAllIcons(ReportChartData data) 
@@ -110,23 +113,21 @@ namespace Orions.Systems.CrossModules.Components
 				if (report.ColumnsDefinitions == null)
 					return result;
 
-				var categories = report.ColumnsDefinitions.Select(it => it.Title).ToList();
-				var rowsDef = report.RowsDefinitions.ToList();
+				var columns = report.ColumnsDefinitions;
 				var rowData = report.Rows;
 
 				var resultCategoryRange = new List<string>();
 
-				for (var i = 0; i < categories.Count; i++)
+				for (var columnIndex = 0; columnIndex < columns.Length; columnIndex++)
 				{
-					var categoryTitle = categories[i];
+					var columnTemplate = columns[columnIndex];
+					var columnTitle = columnTemplate.Title;
 
-					if (categoryFilters?.Any() == true && !categoryFilters.Contains(categoryTitle))
-					{
+					if (categoryFilters?.Any() == true && !categoryFilters.Contains(columnTitle))
 						continue;
-					}
 
 					var chartSeries = new ReportSeriesChartData();
-					var existingSeries = result.Series.FirstOrDefault(it => it.Name == categoryTitle);
+					var existingSeries = result.Series.FirstOrDefault(it => it.Name == columnTitle);
 
 					if (existingSeries != null)
 					{
@@ -135,20 +136,18 @@ namespace Orions.Systems.CrossModules.Components
 					}
 					else
 					{
-						chartSeries.Name = categoryTitle;
-						resultCategoryRange.Add(categoryTitle);
+						chartSeries.Name = columnTitle;
+						resultCategoryRange.Add(columnTitle);
 					}
 
 					for (var rowIndex = 0; rowIndex < rowData.Length; rowIndex++)
 					{
-						var rowEl = rowData[rowIndex];
+						var row = rowData[rowIndex];
 
-						var label = rowEl.Template.Title;
+						var label = row.Template.Title;
 
-						//var reportRowEl = rowsDef[rowIndex];
-						//var label = reportRowEl.Title;
-
-						var data = rowEl.Cells[i].Values.FirstOrDefault();
+						var cell = row.Cells[columnIndex];
+						var data = cell.Values.FirstOrDefault();
 
 						ReportSeriesChartDataItem chartItem = null;
 						var existingChartItem = chartSeries.Data.FirstOrDefault(it => it.Label == label);
@@ -156,24 +155,32 @@ namespace Orions.Systems.CrossModules.Components
 						{
 							chartItem = new ReportSeriesChartDataItem
 							{
-								CategoryName = categoryTitle,
-								Value = data.ToString(), //Convert.ToUInt16(data.ToString()),
-								Label = label
+								CategoryName = columnTitle,
+								Value = Convert.ToString(data),
+								Label = label,
+
+								RowTemplate = row.Template,
+								ColumnTemplate = columnTemplate,
+
+								Cell = cell,
 							};
 
 							if (result.IsDateAxis)
 							{
 								try
 								{
+									result.IsDateAxis = row.Template?.StartDateTime.HasValue == true;
 
-									var position = Report.ParseTimePosition(label);
-									if (!position.HasValue)
-										result.IsDateAxis = false;
-									else
-									{
-										chartItem.DatePosition = position.Value;
-										chartItem.StreamPosition = Report.ParseStreamPosition(label);
-									}
+									//var position = Report.ParseTimePosition(label);
+									//if (!position.HasValue)
+									//{
+									//	result.IsDateAxis = false;
+									//}
+									//else
+									//{
+									//	chartItem.DatePosition = position.Value;
+									//	chartItem.StreamPosition = Report.ParseStreamPosition(label);
+									//}
 								}
 								catch (Exception ex)
 								{
@@ -187,8 +194,6 @@ namespace Orions.Systems.CrossModules.Components
 						{
 							chartItem.Value += Convert.ToUInt16(data.ToString());
 						}
-
-
 					}
 
 					result.AddCategoryRange(resultCategoryRange.ToArray());
@@ -197,6 +202,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			catch (Exception ex)
 			{
+				Logger.Instance.Error(typeof(ReportWidgetVm<>), nameof(LoadReportChartData), ex);
 				System.Diagnostics.Debug.Assert(false, ex.Message);
 			}
 
