@@ -19,41 +19,55 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task HandlePointOnclick(IPointEventArgs args)
 		{
+			//if (this.Widget.AllowFiltrationSource == false)
+			//	return;
+
 			var series = this.ReportChartData.Series[(int)args.SeriesIndex];
 			var category = series.Name;
-			var currentData = series.Data[(int)args.PointIndex];
+			ReportSeriesChartDataItem currentData = series.Data[(int)args.PointIndex];
 
-			throw new NotImplementedException(); // Figure out how this relates to the new filtering system.
+			var data = this.DashboardVm.ObtainFilterData(this.Widget);
 
-			//if (this.Widget.InteractiveModeCategoryFiltering)
-			//{
-			//	this.DashboardVm.SetStringFilters(this.Widget.FilterGroup, new string[] { category }, ReportFilterInstruction.Targets.Column);
-			//}
+			bool didModify = false;
+			if (this.Widget.AllowFiltrationSource_TextCategory)
+			{
+				data.FilterLabels = new string[] { category };
+				data.FilterTarget = ReportFilterInstruction.Targets.Column;
 
-			//if (this.Widget.InteractiveModeDateTimeFiltering)
-			//{
-			//	if (series.Data.Count <= 1)
-			//		return;
+				didModify = true;
+			}
 
-			//	if (series.Data.Count == args.PointIndex + 1)
-			//	{
-			//		var prevData = series.Data[(int)args.PointIndex - 1];
+			if (this.Widget.AllowFiltrationSource_DateTime && series.Data.Count > 1)
+			{
+				didModify = true;
 
-			//		//var prevDif = currentData.DatePosition - prevData.DatePosition;
-			//		//= category;
-			//		this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, prevData.DatePosition, currentData.DatePosition);
-			//	}
-			//	else
-			//	{
-			//		var nextData = series.Data[(int)args.PointIndex + 1];
-			//		//= category;
-			//		//var nextDif = nextData.DatePosition - currentData.DatePosition;
-			//		this.DashboardVm.SetDateTimeFilters(this.Widget.FilterGroup, currentData.DatePosition, nextData.DatePosition);
-			//	}
-			//}
+				data.StartTime = currentData.StartTime;
+				data.EndTime = currentData.EndTime;
 
-			//if (this.Widget.InteractiveModeCategoryFiltering || this.Widget.InteractiveModeDateTimeFiltering)
-			//	await this.DashboardVm.UpdateDynamicWidgetsAsync();
+				//if (series.Data.Count == args.PointIndex + 1)
+				//{// Last one
+				//	var prevData = series.Data[(int)args.PointIndex - 1];
+
+				//	var delta = currentData.DatePosition - prevData.DatePosition;
+
+				//	data.StartTime = currentData.DatePosition;
+				//	data.EndTime = currentData.DatePosition + delta;
+
+				//	didModify = true;
+				//}
+				//else
+				//{// First or a middle one.
+				//	var nextData = series.Data[(int)args.PointIndex + 1];
+
+				//	data.StartTime = currentData.DatePosition;
+				//	data.EndTime = nextData.DatePosition;
+
+				//	didModify = true;
+				//}
+			}
+
+			if (didModify)
+				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 	}
 }

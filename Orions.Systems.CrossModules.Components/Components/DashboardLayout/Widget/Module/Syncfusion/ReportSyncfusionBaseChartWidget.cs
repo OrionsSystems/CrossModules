@@ -59,7 +59,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			public double LabelRotation { get; set; }
 
-			public LabelIntersectAction LabelIntersectAction { get; set; } = LabelIntersectAction.None;
+			public LabelIntersectAction LabelIntersectAction { get; set; } = LabelIntersectAction.Rotate45;
 		}
 
 		public class PrimaryYAxis {

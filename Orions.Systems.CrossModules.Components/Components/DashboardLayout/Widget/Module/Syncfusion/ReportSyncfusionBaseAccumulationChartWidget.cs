@@ -109,8 +109,10 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Specifies whether point has to get selected or not. Takes value either 'None'or 'Point'")]
 		public AccumulationType AccumulationType { get; set; } = AccumulationType.Pie;
 
+		[HelpText("For ex. 100%")]
 		public string Radius { get; set; } = "100%";
 
+		[HelpText("For ex. 0%")]
 		public string InnerRadius { get; set; } = "0%"; 
 
 		public ReportSyncfusionBaseAccumulationChartWidget()
