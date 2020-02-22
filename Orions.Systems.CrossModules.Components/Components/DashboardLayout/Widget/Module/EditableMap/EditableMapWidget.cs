@@ -5,7 +5,7 @@ using static Orions.Systems.CrossModules.Components.Components.SVGMapEditor.SVGM
 
 namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
 {
-	public class EditableMapWidget : DashboardWidget, IDashboardWidget
+	public class EditableMapWidget : DashboardWidget
 	{
 		
 		[HyperDocumentId.DocumentType(typeof(MapOverlay))]

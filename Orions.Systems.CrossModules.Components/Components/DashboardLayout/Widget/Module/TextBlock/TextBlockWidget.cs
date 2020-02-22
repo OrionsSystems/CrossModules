@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class TextBlockWidget : DashboardWidget, IDashboardWidget
+   public class TextBlockWidget : DashboardWidget
    {
       [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
       public string RawHtml { get; set; }

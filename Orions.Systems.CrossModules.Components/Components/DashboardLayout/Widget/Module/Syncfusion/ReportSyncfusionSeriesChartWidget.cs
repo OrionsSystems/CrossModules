@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class ReportSyncfusionSeriesChartWidget : ReportSyncfusionBaseChartWidget, IDashboardWidget
+   public class ReportSyncfusionSeriesChartWidget : ReportSyncfusionBaseChartWidget
    {
       public ReportSyncfusionSeriesChartWidget()
       {

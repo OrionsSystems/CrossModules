@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class ReportGridWidget : ReportBaseWidget, IDashboardWidget
+   public class ReportGridWidget : ReportBaseWidget
    {
       public ReportGridWidget()
       {

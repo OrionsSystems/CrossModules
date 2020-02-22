@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class ReportTelericPieChartWidget : ReportBaseWidget, IDashboardWidget
+    public class ReportTelericPieChartWidget : ReportBaseWidget
     {
       public ReportTelericPieChartWidget()
       {

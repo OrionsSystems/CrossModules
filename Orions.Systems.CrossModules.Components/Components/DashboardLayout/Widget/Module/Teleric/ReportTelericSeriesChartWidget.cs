@@ -4,7 +4,7 @@ using System;
 namespace Orions.Systems.CrossModules.Components
 {
 	[Compatibility("ReportTelericLineChartWidget")]
-	public class ReportTelericSeriesChartWidget : ReportTelericBaseChartWidget, IDashboardWidget
+	public class ReportTelericSeriesChartWidget : ReportTelericBaseChartWidget
 	{
 		public ReportTelericSeriesChartWidget()
 		{

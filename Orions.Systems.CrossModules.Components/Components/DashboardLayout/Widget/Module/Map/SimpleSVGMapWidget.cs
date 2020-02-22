@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class SimpleSVGMapWidget : DashboardWidget, IDashboardWidget
+   public class SimpleSVGMapWidget : DashboardWidget
    {
       [HelpText("Selected zone")]
       public string Zone { get; set; }

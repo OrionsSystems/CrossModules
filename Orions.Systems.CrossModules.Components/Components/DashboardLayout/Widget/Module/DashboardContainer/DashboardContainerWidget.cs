@@ -3,7 +3,7 @@ using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class DashboardContainerWidget : DashboardWidget, IDashboardWidget
+	public class DashboardContainerWidget : DashboardWidget
 	{
 		public DashboardLayout DashboardLayout;
 

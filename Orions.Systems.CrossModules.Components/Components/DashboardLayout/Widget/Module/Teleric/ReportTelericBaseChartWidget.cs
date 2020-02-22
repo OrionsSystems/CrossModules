@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class ReportTelericBaseChartWidget : ReportBaseWidget, IDashboardWidget
+	public abstract class ReportTelericBaseChartWidget : ReportBaseWidget
 	{
 		public bool IsShowChartTitle { get; set; } = false;
 		public string ChartTitle { get; set; }

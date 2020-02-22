@@ -9,7 +9,7 @@ namespace Orions.Systems.CrossModules.Components
 {
 	[HelpText("Helps visualize the individual tags from the selected MetadataSet + runtime filtering range")]
 	[Compatibility("MetadataTagReviewWidget", "MetadataSetReviewWidget")]
-	public class TagReviewWidget : DashboardWidget, IDashboardWidget
+	public class TagReviewWidget : DashboardWidget
 	{
 		[HelpText("The Id of the metadata set to use", HelpTextAttribute.Priorities.Mandatory)]
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataSet))]

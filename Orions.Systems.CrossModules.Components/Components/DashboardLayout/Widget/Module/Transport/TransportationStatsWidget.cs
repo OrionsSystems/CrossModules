@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class TransportationStatsWidget : DashboardWidget, IDashboardWidget
+   public class TransportationStatsWidget : DashboardWidget
    {
 
       public class Transportation

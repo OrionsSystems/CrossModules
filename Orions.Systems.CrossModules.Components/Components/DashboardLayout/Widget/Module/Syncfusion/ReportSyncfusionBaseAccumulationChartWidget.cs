@@ -4,7 +4,7 @@ using Syncfusion.EJ2.Blazor.Charts;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public abstract class ReportSyncfusionBaseAccumulationChartWidget : ReportChartWidget, IDashboardWidget
+	public abstract class ReportSyncfusionBaseAccumulationChartWidget : ReportChartWidget
 	{
 
 		public class ChartSeriesConfiguration 

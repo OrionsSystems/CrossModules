@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class ReportPieChartJSWidget : ReportBaseWidget, IDashboardWidget
+   public class ReportPieChartJSWidget : ReportBaseWidget
    {
       public int Height { get; set; } = 400;
 
