@@ -22,22 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		BaseVm _parentVm = null;
-		public BaseVm ParentVm
-		{
-			get => _parentVm;
-			set
-			{
-				_parentVm = value;
-				OnSetParentVm(value);
-			}
-		}
-
 		public BlazorVm()
-		{
-		}
-
-		protected virtual void OnSetParentVm(BaseVm vm)
 		{
 		}
 	}
