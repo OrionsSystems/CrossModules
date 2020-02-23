@@ -163,7 +163,7 @@ app {
 		display: block;
 		width: 200px;
 		height: 100%;
-		background-color: #ff6458;
+		background-color: #395D7F;
 		animation: progressbar-slide 1s infinite;
 		animation-timing-function: ease-in-out;
 	}
