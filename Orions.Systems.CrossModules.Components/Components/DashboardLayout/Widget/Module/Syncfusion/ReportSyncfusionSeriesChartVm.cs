@@ -26,7 +26,7 @@ namespace Orions.Systems.CrossModules.Components
 			var category = series.Name;
 			ReportSeriesChartDataItem currentData = series.Data[(int)args.PointIndex];
 
-			var data = this.DashboardVm.ObtainFilterData(this.Widget);
+			var data = this.DashboardVm.ObtainFilterGroup(this.Widget);
 
 			bool didModify = false;
 			if (this.Widget.AllowFiltrationSource_TextCategory)

@@ -24,6 +24,12 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Execute the report as a job on the server; recommended to use, unless specific reasons against, as it is MUCH faster")]
 		public bool JobMode { get; set; } = true;
 
+		[HelpText("Allow Job mode to use cached reports (faster)")]
+		public bool JobMode_CacheRead { get; set; } = true;
+
+		[HelpText("Allow Job mode to store cached results (faster on subsequent calls)")]
+		public bool JobMode_CacheWrite { get; set; } = true;
+
 		public ReportModelWidgetDataSource()
 		{
 		}
@@ -47,7 +53,7 @@ namespace Orions.Systems.CrossModules.Components
 			var helper = new ReportModelHelper();
 			if (this.JobMode)
 			{
-				return await helper.ExecuteJobModeAsync(context.HyperStore, reportModelConfig, null, context.CancellationToken, "");
+				return await helper.ExecuteJobModeAsync(context.HyperStore, reportModelConfig, null, context.CancellationToken, "", this.JobMode_CacheRead, this.JobMode_CacheWrite);
 			}
 			else
 			{

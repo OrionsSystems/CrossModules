@@ -7,122 +7,102 @@
 @using Syncfusion.EJ2.Blazor.Charts
 @using Syncfusion.EJ2.Blazor.SplitButtons
 
-<div class="widget-content-report">
+	<div class="widget-content-report">
 
-	@if (Vm.Report != null && Vm.IsLoadedReportResult)
-	{
-		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
-		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
-
-		@if (Showing)
+		@if (Vm.Report != null && Vm.ReportChartData != null && Vm.IsLoadedReportResult)
 		{
-			<div class="widget-content-report-view widget-syncfusion">
+			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-				<EjsChart @ref="Chartobj"
-							 Height="@Widget.Height"
-							 Width="@Widget.Width"
-							 Title="@Widget.ChartTitle"
-							 Background="@Widget.ChartBackground"
-							 SelectionMode="SelectionMode.Series">
+			@if (Showing)
+			{
+				<div class="widget-content-report-view widget-syncfusion">
 
-					<ChartArea Border="@Widget.Border"></ChartArea>
+					<EjsChart @ref="Chartobj"
+								 Height="@Widget.Height"
+								 Width="@Widget.Width"
+								 Title="@Widget.ChartTitle"
+								 Background="@Widget.ChartBackground"
+								 SelectionMode="SelectionMode.Series">
 
-					<ChartMargin Left="@Widget.Margin.Left"
-									 Right="@Widget.Margin.Right"
-									 Top="@Widget.Margin.Top"
-									 Bottom="@Widget.Margin.Bottom"></ChartMargin>
+						<ChartArea Border="@Widget.Border"></ChartArea>
 
-					<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
+						<ChartMargin Left="@Widget.Margin.Left"
+										 Right="@Widget.Margin.Right"
+										 Top="@Widget.Margin.Top"
+										 Bottom="@Widget.Margin.Bottom"></ChartMargin>
 
-					<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
-											 Minimum="@Widget.YAxisSettings.Minimum"
-											 LineStyle="@Widget.YAxisSettings.LineStyle"
-											 Visible="@Widget.YAxisSettings.Visible"
-											 MajorTickLines="@Widget.YAxisSettings.MajorTickLines"
-											 MinorTickLines="@Widget.YAxisSettings.MinorTickLines"></ChartPrimaryYAxis>
+						<ChartEvents OnPointClick="@Vm.HandlePointOnclick"></ChartEvents>
 
-					@if (ChartData.IsDateAxis)
-					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
-												 IntervalType="@Widget.XAxisSettings.IntervalType"
-												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
-												 Skeleton="@Widget.XAxisSettings.Skeleton"
-												 Interval="@Widget.XAxisSettings.Interval"
-												 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
-												 TickPosition="@Widget.XAxisSettings.TickPosition"
-												 LabelPosition="@Widget.XAxisSettings.LabelPosition"
-												 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
-												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
-												 LabelRotation="@Widget.XAxisSettings.LabelRotation"
-												 LabelStyle="@Widget.XAxisSettings.LabelStyle"
-												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
-												 Visible="@Widget.XAxisSettings.Visible">
-						</ChartPrimaryXAxis>
-					}
-					else
-					{
-						<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
-												 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
-												 IntervalType="@Widget.XAxisSettings.IntervalType"
-												 LabelFormat="@Widget.XAxisSettings.LabelFormat"
-												 Skeleton="@Widget.XAxisSettings.Skeleton"
-												 Interval="@Widget.XAxisSettings.Interval"
-												 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
-												 TickPosition="@Widget.XAxisSettings.TickPosition"
-												 LabelPosition="@Widget.XAxisSettings.LabelPosition"
-												 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
-												 LabelRotation="@Widget.XAxisSettings.LabelRotation"
-												 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
-												 LabelStyle="@Widget.XAxisSettings.LabelStyle"
-												 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
-												 Visible="@Widget.XAxisSettings.Visible">
-						</ChartPrimaryXAxis>
-					}
+						<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
+												 Minimum="@Widget.YAxisSettings.Minimum"
+												 LineStyle="@Widget.YAxisSettings.LineStyle"
+												 Visible="@Widget.YAxisSettings.Visible"
+												 MajorTickLines="@Widget.YAxisSettings.MajorTickLines"
+												 MinorTickLines="@Widget.YAxisSettings.MinorTickLines"></ChartPrimaryYAxis>
 
-					<ChartTooltipSettings Format="@Widget.TooltipSettings.Format"
-												 TextStyle="@Widget.TooltipSettings.TextStyle"
-												 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
-
-					<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
-												Position="@Widget.LegendSettings.Position"
-												Alignment="@Widget.LegendSettings.Alignment">
-					</ChartLegendSettings>
-					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
-											 EnablePinchZooming="@Widget.EnablePinchZooming"
-											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
-											 EnablePan="@Widget.EnablePan"
-											 EnableScrollbar="true">
-					</ChartZoomSettings>
-
-					<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
-
-					<ChartSeriesCollection>
-						@foreach (var ser in ChartData.Series)
+						@if (Vm.ReportChartData.IsDateAxis)
 						{
-							<ChartSeries DataSource="@ser.Data"
-											 Name="@ser.Name"
-											 XName="@nameof(ReportSeriesChartDataItem.Label)"
-											 YName="@nameof(ReportSeriesChartDataItem.Value)"
-											 CornerRadius="@Widget.CornerRadius"
-											 Type="@Widget.ChartSeriesType">
+							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.DateTime"
+													 IntervalType="@Widget.XAxisSettings.IntervalType"
+													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+													 Skeleton="@Widget.XAxisSettings.Skeleton"
+													 Interval="@Widget.XAxisSettings.Interval"
+													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
+													 TickPosition="@Widget.XAxisSettings.TickPosition"
+													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 LabelRotation="@Widget.XAxisSettings.LabelRotation"
+													 LabelStyle="@Widget.XAxisSettings.LabelStyle"
+													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
+													 Visible="@Widget.XAxisSettings.Visible">
+							</ChartPrimaryXAxis>
+						}
+						else
+						{
+							<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
+													 ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"
+													 IntervalType="@Widget.XAxisSettings.IntervalType"
+													 LabelFormat="@Widget.XAxisSettings.LabelFormat"
+													 Skeleton="@Widget.XAxisSettings.Skeleton"
+													 Interval="@Widget.XAxisSettings.Interval"
+													 MajorGridLines="@Widget.XAxisSettings.MajorGridLines"
+													 TickPosition="@Widget.XAxisSettings.TickPosition"
+													 LabelPosition="@Widget.XAxisSettings.LabelPosition"
+													 LabelPlacement="@Widget.XAxisSettings.LabelPlacement"
+													 LabelRotation="@Widget.XAxisSettings.LabelRotation"
+													 LabelIntersectAction="@Widget.XAxisSettings.LabelIntersectAction"
+													 LabelStyle="@Widget.XAxisSettings.LabelStyle"
+													 EdgeLabelPlacement="@Widget.XAxisSettings.EdgeLabelPlacement"
+													 Visible="@Widget.XAxisSettings.Visible">
+							</ChartPrimaryXAxis>
+						}
 
-								<ChartMarker Width="@Widget.ChartMarkerSettings.Width"
-												 Height="@Widget.ChartMarkerSettings.Height"
-												 Border="@Widget.ChartMarkerSettings.Border">
-									<ChartDataLabel Visible="@Widget.ChartMarkerSettings.Visible"
-														 Fill="@Widget.ChartMarkerSettings.Fill"
-														 Opacity="@Widget.ChartMarkerSettings.Opacity"
-														 Position="@Widget.ChartMarkerSettings.Position"
-														 Font="@Widget.ChartMarkerSettings.Font"></ChartDataLabel>
-								</ChartMarker>
-							</ChartSeries>
+						<ChartTooltipSettings Format="@Widget.TooltipSettings.Format"
+													 TextStyle="@Widget.TooltipSettings.TextStyle"
+													 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
 
-							@*@if (ChartData.IsDateAxis)
+						<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
+													Position="@Widget.LegendSettings.Position"
+													Alignment="@Widget.LegendSettings.Alignment">
+						</ChartLegendSettings>
+						<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+												 EnablePinchZooming="@Widget.EnablePinchZooming"
+												 EnableSelectionZooming="@Widget.EnableSelectionZooming"
+												 EnablePan="@Widget.EnablePan"
+												 EnableScrollbar="true">
+						</ChartZoomSettings>
+
+						<ChartCrosshairSettings Enable="@Widget.IsEnableCrosshair"></ChartCrosshairSettings>
+
+						<ChartSeriesCollection>
+							@foreach (var ser in Vm.ReportChartData.Series)
 							{
 								<ChartSeries DataSource="@ser.Data"
 												 Name="@ser.Name"
-												 XName="@nameof(ReportSeriesChartDataItem.StartTime)"
+												 XName="@nameof(ReportSeriesChartDataItem.Label)"
 												 YName="@nameof(ReportSeriesChartDataItem.Value)"
 												 CornerRadius="@Widget.CornerRadius"
 												 Type="@Widget.ChartSeriesType">
@@ -137,56 +117,75 @@
 															 Font="@Widget.ChartMarkerSettings.Font"></ChartDataLabel>
 									</ChartMarker>
 								</ChartSeries>
+
+								@*@if (ChartData.IsDateAxis)
+								{
+									<ChartSeries DataSource="@ser.Data"
+													 Name="@ser.Name"
+													 XName="@nameof(ReportSeriesChartDataItem.StartTime)"
+													 YName="@nameof(ReportSeriesChartDataItem.Value)"
+													 CornerRadius="@Widget.CornerRadius"
+													 Type="@Widget.ChartSeriesType">
+
+										<ChartMarker Width="@Widget.ChartMarkerSettings.Width"
+														 Height="@Widget.ChartMarkerSettings.Height"
+														 Border="@Widget.ChartMarkerSettings.Border">
+											<ChartDataLabel Visible="@Widget.ChartMarkerSettings.Visible"
+																 Fill="@Widget.ChartMarkerSettings.Fill"
+																 Opacity="@Widget.ChartMarkerSettings.Opacity"
+																 Position="@Widget.ChartMarkerSettings.Position"
+																 Font="@Widget.ChartMarkerSettings.Font"></ChartDataLabel>
+										</ChartMarker>
+									</ChartSeries>
+								}
+								else
+								{
+									<ChartSeries DataSource="@ser.Data"
+													 Name="@ser.Name"
+													 XName="@nameof(ReportSeriesChartDataItem.Label)"
+													 YName="@nameof(ReportSeriesChartDataItem.Value)"
+													 Type="@Widget.ChartSeriesType"
+													 CornerRadius="@Widget.CornerRadius">
+										<ChartMarker>
+											<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
+										</ChartMarker>
+									</ChartSeries>
+								}*@
 							}
-							else
-							{
-								<ChartSeries DataSource="@ser.Data"
-												 Name="@ser.Name"
-												 XName="@nameof(ReportSeriesChartDataItem.Label)"
-												 YName="@nameof(ReportSeriesChartDataItem.Value)"
-												 Type="@Widget.ChartSeriesType"
-												 CornerRadius="@Widget.CornerRadius">
-									<ChartMarker>
-										<ChartDataLabel Visible="@Widget.IsShowMarker"></ChartDataLabel>
-									</ChartMarker>
-								</ChartSeries>
-							}*@
-						}
 
-					</ChartSeriesCollection>
+						</ChartSeriesCollection>
 
-				</EjsChart>
+					</EjsChart>
 
-			</div>
+				</div>
+			}
+
+			@if (Widget.ShowFooter)
+			{
+				<div class="widget-content-report-footer">
+					@if (Vm.ReportHasName)
+					{
+						<div class="widget-content-report-footer-name">@Vm.ReportName</div>
+					}
+					<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+				</div>
+			}
+
+			<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
 		}
-
-		@if (Widget.ShowFooter)
+		else
+		@if ((Vm.Report == null || Vm.ReportChartData == null) && Vm.IsLoadedReportResult)
 		{
-			<div class="widget-content-report-footer">
-				@if (Vm.ReportHasName)
-				{
-					<div class="widget-content-report-footer-name">@Vm.ReportName</div>
-				}
-				<div class="widget-content-report-footer-create">Created at @Vm.Report.CreatedAtUTC</div>
+			<div class="widget-missing-report">
+				No Data
 			</div>
 		}
+		else
+		{// Loading...
+			<Loader Settings="@Widget.LoaderSettings"></Loader>
+		}
 
-		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
-	}
-
-	@if (Vm.Report == null && Vm.IsLoadedReportResult)
-	{
-		<div class="widget-missing-report">
-			Missing report data!
-		</div>
-	}
-
-	@if (!Vm.IsLoadedReportResult)
-	{
-		<Loader Settings="@Widget.LoaderSettings"></Loader>
-	}
-
-</div>
+	</div>
 
 @code {
 
@@ -198,25 +197,18 @@
 	{
 	}
 
-	public ReportChartData ChartData => Vm.ReportChartData;
-
 	protected override async Task OnInitializedAsync()
 	{
-		Vm.OnReportResultChanged += OnChangeDataSource;
+		//Vm.OnReportResultChanged += OnChangeDataSource;
 		await Vm.RefreshReportResultData();
 
 		await base.OnInitializedAsync();
 	}
 
-	private void OnChangeDataSource()
-	{
-		this.Showing = true;
-		this.StateHasChanged();
-	}
-
-	protected override void OnStateHasChanged()
-	{
-		base.OnStateHasChanged();
-	}
+	//private void OnChangeDataSource()
+	//{
+	//	this.Showing = true;
+	//	this.StateHasChanged();
+	//}
 
 }

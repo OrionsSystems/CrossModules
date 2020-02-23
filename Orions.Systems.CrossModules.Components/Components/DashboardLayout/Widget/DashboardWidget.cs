@@ -1,14 +1,15 @@
 ﻿using Orions.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public abstract class DashboardWidget : IdUnifiedBlob, IDashboardWidget
 	{
 		[HelpText("Title name")]
-		public string Label { get { return TitleSettings.Title; } set { TitleSettings.Title = value; } }
+		public string Label { get { return WidgetTitleSettings.Title; } set { WidgetTitleSettings.Title = value; } }
 
 		[HelpText("Show or hide title")]
-		public bool ShowTitle { get { return TitleSettings.IsShow; } set { TitleSettings.IsShow = value; } }
+		public bool ShowLabel { get { return WidgetTitleSettings.IsShow; } set { WidgetTitleSettings.IsShow = value; } }
 
 		[HelpText("Show or hide footer")]
 		public bool ShowFooter { get; set; } = false;
@@ -16,8 +17,16 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Show or hide widget on render")]
 		public bool IsVisibile { get; set; } = true;
 
-		[HelpText("Title options")]
-		public TitleConfiguration TitleSettings { get; set; } = new TitleConfiguration();
+		[HelpText("Widget title options")]
+		public TitleConfiguration WidgetTitleSettings { get; set; } = new TitleConfiguration();
+
+		[UniJsonIgnore]
+		[UniBrowsable(false)]
+		public TitleConfiguration TitleSettings
+		{
+			get => WidgetTitleSettings;
+			set => WidgetTitleSettings = value;
+		}
 
 		[HelpText("Top separator options")]
 		public SeparatorConfiguration TopSeparator { get; set; } = new SeparatorConfiguration();

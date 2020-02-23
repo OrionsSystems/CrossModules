@@ -1,32 +1,100 @@
-﻿using Orions.Infrastructure.Reporting;
+﻿using Orions.Common;
+using Orions.Infrastructure.Reporting;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class DashboardGroupData
+	public class DashboardFilterGroupData : NotifyPropertyChanged
 	{
+
+		DateTime? _startTime = null;
+
 		/// <summary>
 		/// If assigned, the StartTime of our search.
 		/// </summary>
-		public DateTime? StartTime { get; set; }
+		public DateTime? StartTime
+		{
+			get
+			{
+				return _startTime;
+			}
+
+			set
+			{
+				SetValue(ref _startTime, value);
+			}
+		}
+
+
+		DateTime? _endTime = null;
 
 		/// <summary>
 		/// If assigned, the EndTime of our search.
 		/// </summary>
-		public DateTime? EndTime { get; set; }
+		public DateTime? EndTime
+		{
+			get
+			{
+				return _endTime;
+			}
+
+			set
+			{
+				SetValue(ref _endTime, value);
+			}
+		}
+
+		PeriodDefinition _period;
 
 		/// <summary>
 		/// If assigned, the step-period we want to apply to our reports.
 		/// </summary>
-		public PeriodDefinition Period { get; set; }
+		public PeriodDefinition Period
+		{
+			get
+			{
+				return _period;
+			}
 
-		public ReportFilterInstruction.Targets? FilterTarget { get; set; }
+			set
+			{
+				SetValue(ref _period, value);
+			}
+		}
 
-		public string[] FilterLabels { get; set; }
+		ReportFilterInstruction.Targets? _filterTarget = null;
 
-		public DashboardGroupData()
+		public ReportFilterInstruction.Targets? FilterTarget
+		{
+			get
+			{
+				return _filterTarget;
+			}
+
+			set
+			{
+				SetValue(ref _filterTarget, value);
+			}
+		}
+
+		string[] _filterLabels = null;
+
+		public string[] FilterLabels
+		{
+			get
+			{
+				return _filterLabels;
+			}
+
+			set
+			{
+				SetValue(ref _filterLabels, value);
+			}
+		}
+
+		public DashboardFilterGroupData()
 		{
 		}
 

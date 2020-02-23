@@ -37,7 +37,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public List<Type> AvailableWidgets { get; private set; } = new List<Type>();
 
-		Dictionary<string, DashboardGroupData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, DashboardGroupData>();
+		Dictionary<string, DashboardFilterGroupData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, DashboardFilterGroupData>();
 
 		/// <summary>
 		/// The Propertyy grid has its own Vm, but we assign it one from here, to make sure it uses this one, so we can control it.
@@ -129,22 +129,22 @@ namespace Orions.Systems.CrossModules.Components
 			return args.ExecutionResult.AsResponse();
 		}
 
-		public DashboardGroupData ObtainFilterData(IDashboardWidget widget)
+		public DashboardFilterGroupData ObtainFilterGroup(IDashboardWidget widget)
 		{
-			return this.ObtainFilterData(widget.FilterGroup);
+			return this.ObtainFilterGroup(widget.FilterGroup);
 		}
 
-		public DashboardGroupData ObtainFilterData(string group)
+		public DashboardFilterGroupData ObtainFilterGroup(string group)
 		{
 			if (group == null)
 				group = "";
 
-			DashboardGroupData data;
+			DashboardFilterGroupData data;
 			lock (_syncRoot)
 			{
 				if (_dynamicFiltersByGroup.TryGetValue(group, out data) == false)
 				{
-					data = new DashboardGroupData();
+					data = new DashboardFilterGroupData();
 					_dynamicFiltersByGroup[group] = data;
 				}
 			}
@@ -192,13 +192,6 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public void ClearFilterGroup(string group)
-		{
-			var data = ObtainFilterData(group);
-
-			data.Clear();
-		}
-
 		//public void SetStringFilters(string group, string[] filters, ReportFilterInstruction.Targets filterTarget)
 		//{
 		//	var data = ObtainFilterData(group);
@@ -223,10 +216,13 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public async Task UpdateDynamicWidgetsFilteringAsync()
 		{
+			var tasks = new List<Task>();
 			foreach (var widgetVm in _widgetsVms.Select(it => it.Value))
 			{
-				await widgetVm.HandleFiltersChangedAsync();
+				tasks.Add(widgetVm.HandleFiltersChangedAsync());
 			}
+
+			await Task.WhenAll(tasks);
 		}
 
 		#region Dashboad Desing Operations

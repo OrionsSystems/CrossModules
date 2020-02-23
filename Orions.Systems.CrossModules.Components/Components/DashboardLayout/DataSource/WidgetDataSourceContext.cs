@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
 		/// <summary>
 		/// Instructions, filtering etc. for the dashboard group we are in.
 		/// </summary>
-		public DashboardGroupData GroupFilterData { get; set; } 
+		public DashboardFilterGroupData GroupFilterData { get; set; } 
 
 		public IHyperArgsSink HyperStore { get; set; }
 

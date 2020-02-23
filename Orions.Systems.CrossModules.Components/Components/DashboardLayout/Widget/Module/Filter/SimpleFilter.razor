@@ -25,7 +25,7 @@
 					<div class="control-styles simple-filter-item">
 						<EjsMultiSelect @ref="MultiSelect"
 											 TValue="string[]"
-											 Value="@Values"
+											 Value="@Vm.Filters"
 											 Mode="@VisualMode.Box"
 											 AllowFiltering="true"
 											 AllowCustomValue="true" 
@@ -41,8 +41,11 @@
 				{
 					<div class="control-styles simple-filter-item">
 						<EjsDateRangePicker @ref="DateRangePicker"
-												  StartDate="@Vm.Widget.StartDate"
-												  EndDate="@Vm.Widget.EndDate"
+													@bind-StartDate="@Vm.StartDate"
+												  @bind-EndDate="@Vm.EndDate"
+
+												  Min="@(new DateTime(2019, 10, 1))"
+												  Max="@(new DateTime(2019, 12, 31))"
 												  Placeholder="Select Time Range"></EjsDateRangePicker>
 					</div>
 				}
@@ -77,13 +80,15 @@
 										 CssClass="simple-filter-btn-item">
 					<ProgressButtonEvents></ProgressButtonEvents>
 				</EjsProgressButton>
-				<EjsProgressButton @ref="ClearAllButton"
+
+				@*<EjsProgressButton @ref="ClearAllButton"
 										 Duration="9999999"
 										 OnClick="@OnClearAll"
 										 Content="Clear All"
 										 CssClass="simple-filter-btn-item">
 					<ProgressButtonEvents></ProgressButtonEvents>
-				</EjsProgressButton>
+				</EjsProgressButton>*@
+
 			</div>
 		</div>
 
@@ -104,11 +109,6 @@
 
 	public EjsDateRangePicker DateRangePicker { get; set; }
 
-	public string[] Values
-	{
-		get => Widget.Filters;
-	}
-
 	public async Task OnClearAll(MouseEventArgs args)
 	{
 		await Vm.ClearAllFilters();
@@ -127,7 +127,7 @@
 		string text = MultiSelect.Text;
 		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { };
 
-		this.Vm.Widget.Filters = filters;
+		this.Vm.Filters = filters;
 
 		await Vm.ApplyAsync();
 		await ProgressButton.ProgressComplete(); // Mark completion.

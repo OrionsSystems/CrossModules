@@ -157,7 +157,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public ChartMargin Margin { get; set; } = new ChartMargin();
 
-		public ChartAreaBorder Border { get; set; } = new ChartAreaBorder();
+		public ChartAreaBorder Border { get; set; } = new ChartAreaBorder() { Width = 0 };
 
 		public ReportSyncfusionBaseChartWidget()
 		{

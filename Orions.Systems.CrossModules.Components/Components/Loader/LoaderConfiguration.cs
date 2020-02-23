@@ -11,7 +11,7 @@ namespace Orions.Systems.CrossModules.Components
 		public int Height { get; set; } = 2;
 
 		[HelpText("Valid CSS color string")]
-		public string Color { get; set; } = "#365c7e";
+		public string Color { get; set; } = "#395D7F";
 
 		[HelpText("The opacity of the marker.")]
 		public double Opacity { get; set; } = 1;

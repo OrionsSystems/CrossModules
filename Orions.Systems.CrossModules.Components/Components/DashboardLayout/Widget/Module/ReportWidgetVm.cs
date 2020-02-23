@@ -45,35 +45,58 @@ namespace Orions.Systems.CrossModules.Components
 			var widget = this.Widget as ReportBaseWidget;
 			var dataSource = widget?.DataSource;
 
+			ReportChartData = null;
+
 			if (dataSource == null)
 				return;
 
-			var context = new WidgetDataSourceContext();
-			context.HyperStore = this.HyperStore;
+			IsLoadedReportResult = false;
 
-			// Only if we are allowed as a active filtering target, do we set the filters.
-			if (widget is ActiveFilterReportChartWidget activeReportWidget && activeReportWidget.AllowFiltrationTarget)
-				context.GroupFilterData = this.DashboardVm?.ObtainFilterData(widget.FilterGroup); 
+			OnReportResultChanged?.Invoke();
+			RaiseNotify(nameof(ReportChartData)); // Refresh UI - loader.
 
-			var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
-			if (reportResult == null)
+			try
 			{
-				Logger.Instance.Error("Cannot load report result");
+
+				var context = new WidgetDataSourceContext();
+				context.HyperStore = this.HyperStore;
+
+				// Only if we are allowed as a active filtering target, do we set the filters.
+				if (widget is ActiveFilterReportChartWidget activeReportWidget && activeReportWidget.AllowFiltrationTarget)
+					context.GroupFilterData = this.DashboardVm?.ObtainFilterGroup(widget.FilterGroup);
+
+				var reportResult = await dataSource.GenerateFilteredReportResultAsync(context);
+				if (reportResult == null)
+				{
+					Logger.Instance.Error("Failed to load report result");
+					IsLoadedReportResult = true;
+
+					RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+					return;
+				}
+
+				Report = reportResult.FirstOrDefault();
+
+				if (Report == null || Report.ColumnsDefinitions.Length == 0)
+				{
+					IsLoadedReportResult = true;
+
+					RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+					return;
+				}
+
+				ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
+
+				if (ReportChartData != null)
+				{
+					ReportChartData.MapIcons(dataSource.IconMapping);
+					await LoadAllIcons(ReportChartData);
+				}
+			}
+			finally
+			{
 				IsLoadedReportResult = true;
-
-				return;
 			}
-
-			Report = reportResult.FirstOrDefault();
-
-			ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
-
-			if (ReportChartData != null) {
-				ReportChartData.MapIcons(dataSource.IconMapping);
-				await LoadAllIcons(ReportChartData);
-			}
-
-			IsLoadedReportResult = true;
 
 			OnReportResultChanged?.Invoke();
 			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
@@ -101,7 +124,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public static ReportChartData LoadReportChartData(Report report, string[] categoryFilters)
+		static ReportChartData LoadReportChartData(Report report, string[] categoryFilters)
 		{
 			var result = new ReportChartData();
 
