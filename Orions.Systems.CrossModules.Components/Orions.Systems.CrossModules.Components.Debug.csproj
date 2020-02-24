@@ -27,7 +27,7 @@
 		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
-		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\bundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 	</ItemGroup>
 
@@ -94,8 +94,12 @@
 		  <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
 </ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="content\Orions.Crossmodules.ComponentsBundle\dist\" />
+	</ItemGroup>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-	  <Exec Command="npx webpack" />
+	  <Exec Command="cd $(ProjectDir)/content/Orions.Crossmodules.ComponentsBundle&#xD;&#xA;npx webpack" />
 	</Target>
 
 </Project>

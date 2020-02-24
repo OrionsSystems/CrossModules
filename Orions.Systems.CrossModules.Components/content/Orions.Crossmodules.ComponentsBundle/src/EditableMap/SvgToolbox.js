@@ -1,4 +1,3 @@
-import { SVG } from '@svgdotjs/svg.js'
 import './svg.draw.js'
 import '@svgdotjs/svg.draggable.js'
 

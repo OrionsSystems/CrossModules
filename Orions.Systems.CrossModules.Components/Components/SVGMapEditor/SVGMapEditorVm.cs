@@ -398,9 +398,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			// Run first step outside the timer
 			dateRangeFilter.CurrentMinDate = currentSegmentMinDate;
 			dateRangeFilter.CurrentMaxDate = currentSegmentMaxDate;
+			await ShowTagsForCurrentTagSets();
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
-			await ShowTagsForCurrentTagSets();
 
 			// Start timer 
 			_playbackTimer.Start();
@@ -413,16 +413,16 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				}
 
 				ZoneDataSets = nextTagSets;
-
-				dateRangeFilter.CurrentMinDate = currentSegmentMinDate;
-				dateRangeFilter.CurrentMaxDate = currentSegmentMaxDate;
-				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
-				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
-				ShowTagsForCurrentTagSets().Wait();
-
 				currentSegmentMinDate = currentSegmentMaxDate;
 				currentSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
 				nextSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
+
+				dateRangeFilter.CurrentMinDate = currentSegmentMinDate;
+				dateRangeFilter.CurrentMaxDate = currentSegmentMaxDate;
+				ShowTagsForCurrentTagSets().Wait();
+				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
+				this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
+
 
 				if (currentSegmentMaxDate >= dateRangeFilter.MaxDate)
 				{

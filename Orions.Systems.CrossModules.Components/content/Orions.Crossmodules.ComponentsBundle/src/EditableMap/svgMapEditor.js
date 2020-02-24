@@ -67,7 +67,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             startUserDrawing: startUserDrawing,
             overlayEntry: circleOverlayEntry,
             isReadOnly,
-            isSelectable: circleOverlayEntry.isSelectable == null || circleOverlayEntry === 'undefined' ? true : circleOverlayEntry.isSelectable
+            isSelectable: circleOverlayEntry.isSelectable ?? circleOverlayEntry.isSelectable
         });
         newCircle.persist = circleOverlayEntry.persist;
 
@@ -98,7 +98,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             name: zoneOverlayEntry.name,
             overlayEntry: zoneOverlayEntry,
             isReadOnly,
-            isSelectable: zoneOverlayEntry.isSelectable == null || zoneOverlayEntry === 'undefined' ? true : zoneOverlayEntry.isSelectable,
+            isSelectable: zoneOverlayEntry.isSelectable ?? zoneOverlayEntry.isSelectable,
             maxPointsNumber: 4
         });
         newZone.persist = zoneOverlayEntry.persist;
@@ -137,7 +137,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             isDefaultPosition: isDefaultPosition,
             overlayEntry: cameraOverlayEntry,
             isReadOnly,
-            isSelectable: cameraOverlayEntry.isSelectable == null || cameraOverlayEntry === 'undefined' ? true : cameraOverlayEntry.isSelectable
+            isSelectable: cameraOverlayEntry.isSelectable ?? cameraOverlayEntry.isSelectable
         });
 
         newCamera.persist = cameraOverlayEntry.persist;
@@ -281,6 +281,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     }
 
     let currentControlDrawing;
+    let circle
     function addCircleTool() {
         if (currentControlDrawing) {
             currentControlDrawing.cancelDraw()
@@ -303,6 +304,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         });
     }
 
+    let zone
     function addAreaTool() {
         if (currentControlDrawing) {
             currentControlDrawing.cancelDraw();
