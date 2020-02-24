@@ -18,6 +18,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
 	public class SVGMapEditorVm : BlazorVm
 	{
+		private Helpers.MasksHeatmapRenderer.RenderingMode _heatmapRendererMode => HeatmapRenderingModeToRenderersModes(HeatmapMode);
+
 		private Helpers.MasksHeatmapRenderer _heatmapRenderer;
 
 		#region Properties
@@ -51,6 +53,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 		public ZoneDataSet CurrentlyShownHeatmapZoneDataSet { get; set; }
 
+		// TODO: Expose it as widget configuration's option?
+		public HeatmapRenderingMode HeatmapMode { get; set; } = HeatmapRenderingMode.Masks;
+
 		public string TagInfoImageBase64Url
 		{
 			get
@@ -82,6 +87,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private string _componentContainerId;
 
+
 		public SVGMapEditorVm()
 		{
 			PlaybackOptions = new MapPlaybackOptions()
@@ -106,6 +112,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await OpenPopupMap(zoneId, false);
 		}
 
+		private Helpers.MasksHeatmapRenderer.RenderingMode HeatmapRenderingModeToRenderersModes(HeatmapRenderingMode mode)
+		{
+			switch (mode)
+			{
+				case HeatmapRenderingMode.Masks:
+					return Helpers.MasksHeatmapRenderer.RenderingMode.Masks;
+				case HeatmapRenderingMode.LowerPointOfGeometry:
+					return Helpers.MasksHeatmapRenderer.RenderingMode.LowerPointOfGeometry;
+				default:
+					return Helpers.MasksHeatmapRenderer.RenderingMode.LowerPointOfGeometry; // Most compatible
+			}
+		}
+
 		private async Task OpenPopupMap(string zoneId, bool heatmapMode)
 		{
 			var zoneDataSet = GetZoneDataSetForCurrentShownZone(zoneId);
@@ -113,7 +132,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			var tagsForMap = zoneDataSet.Tags;
 			var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
-			
+
 			if (zoneDataSet.Heatmap != null)
 			{
 				this.HeatmapImgProp.Value = zoneDataSet.Heatmap.DataBase64Link;
@@ -129,7 +148,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
 			_heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
-			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode, false);
+			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage, false);
 
 			if (img != null)
 			{
@@ -383,7 +402,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMinDate)}");
 			this.RaiseNotify($"{nameof(this.AutoplayTagDateRangeFilter)}.{nameof(this.AutoplayTagDateRangeFilter.CurrentMaxDate)}");
 			await ShowTagsForCurrentTagSets();
-			
+
 			// Start timer 
 			_playbackTimer.Start();
 			_playbackTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
@@ -450,7 +469,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				if (ts.Zone.FixedCameraEnhancementId.HasValue)
 				{
-					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, true, false);
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, _heatmapRendererMode, false);
 				}
 			}
 		}
@@ -510,7 +529,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				foreach (var ds in zoneDataSets)
 				{
-					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, true, false);
+					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, _heatmapRendererMode, false);
 				}
 			}
 
@@ -836,13 +855,13 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public override void Dispose()
 		{
-			if(_playbackTimer != null)
+			if (_playbackTimer != null)
 			{
 				this._playbackTimer.Stop();
 				this._playbackTimer.Close();
 			}
 
-			if(_heatmapRenderer != null)
+			if (_heatmapRenderer != null)
 			{
 				_heatmapRenderer.Dispose();
 			}
@@ -850,6 +869,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		#endregion // Methods
 
 		#region Inner classes
+
+		public enum HeatmapRenderingMode
+		{
+			Masks,
+			LowerPointOfGeometry
+		}
 
 		public class TagDateRangeFilterOptions
 		{

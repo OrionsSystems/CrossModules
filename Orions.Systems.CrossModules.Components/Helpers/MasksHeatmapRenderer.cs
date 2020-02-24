@@ -11,12 +11,21 @@ using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 
+using ReactNOW.ML;
+
 using SkiaSharp;
 
 namespace Orions.Systems.CrossModules.Components.Helpers
 {
 	public class MasksHeatmapRenderer : IDisposable
 	{
+		public enum RenderingMode
+		{
+			Masks,
+			RealImage,
+			LowerPointOfGeometry
+		}
+
 		private IHyperArgsSink _hyperStore;
 		private HyperMetadataSet _metadataSet;
 		private AsyncManualResetEvent _pauseResetEvent = new AsyncManualResetEvent(true);
@@ -199,9 +208,9 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		/// </summary>
 		/// <param name="tags">Subset of tags to use.</param>
 		/// <param name="fixedCameraPresetId">Id of Fixed Camera Preset to take homography configuration from.</param>
-		/// <param name="renderAsMasks">If enabled, heatmap masks will be rendered, otherwise real pixels from corresponding frames will be rendered in overlap.</param>
+		/// <param name="renderingMode">If enabled, heatmap masks will be rendered, otherwise real pixels from corresponding frames will be rendered in overlap.</param>
 		/// <param name="cutOff">If we should cutoff the image by homography or just render a polygon line over.</param>
-		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool renderAsMasks = true, bool cutOff = false, int tagGroupsLimit = 30)
+		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, RenderingMode renderingMode = RenderingMode.Masks, bool cutOff = false, int tagGroupsLimit = 30)
 		{
 			if (tags == null || tags.Count < 1)
 				return null;
@@ -231,7 +240,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			SKImage maskedImage = null;
 
-			if (renderAsMasks)
+			if (renderingMode == RenderingMode.Masks)
 			{
 				_globalMatrix = new uint[_height, _width];
 
@@ -246,7 +255,18 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 				maskedImage = RenderMask(_lastImage);
 			}
-			else
+			else if (renderingMode == RenderingMode.LowerPointOfGeometry)
+			{
+				var framePoints = new List<HeatmapRenderHelper.HeatPoint>();
+
+				foreach (var tag in tags)
+				{
+					ProcessGeometryTag(tag, framePoints);
+				}
+
+				maskedImage = HeatmapRenderHelper.RenderToSkImage(framePoints, _width, _height);
+			}
+			else if (renderingMode == RenderingMode.RealImage)
 			{
 				var tagsBySlice = tagsWithHyperId.GroupBy(x => x.HyperId).OrderBy(x => x.Key).ToArray();
 
@@ -581,6 +601,46 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			public UniRectangle2f Rect { get; set; }
 		}
 
+		private void ProcessGeometryTag(HyperTag tag, List<HeatmapRenderHelper.HeatPoint> heatpoints)
+		{
+			var geometryItems = tag.GetElements<HyperTagGeometry>().Select(x => x.GeometryItem).ToList();
+
+			geometryItems.AddRange(tag.GetElements<HyperTagTrackingData>().SelectMany(x => x.TrackingSequence.Select(ts => ts.GeometryItem)));
+
+			var classification = tag.GetElements<HyperTagLabel>().Where(x => x.Type == HyperTagLabel.Types.Classification).Select(x => x.Label).FirstOrDefault();
+
+			if (classification == null)
+			{
+				classification = tag.GetElement<TagonomyExecutionResultHyperTagElement>()?.GetCombinedLabel();
+			}
+
+			//var setting = Settings.Classifications.FirstOrDefault(x => x.Classification == classification);
+
+			//if (setting == null)
+			//{
+			//	setting = new ClassificationSettings
+			//	{
+			//		Classification = classification,
+			//		IsEnabled = true,
+			//		Color = Settings.Classifications.First().Color
+			//	};
+			//	Settings.Classifications.Add(setting);
+			//}
+
+			//setting.DebugCount++;
+
+			foreach (var geo in geometryItems)
+			{
+				var rect = geo.BoundingBox;
+				if (geo.SpaceMode != GeometryItem.SpaceModes.Normal)
+				{
+					rect = geo.ConvertFromXSpace(rect);
+				}
+
+				heatpoints.Add(new HeatmapRenderHelper.HeatPoint((int)(rect.Center.X * _width), (int)(rect.Bottom * _height), 255, classification));
+			}
+		}
+
 		private TagMaskExtraction ProcessMaskedTag(HyperTag tag)
 		{
 			var geometry = tag.GetElement<HyperTagGeometry>();
@@ -589,12 +649,12 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			if (geometryMask == null)
 				return null;
 
-			var classification = tag.GetElements<HyperTagLabel>().Where(x => x.Type == HyperTagLabel.Types.Classification).Select(x => x.Label).FirstOrDefault();
+			//var classification = tag.GetElements<HyperTagLabel>().Where(x => x.Type == HyperTagLabel.Types.Classification).Select(x => x.Label).FirstOrDefault();
 
-			if (classification == null)
-			{
-				classification = tag.GetElement<TagonomyExecutionResultHyperTagElement>()?.GetCombinedLabel();
-			}
+			//if (classification == null)
+			//{
+			//	classification = tag.GetElement<TagonomyExecutionResultHyperTagElement>()?.GetCombinedLabel();
+			//}
 
 			var rect = geometry.GeometryItem.BoundingBox;
 			rect = geometry.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(rect, _width, _height);
