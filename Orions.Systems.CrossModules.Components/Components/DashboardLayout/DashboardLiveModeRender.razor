@@ -5,37 +5,60 @@
 @if (DashboardVm.Source.Rows.Any())
 {
 
-   @foreach (var row in DashboardVm.Source.Rows)
-   {
-      <div class="row">
-         @foreach (var column in row.Columns)
-         {
-            <div @key="column.Id" class="col-lg-@column.Size">
+	@foreach (var row in DashboardVm.Source.Rows)
+	{
+		<div class="row">
+			@foreach (var column in row.Columns)
+			{
+				<div @key="column.Id" class="col-lg-@column.Size">
 
-               <div class="dashboard-element-container-live">
-                  <div class="dashboard-content-live">
-                     @if (column.Widget != null && column.Widget.IsVisibile)
-                     {
-                        <WidgetDynamicComponent @key="column.Widget.Id"
-                                                DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)"
-                                                DashboardVm="DashboardVm" />
-                     }
-                  </div>
-               </div>
-            </div>
-         }
-      </div>
-   }
+					@if (column.InnerRows.Count == 0)
+					{
+						<div class="dashboard-element-container-live">
+							<div class="dashboard-content-live">
+								@if (column.Widget != null && column.Widget.IsVisibile)
+								{
+									<WidgetDynamicComponent @key="column.Widget.Id"
+																	DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)"
+																	DashboardVm="DashboardVm" />
+								}
+							</div>
+						</div>
+					}
+					else
+					{
+						@foreach (var innerRow in column.InnerRows)
+						{
+							<div class="row">
+								@foreach (var innerColumn in innerRow.Columns)
+								{
+									<div @key="innerColumn.Id" class="col-lg-@innerColumn.Size">
+										@if (innerColumn.Widget != null && innerColumn.Widget.IsVisibile)
+										{
+											<WidgetDynamicComponent @key="innerColumn.Widget.Id"
+																			DataContext="@DashboardVm.ObtainWidgetVm(innerColumn.Widget)"
+																			DashboardVm="DashboardVm" />
+										}
+									</div>
+								}
+							</div>
+						}
+					}
+
+				</div>
+			}
+		</div>
+	}
 }
 
 @code{
 
-   [Parameter]
-   public DashboardVm DashboardVm { get; set; }
+	[Parameter]
+	public DashboardVm DashboardVm { get; set; }
 
 }
 
 @if (DashboardVm.Source.EnableStyles)
 {
-   @((MarkupString)DashboardVm.Source.Styles)
+	@((MarkupString)DashboardVm.Source.Styles)
 }

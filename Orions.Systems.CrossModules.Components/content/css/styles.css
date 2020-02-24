@@ -125,6 +125,7 @@
 		width: 50px;
 		height: 50px;
 		margin-right: 20px;
+		cursor:pointer;
 	}
 
 	.dashboard-widget-container .dashboard-widget-data-container {
@@ -165,6 +166,10 @@
 		.dashboard-widget-container .dashboard-widget-data-container .dashboard-widget-commands .dashboard-widget-command-settings {
 			fill: black;
 		}
+
+.dashboard-widget-command-enable svg {
+	fill: #34fe00;
+}
 
 .dashboard-widget-add {
 	text-align: center;
@@ -311,6 +316,25 @@
 	.dashboard-element-container {
 		margin-bottom: 1.5rem;
 	}
+}
+
+.dashboard-widget-inner-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.dashboard-widget-inner-container-item {
+	width: 100%;
+	border: 1px dashed lightgray;
+	margin: 5px 0px;
+	padding: 10px;
+	display: flex;
+}
+
+.dashboard-widget-inner-add a {
+	margin-bottom: -20px;
 }
 
 

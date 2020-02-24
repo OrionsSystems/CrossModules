@@ -234,12 +234,26 @@ namespace Orions.Systems.CrossModules.Components
 			Source.Rows.AddLast(row);
 		}
 
-		//SplitElementVerical
-
-
-		public void SplitElementVerical(MouseEventArgs e, DashboardRow row, DashboardColumn column) 
+		// split only first level
+		public void InitSplitElementVerical(MouseEventArgs e, DashboardRow row, DashboardColumn column) 
 		{
-			var elem = row.Columns.Find(column);
+			if (column.InnerRows.Count != 0) return; 
+
+			var row1 = new DashboardRow();
+			row1.Columns.AddFirst(new DashboardColumn { Size = 12 });
+
+			var row2 = new DashboardRow();
+			row2.Columns.AddFirst(new DashboardColumn { Size = 12 });
+			column.InnerRows.AddFirst(row1);
+			column.InnerRows.AddFirst(row2);
+		}
+
+		public void AddInnerRow(MouseEventArgs e, DashboardRow row, DashboardColumn column)
+		{
+			var newRow = new DashboardRow();
+			newRow.Columns.AddFirst(new DashboardColumn { Size = 12 });
+			
+			column.InnerRows.AddFirst(newRow);
 		}
 
 
@@ -376,6 +390,10 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public void ToggleVisibility(MouseEventArgs e, DashboardColumn column)
+		{
+			column.Widget.IsVisibile = !column.Widget.IsVisibile;
+		}
 		public void OpenWidgetProperty(MouseEventArgs e, DashboardColumn column)
 		{
 			IsShowProperty = true;

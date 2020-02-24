@@ -62,6 +62,8 @@ namespace Orions.Systems.CrossModules.Components
       public int Order { get; set; }
       public bool ShowCommands { get; set; }
 
+      public LinkedList<DashboardRow> InnerRows { get; set; } = new LinkedList<DashboardRow>();
+
       public bool ShowBetweenCommands { get; set; }
 
       public DashboardWidget Widget { get; set; }
