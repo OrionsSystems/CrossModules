@@ -1,6 +1,7 @@
 /*! svg.draw.js - v2.0.4 - 2019-11-28
 * https://github.com/svgdotjs/svg.draw.js
 * Copyright (c) 2019 Ulrich-Matthias Schäfer; Licensed MIT */
+import * as SVG from '@svgdotjs/svg.js'
 
 ;(function () {
     // Our Object which manages drawing

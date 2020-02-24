@@ -26,7 +26,8 @@
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
+		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\bundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 	</ItemGroup>
 
@@ -69,7 +70,6 @@
 		<None Remove="content\css\styles.css" />
 		<None Remove="content\css\propertyGrid.css" />
 		<None Remove="content\scripts\svgMapEditor.js" />
-		<None Remove="content\svgjs\jquery.ui.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 	</ItemGroup>
 
@@ -93,6 +93,10 @@
 		<ProjectReference Include="..\..\Orions.Systems.Open\SDK\Orions.SDK.NetStandard\Orions.SDK.NetStandard.Debug.csproj" />
 		  <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
 </ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="npx webpack" />
+	</Target>
 
 </Project>
 

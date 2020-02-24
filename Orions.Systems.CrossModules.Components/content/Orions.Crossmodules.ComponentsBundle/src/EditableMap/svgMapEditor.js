@@ -1,4 +1,10 @@
-﻿window.Orions.SvgMapEditor = {
+﻿import { SVG } from '@svgdotjs/svg.js'
+import './SvgToolbox.js'
+import $ from 'jquery';
+import 'jquery-ui/ui/widgets/draggable';
+import svgPanZoom from 'svg-pan-zoom'
+
+window.Orions.SvgMapEditor = {
     layoutEditors: {},
 
     init: function (rootElementId, componentReference, mapOverlay, config) {
@@ -61,7 +67,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             startUserDrawing: startUserDrawing,
             overlayEntry: circleOverlayEntry,
             isReadOnly,
-            isSelectable: circleOverlayEntry.isSelectable ?? true
+            isSelectable: circleOverlayEntry.isSelectable == null || circleOverlayEntry === 'undefined' ? true : circleOverlayEntry.isSelectable
         });
         newCircle.persist = circleOverlayEntry.persist;
 
@@ -92,7 +98,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             name: zoneOverlayEntry.name,
             overlayEntry: zoneOverlayEntry,
             isReadOnly,
-            isSelectable: zoneOverlayEntry.isSelectable ?? true,
+            isSelectable: zoneOverlayEntry.isSelectable == null || zoneOverlayEntry === 'undefined' ? true : zoneOverlayEntry.isSelectable,
             maxPointsNumber: 4
         });
         newZone.persist = zoneOverlayEntry.persist;
@@ -131,7 +137,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             isDefaultPosition: isDefaultPosition,
             overlayEntry: cameraOverlayEntry,
             isReadOnly,
-            isSelectable: cameraOverlayEntry.isSelectable ?? true
+            isSelectable: cameraOverlayEntry.isSelectable == null || cameraOverlayEntry === 'undefined' ? true : cameraOverlayEntry.isSelectable
         });
 
         newCamera.persist = cameraOverlayEntry.persist;
