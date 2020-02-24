@@ -86,10 +86,7 @@
 										{
 											<div class="dashboard-content-prev" title="Increase size into left">
 												<a @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
-													<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-														  viewBox="0 0 30 30">
-														<polygon points="2.72,15 13.24,27.62 13.24,20.18 26.75,20.18 26.75,9.74 13.24,9.74 13.24,2.38 " />
-													</svg>
+													<IconArrowLeft></IconArrowLeft>
 												</a>
 											</div>
 										}
@@ -181,10 +178,7 @@
 										{
 											<div class="dashboard-content-next" title="Increase size into right">
 												<a @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-													<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-														  viewBox="0 0 30 30">
-														<polygon points="26.75,15 16.23,2.38 16.23,9.82 2.72,9.82 2.72,20.26 16.23,20.26 16.23,27.62 " />
-													</svg>
+													<IconArrowRight></IconArrowRight>
 												</a>
 											</div>
 										}
@@ -198,22 +192,7 @@
 										@if (true || column.ShowBetweenCommands)
 										{
 											<div class="dashboard-swap-column" @onclick="(e => Vm.OnSwapColumns(e, row, column))">
-												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-													  viewBox="0 0 30 30">
-													<path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
-													<path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
-	                                c1,0,1.82,0.82,1.82,1.82v0.93v5.2v6.12C25.59,27.02,24.77,27.84,23.77,27.84z" />
-													<g>
-														<line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
-														<line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
-														<line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
-													</g>
-													<g>
-														<line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
-														<line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
-														<line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
-													</g>
-												</svg>
+												<IconSwapColumn></IconSwapColumn>
 											</div>
 											<div id="@column.Id"
 												  class="dashboard-dragbar"
@@ -237,32 +216,22 @@
 						</div>
 					}
 
-					@if (IsEditMode && firstRowId != row.Id)
+					@if (IsEditMode)
 					{
-						<div class="dashboard-between-row" @onmouseover="(e => { row.ShowCommands = true; })" @onmouseout="(e => { row.ShowCommands = false; })">
+						<div class="dashboard-between-row">
 
-							@if (true || row.ShowCommands)
-							{
-								<div class="dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
-									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-										  viewBox="0 0 30 30">
-										<path d="M9.89,17.94H4.87c-1,0-1.82-0.82-1.82-1.82V3.87c0-1,0.82-1.82,1.82-1.82h9.12c1,0,1.82,0.82,1.82,1.82v5.44" />
-										<path d="M23.77,27.84h-4.56h-4.56c-1,0-1.82-0.82-1.82-1.82v-6.32v-5.93c0-1,0.82-1.82,1.82-1.82h4.56h4.56
-	                                c1,0,1.82,0.82,1.82,1.82v0.93v5.2v6.12C25.59,27.02,24.77,27.84,23.77,27.84z" />
-										<g>
-											<line x1="8.54" y1="29.11" x2="1.56" y2="22.03" />
-											<line x1="1.54" y1="29.09" x2="1.56" y2="22.03" />
-											<line x1="8.59" y1="22.05" x2="1.56" y2="22.03" />
-										</g>
-										<g>
-											<line x1="20.11" y1="0.89" x2="27.09" y2="7.97" />
-											<line x1="27.11" y1="0.91" x2="27.09" y2="7.97" />
-											<line x1="20.06" y1="7.95" x2="27.09" y2="7.97" />
-										</g>
-									</svg>
+							<div class="dashboard-between-row-container">
+								@if (firstRowId != row.Id)
+								{
+									<div class="dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
+										<IconSwapRow></IconSwapRow>
+									</div>
+								}
+
+								<div class="dahsboard-clone-row" @onclick="(e => Vm.CloneRow(e, row))">
+									<IconClone></IconClone>
 								</div>
-							}
-
+							</div>
 						</div>
 					}
 

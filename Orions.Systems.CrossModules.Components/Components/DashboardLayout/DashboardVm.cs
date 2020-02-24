@@ -253,7 +253,7 @@ namespace Orions.Systems.CrossModules.Components
 			var newRow = new DashboardRow();
 			newRow.Columns.AddFirst(new DashboardColumn { Size = 12 });
 			
-			column.InnerRows.AddFirst(newRow);
+			column.InnerRows.AddLast(newRow);
 		}
 
 
@@ -318,6 +318,14 @@ namespace Orions.Systems.CrossModules.Components
 
 			Source.Rows.Remove(prevRow);
 			Source.Rows.AddAfter(r, prevRow);
+		}
+
+		public void CloneRow(MouseEventArgs e, DashboardRow row)
+		{
+			var r = Source.Rows.Find(row);
+			//TODO add copy implementation !!!
+			
+			//Source.Rows.AddAfter(r, r.Value);
 		}
 
 		public void IncreaseSizeLeft(MouseEventArgs e, DashboardRow row, DashboardColumn column)
