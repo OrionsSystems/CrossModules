@@ -28,3 +28,5 @@ bld/
 
 # Web packages (all folders and subfolders)
 **/wwwroot/lib/
+
+packages/
