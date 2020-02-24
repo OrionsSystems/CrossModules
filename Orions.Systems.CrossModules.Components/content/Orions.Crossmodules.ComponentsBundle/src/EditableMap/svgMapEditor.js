@@ -1,5 +1,5 @@
 ﻿import { SVG } from '@svgdotjs/svg.js'
-import './SvgToolbox.js'
+import * as SvgToolbox from './SvgToolbox.js'
 import $ from 'jquery';
 import 'jquery-ui/ui/widgets/draggable';
 import svgPanZoom from 'svg-pan-zoom'

@@ -12,17 +12,8 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class TagReviewComponentBase : BaseBlazorComponent<TagReviewVm>
 	{
-		//[Parameter]
-		//public HyperDocumentId? MetadataSetId { get; set; }
-
 		[Parameter]
 		public UniFilterData Filter { get; set; }
-
-		//[Parameter]
-		//public int ColumnsNumber { get; set; }
-
-		[Parameter]
-		public new TagReviewVm Vm { get { return base.Vm; } set { base.Vm = value; } }
 
 		protected override bool AutoCreateVm => false;
 	}

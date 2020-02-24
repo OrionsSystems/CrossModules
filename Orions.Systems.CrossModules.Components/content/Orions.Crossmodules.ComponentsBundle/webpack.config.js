@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-    mode: 'development',
+    mode: 'production',
     entry: './index.js',
     output: {
         filename: 'Orions.Crossmodules.ComponentsBundle.js',
