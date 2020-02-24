@@ -25,6 +25,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public MapPlaybackCache MapPlaybackCache { get; set; }
 		public MapPlaybackOptions MapPlaybackOptions { get; set; }
 
+		public HeatmapRenderingMode HeatmapMode { get; set; } = HeatmapRenderingMode.Masks;
+
 		public EditableMapWidget()
 		{
 			this.Label = "Editable Map Widget";

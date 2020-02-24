@@ -53,8 +53,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 		public ZoneDataSet CurrentlyShownHeatmapZoneDataSet { get; set; }
 
-		// TODO: Expose it as widget configuration's option?
-		public HeatmapRenderingMode HeatmapMode { get; set; } = HeatmapRenderingMode.Masks;
+		public HeatmapRenderingMode HeatmapMode { get; set; }
 
 		public string TagInfoImageBase64Url
 		{
