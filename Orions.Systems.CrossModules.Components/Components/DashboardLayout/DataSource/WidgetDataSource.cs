@@ -1,6 +1,7 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.Reporting;
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,21 +28,29 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task<Report[]> GenerateFilteredReportResultAsync(WidgetDataSourceContext context)
 		{
-			var result = await OnGenerateFilteredReportResultAsync(context);
-
-			if (this.Mapping != null)
-				result?.MapNames(this.Mapping);
-
-
-			if (!string.IsNullOrWhiteSpace(this.ExcludePrefix))
+			try
 			{
-				foreach (var col in result.ColumnsDefinitions ?? Enumerable.Empty<ReportColumnTemplate>())
+				var result = await OnGenerateFilteredReportResultAsync(context);
+
+				if (this.Mapping != null)
+					result?.MapNames(this.Mapping);
+
+
+				if (!string.IsNullOrWhiteSpace(this.ExcludePrefix))
 				{
-					col.Title = col.Title.Replace(this.ExcludePrefix, "");
+					foreach (var col in result.ColumnsDefinitions ?? Enumerable.Empty<ReportColumnTemplate>())
+					{
+						col.Title = col.Title.Replace(this.ExcludePrefix, "");
+					}
 				}
+
+				return new Report[] { result };
+			}
+			catch (Exception e)
+			{
+				return new Report[] { };
 			}
 
-			return new Report[] { result };
 		}
 
 		protected abstract Task<Report> OnGenerateFilteredReportResultAsync(WidgetDataSourceContext context);
