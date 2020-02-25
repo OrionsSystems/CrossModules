@@ -1,0 +1,20 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<SlideContainerVm, SlideContainerWidget>
+
+<div class="widget-content-report">
+
+	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+	<div class="widget-content-report-view">
+		
+	</div>
+</div>
+
+@code {
+	protected override async Task OnInitializedAsync()
+	{
+
+		await base.OnInitializedAsync();
+	}
+}

@@ -9,7 +9,7 @@
 
 <div class="container-fluid">
 
-	<div class="row">
+	<div class="dashboard-header row">
 		<div class="col">
 			@if (!string.IsNullOrEmpty(Data?.Name) && !IsHideTitle)
 			{
@@ -154,25 +154,53 @@
 										}
 										else
 										{
-											<div class="dashboard-widget-icon" @ondblclick="(e => Vm.OpenWidgetProperty(e, column))">
-												@((MarkupString)column.Widget.GetIcon())
-											</div>
-											<div class="dashboard-widget-data-container">
-												<div class="dashboard-widget-label">
-													@column.Widget.Label
+											var slideWidget = column.Widget as SlideContainerWidget;
+
+											<div class="dashboard-widget-container-flex">
+												<div class="dashboard-widget-icon" @ondblclick="(e => Vm.OpenWidgetProperty(e, column))">
+													@((MarkupString)column.Widget.GetIcon())
 												</div>
-												<div class="dashboard-widget-commands">
-													<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, column))">
-														<IconSettings></IconSettings>
-													</a>
-													<a class="dashboard-widget-command-visible @(column.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, column))">
-														<IconVisible></IconVisible>
-													</a>
-													<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
-														<IconClean></IconClean>
-													</a>
+												<div class="dashboard-widget-data-container">
+													<div class="dashboard-widget-label">
+														@column.Widget.Label
+													</div>
+													<div class="dashboard-widget-commands">
+														<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, column))">
+															<IconSettings></IconSettings>
+														</a>
+														<a class="dashboard-widget-command-visible @(column.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, column))">
+															<IconVisible></IconVisible>
+														</a>
+														<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
+															<IconClean></IconClean>
+														</a>
+													</div>
 												</div>
 											</div>
+
+											@if (slideWidget != null && slideWidget.Data != null)
+											{
+												@foreach (var slWdg in slideWidget.Data)
+												{
+													<div class="dashboard-slide-container">
+														<div class="dashboard-widget-container-flex">
+															<div class="dashboard-widget-icon">
+																@((MarkupString)slWdg.GetIcon())
+															</div>
+															<div class="dashboard-widget-data-container">
+																<div class="dashboard-widget-label">
+																	@slWdg.Label
+																</div>
+																<div class="dashboard-widget-commands">
+																	<a class="dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
+																		<IconVisible></IconVisible>
+																	</a>
+																</div>
+															</div>
+														</div>
+													</div>
+												}
+											}
 										}
 										@if (IsEditMode && Vm.HasNextColumn(row, column))
 										{

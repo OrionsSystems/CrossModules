@@ -37,6 +37,11 @@ h5.modal-title {
 /* 
     START DASHBOARD LAYOUT COMPONENT
 */
+
+.dashboard-header {
+	margin-bottom: 23px;
+}
+
 .dashboard-title {
 	display: inline-block;
 }
@@ -109,12 +114,15 @@ h5.modal-title {
 
 
 .dashboard-widget-container {
-	display: flex;
 	border: 1px solid #c4c2c2;
 	padding: 30px 15px;
 	position: relative;
 	margin: 2px 0px 7px 0px;
 	background-color: white;
+}
+
+.dashboard-widget-container-flex {
+	display: flex;
 }
 
 	.dashboard-widget-container:hover .dashboard-content-next,
@@ -278,17 +286,18 @@ h5.modal-title {
 
 .dashboard-between-row {
 	position: absolute;
-	width: calc(100% - 335px);
+	width: calc(100% - 80px);
 	height: 25px;
 	margin-top: -24px;
 	margin-left: 14px;
-	margin-right: -118px;
+	right: 10px;
 }
 
 	.dashboard-between-row .dashboard-between-row-container {
 		position: relative;
 		opacity: 0.2;
 		transition: 0.5s;
+		float:right;
 	}
 		.dashboard-between-row .dashboard-between-row-container .dashboard-swap-row,
 		.dashboard-between-row .dashboard-between-row-container .dahsboard-clone-row {
@@ -367,6 +376,12 @@ h5.modal-title {
 
 .dashboard-widget-inner-add a {
 	margin-bottom: -20px;
+}
+
+.dashboard-slide-container {
+	padding: 10px 5px;
+	border: 1px dashed lightgray;
+	margin: 7px 20px;
 }
 
 
