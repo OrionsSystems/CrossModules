@@ -2,16 +2,20 @@
 
 @inherits DashboardComponent<TextBlockVm, TextBlockWidget>
 
-<div class="widget-content-report">
+	<div class="widget-content-report">
 
-	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-	<div class="widget-content-report-view">
-		<section>
-			@((MarkupString)Vm.Widget.RawHtml)
-		</section>
+		<div class="widget-content-report-view">
+			<section>
+				@((MarkupString)Vm.Widget.RawHtml)
+			</section>
+		</div>
+
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+
 	</div>
-</div>
 
 @code {
 	protected override async Task OnInitializedAsync()
