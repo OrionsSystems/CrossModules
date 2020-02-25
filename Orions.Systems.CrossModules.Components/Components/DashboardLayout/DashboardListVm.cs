@@ -86,6 +86,8 @@ namespace Orions.Systems.CrossModules.Components
 			var res = await HyperStore.ExecuteAsync(args);
 
 			IsShowRenameDashboardModal = false;
+
+			await LoadDashboarList();
 		}
 
 		public async Task DeleteDashboard(DashboardData data)
