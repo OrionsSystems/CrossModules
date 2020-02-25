@@ -7,14 +7,45 @@
 	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 	<div class="widget-content-report-view">
-		
+		@if (Vm.Widget.Data != null && Vm.Widget.Data.Count() > 0)
+		{
+			<div class="widget-slide-container">
+				<div class="widget-slide-container-nav row">
+					<div class="col-6 widget-slide-container-nav-icon @(Vm.IsFirstElementActive() ? "hidden" : "")">
+						<a @onclick="Vm.OnClickLeftArrow">
+							<MatIcon Icon="@MatIconNames.Keyboard_arrow_left"></MatIcon>
+						</a>
+
+					</div>
+					<div class="col-6 widget-slide-container-nav-icon right @(Vm.IsLastElementActive() ? "hidden" : "")">
+						<a @onclick="Vm.OnClickRightArrow">
+							<MatIcon Icon="@MatIconNames.Keyboard_arrow_right"></MatIcon>
+						</a>
+					</div>
+				</div>
+				@foreach (var wdg in Vm.Widget.Data)
+				{
+					<div class="widget-slide-container-data @(Vm.IsActiveElement(wdg.Id) ? "active" : "")">
+						@if (wdg != null && wdg.IsVisibile)
+						{
+							<WidgetDynamicComponent @key="wdg.Id"
+															DataContext="@DashboardVm.ObtainWidgetVm(wdg)"
+															DashboardVm="DashboardVm" />
+						}
+					</div>
+				}
+			</div>
+		}
 	</div>
 </div>
 
 @code {
+
 	protected override async Task OnInitializedAsync()
 	{
-
 		await base.OnInitializedAsync();
+
+		Vm.InitMapping();
 	}
+	
 }

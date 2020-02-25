@@ -379,10 +379,71 @@ h5.modal-title {
 }
 
 .dashboard-slide-container {
-	padding: 10px 5px;
+	padding: 5px 5px;
 	border: 1px dashed lightgray;
 	margin: 7px 20px;
 }
+
+	.dashboard-slide-container .dashboard-widget-icon {
+		opacity: 0.3;
+		transition: 0.5s;
+	}
+
+	.dashboard-slide-container:hover .dashboard-widget-icon {
+		opacity: 1;
+		transition: 0.5s;
+	}
+
+	.dashboard-slide-container .dashboard-widget-icon svg {
+		height: 35px;
+		width: 35px;
+		margin-top: 5px;
+		margin-left: 15px
+	}
+
+
+.widget-slide-container {
+}
+
+	.widget-slide-container .widget-slide-container-nav {
+	}
+
+		.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon {
+			text-align: left;
+		}
+
+			.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon a {
+				cursor: pointer;
+				opacity: 0.6;
+				transition: 0.4s;
+			}
+
+				.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon a:hover {
+					opacity: 1;
+					transition: 0.4s;
+				}
+
+			.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon:hover {
+				opacity: 1;
+				transition: 0.4s;
+			}
+
+			.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon.right {
+				text-align: right;
+			}
+
+			.widget-slide-container .widget-slide-container-nav .widget-slide-container-nav-icon.hidden a {
+				display: none;
+			}
+
+	.widget-slide-container .widget-slide-container-data {
+		display: none;
+	}
+
+		.widget-slide-container .widget-slide-container-data.active {
+			display: block;
+		}
+
 
 
 /* Modal - Widget list */
