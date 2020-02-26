@@ -543,6 +543,7 @@ h5.modal-title {
 	height: 38px;
 }
 
+
 /* End Modal - Widget List*/
 
 /* Widget Icons*/
@@ -619,15 +620,30 @@ h5.modal-title {
 	padding: 10px 10px;
 }
 
-.progress-line .stat-title {
-	vertical-align: middle;
-	font-weight: bold;
-	display: inline-block;
-	min-width: 50px;
-	font-size: 14px;
-	letter-spacing: 2px;
-	color: #807e7e;
+
+.title-card-container {
+	color: #365c7e;
+	margin: 10px 0px;
 }
+
+.progress-line {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 10px 0px;
+}
+
+	.progress-line .stat-title {
+		vertical-align: middle;
+		font-weight: bold;
+		display: inline-block;
+		font-size: 14px;
+		letter-spacing: 2px;
+		color: #807e7e;
+		flex: 0 0 25%;
+		max-width: 25%;
+		text-transform: uppercase;
+		color: #365c7e;
+	}
 
 .progress-line .icon {
 	display: inline-flex;
@@ -639,23 +655,33 @@ h5.modal-title {
 		width: 12px;
 	}
 
-.progress-line .stat-progress {
-	background-color: #bcc0cc;
-	display: inline-flex;
-	height: 6px;
-	border-radius: 10px;
-	vertical-align: middle;
+.stat-container {
+	flex: 0 0 75%;
+	max-width: 75%;
 }
+
+	.progress-line .stat-progress {
+		background-color: #bcc0cc;
+		display: inline-flex;
+		height: 12px;
+		border-radius: 10px;
+		vertical-align: middle;
+	}
 
 .progress-line .stat-container {
 	display: inline-block;
-	width: 70%;
+	/*width: 70%;*/
+	flex: 0 0 75%;
+	max-width: 75%;
 }
 
 .progress-line .stat-value {
 	vertical-align: middle;
 	font-weight: bold;
 	color: #807e7e;
+	margin-left: 10px;
+	opacity: .5;
+	font-size: 18px;
 }
 
 .separator-line-container {
