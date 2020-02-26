@@ -22,6 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void InitMapping()
 		{
+			Mapping.Clear();
+
 			if (Widget.Data != null && Widget.Data.Count() > 0)
 			{
 				for (var i = 0; i < Widget.Data.Count(); i++)
