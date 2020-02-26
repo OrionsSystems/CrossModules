@@ -1,12 +1,4 @@
 ﻿using Orions.Common;
-using Orions.Infrastructure.HyperMedia;
-using Orions.Infrastructure.Reporting;
-using Orions.Node.Common;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -14,9 +6,6 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		[HelpText("Add the data for this widget to use", HelpTextAttribute.Priorities.Important)]
 		public WidgetDataSource DataSource { get; set; } = new ReportModelWidgetDataSource();
-
-		[HelpText("Add category filters separated by comma")]
-		public string CategoryFilter { get; set; }
 
 		public ReportBaseWidget()
 		{
