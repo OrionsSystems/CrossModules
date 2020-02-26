@@ -216,6 +216,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			};
 
 			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
+			foreach(var zone in overlayJsModel.Zones)
+			{
+				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
+				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
+				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
+				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+			}
+
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { componentContainerId, thisReference, overlayJsModel, editorConfig });
 
 			this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
@@ -232,6 +240,20 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 
 			await ShowTags();
+		}
+
+		public async Task RemoveTagCirclesForZone(string zoneId)
+		{
+			var circlesToRemove = _circlesToTagsMappings.Where(c => ZoneDataSets.Any(z => z.Tags.Any(t => t.Id == c.Value.Id) && z.Zone.Id==zoneId)).Select(kv => new MapOverlayUpdateDetails
+			{
+				Type = MapOverlayUpdateDetails.DeleteUpdateType,
+				OverlayEntry = JsonSerializer.Serialize(kv.Key, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
+			}).ToArray();
+
+			if (circlesToRemove.Any())
+			{
+				await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
+			}
 		}
 
 		private async Task InitializeTagFilter()
@@ -554,6 +576,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 		#endregion
 
+		public async Task UpdateZone(ZoneOverlayEntryJsModel zoneModel)
+		{
+			var zone = ZoneDataSets.SingleOrDefault(z => z.Zone.Id == zoneModel.Id)?.Zone;
+
+			// if there is data (tags) loaded for the zone
+			if(zone != null)
+			{
+				zone.Points = zoneModel.Points;
+
+				await UpdateSvgMapZone(zone);
+			}
+		}
+
 		private async Task<List<ZoneDataSet>> GetZoneDataSetsForDateRange(DateTime from, DateTime to, bool populateWithHeatmaps = false)
 		{
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
@@ -627,7 +662,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			this.TagsAreBeingLoaded.Value = true;
 
-			ZoneDataSets = await GetZoneDataSetsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
+			if(TagDateRangeFilter != null)
+			{
+				ZoneDataSets = await GetZoneDataSetsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
+			}
 
 			await ShowTagsForCurrentTagSets();
 
@@ -680,8 +718,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				{
 					Id = Guid.NewGuid().ToString(),
 					Center = mapperCentrePoint,
-					Size = 4,
-					IsSelectable = false
+					Size = 2.5,
+					IsSelectable = false,
+					IsDraggable = false
 				};
 				circle.EventHandlerMappings.Add("click", "ShowTagInfo");
 
@@ -864,6 +903,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				_heatmapRenderer.Dispose();
 			}
+
+			JsRuntime.InvokeVoidAsync("window.Orions.SvgMapEditor.destroy", new object[] { this._componentContainerId });
 		}
 		#endregion // Methods
 
