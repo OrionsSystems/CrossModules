@@ -10,41 +10,41 @@
 @using ChartJs.Blazor.ChartJS.Common.Properties
 @using ChartJs.Blazor.Util
 
-	<div class="widget-content-report-piechart">
+<div class="widget-content-report-piechart">
 
-		@if (Vm.Report != null && Vm.IsLoadedReportResult)
-		{
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
 
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-			@if (Showing)
-			{
-				<div class="widget-content-report-piechart-view">
-					<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
-				</div>
-			}
+		@if (Showing)
+		{
+			<div class="widget-content-report-piechart-view">
+				<ChartJsPieChart @ref="_pieChartJs" Config="@_pieConfig" Height="Widget.Height" Width="Widget.Width" />
+			</div>
+		}
 
-				@if (Widget.ShowFooter)
-				{
-					<div class="widget-content-report-piechart-footer">
-						<div class="">Created at @Vm.Report.CreatedAtUTC</div>
-					</div>
-				}
-			}
-		
+		@if (Widget.ShowFooter)
+		{
+			<div class="widget-content-report-piechart-footer">
+				<div class="">Created at @Vm.Report.CreatedAtUTC</div>
+			</div>
+		}
+	}
 
-			@if (Vm.Report == null && Vm.IsLoadedReportResult)
-			{
-				<div class="widget-missing-report-data">
-					Missing report data!
-				</div>
-			}
 
-			@if (!Vm.IsLoadedReportResult)
-			{
-	<Loader Settings="@Widget.LoaderSettings"></Loader>
-			}
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report-data">
+			Missing report data!
 		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
+	}
+</div>
 
 @code {
 	private PieConfig _pieConfig;
@@ -67,7 +67,7 @@
 		this.Showing = true;
 
 		// This thread dispatch magic, forces the system to process this request separately as part of the next iteration. A single invoke does not do that.
-		//Task.Factory.StartNew(() => 
+		//Task.Factory.StartNew(() =>
 		//{
 		//	this.InvokeAsync(() =>
 		//	{
@@ -120,7 +120,7 @@
 		};
 		pieSet.BackgroundColor = RandomBackgroudColors(labels.Count());
 
-		var rowData = Vm.ReportChartData.Series.Select(it=> Convert.ToDouble(it.Data.FirstOrDefault()?.Value)).ToList();
+		var rowData = Vm.ReportChartData.Series.Select(it => Convert.ToDouble(it.Data.FirstOrDefault()?.Value)).ToList();
 		pieSet.Data.AddRange(rowData);
 		_pieConfig.Data.Datasets.Add(pieSet);
 	}

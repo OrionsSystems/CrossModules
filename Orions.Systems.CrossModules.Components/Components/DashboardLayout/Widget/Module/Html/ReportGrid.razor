@@ -6,11 +6,11 @@
 
 <div class="widget-content-report">
 
-	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	@if (Vm.Report != null && Vm.ReportChartData != null && Vm.IsLoadedReportResult)
 	{
 		var rowIndex = 0;
 
-	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
 		<div class="widget-content-report-view">
 
@@ -26,26 +26,26 @@
 						</tr>
 					</thead>
 					<tbody>
-						@for(int i=0; i< Vm.ReportChartData.Series.FirstOrDefault().Data.Count(); i++)
+						@for (int i = 0; i < Vm.ReportChartData.Series.FirstOrDefault().Data.Count(); i++)
 						{
-						<tr>
+							<tr>
 
-							@*@if ( Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].StartTime.HasValue)
-							{
-								<td>@Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].Label.StartTime?.ToString("dd MMM HH:mm")</td>
-							}
-							else
-							{*@
+								@*@if ( Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].StartTime.HasValue)
+									{
+										<td>@Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].Label.StartTime?.ToString("dd MMM HH:mm")</td>
+									}
+									else
+									{*@
 								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].Label</td>
-@*							}*@
+								@*							}*@
 
-							@foreach (var item in Vm.ReportChartData.Series)
-							{
+								@foreach (var item in Vm.ReportChartData.Series)
+								{
 
-								<td>@item.Data[i].Value</td>
+									<td>@item.Data[i].Value</td>
 
-							}
-						</tr>
+								}
+							</tr>
 						}
 					</tbody>
 				</table>
@@ -73,7 +73,7 @@
 
 	@if (!Vm.IsLoadedReportResult)
 	{
-<Loader Settings="@Widget.LoaderSettings"></Loader>
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
 	}
 
 </div>

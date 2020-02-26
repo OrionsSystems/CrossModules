@@ -32,7 +32,7 @@
 							<div class="row">
 								@foreach (var innerColumn in innerRow.Columns)
 								{
-									<div @key="innerColumn.Id" class="col-lg-@innerColumn.Size">
+									<div class="col-lg-@innerColumn.Size">
 										@if (innerColumn.Widget != null && innerColumn.Widget.IsVisibile)
 										{
 											<WidgetDynamicComponent @key="innerColumn.Widget.Id"
