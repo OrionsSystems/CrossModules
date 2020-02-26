@@ -107,41 +107,68 @@
 												<div class="dashboard-widget-inner-container">
 													@foreach (var innerRow in column.InnerRows)
 													{
-														<div class="dashboard-widget-inner-container-item">
+														<div class="dashboard-widget-inner-container-item row">
 															@foreach (var innerColumn in innerRow.Columns)
 															{
-																@if (innerColumn.Widget == null)
-																{
-																	<div class="dashboard-widget-add">
-																		<EjsTooltip Content="@("Add widget")">
-																			<a class="dashboard-widget-add-icon" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, innerColumn))">
-																				<IconAdd></IconAdd>
-																			</a>
-																		</EjsTooltip>
+																<div @key="innerColumn.Id" class="dashboard-widget-inner-container-item-element col-lg-@innerColumn.Size">
+																	<div class="dashboard-widget-inner-container-data">
+																		@if (IsEditMode)
+																		{
+																			<div class="dashboard-element-commands">
+																				@if (column.Size > 1)
+																				{
+																					<a class="dashboard-element-commands-split-horisontal" title=" Split column horizontal" @onclick="@(el => { Vm.SplitColumn(el, innerRow, innerColumn); })">
+																						<IconSplitHorisontal></IconSplitHorisontal>
+																					</a>
+																				}
+																				@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
+																				{
+																					<a class="dashboard-element-commands-split-vertical" title=" Split column vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, innerRow, innerColumn); })">
+																						<IconSplitVertical></IconSplitVertical>
+																					</a>
+																				}
+																				<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, innerRow, innerColumn); })">
+																					<IconClose></IconClose>
+																				</a>
+																			</div>
+																		}
+
+																		@if (innerColumn.Widget == null)
+																		{
+																			<div class="dashboard-widget-add">
+																				<EjsTooltip Content="@("Add widget")">
+																					<a class="dashboard-widget-add-icon" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, innerColumn))">
+																						<IconAdd></IconAdd>
+																					</a>
+																				</EjsTooltip>
+																			</div>
+																		}
+																		else
+																		{
+																			<div class="dashboard-widget-container-flex">
+																				<div class="dashboard-widget-icon">
+																					@((MarkupString)innerColumn.Widget.GetIcon())
+																				</div>
+																				<div class="dashboard-widget-data-container">
+																					<div class="dashboard-widget-label">
+																						@innerColumn.Widget.Label
+																					</div>
+																					<div class="dashboard-widget-commands">
+																						<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, innerColumn))">
+																							<IconSettings></IconSettings>
+																						</a>
+																						<a class="dashboard-widget-command-visible @(innerColumn.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
+																							<IconVisible></IconVisible>
+																						</a>
+																						<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, innerColumn))">
+																							<IconClean></IconClean>
+																						</a>
+																					</div>
+																				</div>
+																			</div>
+																		}
 																	</div>
-																}
-																else
-																{
-																	<div class="dashboard-widget-icon">
-																		@((MarkupString)innerColumn.Widget.GetIcon())
-																	</div>
-																	<div class="dashboard-widget-data-container">
-																		<div class="dashboard-widget-label">
-																			@innerColumn.Widget.Label
-																		</div>
-																		<div class="dashboard-widget-commands">
-																			<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, innerColumn))">
-																				<IconSettings></IconSettings>
-																			</a>
-																			<a class="dashboard-widget-command-visible @(innerColumn.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
-																				<IconVisible></IconVisible>
-																			</a>
-																			<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, innerColumn))">
-																				<IconClean></IconClean>
-																			</a>
-																		</div>
-																	</div>
-																}
+																</div>
 															}
 														</div>
 													}
