@@ -33,7 +33,7 @@
 					{
 						rowIndex++;
 
-						<tr>
+						<tr @key="item.Id">
 							<td class="center nowrap">@rowIndex</td>
 							<td class="center">@item.Group</td>
 							<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>

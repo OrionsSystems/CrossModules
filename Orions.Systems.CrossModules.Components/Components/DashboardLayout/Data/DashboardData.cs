@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
       public bool Published { get; set; }
 
       [DocumentDescriptor]
-      public bool IsHideTitle { get; set; }
+      public bool IsHideTitle { get; set; } = true;
 
       [DocumentDescriptor]
       public string Tag { get; set; }
@@ -61,6 +61,8 @@ namespace Orions.Systems.CrossModules.Components
       public int Size { get; set; }
       public int Order { get; set; }
       public bool ShowCommands { get; set; }
+
+      public LinkedList<DashboardRow> InnerRows { get; set; } = new LinkedList<DashboardRow>();
 
       public bool ShowBetweenCommands { get; set; }
 
