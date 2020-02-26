@@ -104,7 +104,7 @@ class ViewModelProperty {
 }
 
 class BaseControl {
-    constructor(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable) {
+    constructor(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable, shapeControlsLayer) {
         let self = this;
 
         if (overlayEntry) {
@@ -114,6 +114,7 @@ class BaseControl {
             this.overlayEntry = {}
         }
 
+        this.shapeControlsLayer = shapeControlsLayer;
         this.isSelectable = isSelectable;
         this.isDraggable = isDraggable ?? true;
         this.onRemoveEventHandlers = []
@@ -169,6 +170,7 @@ class BaseControl {
     remove() {
         let self = this;
         this.controlGroup.remove()
+        this.resizeControls.forEach(c => c.control.remove())
 
         this.onRemoveEventHandlers.forEach(h => h(self))
     }
@@ -195,10 +197,10 @@ class BaseControl {
 
     select(isSelected) {
         let self = this;
-        let editControls = self.controlGroup.node.querySelectorAll('[mapObjectType="edit-control"]');
+        let editControls = self.resizeControls;
         if (!isSelected) {
             for (let i = 0; i < editControls.length; i++) {
-                editControls[i].setAttribute("style", "visibility: collapse");
+                editControls[i].control.node.setAttribute("style", "visibility: collapse");
             }
 
             self.isSelected = false
@@ -209,7 +211,7 @@ class BaseControl {
         }
         else if (self.isSelectable) {
             for (let i = 0; i < editControls.length; i++) {
-                editControls[i].setAttribute("style", "visibility: visible");
+                editControls[i].control.node.setAttribute("style", "visibility: visible");
             }
 
             self.isSelected = true
@@ -219,10 +221,12 @@ class BaseControl {
 }
 
 export class Camera extends BaseControl {
-    constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry, isSelectable, isDraggable }) {
-        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable)
+    constructor({ svgRoot, svgNode, attr, isDefaultPosition, points, transformMatrix, isReadOnly, overlayEntry, isSelectable, isDraggable, shapeControlsLayer }) {
+        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable, shapeControlsLayer)
 
         this.attr = attr || {}
+        this.resizeControls = []
+        this.resizeControlWidth = 6
 
         if (isDefaultPosition) {
             let initialPoint = new SVG.Point(100, 100).transform(this.svgNode.node.getCTM().inverse())
@@ -329,10 +333,15 @@ export class Camera extends BaseControl {
         var verticesArr = camera.array();
         for (let i = 0; i < verticesArr.length; i++) {
             let vertex = verticesArr[i]
-            let resizeControl = svgNode.rect(4, 4).move(vertex[0] - 2, vertex[1] - 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
+            let resizeControl = self.shapeControlsLayer.rect(self.resizeControlWidth, self.resizeControlWidth)
+                .move(vertex[0] - self.resizeControlWidth / 2, vertex[1] - self.resizeControlWidth / 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
             resizeControl.attr({ mapObjectType: 'edit-control' })
             resizeControl.draggable();
-            this.controlGroup.add(resizeControl);
+            this.resizeControls.push({
+                vIndex: i,
+                control: resizeControl
+            })
+            //this.controlGroup.add(resizeControl);
             resizeControl.on('dragmove', function (ev) {
                 let vIndex = i;
                 let newVertArray = camera.array();
@@ -354,6 +363,14 @@ export class Camera extends BaseControl {
 
         this.draggable(true);
 
+        this.polygon.on('dragmove', function () {
+            self.resizeControls.forEach(c => {
+                let control = c.control;
+                let polygonVertex = self.polygon.array()[c.vIndex]
+                control.move(polygonVertex[0] - (self.resizeControlWidth) / 2, polygonVertex[1] - (self.resizeControlWidth) / 2)
+            })
+        })
+
         this.cameraControlsGroup = this.controlGroup
         this.mainShape = camera;
 
@@ -363,13 +380,14 @@ export class Camera extends BaseControl {
 }
 
 export class Zone extends BaseControl {
-    constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isDraggable, isSelectable, maxPointsNumber }) {
-        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable)
+    constructor({ svgRoot, svgNode, attr, points, startUserDrawing, name, overlayEntry, isReadOnly, isDraggable, isSelectable, maxPointsNumber, shapeControlsLayer }) {
+        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable, shapeControlsLayer)
         this.maxPointsNumber = maxPointsNumber;
         this.resizeControlWidth = 6
         this.resizeControlScaledWidth = this.resizeControlWidth;
         this.resizeControlStrokeWidth = 0.5;
         this.resizeControlStrokeScaledWidth = this.resizeControlStrokeWidth;
+        this.resizeControls = []
         this.attr = attr || {}
         this.isEditingName = new ViewModelProperty(false);
         this.name = new ViewModelProperty(name != undefined ? name : 'Zone Name')
@@ -457,25 +475,30 @@ export class Zone extends BaseControl {
 
         this.controlGroup.on('dragmove', function () {
             self.overlayEntry.points = self.polygon.array().map(p => { return { x: p[0], y: p[1] } })
+            self.resizeControls.forEach(c => {
+                let control = c.control;
+                let polygonVertex = self.polygon.array()[c.vIndex]
+                control.move(polygonVertex[0] - (self.resizeControlScaledWidth) / 2, polygonVertex[1] - (self.resizeControlScaledWidth) / 2)
+            })
         })
 
         // init resize controls
         var verticesArr = polygon.array();
-        self.resizeControls = []
+        
         for (let i = 0; i < verticesArr.length; i++) {
             let vertex = verticesArr[i]
-            let resizeControl = self.svgNode
+            let resizeControl = self.shapeControlsLayer
                 .rect(self.resizeControlWidth, self.resizeControlWidth)
                 .move(vertex[0] - (self.resizeControlWidth) / 2, vertex[1] - (self.resizeControlWidth) / 2)
                 .attr({ 'stroke-width': self.resizeControlStrokeWidth, 'stroke': '#6e6e6e', fill: 'white' });
             resizeControl.attr({ mapObjectType: 'edit-control' })
             resizeControl.draggable();
-            self.controlGroup.add(resizeControl);
+            //self.controlGroup.add(resizeControl);
             self.resizeControls.push({ vIndex: i, control: resizeControl })
             resizeControl.on('dragmove', function (ev) {
                 let vIndex = i;
                 let newVertArray = polygon.array();
-                newVertArray[vIndex] = [ev.detail.box.x + self.resizeControlScaledWidth / 2, ev.detail.box.y + self.resizeControlScaledWidth/2];
+                newVertArray[vIndex] = [ev.detail.box.x + self.resizeControlScaledWidth / 2, ev.detail.box.y + self.resizeControlScaledWidth / 2];
                 polygon.plot(newVertArray);
 
                 self.overlayEntry.points = self.polygon.array().map(p => { return { x: p[0], y: p[1] } })
@@ -484,7 +507,7 @@ export class Zone extends BaseControl {
             })
 
             resizeControl.on('dragend', function () {
-                self.controlGroup.fire('zoneHasBeenResized')
+               self.controlGroup.fire('zoneHasBeenResized')
             })
         }
 
@@ -569,11 +592,13 @@ export class Zone extends BaseControl {
 }
 
 export class CircleZone extends BaseControl {
-    constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly, isDraggable, isSelectable }) {
-        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable)
+    constructor({ svgRoot, svgNode, attr, center, size, startUserDrawing, overlayEntry, isReadOnly, isDraggable, isSelectable, shapeControlsLayer }) {
+        super(isReadOnly, svgNode, overlayEntry, isSelectable, isDraggable, shapeControlsLayer)
 
         this.attr = attr || {}
         this.circle = svgRoot.circle().attr(this.attr);
+        this.resizeControls = []
+        this.resizeControlWidth = 6
         this.mainShape = this.circle;
         this.size = size;
 
@@ -615,19 +640,28 @@ export class CircleZone extends BaseControl {
         self.circle.node.classList.add('cursor-pointer')
 
         let r = circle.rx()
-        var verticesArr = [[circle.cx() - r, circle.cy()], [circle.cx(), circle.cy() - r], [circle.cx() + r, circle.cy()], [circle.cx(), circle.cy() + r]]
-        let resizeControls = []
+        let getResizeControlVerticesArr = (radius) => [
+            [circle.cx() - radius - (self.resizeControlWidth) / 2, circle.cy() - (self.resizeControlWidth) / 2],
+            [circle.cx() - (self.resizeControlWidth) / 2, circle.cy() - radius - (self.resizeControlWidth) / 2],
+            [circle.cx() + radius - (self.resizeControlWidth) / 2, circle.cy() - (self.resizeControlWidth) / 2],
+            [circle.cx() - (self.resizeControlWidth) / 2, circle.cy() + radius - (self.resizeControlWidth) / 2]
+        ];
+        let verticesArr = getResizeControlVerticesArr(r);
         for (let i = 0; i < verticesArr.length; i++) {
             let vertex = verticesArr[i]
-            let resizeControl = self.svgNode.rect(4, 4).move(vertex[0] - 2, vertex[1] - 2).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
+            let resizeControl = self.shapeControlsLayer.rect(self.resizeControlWidth, self.resizeControlWidth).move(vertex[0], vertex[1]).attr({ 'stroke-width': 0.5, 'stroke': '#6e6e6e', fill: 'white' });
             resizeControl.attr({ mapObjectType: 'edit-control' })
 
-            self.controlGroup.add(resizeControl);
-            resizeControls.push(resizeControl)
+            self.resizeControls.push({
+                vIndex: i,
+                control: resizeControl
+            })
+
+            //self.controlGroup.add(resizeControl);
 
             resizeControl.on('mousedown', function (ev) {
                 ev.stopPropagation();
-                this.draggable(false)
+                self.draggable(false)
 
                 let prevPos = getSvgPoint(ev.clientX, ev.clientY, self.svgNode.node)
                 let mouseMove = function (ev, isMouseDown) {
@@ -646,10 +680,10 @@ export class CircleZone extends BaseControl {
                     circle.radius(circle.rx() + radiusChange)
                     prevPos = currentPos
 
-                    resizeControls[0].dx(-radiusChange)
-                    resizeControls[1].dy(-radiusChange)
-                    resizeControls[2].dx(radiusChange)
-                    resizeControls[3].dy(radiusChange)
+                    let controlsVerticies = getResizeControlVerticesArr(circle.rx());
+                    for (let i = 0; i < 4; i++){
+                        self.resizeControls[i].control.move(controlsVerticies[i][0], controlsVerticies[i][1])
+                    }
                 }
                 window.addEventListener('mousemove', mouseMove)
 
@@ -663,6 +697,16 @@ export class CircleZone extends BaseControl {
         }
 
         self.draggable(true)
+
+        self.controlGroup.on('dragmove', function (ev) {
+            
+            let verticesArr = getResizeControlVerticesArr(circle.rx());
+            for (let i = 0; i < 4; i++) {
+                let control = self.resizeControls[i].control;
+                let controlVertex = verticesArr[i];
+                control.move(controlVertex[0] , controlVertex[1])
+            }
+        })
 
         addSelectionEventListener(self.controlGroup, circle, self)
 

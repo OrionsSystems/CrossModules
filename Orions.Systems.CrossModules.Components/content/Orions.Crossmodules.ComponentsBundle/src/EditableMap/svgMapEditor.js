@@ -50,6 +50,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     let zonesLayer = draw.group();
     let camerasLayer = draw.group();
     let circlesLayer = draw.group();
+    let shapeControlsLayer = draw.group();
 
     let globalClickEventHandler = () => {
         document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
@@ -80,7 +81,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             overlayEntry: circleOverlayEntry,
             isReadOnly,
             isDraggable: circleOverlayEntry.isDraggable ?? true,
-            isSelectable: circleOverlayEntry.isSelectable ?? true
+            isSelectable: circleOverlayEntry.isSelectable ?? true,
+            shapeControlsLayer
         });
         newCircle.persist = circleOverlayEntry.persist;
 
@@ -113,7 +115,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             isReadOnly,
             isDraggable: zoneOverlayEntry.isDraggable ?? true,
             isSelectable: zoneOverlayEntry.isSelectable ?? true,
-            maxPointsNumber: 4
+            maxPointsNumber: 4,
+            shapeControlsLayer
         });
         newZone.persist = zoneOverlayEntry.persist;
 
@@ -161,7 +164,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             overlayEntry: cameraOverlayEntry,
             isReadOnly,
             isDraggable: cameraOverlayEntry.isDraggable ?? true,
-            isSelectable: cameraOverlayEntry.isSelectable ?? true
+            isSelectable: cameraOverlayEntry.isSelectable ?? true,
+            shapeControlsLayer
         });
 
         newCamera.persist = cameraOverlayEntry.persist;
