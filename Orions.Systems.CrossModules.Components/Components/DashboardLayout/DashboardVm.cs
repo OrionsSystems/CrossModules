@@ -270,13 +270,20 @@ namespace Orions.Systems.CrossModules.Components
 			row.Columns.AddAfter(n, newColumn);
 		}
 
-		public void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column)
+		public void DeleteColumn(MouseEventArgs e, DashboardRow row, DashboardColumn column, DashboardColumn parrernColumn = null)
 		{
 			var columnSize = column.Size;
 
 			if (row.Columns.Count == 1)
 			{
-				Source.Rows.Remove(row);
+				if (parrernColumn != null)
+				{
+					parrernColumn.InnerRows.Remove(row);
+				}
+				else {
+					Source.Rows.Remove(row);
+				}
+				
 				return;
 			}
 

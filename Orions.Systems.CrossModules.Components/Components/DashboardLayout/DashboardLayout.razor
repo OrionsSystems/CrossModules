@@ -127,7 +127,7 @@
 																						<IconSplitVertical></IconSplitVertical>
 																					</a>
 																				}
-																				<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, innerRow, innerColumn); })">
+																				<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, innerRow, innerColumn, column); })">
 																					<IconClose></IconClose>
 																				</a>
 																			</div>
