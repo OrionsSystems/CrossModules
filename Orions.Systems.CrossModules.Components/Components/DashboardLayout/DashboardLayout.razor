@@ -145,6 +145,9 @@
 																		}
 																		else
 																		{
+
+																			var innerSlideWidget = innerColumn.Widget as SlideContainerWidget;
+
 																			<div class="dashboard-widget-container-flex">
 																				<div class="dashboard-widget-icon">
 																					@((MarkupString)innerColumn.Widget.GetIcon())
@@ -166,6 +169,31 @@
 																					</div>
 																				</div>
 																			</div>
+
+																			@if (innerSlideWidget != null && innerSlideWidget.Data != null)
+																			{
+																				@foreach (var slWdg in innerSlideWidget.Data)
+																				{
+																					<div class="dashboard-slide-container">
+																						<div class="dashboard-widget-container-flex">
+																							<div class="dashboard-widget-icon">
+																								@((MarkupString)slWdg.GetIcon())
+																							</div>
+																							<div class="dashboard-widget-data-container">
+																								<div class="dashboard-widget-label">
+																									@slWdg.Label
+																								</div>
+																								<div class="dashboard-widget-commands">
+																									<a class="dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
+																										<IconVisible></IconVisible>
+																									</a>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																				}
+																			}
+
 																		}
 																	</div>
 																</div>
