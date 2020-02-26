@@ -21,6 +21,11 @@ window.Orions.SvgMapEditor = {
 
     makePopupDraggable: function(rootElementId) {
         $('#' + rootElementId + ' .draggable-popup .modal-dialog').draggable()
+    },
+
+    destroy: function (rootElementId) {
+        let editorToDestroy = this.layoutEditors[rootElementId];
+        editorToDestroy.destroy();
     }
 }
 
@@ -31,21 +36,29 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     var svg = document.querySelector(rootSelector + ' .map-container svg');
 
 
-    svgPanZoom(svg, {
+    let onZoomHandler = function (newZoomScale) {
+        zones.forEach(z => z.handleZoom(newZoomScale))
+    }
+
+    let panZoomCtrl = svgPanZoom(svg, {
         zoomScaleSensitivity: 0.4,
-        controlIconsEnabled: true
+        controlIconsEnabled: true,
+        onZoom: onZoomHandler
     })
 
     var draw = SVG(rootSelector + ' .svg-pan-zoom_viewport');
     let zonesLayer = draw.group();
     let camerasLayer = draw.group();
     let circlesLayer = draw.group();
+    let shapeControlsLayer = draw.group();
 
-    document.addEventListener('click', () => {
+    let globalClickEventHandler = () => {
         document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
         document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
         componentReference.invokeMethodAsync("CloseHyperTagInfoPopup")
-    })
+    }
+
+    document.addEventListener('click', globalClickEventHandler)
 
     let zones = []
     let cameras = []
@@ -67,7 +80,9 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             startUserDrawing: startUserDrawing,
             overlayEntry: circleOverlayEntry,
             isReadOnly,
-            isSelectable: circleOverlayEntry.isSelectable ?? circleOverlayEntry.isSelectable
+            isDraggable: circleOverlayEntry.isDraggable ?? true,
+            isSelectable: circleOverlayEntry.isSelectable ?? true,
+            shapeControlsLayer
         });
         newCircle.persist = circleOverlayEntry.persist;
 
@@ -98,8 +113,10 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             name: zoneOverlayEntry.name,
             overlayEntry: zoneOverlayEntry,
             isReadOnly,
-            isSelectable: zoneOverlayEntry.isSelectable ?? zoneOverlayEntry.isSelectable,
-            maxPointsNumber: 4
+            isDraggable: zoneOverlayEntry.isDraggable ?? true,
+            isSelectable: zoneOverlayEntry.isSelectable ?? true,
+            maxPointsNumber: 4,
+            shapeControlsLayer
         });
         newZone.persist = zoneOverlayEntry.persist;
 
@@ -124,6 +141,15 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             }
         })
 
+        for (var key in zoneOverlayEntry.eventHandlerMappings) {
+            let eventName = key
+            newZone.on(eventName, function (e) {
+                let svgEvent = { clientX: e.clientX, clientY: e.clientY }
+
+                componentReference.invokeMethodAsync(zoneOverlayEntry.eventHandlerMappings[eventName], newZone.overlayEntry, svgEvent)
+            })
+        }
+
         return newZone;
     }
 
@@ -137,7 +163,9 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             isDefaultPosition: isDefaultPosition,
             overlayEntry: cameraOverlayEntry,
             isReadOnly,
-            isSelectable: cameraOverlayEntry.isSelectable ?? cameraOverlayEntry.isSelectable
+            isDraggable: cameraOverlayEntry.isDraggable ?? true,
+            isSelectable: cameraOverlayEntry.isSelectable ?? true,
+            shapeControlsLayer
         });
 
         newCamera.persist = cameraOverlayEntry.persist;
@@ -438,7 +466,12 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         addPanelButtonsEventListeners();
     }
 
+    function destroyEditor() {
+        document.removeEventListener('click', globalClickEventHandler)
+    }
+
     return {
-        update: updateOverlay
+        update: updateOverlay,
+        destroy: destroyEditor
     }
 }

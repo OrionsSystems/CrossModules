@@ -122,6 +122,8 @@
 
 	private void OnChangeDataSource()
 	{
+		if (Vm.ReportChartData == null) return;
+
 		double total = 0;
 		foreach (var series in Vm.ReportChartData.Series)
 		{

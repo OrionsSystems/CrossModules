@@ -34,6 +34,7 @@ namespace Orions.Systems.CrossModules.Components
 		public int InitialRowsNumber { get; set; } = 2;
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
+		public MasksHeatmapRenderer.HeatmapSettings HeatmapSettings { get; set; } = new MasksHeatmapRenderer.HeatmapSettings();
 
 		public List<int> PageSizeOptions
 		{
@@ -118,7 +119,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void ShowHeatmap()
 		{
-			_renderer = new MasksHeatmapRenderer(this.Store, this._metadataSet, new MasksHeatmapRenderer.HeatmapSettings());
+			_renderer = new MasksHeatmapRenderer(this.Store, this._metadataSet, HeatmapSettings);
 			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
 			IsVmShowingHeatmapProp.Value = true;
 			Task.Run(_renderer.RunGenerationAsync);

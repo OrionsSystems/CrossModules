@@ -80,6 +80,8 @@
 
 	private void OnChangeDataSource()
 	{
+		if (Vm.ReportChartData == null) return;
+
 		var total = 0;
 		foreach (var series in Vm.ReportChartData.Series)
 		{

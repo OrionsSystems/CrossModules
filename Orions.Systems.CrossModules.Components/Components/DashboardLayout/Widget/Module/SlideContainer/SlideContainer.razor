@@ -29,8 +29,7 @@
 						<div class="widget-slide-container-data @(Vm.IsActiveElement(wdg.Id) ? "active" : "")">
 							@if (wdg != null && wdg.IsVisibile)
 							{
-								<WidgetDynamicComponent @key="wdg.Id"
-																DataContext="@DashboardVm.ObtainWidgetVm(wdg)"
+								<WidgetDynamicComponent DataContext="@DashboardVm.ObtainWidgetVm(wdg)"
 																DashboardVm="DashboardVm" />
 							}
 						</div>

@@ -67,11 +67,11 @@ h5.modal-title {
 }
 
 .dashboard-row-container {
-	background-color: #F0F1F5;
+	background-color: #f4f4f49e;
 	/*padding: 15px 5px;*/
 }
 
-.dashboard-element-commands {
+.dashboard-content > .dashboard-element-commands {
 	position: relative;
 	line-height: initial;
 	z-index: 99998;
@@ -81,12 +81,46 @@ h5.modal-title {
 	transition: 0.5s;
 }
 
-	.dashboard-element-commands svg {
-		height: 20px;
-		width: 20px;
+.dashboard-widget-inner-container .dashboard-element-commands {
+	position: relative;
+	line-height: initial;
+	text-align: right;
+	margin: 2px;
+	z-index: 99998;
+	opacity: 0.2;
+	transition: 0.5s;
+}
+
+.dashboard-widget-inner-container-item-element {
+	padding: 0px 10px 0px 0px !important;
+}
+
+	.dashboard-widget-inner-container-item-element:last-child {
+		padding: 0px !important;
 	}
 
-.dashboard-element-container:hover .dashboard-element-commands {
+.dashboard-widget-inner-container-data {
+	border: 1px dashed lightgray;
+	margin: 0px;
+	padding: 5px;
+}
+
+	.dashboard-widget-inner-container-data .dashboard-widget-add {
+		padding: 0px 0px 10px 0px;
+	}
+
+
+.dashboard-element-commands svg {
+	height: 20px;
+	width: 20px;
+}
+
+.dashboard-element-container:hover .dashboard-content > .dashboard-element-commands {
+	opacity: 1;
+	transition: 0.5s;
+}
+
+.dashboard-widget-inner-container-data:hover .dashboard-element-commands {
 	opacity: 1;
 	transition: 0.5s;
 }
@@ -368,7 +402,7 @@ h5.modal-title {
 
 .dashboard-widget-inner-container-item {
 	width: 100%;
-	border: 1px dashed lightgray;
+	/*border: 1px dashed lightgray;*/
 	margin: 5px 0px;
 	padding: 10px;
 	display: flex;
@@ -633,6 +667,43 @@ h5.modal-title {
 	margin: auto;
 }
 
+.widget-single-analytics-title {
+	font-size: 12px;
+	color: #365c7e;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+}
+
+.widget-single-analytics-container {
+	display: inline-flex;
+	vertical-align: middle;
+}
+
+widget-single-analytics-icon {
+	vertical-align: middle;
+}
+
+	widget-single-analytics-icon img {
+		vertical-align: middle;
+		width: 30px;
+	}
+
+.widget-single-analytics-icon svg {
+	width: 30px;
+	vertical-align: middle;
+	fill: rgb(57, 93, 127);
+	margin-top: 7px;
+}
+
+.widget-single-analytics-value {
+	margin-left: 10px;
+	display: inline-flex;
+	opacity: .5;
+	font-size: 40px;
+	vertical-align: middle;
+	margin-top: -8px;
+	letter-spacing: 6px;
+}
 
 /*    END WIDGET DASHBOARD  */
 
