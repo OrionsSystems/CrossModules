@@ -17,7 +17,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public bool IsReadOnly { get; set; } = false;
 		public int TagRequestMaxCountLimit { get; set; }
 
-		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; }
+		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
+
 		public string DefaultZoneColor { get; set; } = "#FF0000";
 		public string DefaultCameraColor { get; set; } = "#00FF00";
 		public string DefaultCircleColor { get; set; } = "#0000FF";
