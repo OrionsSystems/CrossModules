@@ -264,7 +264,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					ProcessGeometryTag(tag, framePoints);
 				}
 
-				maskedImage = HeatmapRenderHelper.RenderToSkImage(framePoints, _width, _height);
+				var mask = HeatmapRenderHelper.RenderToSkImage(framePoints, _width, _height);
+				maskedImage = BlendTwoImages(SKBitmap.Decode(_lastImage.Data), mask, SKBlendMode.Plus);
 			}
 			else if (renderingMode == RenderingMode.RealImage)
 			{
@@ -374,7 +375,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
-		private void BlendTwoImages(SKImage image1, SKBitmap image2, SKBlendMode blendMode)
+		private SKImage BlendTwoImages(SKBitmap image1, SKImage image2, SKBlendMode blendMode)
 		{
 			using (var tempSurface = SKSurface.Create(new SKImageInfo(_width, _height)))
 			{
@@ -389,21 +390,23 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					BlendMode = blendMode
 				};
 
-				canvas.DrawImage(image1, 0, 0);
+				canvas.DrawBitmap(image1, 0, 0);
 
-				canvas.DrawBitmap(image2, 0, 0, skPaint);
+				canvas.DrawImage(image2, 0, 0, skPaint);
 
 				// return the surface as a manageable image
 				var res = tempSurface.Snapshot();
 
-				using (var data = res.Encode(SKEncodedImageFormat.Png, 80))
-				{
-					// save the data to a stream
-					using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__{(blendMode.ToString())}.png"))
-					{
-						data.SaveTo(stream);
-					}
-				}
+				//using (var data = res.Encode(SKEncodedImageFormat.Png, 80))
+				//{
+				//	// save the data to a stream
+				//	using (var stream = System.IO.File.OpenWrite(@$"C:/temp/__{(blendMode.ToString())}.png"))
+				//	{
+				//		data.SaveTo(stream);
+				//	}
+				//}
+
+				return res;
 			}
 		}
 
