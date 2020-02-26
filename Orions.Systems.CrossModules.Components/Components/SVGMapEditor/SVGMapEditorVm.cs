@@ -54,6 +54,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ZoneDataSet CurrentlyShownHeatmapZoneDataSet { get; set; }
 
 		public HeatmapRenderingMode HeatmapMode { get; set; }
+		public bool HeatmapCustomNormalization { get; set; }
+		public uint HeatmapNormalizationMinOverlaps { get; set; }
+		public uint HeatmapNormalizationMaxOverlaps { get; set; }
 
 		public string TagInfoImageBase64Url
 		{
@@ -146,6 +149,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
+			var settings = new Helpers.MasksHeatmapRenderer.HeatmapSettings
+			{
+				UseCustomNormalizationSettings = HeatmapCustomNormalization,
+				MinimumNumberOfOverlaps = HeatmapNormalizationMinOverlaps,
+				MaximumNumberOfOverlaps = HeatmapNormalizationMaxOverlaps
+			};
 			_heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
 			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage, false);
 
@@ -216,7 +225,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			};
 
 			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
-			foreach(var zone in overlayJsModel.Zones)
+			foreach (var zone in overlayJsModel.Zones)
 			{
 				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
 				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
@@ -244,7 +253,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task RemoveTagCirclesForZone(string zoneId)
 		{
-			var circlesToRemove = _circlesToTagsMappings.Where(c => ZoneDataSets.Any(z => z.Tags.Any(t => t.Id == c.Value.Id) && z.Zone.Id==zoneId)).Select(kv => new MapOverlayUpdateDetails
+			var circlesToRemove = _circlesToTagsMappings.Where(c => ZoneDataSets.Any(z => z.Tags.Any(t => t.Id == c.Value.Id) && z.Zone.Id == zoneId)).Select(kv => new MapOverlayUpdateDetails
 			{
 				Type = MapOverlayUpdateDetails.DeleteUpdateType,
 				OverlayEntry = JsonSerializer.Serialize(kv.Key, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
@@ -581,7 +590,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var zone = ZoneDataSets.SingleOrDefault(z => z.Zone.Id == zoneModel.Id)?.Zone;
 
 			// if there is data (tags) loaded for the zone
-			if(zone != null)
+			if (zone != null)
 			{
 				zone.Points = zoneModel.Points;
 
@@ -662,7 +671,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			this.TagsAreBeingLoaded.Value = true;
 
-			if(TagDateRangeFilter != null)
+			if (TagDateRangeFilter != null)
 			{
 				ZoneDataSets = await GetZoneDataSetsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
 			}
