@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public string SvgHtmlString { get; set; } = @"<svg viewBox=""0 0 300 100"" xmlns=""http://www.w3.org/2000/svg"" fill=""grey""></svg>";
 
 		public bool IsReadOnly { get; set; } = false;
-		public int TagRequestMaxCountLimit { get; set; }
+		public int TagRequestMaxCountLimit { get; set; } = 200;
 
 		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
 
