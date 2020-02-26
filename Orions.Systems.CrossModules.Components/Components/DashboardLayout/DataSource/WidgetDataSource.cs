@@ -1,4 +1,5 @@
 ﻿using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.Reporting;
 
 using System;
@@ -48,6 +49,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			catch (Exception e)
 			{
+				Logger.Instance.Error(this, nameof(GenerateFilteredReportResultAsync), e);
 				return new Report[] { };
 			}
 
