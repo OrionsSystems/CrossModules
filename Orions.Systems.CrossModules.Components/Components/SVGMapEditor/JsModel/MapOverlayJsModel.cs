@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 		public List<CircleOverlayEntryJsModel> Circles { get; set; }
 		public List<CameraOverlayEntryJsModel> Cameras { get; set; }
 
-		public static object CreateFromDomainModel(MapOverlay domainModel)
+		public static MapOverlayJsModel CreateFromDomainModel(MapOverlay domainModel)
 		{
 			var model = new MapOverlayJsModel();
 			model.Id = domainModel.Id;
@@ -27,7 +27,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 			return model;
 		}
 
-		public MapOverlay ToDomainModel() 
+		public MapOverlay ToDomainModel()
 		{
 			var domain = new MapOverlay();
 
@@ -39,6 +39,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 				.ToList();
 
 			return domain;
-		} 
+		}
 	}
 }

@@ -67,6 +67,18 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		[JSInvokable]
+		public async Task RemoveTagCirclesForZone(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
+		{
+			await Vm.RemoveTagCirclesForZone(zone.Id);
+		}
+
+		[JSInvokable]
+		public async Task UpdateZone(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
+		{
+			await Vm.UpdateZone(zone);
+		}
+
+		[JSInvokable]
 		public async Task OpenHeatmap(string zoneId)
 		{
 			await Vm.OpenHeatmapAsync(zoneId);
