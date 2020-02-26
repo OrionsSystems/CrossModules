@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -22,6 +23,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private Helpers.MasksHeatmapRenderer _heatmapRenderer;
 
+		ConcurrentDictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new ConcurrentDictionary<CircleOverlayEntryJsModel, HyperTag>();
+
 		#region Properties
 		public IHyperArgsSink HyperArgsSink { get; set; }
 		public IJSRuntime JsRuntime { get; set; }
@@ -32,20 +35,24 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public Func<MapPlaybackCache, Task> OnMapPlayebackCacheUpdated { get; set; }
 		public Func<TagDateRangeFilterOptions, Task> TagDateRangeFilterChanged { get; set; }
 
+		public int RenderTagsLimit { get; set; } = 100;
+
 		public string DefaultCircleColor { get; internal set; }
 		public string DefaultZoneColor { get; internal set; }
 		public string DefaultCameraColor { get; internal set; }
+
 		public bool IsReadOnly { get; set; }
 
-		private int _tagRequestMaxCountLimit = 250;
-		public int TagRequestMaxCountLimit { get { return _tagRequestMaxCountLimit; } set { if (value > 0) _tagRequestMaxCountLimit = value; } }
+		public int TagRequestMaxCountLimit { get; set; } = 200;
 
 		public ViewModelProperty<bool> ShowingControlPropertyGrid { get; set; } = false;
 		public OverlayEntry CurrentPropertyGridObject { get; set; }
 		public ViewModelProperty<bool> ShowingHyperTagInfo { get; set; } = false;
 		public ViewModelProperty<HyperTag> CurrentTagBeingShown { get; set; } = new ViewModelProperty<HyperTag>();
+
 		public double HyperTagInfoXPos { get; set; }
 		public double HyperTagInfoYPos { get; set; }
+
 		public ViewModelProperty<bool> ShowingHyperTagProperties { get; set; } = false;
 
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
@@ -102,6 +109,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		#region Methods
 		#region Heatmap
+
 		public async Task OpenHeatmapAsync(string zoneId)
 		{
 			await OpenPopupMap(zoneId, true);
@@ -130,6 +138,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		private async Task OpenPopupMap(string zoneId, bool heatmapMode)
 		{
 			var zoneDataSet = GetZoneDataSetForCurrentShownZone(zoneId);
+			if (zoneDataSet == null)
+			{
+				System.Diagnostics.Debug.Assert(false, "Failed to find zone");
+				return;
+			}
+
 			this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet; // remember requested zoneId dataset to enable live heatmap refresh while autoplayback is on
 
 			var tagsForMap = zoneDataSet.Tags;
@@ -141,7 +155,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 			else
 			{
-				PrepareHeatmapAsyncFunc(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
+				await PrepareHeatmapAsyncFunc(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
 			}
 
 			IsVmShowingHeatmapProp.Value = true;
@@ -150,7 +164,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
 			_heatmapRenderer = InstantiateHeatmapRendererWithSettings();
-			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, false);
+			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, false, this.TagRequestMaxCountLimit);
 
 			if (img != null)
 			{
@@ -493,7 +507,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				if (ts.Zone.FixedCameraEnhancementId.HasValue)
 				{
-					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, false);
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, false, this.TagRequestMaxCountLimit);
 				}
 			}
 		}
@@ -553,7 +567,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				foreach (var ds in zoneDataSets)
 				{
-					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false);
+					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false, this.TagRequestMaxCountLimit);
 				}
 			}
 
@@ -678,7 +692,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			return sliceResult[0].Image.Data;
 		}
 
-		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
 		public async Task ShowTags()
 		{
 			this.TagsAreBeingLoaded.Value = true;
@@ -745,7 +758,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				};
 				circle.EventHandlerMappings.Add("click", "ShowTagInfo");
 
-				_circlesToTagsMappings.Add(circle, tag);
+				_circlesToTagsMappings[circle] = tag;
 
 				var circleSerialized = JsonSerializer.Serialize(circle, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
