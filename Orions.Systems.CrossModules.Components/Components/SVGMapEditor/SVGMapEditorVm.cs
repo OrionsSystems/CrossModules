@@ -73,7 +73,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<bool> TagsAreBeingLoaded { get; set; } = new ViewModelProperty<bool>(false);
 
 		public bool TagDateFilterPreInitialized { get; set; } = false;
+
 		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
+
 		public TagDateRangeFilterOptions AutoplayTagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
 		public ViewModelProperty<bool> HomographiesDetected { get; set; } = false;
 		public ViewModelProperty<bool> IsAutoPlayOn { get; set; } = false;
@@ -338,7 +340,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (mapOverlayZonesWithHomographyAssigned.Any())
 			{
-				TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value, this.TagDateFilterPreInitialized);
+				TagDateRangeFilter?.InitRangeSlider(earliestDate.Value, latestDate.Value, this.TagDateFilterPreInitialized);
 				this.RaiseNotify("TagDateRangeFilter");
 			}
 
@@ -623,9 +625,13 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
+
 		public async Task ShowTags()
 		{
 			this.TagsAreBeingLoaded.Value = true;
+
+			if (TagDateRangeFilter == null)
+				return;
 
 			ZoneDataSets = await GetZoneDataSetsForDateRange(TagDateRangeFilter.CurrentMinDate, TagDateRangeFilter.CurrentMaxDate);
 
