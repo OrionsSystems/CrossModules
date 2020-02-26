@@ -149,14 +149,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
 		{
-			var settings = new Helpers.MasksHeatmapRenderer.HeatmapSettings
-			{
-				UseCustomNormalizationSettings = HeatmapCustomNormalization,
-				MinimumNumberOfOverlaps = HeatmapNormalizationMinOverlaps,
-				MaximumNumberOfOverlaps = HeatmapNormalizationMaxOverlaps
-			};
-			_heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
-			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage, false);
+			_heatmapRenderer = InstantiateHeatmapRendererWithSettings();
+			var img = await _heatmapRenderer.GenerateFromTagsAsync(tagsForMap, fixedCameraEnhancementId, false);
 
 			if (img != null)
 			{
@@ -499,7 +493,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				if (ts.Zone.FixedCameraEnhancementId.HasValue)
 				{
-					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, _heatmapRendererMode, false);
+					ts.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ts.Tags, ts.Zone.FixedCameraEnhancementId.Value, false);
 				}
 			}
 		}
@@ -552,14 +546,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			await Task.WhenAll(stepTasks);
 
-			var heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings());
+			var heatmapRenderer = InstantiateHeatmapRendererWithSettings();
 			foreach (var kv in stepToDatasetMappings)
 			{
 				var zoneDataSets = kv.Key.ZoneDataSets = kv.Value.Result;
 
 				foreach (var ds in zoneDataSets)
 				{
-					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, _heatmapRendererMode, false);
+					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false);
 				}
 			}
 
@@ -631,13 +625,31 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (populateWithHeatmaps)
 			{
-				using (var heatmapRenderer = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, new Helpers.MasksHeatmapRenderer.HeatmapSettings()))
+				using (var heatmapRenderer = InstantiateHeatmapRendererWithSettings())
 				{
 					await PopulateZoneDataSetsWithHeatmaps(zonesHypZoneHyperTagSets, heatmapRenderer);
 				}
 			}
 
 			return zonesHypZoneHyperTagSets;
+		}
+
+		/// <summary>
+		/// Generates instance of Heatmap Renderer filling it's settings with properties from VM
+		/// </summary>
+		/// <param name="heatmapMode">If we should render heatmap or real images.</param>
+		/// <returns></returns>
+		private Helpers.MasksHeatmapRenderer InstantiateHeatmapRendererWithSettings(bool heatmapMode = true)
+		{
+			var settings = new Helpers.MasksHeatmapRenderer.HeatmapSettings
+			{
+				UseCustomNormalizationSettings = HeatmapCustomNormalization,
+				MinimumNumberOfOverlaps = HeatmapNormalizationMinOverlaps,
+				MaximumNumberOfOverlaps = HeatmapNormalizationMaxOverlaps,
+				RenderingMode = heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage
+			};
+			var helper = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, settings);
+			return helper;
 		}
 
 		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Orions.Common;
+using Orions.Common.Collections;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
@@ -14,6 +15,8 @@ using Orions.Node.Common;
 using ReactNOW.ML;
 
 using SkiaSharp;
+
+using static ReactNOW.ML.HeatmapRenderHelper;
 
 namespace Orions.Systems.CrossModules.Components.Helpers
 {
@@ -41,6 +44,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		private int _width = 0;
 		private int _height = 0;
 		private uint[,] _globalMatrix;
+		private ConcurrentFixedSizeQueue<List<HeatPoint>> _frames;
 		private UniImage _lastImage;
 
 		public MasksHeatmapRenderer(IHyperArgsSink hyperStore, HyperMetadataSet metadataSet, HeatmapSettings settings)
@@ -69,6 +73,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			[HelpText("Used only if custom normalization is enabled. Any number of overlaps that is equal to this or higher than this considered to be the hottest possible value.")]
 			public uint MaximumNumberOfOverlaps { get; set; } = 100;
 			public int NumberOfBatchesToProcess { get; set; } = int.MaxValue;
+
+			public RenderingMode RenderingMode { get; set; } = RenderingMode.Masks;
 		}
 
 		public void CancelGeneration()
@@ -87,9 +93,11 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			try
 			{
+				_frames = new ConcurrentFixedSizeQueue<List<HeatPoint>>(int.MaxValue);
+
 				ProtectOriginalMetadataSet();
 
-				TryAddTagType(nameof(HyperTagGeometry), nameof(HyperTagGeometryMask));
+				//TryAddTagType(nameof(HyperTagGeometry), nameof(HyperTagGeometryMask));
 
 				await CountTagsTotalAsync();
 
@@ -171,14 +179,26 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 						{
 							await _pauseResetEvent.WaitAsync();
 
+							var framePoints = new List<HeatPoint>();
+
 							foreach (var tag in sliceTags)
 							{
-								var tagExtraction = ProcessMaskedTag(tag);
-								if (tagExtraction != null)
+								// TODO: Reintegrate RealImage processing logic
+								if (_settings.RenderingMode == RenderingMode.Masks || _settings.RenderingMode == RenderingMode.RealImage)
 								{
-									ProcessMaskOverlapsIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
+									var tagExtraction = ProcessMaskedTag(tag);
+									if (tagExtraction != null)
+									{
+										ProcessMaskOverlapsIntoMatrix(tagExtraction.Image, tagExtraction.Rect);
+									}
+								}
+								else if (_settings.RenderingMode == RenderingMode.LowerPointOfGeometry)
+								{
+									ProcessGeometryTag(tag, framePoints);
 								}
 							}
+
+							_frames.Enqueue(framePoints);
 						}
 
 						if (!_keepWorking || _ct.IsCancellationRequested)
@@ -210,7 +230,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		/// <param name="fixedCameraPresetId">Id of Fixed Camera Preset to take homography configuration from.</param>
 		/// <param name="renderingMode">If enabled, heatmap masks will be rendered, otherwise real pixels from corresponding frames will be rendered in overlap.</param>
 		/// <param name="cutOff">If we should cutoff the image by homography or just render a polygon line over.</param>
-		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, RenderingMode renderingMode = RenderingMode.Masks, bool cutOff = false, int tagGroupsLimit = 30)
+		public async Task<UniImage> GenerateFromTagsAsync(List<HyperTag> tags, HyperDocumentId fixedCameraPresetId, bool cutOff = false, int tagGroupsLimit = 30)
 		{
 			if (tags == null || tags.Count < 1)
 				return null;
@@ -240,7 +260,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			SKImage maskedImage = null;
 
-			if (renderingMode == RenderingMode.Masks)
+			if (_settings.RenderingMode == RenderingMode.Masks)
 			{
 				_globalMatrix = new uint[_height, _width];
 
@@ -255,7 +275,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 				maskedImage = RenderMask(_lastImage);
 			}
-			else if (renderingMode == RenderingMode.LowerPointOfGeometry)
+			else if (_settings.RenderingMode == RenderingMode.LowerPointOfGeometry)
 			{
 				var framePoints = new List<HeatmapRenderHelper.HeatPoint>();
 
@@ -267,7 +287,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 				var mask = HeatmapRenderHelper.RenderToSkImage(framePoints, _width, _height);
 				maskedImage = BlendTwoImages(SKBitmap.Decode(_lastImage.Data), mask, SKBlendMode.Plus);
 			}
-			else if (renderingMode == RenderingMode.RealImage)
+			else if (_settings.RenderingMode == RenderingMode.RealImage)
 			{
 				var tagsBySlice = tagsWithHyperId.GroupBy(x => x.HyperId).OrderBy(x => x.Key).ToArray();
 
@@ -564,9 +584,19 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				SKImage result;
 
-				var heatmap = GenerateMaskFromValuesMatrix(_globalMatrix, _width, _height,
+				SKImage heatmap = null;
+
+				if (_settings.RenderingMode == RenderingMode.Masks)
+				{
+					heatmap = GenerateMaskFromValuesMatrix(_globalMatrix, _width, _height,
 						_settings.UseCustomNormalizationSettings ? _settings.MinimumNumberOfOverlaps : (uint?)null,
 						_settings.UseCustomNormalizationSettings ? _settings.MaximumNumberOfOverlaps : (uint?)null);
+				}
+				else if (_settings.RenderingMode == RenderingMode.LowerPointOfGeometry)
+				{
+					var points = _frames.SelectMany(it => it).ToArray();
+					heatmap = Render(points, _width, _height).ToSKImage();
+				}
 
 				if (heatmap == null)
 				{
@@ -649,7 +679,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			var geometry = tag.GetElement<HyperTagGeometry>();
 			var geometryMask = tag.GetElement<HyperTagGeometryMask>();
 
-			if (geometryMask == null)
+			if (geometryMask == null || geometry == null)
 				return null;
 
 			//var classification = tag.GetElements<HyperTagLabel>().Where(x => x.Type == HyperTagLabel.Types.Classification).Select(x => x.Label).FirstOrDefault();
