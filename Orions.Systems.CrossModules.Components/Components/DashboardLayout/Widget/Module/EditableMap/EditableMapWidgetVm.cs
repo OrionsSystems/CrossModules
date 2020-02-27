@@ -75,7 +75,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			var startDate = filter.StartTime;
 			var endDate = filter.EndTime;
 
-			this.EditorVm.FilterDate(startDate, endDate, filter.FilterLabels);
+			this.EditorVm.SetFilter(startDate, endDate, filter.FilterLabels);
 		}
 	}
 }

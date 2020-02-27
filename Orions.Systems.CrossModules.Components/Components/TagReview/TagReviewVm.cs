@@ -145,7 +145,7 @@ namespace Orions.Systems.CrossModules.Components
 				this._metadataSet.ToDate = endDate.Value;
 			}
 
-			if(filterLabels != null && filterLabels.Any())
+			if(filterLabels != null)
 			{
 				this._metadataSet.TextFilters = filterLabels.Select(it =>
 				{

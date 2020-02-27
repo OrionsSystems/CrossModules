@@ -780,8 +780,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
 
+		private System.Threading.SemaphoreSlim _showTagsMutex = new System.Threading.SemaphoreSlim(1,1);
 		public async Task ShowTags()
 		{
+			await _showTagsMutex.WaitAsync();
+			System.Diagnostics.Debug.WriteLine("Showing tags ofr current filter state");
+
 			this.TagsAreBeingLoaded.Value = true;
 
 			if (TagDateRangeFilter != null)
@@ -794,6 +798,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.TagsAreBeingLoaded.Value = false;
 
 			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
+
+			_showTagsMutex.Release();
 		}
 
 		private async Task ShowTagsForCurrentTagSets()
@@ -949,14 +955,21 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.ShowingControlPropertyGrid.Value = true;
 		}
 
-		public async Task FilterDate(DateTime? start, DateTime? end, string[] filterLabels)
+		public async Task SetFilter(DateTime? start, DateTime? end, string[] filterLabels)
 		{
 
 			this._filterLabels = filterLabels;
 
+			if (start == null) start = TagDateRangeFilter.MinDate;
+			if (end == null) end = TagDateRangeFilter.MaxDate;
+			if(start == TagDateRangeFilter.CurrentMinDate && end == TagDateRangeFilter.CurrentMaxDate)
+			{
+				await ShowTags();
+			}
+
 			this.TagDateRangeFilter.InitRangeSlider(null, null, start, end, true);
-			//this.TagDateRangeFilter.RaiseValueChanged();
-			RaiseNotify(nameof(TagDateRangeFilter.Value));
+
+			RaiseNotify($"{nameof(TagDateRangeFilter)}.{nameof(TagDateRangeFilter.Value)}");
 		}
 
 		public async Task UpdateSelectedControlProperties()
@@ -1156,6 +1169,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 				lock (_dateFilterLock)
 				{
+					System.Diagnostics.Debug.WriteLine($"Slider value changed {value[0]}:{value[1]}");
 					if (_dateFilterChangeThrottlingTimer == null)
 					{
 						_dateFilterChangeThrottlingTimer = new System.Timers.Timer(ThrottlingTimeDelay);
