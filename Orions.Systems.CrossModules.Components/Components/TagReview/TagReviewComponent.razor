@@ -58,6 +58,10 @@
 						<input type="number" min="1" max="@Vm.TotalPages.Value" class="form-control page-number-input" value="@Vm.PageNumber.Value" @onchange="async (e) => await Vm.ChangePage(e.Value as string)" />
 					</div>
 
+					@{
+						this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);
+					}
+
 					<div class="total-pages">Total pages: @DataContext.TotalPages.Value</div>
 					<div class="right-controls">
 						<input type="button" class="btn btn-dark form-control" value="Heatmap" @onclick="Vm.ShowHeatmap" />

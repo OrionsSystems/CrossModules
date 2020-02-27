@@ -19,6 +19,30 @@ window.Orions.SvgMapEditor = {
         layoutEditor.update(updateDetails, persist, mode)
     },
 
+    addCircleTool: function (rootElementId) {
+        let layoutEditor = this.layoutEditors[rootElementId];
+
+        layoutEditor.addCircleTool()
+    },
+
+    addAreaTool: function (rootElementId) {
+        let layoutEditor = this.layoutEditors[rootElementId];
+
+        layoutEditor.addAreaTool()
+    },
+
+    addCameraTool: function (rootElementId) {
+        let layoutEditor = this.layoutEditors[rootElementId];
+
+        layoutEditor.addCameraTool()
+    },
+
+    saveMapOverlay: function (rootElementId) {
+        let layoutEditor = this.layoutEditors[rootElementId];
+
+        layoutEditor.saveMapOverlay()
+    },
+
     makePopupDraggable: function(rootElementId) {
         $('#' + rootElementId + ' .draggable-popup .modal-dialog').draggable()
     },
@@ -129,18 +153,6 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
 
-        //newZone.onSelect(() => {
-        //    if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
-        //        && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
-        //        document.querySelector(rootSelector + " .heatmapBtn").removeAttribute('disabled')
-        //        document.querySelector(rootSelector + " .realMasksMapBtn").removeAttribute('disabled')
-        //    }
-        //    else {
-        //        document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
-        //        document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
-        //    }
-        //})
-
         for (var key in zoneOverlayEntry.eventHandlerMappings) {
             let eventName = key
             newZone.on(eventName, function (e) {
@@ -217,41 +229,19 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     }
 
     function addPanelButtonsEventListeners() {
-        if (!isReadOnly) {
-            document.querySelector(rootSelector + " .circleToolBtn")
-                .addEventListener("click", addCircleTool);
+        //if (!isReadOnly) {
+        //    document.querySelector(rootSelector + " .circleToolBtn")
+        //        .addEventListener("click", addCircleTool);
 
-            document.querySelector(rootSelector + " .areaToolBtn")
-                .addEventListener("click", addAreaTool);
+        //    document.querySelector(rootSelector + " .areaToolBtn")
+        //        .addEventListener("click", addAreaTool);
 
-            document.querySelector(rootSelector + " .cameraToolBtn")
-                .addEventListener("click", addCameraTool);
+        //    document.querySelector(rootSelector + " .cameraToolBtn")
+        //        .addEventListener("click", addCameraTool);
 
-            document.querySelector(rootSelector + " .saveBtn")
-                .addEventListener("click", saveMapOverlay);
-        }
-
-        document.querySelector(rootSelector + " .heatmapBtn")
-            .addEventListener("click", openHeatmap);
-
-        document.querySelector(rootSelector + " .realMasksMapBtn")
-            .addEventListener("click", openRealMasksMap);
-    }
-
-    function openHeatmap() {
-        zones.forEach(z => {
-            if (z.isSelected) {
-                componentReference.invokeMethodAsync("OpenHeatmap", z.overlayEntry.id)
-            }
-        })
-    }
-
-    function openRealMasksMap() {
-        zones.forEach(z => {
-            if (z.isSelected) {
-                componentReference.invokeMethodAsync("OpenRealMasksMap", z.overlayEntry.id)
-            }
-        })
+        //    document.querySelector(rootSelector + " .saveBtn")
+        //        .addEventListener("click", saveMapOverlay);
+        //}
     }
 
     function saveMapOverlay() {
@@ -376,7 +366,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             })
     }
 
-    function addCameraTool() {
+    let addCameraTool = function() {
         resetActiveBtns();
 
         let newOverlayEntry = {
@@ -472,6 +462,10 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
     return {
         update: updateOverlay,
-        destroy: destroyEditor
+        destroy: destroyEditor,
+        addCircleTool: addCircleTool,
+        addAreaTool: addAreaTool,
+        addCameraTool: addCameraTool,
+        saveMapOverlay: saveMapOverlay
     }
 }

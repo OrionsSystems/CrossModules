@@ -25,7 +25,7 @@ namespace Orions.Systems.CrossModules.Components
 		public IHyperArgsSink Store { get; set; }
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
-		public UniFilterData Filter { get; private set; }
+		//public UniFilterData Filter { get; private set; }
 		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
 		public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
@@ -106,10 +106,10 @@ namespace Orions.Systems.CrossModules.Components
 			return streamingPort;
 		}
 
-		public async Task FilterTags(UniFilterData filter)
+		public async Task FilterTags(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
-			this.Filter = filter;
-			FitlerMetadataSet(filter);
+			//this.Filter = filter;
+			FitlerMetadataSet(startDate, endDate, filterLabels);
 
 			PageNumber.Value = 1;
 
@@ -133,32 +133,21 @@ namespace Orions.Systems.CrossModules.Components
 			HeatmapImgProp.Value = null;
 		}
 
-		private void FitlerMetadataSet(IUniFilterData filter)
+		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
-			if (filter is MultiFilterData multiFilter)
+			if (startDate.HasValue)
 			{
-				foreach (var subFilter in multiFilter.Elements)
-				{
-					SetMetadataSetFilter(subFilter);
-				}
-			}
-			else
-			{
-				SetMetadataSetFilter(filter);
-			}
-		}
-
-		private void SetMetadataSetFilter(IUniFilterData filter)
-		{
-			if (filter is DateTimeFilterData dateTimefilter)
-			{
-				this._metadataSet.FromDate = dateTimefilter.StartTime;
-				this._metadataSet.ToDate = dateTimefilter.EndTime;
+				this._metadataSet.FromDate = startDate.Value;
 			}
 
-			if (filter is TextFilterData textFilterData)
+			if (endDate.HasValue)
 			{
-				this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it =>
+				this._metadataSet.ToDate = endDate.Value;
+			}
+
+			if(filterLabels != null && filterLabels.Any())
+			{
+				this._metadataSet.TextFilters = filterLabels.Select(it =>
 				{
 					var elements = it.Split(":");
 					if (elements.Count() == 0)
@@ -167,7 +156,39 @@ namespace Orions.Systems.CrossModules.Components
 						return elements[elements.Count() - 1];
 				}).ToArray();
 			}
+			//if (filter is MultiFilterData multiFilter)
+			//{
+			//	foreach (var subFilter in multiFilter.Elements)
+			//	{
+			//		SetMetadataSetFilter(subFilter);
+			//	}
+			//}
+			//else
+			//{
+			//	SetMetadataSetFilter(filter);
+			//}
 		}
+
+		//private void SetMetadataSetFilter(IUniFilterData filter)
+		//{
+		//	if (filter is DateTimeFilterData dateTimefilter)
+		//	{
+		//		this._metadataSet.FromDate = dateTimefilter.StartTime;
+		//		this._metadataSet.ToDate = dateTimefilter.EndTime;
+		//	}
+
+		//	if (filter is TextFilterData textFilterData)
+		//	{
+		//		this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it =>
+		//		{
+		//			var elements = it.Split(":");
+		//			if (elements.Count() == 0)
+		//				return String.Empty;
+		//			else
+		//				return elements[elements.Count() - 1];
+		//		}).ToArray();
+		//	}
+		//}
 
 		public async Task LoadTotalPages()
 		{

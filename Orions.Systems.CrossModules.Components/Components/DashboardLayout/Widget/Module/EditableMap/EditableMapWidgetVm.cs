@@ -64,5 +64,15 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 				await this.DashboardVm.SaveChangesAsync();
 			};
 		}
+
+		public override async Task HandleFiltersChangedAsync()
+		{
+			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+
+			var startDate = filter.StartTime;
+			var endDate = filter.EndTime;
+
+			this.EditorVm.FilterDate(startDate, endDate, filter.FilterLabels);
+		}
 	}
 }

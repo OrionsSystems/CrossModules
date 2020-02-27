@@ -18,10 +18,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			throw new NotImplementedException();
+			//throw new NotImplementedException();
 
-			//DashboardGroupData filter = this.DashboardVm.GetFilterGroup(Widget.FilterGroup);
-			//await this.TagReviewVm.Value.FilterTags(filter);
+			var filter = this.DashboardVm.ObtainFilterGroup(Widget.FilterGroup);
+			await this.TagReviewVm.Value.FilterTags(filter.StartTime, filter.EndTime, filter.FilterLabels);
 		}
 	}
 }
