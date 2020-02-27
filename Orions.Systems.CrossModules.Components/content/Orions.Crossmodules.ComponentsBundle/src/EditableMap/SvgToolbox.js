@@ -144,8 +144,9 @@ class BaseControl {
         })
 
         this.controlGroup.on('dragend', function () {
+            if (dragCounter >= 2)
+                self.controlGroup.fire('zoneHasBeenDragged')
             dragCounter = 0;
-            self.controlGroup.fire('zoneHasBeenDragged')
         });
     }
 
@@ -188,10 +189,10 @@ class BaseControl {
     }
 
 
-    raiseOnSelect() {
+    raiseOnSelect(selected) {
         let self = this;
         this.onSelectEventHandlers.forEach(h => {
-            h(self.overlayEntry);
+            h(self.overlayEntry, selected);
         })
     }
 
@@ -203,6 +204,9 @@ class BaseControl {
                 editControls[i].control.node.setAttribute("style", "visibility: collapse");
             }
 
+            if (self.isSelected) {
+                self.raiseOnSelect(false);
+            }
             self.isSelected = false
 
             if (self.isEditingName) {
@@ -214,8 +218,11 @@ class BaseControl {
                 editControls[i].control.node.setAttribute("style", "visibility: visible");
             }
 
+            if (!self.isSelected) {
+                self.raiseOnSelect(true);
+            }
+
             self.isSelected = true
-            self.raiseOnSelect();
         }
     }
 }
@@ -451,6 +458,20 @@ export class Zone extends BaseControl {
         else if (eventName == 'drawstop') {
             this.polygon.on('drawstop', callback)
         }
+        else if (eventName == 'zoneSelected') {
+            this.onSelect((overlayEntry, selected) => {
+                if (selected) {
+                    callback({})
+                }
+            })
+        }
+        else if (eventName == 'zoneLostSelection') {
+            this.onSelect((overlayEntry, selected) => {
+                if (!selected) {
+                    callback({})
+                }
+            })
+        }
         else {
             this.controlGroup.on(eventName, callback)
         }
@@ -513,14 +534,24 @@ export class Zone extends BaseControl {
 
         // init text name control
         function initNameControl() {
+            let getNameLabelFontSize = () => {
+                var height = self.polygon.height();
+
+                var fontSize = height / 8
+
+                return `${fontSize}px`;
+            }
+
             let zoneName = self.name.get();
             let nameLabel = self.svgNode.text(zoneName);
-            let nameDrawPoint = { x: self.polygon.cx() - nameLabel.bbox().width / 2, y: self.polygon.cy() - nameLabel.bbox().height / 2 };
-            nameLabel.move(nameDrawPoint.x, nameDrawPoint.y);
-            let nameInput = self.svgNode.foreignObject(nameLabel.bbox().width, nameLabel.bbox().height).move(nameDrawPoint.x, nameDrawPoint.y)
+            nameLabel.node.style.fontSize = getNameLabelFontSize();
+            let nameDrawPoint = { x: self.polygon.cx(), y: self.polygon.cy() };
             var htmlInput = document.createElement('input');
             htmlInput.setAttribute('type', 'text')
             htmlInput.setAttribute('value', zoneName)
+            nameLabel.center(nameDrawPoint.x, nameDrawPoint.y);
+            let nameInput = self.svgNode.foreignObject(nameLabel.bbox().width, nameLabel.bbox().height).move(nameDrawPoint.x, nameDrawPoint.y)
+            nameInput.node.style.fontSize = getNameLabelFontSize();
             nameInput.node.style.visibility = 'collapse';
             nameInput.add(htmlInput);
             self.name.onChange((oldValue, newValue) => {
@@ -531,9 +562,9 @@ export class Zone extends BaseControl {
             });
             nameLabel.on('click', function () {
                 self.isEditingName.set(true);
-                nameLabel.attr('style', 'visibility:collapse');
-                nameInput.attr('style', 'visibility:visible');
-                htmlInput.setAttribute('style', 'background:none');
+                nameLabel.node.style.visibility = 'collapse';
+                nameInput.node.style.visibility = 'visible';
+                htmlInput.style.background ='none';
                 htmlInput.focus()
             })
             self.isEditingName.onChange((oldValue, newValue) => {
@@ -543,21 +574,14 @@ export class Zone extends BaseControl {
                 }
             })
 
-            let getNameLabelFontSize = () => {
-                var height = self.polygon.height();
-
-                var fontSize = height / 8
-
-                return `${fontSize}px`;
-            }
-            nameLabel.node.style.fontSize = getNameLabelFontSize();
+            
 
             self.controlGroup.add(nameInput);
             self.controlGroup.add(nameLabel)
 
             self.polygon.on('resize', function (ev) {
-                let nameDrawPoint = { x: self.polygon.cx() - nameLabel.bbox().width / 2, y: self.polygon.cy() - nameLabel.bbox().height / 2 };
-                nameLabel.move(nameDrawPoint.x, nameDrawPoint.y);
+                let nameDrawPoint = { x: self.polygon.cx(), y: self.polygon.cy() };
+                nameLabel.center(nameDrawPoint.x, nameDrawPoint.y);
                 nameLabel.node.style.fontSize = getNameLabelFontSize();
             })
         }

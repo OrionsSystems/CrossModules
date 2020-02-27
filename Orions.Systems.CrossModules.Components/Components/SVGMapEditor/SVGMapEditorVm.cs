@@ -83,6 +83,42 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public MapPlaybackOptions PlaybackOptions { get; set; }
 		public ViewModelProperty<MapPlaybackCache> PlaybackCache { get; set; }
 		public ViewModelProperty<bool> PlaybackCacheBeingUpdated { get; set; } = false;
+
+		public bool HeatmapAvailableForSelectedZone
+		{
+			get
+			{
+				var heatmapAvailable = false;
+				if (!string.IsNullOrWhiteSpace(CurrentlySelectedZoneId))
+				{
+					var zoneDataSet = GetZoneDataSetForCurrentShownZone(CurrentlySelectedZoneId);
+					if (zoneDataSet != null)
+					{
+						if (zoneDataSet.Zone.FixedCameraEnhancementId != null && !string.IsNullOrWhiteSpace(zoneDataSet.Zone.Alias) && zoneDataSet.Zone.MetadataSetId != null
+							&& zoneDataSet.Tags != null && zoneDataSet.Tags.Any())
+						{
+							heatmapAvailable = true;
+						}
+						else
+						{
+							heatmapAvailable = false;
+						}
+					}
+					else
+					{
+						heatmapAvailable = false;
+					}
+				}
+				else
+				{
+					heatmapAvailable = false;
+				}
+
+				return heatmapAvailable;
+			}
+		}
+
+		public string CurrentlySelectedZoneId { get; set; }
 		#endregion // Properties
 
 		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
@@ -130,21 +166,25 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		private async Task OpenPopupMap(string zoneId, bool heatmapMode)
 		{
 			var zoneDataSet = GetZoneDataSetForCurrentShownZone(zoneId);
-			this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet; // remember requested zoneId dataset to enable live heatmap refresh while autoplayback is on
-
-			var tagsForMap = zoneDataSet.Tags;
-			var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
-
-			if (zoneDataSet.Heatmap != null)
+			
+			if(zoneDataSet != null)
 			{
-				this.HeatmapImgProp.Value = zoneDataSet.Heatmap.DataBase64Link;
-			}
-			else
-			{
-				PrepareHeatmapAsyncFunc(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
-			}
+				this.CurrentlyShownHeatmapZoneDataSet = zoneDataSet; // remember requested zoneId dataset to enable live heatmap refresh while autoplayback is on
 
-			IsVmShowingHeatmapProp.Value = true;
+				var tagsForMap = zoneDataSet.Tags;
+				var fixedCameraEnhancementId = zoneDataSet.Zone.FixedCameraEnhancementId;
+
+				if (zoneDataSet.Heatmap != null)
+				{
+					this.HeatmapImgProp.Value = zoneDataSet.Heatmap.DataBase64Link;
+				}
+				else
+				{
+					PrepareHeatmapAsyncFunc(tagsForMap, fixedCameraEnhancementId.Value, heatmapMode);
+				}
+
+				IsVmShowingHeatmapProp.Value = true;
+			}
 		}
 
 		public async Task PrepareHeatmapAsyncFunc(List<HyperTag> tagsForMap, HyperDocumentId fixedCameraEnhancementId, bool heatmapMode)
@@ -225,6 +265,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
 				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
 				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
+				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
 			}
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { componentContainerId, thisReference, overlayJsModel, editorConfig });
@@ -505,6 +547,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				_playbackTimer.Stop();
 				_playbackTimer.Dispose();
 				this.IsAutoPlayOn.Value = false;
+				
+				await ShowTags();
 			}
 		}
 
@@ -691,6 +735,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await ShowTagsForCurrentTagSets();
 
 			this.TagsAreBeingLoaded.Value = false;
+
+			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
 		}
 
 		private async Task ShowTagsForCurrentTagSets()
@@ -849,6 +895,20 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var doc = new HyperDocument(MapOverlay.Value);
 			var storeDocArgs = new StoreHyperDocumentArgs(doc);
 			await this.HyperArgsSink.ExecuteAsync(storeDocArgs);
+		}
+
+		public void SelectZone(ZoneOverlayEntryJsModel zone)
+		{
+			this.CurrentlySelectedZoneId = zone.Id;
+			
+			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
+		}
+
+		public void UnselectZone(ZoneOverlayEntryJsModel zone)
+		{
+			this.CurrentlySelectedZoneId = null;
+
+			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
 		}
 
 		public void OpenSvgControlProps(string id)
