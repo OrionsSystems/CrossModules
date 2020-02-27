@@ -21,7 +21,10 @@
 					<EjsChart @ref="Chartobj"
 								 Height="@Widget.Height"
 								 Width="@Widget.Width"
-								 Title="@Widget.ChartTitle"
+								 Title="@(Widget.ChartTitleSettings.EnableTitle ? Widget.ChartTitleSettings.Title : String.Empty)" 
+								 TitleStyle="@Widget.ChartTitleSettings.TitleStyle"
+								 SubTitle="@(Widget.ChartTitleSettings.EnableSubTitle ? Widget.ChartTitleSettings.SubTitle : String.Empty)"
+								 SubTitleStyle="@Widget.ChartTitleSettings.SubTitleStyle"
 								 Background="@Widget.ChartBackground"
 								 SelectionMode="SelectionMode.Series">
 
