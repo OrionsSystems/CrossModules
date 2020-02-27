@@ -144,8 +144,9 @@ class BaseControl {
         })
 
         this.controlGroup.on('dragend', function () {
+            if (dragCounter >= 2)
+                self.controlGroup.fire('zoneHasBeenDragged')
             dragCounter = 0;
-            self.controlGroup.fire('zoneHasBeenDragged')
         });
     }
 
@@ -188,10 +189,10 @@ class BaseControl {
     }
 
 
-    raiseOnSelect() {
+    raiseOnSelect(selected) {
         let self = this;
         this.onSelectEventHandlers.forEach(h => {
-            h(self.overlayEntry);
+            h(self.overlayEntry, selected);
         })
     }
 
@@ -203,6 +204,9 @@ class BaseControl {
                 editControls[i].control.node.setAttribute("style", "visibility: collapse");
             }
 
+            if (self.isSelected) {
+                self.raiseOnSelect(false);
+            }
             self.isSelected = false
 
             if (self.isEditingName) {
@@ -214,8 +218,11 @@ class BaseControl {
                 editControls[i].control.node.setAttribute("style", "visibility: visible");
             }
 
+            if (!self.isSelected) {
+                self.raiseOnSelect(true);
+            }
+
             self.isSelected = true
-            self.raiseOnSelect();
         }
     }
 }
@@ -450,6 +457,20 @@ export class Zone extends BaseControl {
         }
         else if (eventName == 'drawstop') {
             this.polygon.on('drawstop', callback)
+        }
+        else if (eventName == 'zoneSelected') {
+            this.onSelect((overlayEntry, selected) => {
+                if (selected) {
+                    callback({})
+                }
+            })
+        }
+        else if (eventName == 'zoneLostSelection') {
+            this.onSelect((overlayEntry, selected) => {
+                if (!selected) {
+                    callback({})
+                }
+            })
         }
         else {
             this.controlGroup.on(eventName, callback)

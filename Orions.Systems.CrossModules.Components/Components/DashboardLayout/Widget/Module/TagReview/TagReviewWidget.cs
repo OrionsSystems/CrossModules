@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Orions.Common;
+﻿using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
+using Orions.Systems.CrossModules.Components.Helpers;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -14,6 +12,8 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("The Id of the metadata set to use", HelpTextAttribute.Priorities.Mandatory)]
 		[HyperDocumentId.DocumentType(typeof(HyperMetadataSet))]
 		public HyperDocumentId? MetadataSetId { get; set; }
+
+		public MasksHeatmapRenderer.HeatmapSettings HeatmapSettings { get; set; } = new MasksHeatmapRenderer.HeatmapSettings();
 
 		public int ColumnsNumber { get; set; } = 6;
 

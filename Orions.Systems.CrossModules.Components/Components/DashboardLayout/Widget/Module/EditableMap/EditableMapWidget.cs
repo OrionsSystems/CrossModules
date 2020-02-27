@@ -1,13 +1,15 @@
-﻿using Orions.Infrastructure.HyperMedia.MapOverlay;
+﻿using System;
+
+using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Node.Common;
-using System;
+
 using static Orions.Systems.CrossModules.Components.Components.SVGMapEditor.SVGMapEditorVm;
 
 namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
 {
 	public class EditableMapWidget : DashboardWidget
 	{
-		
+
 		[HyperDocumentId.DocumentType(typeof(MapOverlay))]
 		public HyperDocumentId? MapOverlayId { get; set; }
 
@@ -26,6 +28,9 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public MapPlaybackOptions MapPlaybackOptions { get; set; }
 
 		public HeatmapRenderingMode HeatmapMode { get; set; } = HeatmapRenderingMode.Masks;
+		public bool HeatmapCustomNormalization { get; set; } = false;
+		public uint HeatmapNormalizationMinOverlaps { get; set; } = 10;
+		public uint HeatmapNormalizationMaxOverlaps { get; set; } = 100;
 
 		public EditableMapWidget()
 		{

@@ -1,9 +1,10 @@
-﻿using Orions.Common;
+﻿using System.Threading.Tasks;
+
+using Orions.Common;
+using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Components.SVGMapEditor;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Orions.Infrastructure.HyperMedia.MapOverlay;
+
 using static Orions.Systems.CrossModules.Components.Components.SVGMapEditor.SVGMapEditorVm;
 
 namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widget.Module.EditableMap
@@ -29,9 +30,15 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
 			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
 			vm.PlaybackCache = this.Widget.MapPlaybackCache;
+
 			vm.HeatmapMode = this.Widget.HeatmapMode;
-			if (this.Widget.MapPlaybackOptions != null) vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
-			if(this.Widget.TagDateRangeFilter != null)
+			vm.HeatmapCustomNormalization = this.Widget.HeatmapCustomNormalization;
+			vm.HeatmapNormalizationMinOverlaps = this.Widget.HeatmapNormalizationMinOverlaps;
+			vm.HeatmapNormalizationMaxOverlaps = this.Widget.HeatmapNormalizationMaxOverlaps;
+
+			if (this.Widget.MapPlaybackOptions != null)
+				vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
+			if (this.Widget.TagDateRangeFilter != null)
 			{
 				vm.TagDateRangeFilter = this.Widget.TagDateRangeFilter;
 				vm.TagDateFilterPreInitialized = true;

@@ -19,24 +19,24 @@
 					<div class="widget-single-analytics-container">
 						@if (Widget.IsShowCardIcons)
 						{
-						<div class="widget-single-analytics-icon">
-							@if (string.IsNullOrWhiteSpace(item.SvgIcon))
-							{
-								<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-									  width="35px" height="35px" viewBox="0 0 35 35">
-									<g>
-										<rect width="15.909" height="35" />
-										<rect x="19.091" y="12.727" width="15.909" height="9.546" />
-										<rect x="19.091" width="15.909" height="9.545" />
-										<rect x="19.091" y="25.455" width="15.909" height="9.545" />
-									</g>
-								</svg>
-							}
-							else
-							{
-								@((MarkupString)item.SvgIcon)
-							}
-						</div>
+							<div class="widget-single-analytics-icon">
+								@if (string.IsNullOrWhiteSpace(item.SvgIcon))
+								{
+									<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+										  width="35px" height="35px" viewBox="0 0 35 35">
+										<g>
+											<rect width="15.909" height="35" />
+											<rect x="19.091" y="12.727" width="15.909" height="9.546" />
+											<rect x="19.091" width="15.909" height="9.545" />
+											<rect x="19.091" y="25.455" width="15.909" height="9.545" />
+										</g>
+									</svg>
+								}
+								else
+								{
+									@((MarkupString)item.SvgIcon)
+								}
+							</div>
 						}
 						<div class="widget-single-analytics-value">@item.Value</div>
 					</div>
@@ -59,7 +59,7 @@
 
 	@if (!Vm.IsLoadedReportResult)
 	{
-<Loader Settings="@Widget.LoaderSettings"></Loader>
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
 	}
 
 </div>
@@ -79,17 +79,18 @@
 
 	private void OnChangeDataSource()
 	{
-		if (Vm.ReportChartData == null) return;
-
-		foreach (var series in Vm.ReportChartData.Series)
+		if (Vm.ReportChartData != null)
 		{
-			var item = new CardItem()
+			foreach (var series in Vm.ReportChartData.Series)
 			{
-				Title = series.Name,
-				Value = series.Data.LastOrDefault()?.Value
-			};
+				var item = new CardItem()
+				{
+					Title = series.Name,
+					Value = series.Data.LastOrDefault()?.Value
+				};
 
-			Data.Add(item);
+				Data.Add(item);
+			}
 		}
 
 		if (Widget.CustomItems.Any())
