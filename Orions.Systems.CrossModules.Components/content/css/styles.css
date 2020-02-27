@@ -739,6 +739,58 @@ widget-single-analytics-icon {
 
 /*    END DASHBOARD LAYOUT COMPONENT */
 
+
+/* Transportation widget */
+
+.widget-content-report-transportation {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+}
+
+.widget-content-report-transportation-container {
+	width: 24%;
+	padding-bottom: 0%; /* 32:18, i.e. 16:9 */
+	margin-bottom: 2%; /* (100-32*3)/2 */
+}
+
+.widget-content-report-transportation-container-item {
+	text-align: center;
+	display: flex;
+	flex-direction: row;
+}
+
+	.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data {
+		flex: 0 0 66.666667%;
+		max-width: 66.666667%;
+	}
+
+		.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data svg {
+			height: 100px;
+			width: 100px;
+			fill: #BCC0CC;
+		}
+
+		.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data .widget-content-report-transportation-container-title {
+			text-transform: uppercase;
+			color: #365c7e;
+			font-size: 14px;
+			letter-spacing: 2px;
+		}
+
+	.widget-content-report-transportation-container-item .widget-content-report-transportation-container-value {
+		margin: auto;
+		font-weight: bold;
+		flex: 0 0 33.333333%;
+		max-width: 33.333333%;
+		opacity: .5;
+		font-size: 23px;
+	}
+
+
+/* End transportation widget */
+
+
 /* Icons */
 
 .bodyTypeStHead {
