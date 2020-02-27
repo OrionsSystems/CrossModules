@@ -40,6 +40,9 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Loader options")]
 		public LoaderConfiguration LoaderSettings { get; set; } = new LoaderConfiguration();
 
+		[HelpText("CSS class names")]
+		public string Class { get; set; }
+
 		//public ReportInstruction.Targets FilterGroupTarget { get; set; } = ReportInstruction.Targets.Default;
 
 		public DashboardWidget()
