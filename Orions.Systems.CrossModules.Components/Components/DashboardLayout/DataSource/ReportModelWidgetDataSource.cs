@@ -21,6 +21,10 @@ namespace Orions.Systems.CrossModules.Components
 		[HyperDocumentId.DocumentType(typeof(ReportModelConfig), RetrievePayload = false)]
 		public HyperDocumentId? ReportModelId { get; set; }
 
+		[HelpText("Metadata Set which will be used as source", HelpTextAttribute.Priorities.Mandatory)]
+		[HyperDocumentId.DocumentType(typeof(MetadataSet), RetrievePayload = false)]
+		public HyperDocumentId? MetadataSetId { get; set; }
+
 		[HelpText("Execute the report as a job on the server; recommended to use, unless specific reasons against, as it is MUCH faster")]
 		public bool JobMode { get; set; } = true;
 
@@ -49,6 +53,13 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (context.GroupFilterData?.FilterLabels?.Length > 0)
 				reportModelConfig.TrySetLabels(context.GroupFilterData?.FilterLabels, context.GroupFilterData.FilterTarget);
+
+			if (MetadataSetId.HasValue)
+			{
+				var metadataSetStage = reportModelConfig.DataSource as MetadataSetReportDataSourceStageConfig;
+				if(metadataSetStage != null)
+					metadataSetStage.MetadataSetId = MetadataSetId;
+			}
 
 			var helper = new ReportModelHelper();
 			if (this.JobMode)
