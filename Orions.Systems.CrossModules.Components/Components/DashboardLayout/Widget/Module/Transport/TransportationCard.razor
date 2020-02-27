@@ -1,0 +1,72 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<TransportationCardVm, TransportationCardWidget>
+
+<div class="widget-content-report @Widget.Class">
+
+	@if (Vm.Report != null && Vm.IsLoadedReportResult)
+	{
+
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+		<TitleCard Settings="@Widget.TitleSettings"></TitleCard>
+
+		<div class="widget-content-report-view">
+			@if (Vm.Data.Any())
+			{
+
+				<div class="widget-content-report-transportation">
+					@foreach (var item in Vm.Data)
+					{
+						<div class="widget-content-report-transportation-container">
+							<div class="widget-content-report-transportation-container-item" title="@item.Title">
+								<div class="widget-content-report-transportation-container-data">
+									@if (string.IsNullOrWhiteSpace(item.SvgIcon))
+									{
+										<div class="widget-content-report-transportation-container-title">@item.Title</div>
+									}
+									else
+									{
+										<div class="widget-content-report-transportation-container-icon">@((MarkupString)item.SvgIcon)</div>
+									}
+								</div>
+								<div class="widget-content-report-transportation-container-value">@item.Value</div>
+							</div>
+						</div>
+					}
+				</div>
+
+			}
+		</div>
+
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+	}
+
+	@if (Vm.Report == null && Vm.IsLoadedReportResult)
+	{
+		<div class="widget-missing-report">
+			Missing report data!
+		</div>
+	}
+
+	@if (!Vm.IsLoadedReportResult)
+	{
+		<Loader Settings="@Widget.LoaderSettings"></Loader>
+	}
+
+</div>
+
+@code {
+
+
+	private string Color { get { return string.IsNullOrWhiteSpace(Widget.Color) ? "" : Widget.Color; } }
+
+	protected override async Task OnInitializedAsync()
+	{
+		Vm.OnReportResultChanged += Vm.OnChangeDataSource;
+
+		await Vm.RefreshReportResultData();
+
+		await base.OnInitializedAsync();
+	}
+
+}

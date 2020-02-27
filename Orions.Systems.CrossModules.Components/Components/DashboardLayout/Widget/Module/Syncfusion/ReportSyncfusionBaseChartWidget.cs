@@ -34,7 +34,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			public LabelPlacement LabelPlacement { get; set; } = LabelPlacement.OnTicks;
 
-			public IntervalType IntervalType { get; set; } = IntervalType.Auto;
+			public IntervalType IntervalType { get; set; } = IntervalType.Days;
 
 			public string LabelFormat { get; set; } = "dd MMM HH:mm";
 
@@ -106,6 +106,28 @@ namespace Orions.Systems.CrossModules.Components
 			public ChartDataLabelFont Font { get; set; }
 		}
 
+		public class ChartTitlesConfiguration 
+		{
+			public bool EnableTitle { get; set; } = false;
+		
+			public bool EnableSubTitle { get; set; } = false;
+
+			[HelpText("Title of the chart")]
+			public string Title { get; set; }
+
+			[HelpText("Options for customizing the title of the Chart.")]
+			public ChartTitleStyle TitleStyle { get; set; }
+
+			[HelpText("SubTitle of the chart")]
+			public string SubTitle { get; set; }
+
+			[HelpText("Options for customizing the Subtitle of the Chart.")]
+			public ChartSubTitleStyle SubTitleStyle { get; set; }
+		}
+
+		[HelpText("Options for chart titles settings")]
+		public ChartTitlesConfiguration ChartTitleSettings { get; set; } = new ChartTitlesConfiguration();
+
 		[HelpText("Options for chart marker")]
 		public ChartMarkerConfiguration ChartMarkerSettings { get; set; } = new ChartMarkerConfiguration();
 
@@ -114,11 +136,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		[HelpText("The width of the chart as a string accepts input as both like '100px' or '100%'. If specified as '100%, chart renders to the full width of its parent element.")]
 		public string Width { get; set; }
-
-		public bool IsShowChartTitle { get; set; } = false;
-
-		[HelpText("Title of the chart")]
-		public string ChartTitle { get; set; }
 
 		[HelpText("To render the column series points with particular column spacing. It takes value from 0 - 1.")]
 		public double ColumnSpacing { get; set; } = 0;

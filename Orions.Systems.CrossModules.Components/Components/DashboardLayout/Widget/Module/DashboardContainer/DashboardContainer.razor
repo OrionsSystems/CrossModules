@@ -2,41 +2,48 @@
 
 @inherits DashboardComponent<DashboardContainerVm, DashboardContainerWidget>
 
-@if (Showing)
-{
-   @if (Dashboard != null)
-   {
-      <DashboardLayout HyperStore="@HyperStore"
-                       Data="@Dashboard"
-                       ParrentDashboardId="@Widget.Dashboard?.Id"
-                       EnableBetweenBox="true"
-                       IsPreviewMode="true"
-                       DisableModeOption="true"
-                       HideModeOption="true"
-                       IsHideTitle="true">
-      </DashboardLayout>
-   }
-}
-else
-{
-<Loader Settings="@Widget.LoaderSettings"></Loader>
-}
+	<div class="@Widget.Class">
+		@if (Showing)
+		{
+			@if (Dashboard != null)
+			{
+				<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+				<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+				<DashboardLayout HyperStore="@HyperStore"
+									  Data="@Dashboard"
+									  ParrentDashboardId="@Widget.Dashboard?.Id"
+									  EnableBetweenBox="true"
+									  IsPreviewMode="true"
+									  DisableModeOption="true"
+									  HideModeOption="true"
+									  IsHideTitle="true">
+				</DashboardLayout>
+
+				<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+			}
+		}
+		else
+		{
+			<Loader Settings="@Widget.LoaderSettings"></Loader>
+		}
+	</div>
 
 
 @code {
 
-   private DashboardData Dashboard { get; set; }
+	private DashboardData Dashboard { get; set; }
 
-   public bool Showing { get; set; } = false;
+	public bool Showing { get; set; } = false;
 
-   protected override async Task OnInitializedAsync()
-   {
-      await base.OnInitializedAsync();
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 
-      Dashboard = await this.Vm.SetDashboardAsync();
+		Dashboard = await this.Vm.SetDashboardAsync();
 
-      Showing = true;
-      StateHasChanged();
-   }
+		Showing = true;
+		StateHasChanged();
+	}
 
 }

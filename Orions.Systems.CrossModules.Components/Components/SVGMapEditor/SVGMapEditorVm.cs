@@ -227,66 +227,74 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		#region Initializing
 		public async Task Initialize(string componentContainerId, DotNetObjectReference<SVGMapEditorBase> thisReference)
 		{
-			this._componentContainerId = componentContainerId;
-			if (MapOverlayId != null)
+			try
 			{
-				var retrieveArgs = new RetrieveHyperDocumentArgs(MapOverlayId.Value);
-
-				var hyperDocument = await HyperArgsSink.ExecuteAsync(retrieveArgs);
-
-				var mapOverlay = hyperDocument.GetPayload<MapOverlay>();
-
-				this.MapOverlay.Value = mapOverlay;
-			}
-			else
-			{
-				var doc = new HyperDocument(MapOverlay.Value);
-
-				var storeDocArgs = new StoreHyperDocumentArgs(doc);
-
-				await this.HyperArgsSink.ExecuteAsync(storeDocArgs);
-
-				if (this.OnMapOverlayIdSet != null)
+				this._componentContainerId = componentContainerId;
+				if (MapOverlayId != null)
 				{
-					await OnMapOverlayIdSet.Invoke(doc.Id);
-				}
-			}
+					var retrieveArgs = new RetrieveHyperDocumentArgs(MapOverlayId.Value);
 
-			var editorConfig = new SvgEditorConfig
-			{
-				CameraColor = this.DefaultCameraColor,
-				ZoneColor = this.DefaultZoneColor,
-				CircleColor = this.DefaultCircleColor,
-				IsReadOnly = this.IsReadOnly
-			};
+					var hyperDocument = await HyperArgsSink.ExecuteAsync(retrieveArgs);
 
-			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
-			foreach (var zone in overlayJsModel.Zones)
-			{
-				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
-				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
-			}
+					var mapOverlay = hyperDocument.GetPayload<MapOverlay>();
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { componentContainerId, thisReference, overlayJsModel, editorConfig });
-
-			this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
-			if (this.HomographiesDetected)
-			{
-				if (this.TagDateFilterPreInitialized)
-				{
-					InitializeTagFilter();
+					this.MapOverlay.Value = mapOverlay;
 				}
 				else
 				{
-					await InitializeTagFilter();
-				}
-			}
+					var doc = new HyperDocument(MapOverlay.Value);
 
-			await ShowTags();
+					var storeDocArgs = new StoreHyperDocumentArgs(doc);
+
+					await this.HyperArgsSink.ExecuteAsync(storeDocArgs);
+
+					if (this.OnMapOverlayIdSet != null)
+					{
+						await OnMapOverlayIdSet.Invoke(doc.Id);
+					}
+				}
+
+				var editorConfig = new SvgEditorConfig
+				{
+					CameraColor = this.DefaultCameraColor,
+					ZoneColor = this.DefaultZoneColor,
+					CircleColor = this.DefaultCircleColor,
+					IsReadOnly = this.IsReadOnly
+				};
+
+				var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
+				foreach (var zone in overlayJsModel.Zones)
+				{
+					zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
+					zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
+					zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
+					zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+					zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
+					zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
+				}
+
+				await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { componentContainerId, thisReference, overlayJsModel, editorConfig });
+
+				this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
+				if (this.HomographiesDetected)
+				{
+					if (this.TagDateFilterPreInitialized)
+					{
+						InitializeTagFilter();
+					}
+					else
+					{
+						await InitializeTagFilter();
+					}
+				}
+
+				await ShowTags();
+
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.Assert(false, ex.Message);
+			}
 		}
 
 		public async Task RemoveTagCirclesForZone(string zoneId)

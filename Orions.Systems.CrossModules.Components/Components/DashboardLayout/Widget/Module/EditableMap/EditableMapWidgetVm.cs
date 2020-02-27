@@ -16,7 +16,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public string SvgHtmlString { get; set; }
 
-		public async Task Initialize()
+		public Task Initialize()
 		{
 			this.SvgHtmlString = this.Widget.SvgHtmlString;
 
@@ -38,6 +38,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 			if (this.Widget.MapPlaybackOptions != null)
 				vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
+
 			if (this.Widget.TagDateRangeFilter != null)
 			{
 				vm.TagDateRangeFilter = this.Widget.TagDateRangeFilter;
@@ -63,6 +64,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 				this.Widget.MapPlaybackCache = cache;
 				await this.DashboardVm.SaveChangesAsync();
 			};
+
+			return Task.CompletedTask;
 		}
 
 		public override async Task HandleFiltersChangedAsync()
