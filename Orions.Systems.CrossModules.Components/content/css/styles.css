@@ -763,12 +763,13 @@ widget-single-analytics-icon {
 	.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data {
 		flex: 0 0 66.666667%;
 		max-width: 66.666667%;
+		margin: auto;
 	}
 
 		.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data svg {
-			height: 100px;
-			width: 100px;
-			fill: #BCC0CC;
+			height: 70px;
+			width: 70px;
+			fill: #365c7e;
 		}
 
 		.widget-content-report-transportation-container-item .widget-content-report-transportation-container-data .widget-content-report-transportation-container-title {
