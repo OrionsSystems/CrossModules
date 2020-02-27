@@ -181,6 +181,7 @@ h5.modal-title {
 		font-size: 22px;
 		color: gray;
 		flex-grow: 1;
+		margin: auto;
 	}
 
 	.dashboard-widget-container .dashboard-widget-data-container .dashboard-widget-commands {
@@ -768,6 +769,32 @@ widget-single-analytics-icon {
 
 	.icon-pie-chart .icon-pie-chart-item-3 {
 		fill: #71C386;
+	}
+
+.icon-line-chart {
+}
+
+	.icon-line-chart .icon-line-chart-item-0 {
+	}
+
+	.icon-line-chart .icon-line-chart-item-1 {
+		fill: #EFC41C;
+	}
+
+	.icon-line-chart .icon-line-chart-item-2 {
+		fill: #566181;
+	}
+
+	.icon-line-chart .icon-line-chart-item-3 {
+		fill: #71C386;
+	}
+
+	.icon-line-chart .icon-line-chart-item-4 {
+		fill: #EF785A;
+	}
+
+	.icon-line-chart .icon-line-chart-item-5 {
+		fill: #566181;
 	}
 
 .icon-map {
