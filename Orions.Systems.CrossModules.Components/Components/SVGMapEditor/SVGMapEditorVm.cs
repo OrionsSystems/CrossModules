@@ -502,6 +502,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				_playbackTimer.Stop();
 				_playbackTimer.Dispose();
 				this.IsAutoPlayOn.Value = false;
+				
+				await ShowTags();
 			}
 		}
 
