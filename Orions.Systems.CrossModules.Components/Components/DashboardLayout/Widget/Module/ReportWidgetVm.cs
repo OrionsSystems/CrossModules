@@ -52,8 +52,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			IsLoadedReportResult = false;
 
-			OnReportResultChanged?.Invoke();
-			RaiseNotify(nameof(ReportChartData)); // Refresh UI - loader.
+			//OnReportResultChanged?.Invoke();
+			//RaiseNotify(nameof(ReportChartData)); // Refresh UI - loader.
 
 			try
 			{
@@ -84,8 +84,9 @@ namespace Orions.Systems.CrossModules.Components
 					RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 					return;
 				}
-
-				ReportChartData = LoadReportChartData(Report, widget.CategoryFilter?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray());
+				var includeCategoryFilter = widget.DataSource.IncludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
+				var excludeCategoryFilter = widget.DataSource.ExcludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
+				ReportChartData = LoadReportChartData(Report, includeCategoryFilter, excludeCategoryFilter);
 
 				if (ReportChartData != null)
 				{
@@ -124,7 +125,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		static ReportChartData LoadReportChartData(Report report, string[] categoryFilters)
+		static ReportChartData LoadReportChartData(Report report, string[] includeCategoryFilters, string[] excludeCategoryFilters)
 		{
 			var result = new ReportChartData();
 
@@ -146,7 +147,10 @@ namespace Orions.Systems.CrossModules.Components
 					var columnTemplate = columns[columnIndex];
 					var columnTitle = columnTemplate.Title;
 
-					if (categoryFilters?.Any() == true && !categoryFilters.Contains(columnTitle))
+					if (includeCategoryFilters?.Any() == true && !includeCategoryFilters.Contains(columnTitle))
+						continue;
+
+					if (excludeCategoryFilters?.Any() == true && excludeCategoryFilters.Contains(columnTitle))
 						continue;
 
 					var chartSeries = new ReportSeriesChartData();

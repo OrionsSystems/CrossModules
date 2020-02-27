@@ -3,19 +3,22 @@
 @using Orions.Infrastructure.HyperMedia;
 @using Orions.Systems.CrossModules.Components;
 
-<div class="metadata-review-widget">
+	<div class="metadata-review-widget @Widget.Class">
 
-	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+		<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-	@if (Widget.MetadataSetId != null && Vm != null)
-	{
-		<TagReviewComponent Vm="@Vm.TagReviewVm.Value" />
-	}
-	else
-	{
-		<span>Metadata set has not been selected.</span>
-	}
-</div>
+		@if (Widget.MetadataSetId != null && Vm != null)
+		{
+			<TagReviewComponent Vm="@Vm.TagReviewVm.Value" />
+		}
+		else
+		{
+			<span>Metadata set has not been selected.</span>
+		}
+
+		<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+	</div>
 
 @code{
 	protected override async Task OnInitializedAsync()

@@ -129,17 +129,17 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
             componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
 
-        newZone.onSelect(() => {
-            if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
-                && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
-                document.querySelector(rootSelector + " .heatmapBtn").removeAttribute('disabled')
-                document.querySelector(rootSelector + " .realMasksMapBtn").removeAttribute('disabled')
-            }
-            else {
-                document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
-                document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
-            }
-        })
+        //newZone.onSelect(() => {
+        //    if (newZone.overlayEntry.fixedCameraEnhancementId != '' && newZone.overlayEntry.fixedCameraEnhancementId != null
+        //        && newZone.overlayEntry.alias != '' && newZone.overlayEntry.alias != null && newZone.overlayEntry.metadataSetId != '' && newZone.overlayEntry.metadataSetId != null) {
+        //        document.querySelector(rootSelector + " .heatmapBtn").removeAttribute('disabled')
+        //        document.querySelector(rootSelector + " .realMasksMapBtn").removeAttribute('disabled')
+        //    }
+        //    else {
+        //        document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
+        //        document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
+        //    }
+        //})
 
         for (var key in zoneOverlayEntry.eventHandlerMappings) {
             let eventName = key
@@ -217,17 +217,19 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     }
 
     function addPanelButtonsEventListeners() {
-        document.querySelector(rootSelector + " .circleToolBtn")
-            .addEventListener("click", addCircleTool);
+        if (!isReadOnly) {
+            document.querySelector(rootSelector + " .circleToolBtn")
+                .addEventListener("click", addCircleTool);
 
-        document.querySelector(rootSelector + " .areaToolBtn")
-            .addEventListener("click", addAreaTool);
+            document.querySelector(rootSelector + " .areaToolBtn")
+                .addEventListener("click", addAreaTool);
 
-        document.querySelector(rootSelector + " .cameraToolBtn")
-            .addEventListener("click", addCameraTool);
+            document.querySelector(rootSelector + " .cameraToolBtn")
+                .addEventListener("click", addCameraTool);
 
-        document.querySelector(rootSelector + " .saveBtn")
-            .addEventListener("click", saveMapOverlay);
+            document.querySelector(rootSelector + " .saveBtn")
+                .addEventListener("click", saveMapOverlay);
+        }
 
         document.querySelector(rootSelector + " .heatmapBtn")
             .addEventListener("click", openHeatmap);
@@ -462,9 +464,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
     initializeMapOverlay(mapOverlay)
 
-    if (!isReadOnly) {
-        addPanelButtonsEventListeners();
-    }
+    addPanelButtonsEventListeners();
 
     function destroyEditor() {
         document.removeEventListener('click', globalClickEventHandler)

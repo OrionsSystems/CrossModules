@@ -96,6 +96,20 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.Vm.ShowingHyperTagInfo.Value = false;
 		}
 
+		[JSInvokable]
+		public async Task SelectZone(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
+		{
+			Vm.SelectZone(zone);
+
+			this.StateHasChanged();
+		}
+
+		[JSInvokable]
+		public async Task UnselectZone(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
+		{
+			Vm.UnselectZone(zone);
+		}
+
 		public void Dispose()
 		{
 			Vm.Dispose();
