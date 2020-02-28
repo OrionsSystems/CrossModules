@@ -28,7 +28,7 @@
 											 Value="@Vm.Filters"
 											 Mode="@VisualMode.Box"
 											 AllowFiltering="true"
-											 AllowCustomValue="true" 
+											 AllowCustomValue="true"
 											 Placeholder="Search Filters"
 											 DataSource="@Vm.Options">
 
@@ -41,9 +41,8 @@
 				{
 					<div class="control-styles simple-filter-item">
 						<EjsDateRangePicker @ref="DateRangePicker"
-													@bind-StartDate="@Vm.StartDate"
+												  @bind-StartDate="@Vm.StartDate"
 												  @bind-EndDate="@Vm.EndDate"
-
 												  Min="@(new DateTime(2019, 10, 1))"
 												  Max="@(new DateTime(2019, 12, 31))"
 												  Placeholder="Select Time Range"></EjsDateRangePicker>
@@ -52,17 +51,21 @@
 
 			</div>
 
-			<div class="button-group-section button-group-container">
-				<div id="button-group-control">
-					<div class="row">
-						@foreach(var periodDefinition in Vm.AvailablePeriods)
-						{ 
-							<Syncfusion.EJ2.Blazor.Buttons.EjsButton Content="@periodDefinition.ToString()" 
-																				  IsPrimary="true" CssClass="e-outline" OnClick="@(_ => @Vm.OnPeriodClick(periodDefinition))"/>
-						}
+			@if (Vm.Widget.ShowPeriodSelection)
+			{
+				<div class="button-group-section button-group-container">
+					<div id="button-group-control">
+						<div class="row">
+							@foreach (var periodDefinition in Vm.AvailablePeriods)
+							{
+								<Syncfusion.EJ2.Blazor.Buttons.EjsButton Content="@periodDefinition.ToString()"
+																					  CssClass="e-small"
+																					  OnClick="@(_ => @Vm.OnPeriodClick(periodDefinition))" />
+							}
+						</div>
 					</div>
 				</div>
-			</div>
+			}
 
 			<div class="simple-filter-btn-container">
 
@@ -82,12 +85,12 @@
 				</EjsProgressButton>
 
 				@*<EjsProgressButton @ref="ClearAllButton"
-										 Duration="9999999"
-										 OnClick="@OnClearAll"
-										 Content="Clear All"
-										 CssClass="simple-filter-btn-item">
-					<ProgressButtonEvents></ProgressButtonEvents>
-				</EjsProgressButton>*@
+									 Duration="9999999"
+									 OnClick="@OnClearAll"
+									 Content="Clear All"
+									 CssClass="simple-filter-btn-item">
+				<ProgressButtonEvents></ProgressButtonEvents>
+			</EjsProgressButton>*@
 
 			</div>
 		</div>
@@ -108,6 +111,12 @@
 	public EjsMultiSelect<string[]> MultiSelect;
 
 	public EjsDateRangePicker DateRangePicker { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		await base.OnInitializedAsync();
+	}
 
 	public async Task OnClearAll(MouseEventArgs args)
 	{
@@ -132,7 +141,6 @@
 		await Vm.ApplyAsync();
 		await ProgressButton.ProgressComplete(); // Mark completion.
 	}
-
 
 }
 <style>
