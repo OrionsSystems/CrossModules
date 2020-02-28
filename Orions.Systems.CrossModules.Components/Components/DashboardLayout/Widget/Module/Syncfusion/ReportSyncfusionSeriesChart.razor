@@ -20,6 +20,8 @@
 
 					<EjsChart @ref="Chartobj"
 								 Height="@Widget.Height"
+								 LegendSettings="@Widget.LegendConfigurations"
+								 Palettes="@Widget.Palettes"
 								 Width="@Widget.Width"
 								 Title="@(Widget.ChartTitleSettings.EnableTitle ? Widget.ChartTitleSettings.Title : String.Empty)" 
 								 TitleStyle="@Widget.ChartTitleSettings.TitleStyle"
@@ -87,10 +89,6 @@
 													 TextStyle="@Widget.TooltipSettings.TextStyle"
 													 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
 
-						<ChartLegendSettings Visible="@Widget.LegendSettings.Visible"
-													Position="@Widget.LegendSettings.Position"
-													Alignment="@Widget.LegendSettings.Alignment">
-						</ChartLegendSettings>
 						<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
 												 EnablePinchZooming="@Widget.EnablePinchZooming"
 												 EnableSelectionZooming="@Widget.EnableSelectionZooming"

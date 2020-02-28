@@ -146,7 +146,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public TooltipConfiguration TooltipSettings { get; set; } = new TooltipConfiguration();
 
-		public SyncfiusionLegendDefinition LegendSettings { get; set; } = new SyncfiusionLegendDefinition();
+		[HelpText("Options for customizing the legend of the chart.")]
+		public ChartLegendSettings LegendConfigurations { get; set; } = new ChartLegendSettings(){ Visible = true, Position=LegendPosition.Bottom, Alignment=Alignment.Near};
+
+		[HelpText("Palette for the chart series.")]
+		public string[] Palettes { get; set; }
 
 		public ChartSeriesType ChartSeriesType { get; set; } = ChartSeriesType.StackingColumn;
 
