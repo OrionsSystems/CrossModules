@@ -1,6 +1,6 @@
 import './svg.draw.js'
 import '@svgdotjs/svg.draggable.js'
-
+import * as SVG from '@svgdotjs/svg.js'
 
 function getPerpendicular(p1, p2, box) {
     p1 = transposeCoords(p1, box);

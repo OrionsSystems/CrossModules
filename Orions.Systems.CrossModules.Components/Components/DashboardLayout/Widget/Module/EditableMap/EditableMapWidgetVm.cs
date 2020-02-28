@@ -16,7 +16,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public string SvgHtmlString { get; set; }
 
-		public async Task Initialize()
+		public Task Initialize()
 		{
 			this.SvgHtmlString = this.Widget.SvgHtmlString;
 
@@ -30,7 +30,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
 			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
 			vm.PlaybackCache = this.Widget.MapPlaybackCache;
-
+			vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
 			vm.HeatmapMode = this.Widget.HeatmapMode;
 			vm.HeatmapCustomNormalization = this.Widget.HeatmapCustomNormalization;
 			vm.HeatmapNormalizationMinOverlaps = this.Widget.HeatmapNormalizationMinOverlaps;
@@ -38,6 +38,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 			if (this.Widget.MapPlaybackOptions != null)
 				vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
+
 			if (this.Widget.TagDateRangeFilter != null)
 			{
 				vm.TagDateRangeFilter = this.Widget.TagDateRangeFilter;
@@ -63,6 +64,18 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 				this.Widget.MapPlaybackCache = cache;
 				await this.DashboardVm.SaveChangesAsync();
 			};
+
+			return Task.CompletedTask;
+		}
+
+		public override async Task HandleFiltersChangedAsync()
+		{
+			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+
+			var startDate = filter.StartTime;
+			var endDate = filter.EndTime;
+
+			this.EditorVm.SetFilter(startDate, endDate, filter.FilterLabels);
 		}
 	}
 }

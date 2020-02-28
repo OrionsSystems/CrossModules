@@ -31,7 +31,7 @@
 		this.Vm.TagReviewVm.Value.HeatmapSettings = this.Widget.HeatmapSettings;
 		await this.Vm.TagReviewVm.Value.Initialize(store, Widget.MetadataSetId.Value.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
 
-		await this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);
+		
 	}
 }
 

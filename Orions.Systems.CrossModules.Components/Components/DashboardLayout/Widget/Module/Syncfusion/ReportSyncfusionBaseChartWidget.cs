@@ -34,7 +34,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			public LabelPlacement LabelPlacement { get; set; } = LabelPlacement.OnTicks;
 
-			public IntervalType IntervalType { get; set; } = IntervalType.Auto;
+			public IntervalType IntervalType { get; set; } = IntervalType.Days;
 
 			public string LabelFormat { get; set; } = "dd MMM HH:mm";
 
