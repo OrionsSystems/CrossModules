@@ -13,6 +13,7 @@ using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
+using Syncfusion.EJ2.Blazor.Notifications;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
@@ -119,6 +120,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public string CurrentlySelectedZoneId { get; set; }
+
+		public Toast.Toast Toaster { get; set; }
 		#endregion // Properties
 
 		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
@@ -414,11 +417,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (mapOverlayZonesWithHomographyAssigned.Any())
 			{
-				if(earliestDate > TagDateRangeFilter.MinDate)
+				if (earliestDate > TagDateRangeFilter.MinDate)
 				{
 					earliestDate = TagDateRangeFilter.MinDate;
 				}
-				if(latestDate < TagDateRangeFilter.MaxDate)
+				if (latestDate < TagDateRangeFilter.MaxDate)
 				{
 					latestDate = TagDateRangeFilter.MaxDate;
 				}
@@ -449,11 +452,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 
 			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
-			if(isCacheMode && 
+			if (isCacheMode &&
 				(this.PlaybackOptions.PlayStep != this.PlaybackCache.Value.PlayStep || this.PlaybackCache.Value.Steps.First().From != this.AutoplayTagDateRangeFilter.MinDate
 				|| this.PlaybackCache.Value.Steps.Last().To != this.AutoplayTagDateRangeFilter.MaxDate))
 			{
-				throw new Exception("Cache is outdated. The date range has been changed");
+				Toaster.ShowWarning("Please regenerate the playback cache or switch to the live playback mode");
+				return;
 			}
 
 			this.IsAutoPlayOn.Value = true;
@@ -783,7 +787,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
 
-		private System.Threading.SemaphoreSlim _showTagsMutex = new System.Threading.SemaphoreSlim(1,1);
+		private System.Threading.SemaphoreSlim _showTagsMutex = new System.Threading.SemaphoreSlim(1, 1);
 		public async Task ShowTags()
 		{
 			await _showTagsMutex.WaitAsync();
@@ -939,7 +943,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public void SelectZone(ZoneOverlayEntryJsModel zone)
 		{
 			this.CurrentlySelectedZoneId = zone.Id;
-			
+
 			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
 		}
 
@@ -967,7 +971,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			if (end == null) end = TagDateRangeFilter.MaxDate;
 
 			// if dates didnt change - call ShowTags explicitly instead of relying on TagRange filter ValueChange event
-			if(start == TagDateRangeFilter.CurrentMinDate && end == TagDateRangeFilter.CurrentMaxDate)
+			if (start == TagDateRangeFilter.CurrentMinDate && end == TagDateRangeFilter.CurrentMaxDate)
 			{
 				await ShowTags();
 			}
@@ -1107,7 +1111,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					this.ThrottlingTimeDelay = 200;
 					this._valueHasBeenChangedProgrammatically = true;
 				}
-				
+
 
 				MinDate = minDate ?? MinDate;
 				MaxDate = maxDate ?? MaxDate;
