@@ -16,7 +16,7 @@
 					{
 						<div class="dashboard-element-container-live">
 							<div class="dashboard-content-live">
-								@if (column.Widget != null && column.Widget.IsVisibile)
+								@if (column.Widget != null && column.Widget.IsVisible)
 								{
 									<WidgetDynamicComponent @key="column.Widget.Id"
 																	DataContext="@DashboardVm.ObtainWidgetVm(column.Widget)"
@@ -33,7 +33,7 @@
 								@foreach (var innerColumn in innerRow.Columns)
 								{
 									<div class="col-lg-@innerColumn.Size">
-										@if (innerColumn.Widget != null && innerColumn.Widget.IsVisibile)
+										@if (innerColumn.Widget != null && innerColumn.Widget.IsVisible)
 										{
 											<WidgetDynamicComponent @key="innerColumn.Widget.Id"
 																			DataContext="@DashboardVm.ObtainWidgetVm(innerColumn.Widget)"

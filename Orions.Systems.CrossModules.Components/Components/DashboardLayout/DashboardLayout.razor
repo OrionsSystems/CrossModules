@@ -249,7 +249,7 @@
 																								<IconSettings></IconSettings>
 																							</EjsTooltip>
 																						</a>
-																						<a class="btn dashboard-widget-command-visible @(innerColumn.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
+																						<a class="btn dashboard-widget-command-visible @(innerColumn.Widget.IsVisible ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
 																							<EjsTooltip Content="@("Enable/disable widget")">
 																								<IconVisible></IconVisible>
 																							</EjsTooltip>
@@ -277,7 +277,7 @@
 																									@slWdg.Label
 																								</div>
 																								<div class="dashboard-widget-commands">
-																									<a class="dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
+																									<a class="dashboard-widget-command-visible @(slWdg.IsVisible ? "dashboard-widget-command-enable" : "")">
 																										<EjsTooltip Content="@("Enable/disable widget")">
 																											<IconVisible></IconVisible>
 																										</EjsTooltip>
@@ -320,7 +320,7 @@
 																<IconSettings></IconSettings>
 															</EjsTooltip>
 														</a>
-														<a class="btn dashboard-widget-command-visible @(column.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, column))">
+														<a class="btn dashboard-widget-command-visible @(column.Widget.IsVisible ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, column))">
 															<EjsTooltip Content="@("Enable or disable widget")">
 																<IconVisible></IconVisible>
 															</EjsTooltip>
@@ -348,7 +348,7 @@
 																	@slWdg.Label
 																</div>
 																<div class="dashboard-widget-commands">
-																	<a class="btn dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
+																	<a class="btn dashboard-widget-command-visible @(slWdg.IsVisible ? "dashboard-widget-command-enable" : "")">
 																		<EjsTooltip Content="@("Enable or disable widget")">
 																			<IconVisible></IconVisible>
 																		</EjsTooltip>

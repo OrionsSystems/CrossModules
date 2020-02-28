@@ -219,6 +219,9 @@ namespace Orions.Systems.CrossModules.Components
 			var tasks = new List<Task>();
 			foreach (var widgetVm in _widgetsVms.Select(it => it.Value))
 			{
+				if (widgetVm.Widget.IsVisible == false)
+					continue;
+
 				tasks.Add(widgetVm.HandleFiltersChangedAsync());
 			}
 
@@ -229,13 +232,14 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var json = Encoding.Default.GetString(bytes);
 
-			if (string.IsNullOrWhiteSpace(json)) return;
+			if (string.IsNullOrWhiteSpace(json)) 
+				return;
 
 			var res = JsonHelper.Deserialize<DashboardData>(json);
 
 			//update and save
-			if (res != null) Source = res;
-
+			if (res != null) 
+				Source = res;
 		}
 
 		public string LoadDashboardAsJson()
@@ -446,8 +450,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void ToggleVisibility(MouseEventArgs e, DashboardColumn column)
 		{
-			column.Widget.IsVisibile = !column.Widget.IsVisibile;
+			column.Widget.IsVisible = !column.Widget.IsVisible;
 		}
+
 		public void OpenWidgetProperty(MouseEventArgs e, DashboardColumn column)
 		{
 			IsShowProperty = true;

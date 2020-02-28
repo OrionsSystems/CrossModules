@@ -12,5 +12,7 @@ namespace Orions.Systems.CrossModules.Components
 		/// Filtering group this widget belongs to.
 		/// </summary>
 		string FilterGroup { get; set; }
+
+		bool IsVisible { get; set; }
 	}
 }

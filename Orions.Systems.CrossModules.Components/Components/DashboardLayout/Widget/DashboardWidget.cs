@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 		public bool ShowFooter { get; set; } = false;
 
 		[HelpText("Show or hide widget on render")]
-		public bool IsVisibile { get; set; } = true;
+		public bool IsVisible { get; set; } = true;
 
 		[HelpText("Widget title options")]
 		public TitleConfiguration WidgetTitleSettings { get; set; } = new TitleConfiguration();
