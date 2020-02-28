@@ -47,6 +47,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			ReportChartData = null;
 
+			OnReportResultChanged?.Invoke();
+			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+
 			if (dataSource == null)
 				return;
 
@@ -69,9 +72,6 @@ namespace Orions.Systems.CrossModules.Components
 				if (reportResult == null)
 				{
 					Logger.Instance.Error("Failed to load report result");
-					IsLoadedReportResult = true;
-
-					RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 					return;
 				}
 
@@ -79,11 +79,9 @@ namespace Orions.Systems.CrossModules.Components
 
 				if (Report == null || Report.ColumnsDefinitions.Length == 0)
 				{
-					IsLoadedReportResult = true;
-
-					RaiseNotify(nameof(ReportChartData)); // Refresh UI.
 					return;
 				}
+
 				var includeCategoryFilter = widget.DataSource.IncludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
 				var excludeCategoryFilter = widget.DataSource.ExcludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
 				ReportChartData = LoadReportChartData(Report, includeCategoryFilter, excludeCategoryFilter);
@@ -97,19 +95,22 @@ namespace Orions.Systems.CrossModules.Components
 			finally
 			{
 				IsLoadedReportResult = true;
-			}
 
-			OnReportResultChanged?.Invoke();
-			RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+				OnReportResultChanged?.Invoke();
+				RaiseNotify(nameof(ReportChartData)); // Refresh UI.
+			}
 		}
 
 		private async Task LoadAllIcons(ReportChartData data) 
 		{
-			var docs = data.Series?.Where(it=>it.IconDocument != null)
+			var docsIds = data.Series?.Where(it=>it.IconDocument != null)
 				.Select(it => it.IconDocument.Value).ToArray();
 
+			if (docsIds.Length == 0)
+				return;
+
 			var args = new RetrieveHyperDocumentsArgs();
-			args.DocumentsIds = docs;
+			args.DocumentsIds = docsIds;
 			
 			var results = await this.HyperStore.ExecuteAsync(args);
 

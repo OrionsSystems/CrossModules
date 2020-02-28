@@ -53,9 +53,27 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public DashboardVm DashboardVm => this.ParentVm as DashboardVm;
 
-		public IDashboardWidget Widget { get; set; }
+		IDashboardWidget _widget = null;
+
+		public IDashboardWidget Widget
+		{
+			get
+			{
+				return _widget;
+			}
+
+			set
+			{
+				_widget = value;
+				OnWidgetSet(value);
+			}
+		}
 
 		public WidgetVm()
+		{
+		}
+
+		protected virtual void OnWidgetSet(IDashboardWidget widget)
 		{
 		}
 
