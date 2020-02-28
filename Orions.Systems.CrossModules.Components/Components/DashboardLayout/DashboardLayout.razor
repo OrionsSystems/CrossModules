@@ -24,40 +24,40 @@
 
 			@if (!HideModeOption)
 			{
-		<div class="float-right">
+				<div class="float-right">
 
-			<a class="btn dashboard-cmd-btn" @onclick="OnBackToList">
-				<EjsTooltip Content="@("Back to list of dashboards")">
-					<MatIcon Icon="@MatIconNames.Storage"></MatIcon>
-				</EjsTooltip>
-			</a>
+					<a class="btn dashboard-cmd-btn" @onclick="OnBackToList">
+						<EjsTooltip Content="@("Back to list of dashboards")">
+							<MatIcon Icon="@MatIconNames.Storage"></MatIcon>
+						</EjsTooltip>
+					</a>
 
-			@if (IsEditMode)
-			{
-				<a class="btn dashboard-cmd-btn" @onclick="OnSave">
-					<EjsTooltip Content="@("Save dashboard")">
-						<MatIcon Icon="@MatIconNames.Save"></MatIcon>
-					</EjsTooltip>
-				</a>
-				<a class="btn dashboard-cmd-btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
-					<EjsTooltip Content="@("Import dashboard")">
-						<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
-					</EjsTooltip>
-				</a>
-				<a class="btn dashboard-cmd-btn" @onclick="ExportProject">
-					<EjsTooltip Content="@("Export dashboard")">
-						<MatIcon Icon="@MatIconNames.File_copy"></MatIcon>
-					</EjsTooltip>
-				</a>
-			}
+					@if (IsEditMode)
+					{
+						<a class="btn dashboard-cmd-btn" @onclick="OnSave">
+							<EjsTooltip Content="@("Save dashboard")">
+								<MatIcon Icon="@MatIconNames.Save"></MatIcon>
+							</EjsTooltip>
+						</a>
+						<a class="btn dashboard-cmd-btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
+							<EjsTooltip Content="@("Import dashboard")">
+								<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
+							</EjsTooltip>
+						</a>
+						<a class="btn dashboard-cmd-btn" @onclick="ExportProject">
+							<EjsTooltip Content="@("Export dashboard")">
+								<MatIcon Icon="@MatIconNames.File_copy"></MatIcon>
+							</EjsTooltip>
+						</a>
+					}
 
-			<div class="d-inline-block ml-2">
-				<EjsTooltip Content="@("Switch to Live or design mode")">
-					<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-				</EjsTooltip>
-			</div>
-		
-		</div>
+					<div class="d-inline-block ml-2">
+						<EjsTooltip Content="@("Switch to Live or design mode")">
+							<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
+						</EjsTooltip>
+					</div>
+
+				</div>
 			}
 
 		</div>
@@ -73,10 +73,33 @@
 
 			@foreach (var row in Data.Rows)
 			{
-				<div @key="row.Id" class="row dashboard-row-container mb-4">
+				<div @key="row.Id" class="row dashboard-row-container">
 
 					@{
 						var lastCoumnId = row.Columns.Last.Value.Id;
+					}
+
+					@if (IsEditMode)
+					{
+						<div class="dashboard-between-row">
+
+							<div class="dashboard-between-row-container">
+								@if (firstRowId != row.Id)
+								{
+									<a class="btn dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
+										<EjsTooltip Content="@("Swap rows")">
+											<IconSwapRow></IconSwapRow>
+										</EjsTooltip>
+									</a>
+								}
+
+								<a class="btn dahsboard-clone-row" @onclick="(e => Vm.CloneRow(e, row))">
+									<EjsTooltip Content="@("Clone row")">
+										<IconClone></IconClone>
+									</EjsTooltip>
+								</a>
+							</div>
+						</div>
 					}
 
 					@foreach (var column in row.Columns)
@@ -99,17 +122,17 @@
 											}
 											@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
 											{
-												<a class="btn dashboard-element-commands-split-vertical"  @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
+												<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
 													<EjsTooltip Content="@("Split column vertical")">
 														<IconSplitVertical></IconSplitVertical>
 													</EjsTooltip>
 												</a>
 											}
-										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
-											<EjsTooltip Content="@("Delete column")">
-												<IconClose></IconClose>
-											</EjsTooltip>
-										</a>
+											<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+												<EjsTooltip Content="@("Delete column")">
+													<IconClose></IconClose>
+												</EjsTooltip>
+											</a>
 										</div>
 									}
 
@@ -130,18 +153,41 @@
 											@if (column.InnerRows.Count == 0)
 											{
 												<div class="dashboard-widget-add">
-														<a class="dashboard-widget-add-icon" @onclick="(e => Vm.OpenWidgetModal(e, column))">
-															<EjsTooltip Content="@("Add widget")">
-																<IconAdd></IconAdd>
-															</EjsTooltip>
-														</a>
+													<a class="dashboard-widget-add-icon" @onclick="(e => Vm.OpenWidgetModal(e, column))">
+														<EjsTooltip Content="@("Add widget")">
+															<IconAdd></IconAdd>
+														</EjsTooltip>
+													</a>
 												</div>
 											}
 											else
 											{
+												var firstInnerRowId = column.InnerRows.FirstOrDefault()?.Id;
+
 												<div class="dashboard-widget-inner-container">
 													@foreach (var innerRow in column.InnerRows)
 													{
+														@if (IsEditMode)
+														{
+															<div class="dashboard-inner-row-commands">
+
+																@if (firstInnerRowId != innerRow.Id)
+																{
+																	<a class="btn dashboard-swap-row" @onclick="(e => Vm.OnSwapInnerRows(e, column, innerRow))">
+																		<EjsTooltip Content="@("Swap inner rows")">
+																			<IconSwapRow></IconSwapRow>
+																		</EjsTooltip>
+																	</a>
+																}
+
+																<a class="btn dahsboard-clone-row" @onclick="(e => Vm.CloneInnerRow(e, column, innerRow))">
+																	<EjsTooltip Content="@("Clone inner row")">
+																		<IconClone></IconClone>
+																	</EjsTooltip>
+																</a>
+															</div>
+														}
+
 														<div class="dashboard-widget-inner-container-item row">
 															@foreach (var innerColumn in innerRow.Columns)
 															{
@@ -361,30 +407,6 @@
 							</div>
 						</div>
 					}
-
-					@if (IsEditMode)
-					{
-						<div class="dashboard-between-row">
-
-							<div class="dashboard-between-row-container">
-								@if (firstRowId != row.Id)
-								{
-									<a class="btn dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
-										<EjsTooltip Content="@("Swap rows")">
-											<IconSwapRow></IconSwapRow>
-										</EjsTooltip>
-									</a>
-								}
-
-								<a class="btn dahsboard-clone-row" @onclick="(e => Vm.CloneRow(e, row))">
-									<EjsTooltip Content="@("Clone row")">
-										<IconClone></IconClone>
-									</EjsTooltip>
-								</a>
-							</div>
-						</div>
-					}
-
 				</div>
 			}
 		}

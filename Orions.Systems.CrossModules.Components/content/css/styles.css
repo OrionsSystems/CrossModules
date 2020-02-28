@@ -164,15 +164,24 @@ h5.modal-title {
 
 .dashboard-widget-container {
 	border: 1px solid #c4c2c2;
-	padding: 30px 15px;
+	padding: 0px;
 	position: relative;
 	margin: 2px 0px 7px 0px;
 	background-color: white;
 }
 
+
 .dashboard-widget-container-flex {
 	display: flex;
 }
+
+	.dashboard-widget-container > .dashboard-widget-add {
+		padding: 30px 15px;
+	}
+
+	.dashboard-widget-container > .dashboard-widget-container-flex {
+		padding: 30px 15px;
+	}
 
 .dashboard-widget-container:hover .dashboard-content-next,
 .dashboard-widget-container:hover .dashboard-content-prev {
@@ -335,19 +344,15 @@ h5.modal-title {
 	}
 
 .dashboard-between-row {
-	position: absolute;
-	width: calc(100% - 80px);
-	height: 25px;
-	margin-top: -24px;
-	margin-left: 14px;
-	right: 10px;
+	width: 100%;
+	text-align: right;
+	padding: 0 15px;
 }
 
 	.dashboard-between-row .dashboard-between-row-container {
 		position: relative;
 		opacity: 0.2;
 		transition: 0.5s;
-		float: right;
 	}
 
 		.dashboard-between-row .dashboard-between-row-container .dashboard-swap-row,
@@ -367,16 +372,6 @@ h5.modal-title {
 			opacity: 1;
 			transition: 0.5s;
 		}
-
-/*.dahsboard-clone-row svg {
-	width: 20px;
-	height: 20px;
-}
-
-.dashboard-swap-row svg {
-	width: 20px;
-	height: 20px;
-}*/
 
 .dashboard-modal-widget-header {
 	padding: 4px 15px !important;
@@ -419,14 +414,33 @@ h5.modal-title {
 
 .dashboard-widget-inner-container-item {
 	width: 100%;
-	/*border: 1px dashed lightgray;*/
-	margin: 5px 0px;
-	padding: 10px;
+	padding: 0 10px 0 10px;
 	display: flex;
 }
 
+.dashboard-inner-row-commands {
+	width: 100%;
+	margin: 0px;
+	text-align: left;
+	padding: 0 0 0 15px;
+}
+
+	.dashboard-inner-row-commands a {
+		width: 20px;
+		height: 20px;
+		margin: 2px;
+		display: inline-block;
+		opacity: 0.3;
+		transition: 0.5s;
+	}
+
+		.dashboard-inner-row-commands a:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
+
 .dashboard-widget-inner-add a {
-	margin-bottom: -20px;
+	margin: 10px;
 }
 
 .dashboard-slide-container {

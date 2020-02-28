@@ -334,6 +334,19 @@ namespace Orions.Systems.CrossModules.Components
 			column.ShowBetweenCommands = false;
 		}
 
+		public void OnSwapInnerRows(MouseEventArgs e, DashboardColumn parentColumn, DashboardRow row)
+		{
+			if (parentColumn == null || row == null) return;
+
+			var r = parentColumn.InnerRows.Find(row);
+			var prevRow = r.Previous;
+
+			if (prevRow == null) return;
+
+			parentColumn.InnerRows.Remove(prevRow);
+			parentColumn.InnerRows.AddAfter(r, prevRow);
+		}
+
 		public void OnSwapRows(MouseEventArgs e, DashboardRow row)
 		{
 			var r = Source.Rows.Find(row);
@@ -350,6 +363,14 @@ namespace Orions.Systems.CrossModules.Components
 			var r = Source.Rows.Find(row);
 			//TODO add copy implementation !!!
 			
+			//Source.Rows.AddAfter(r, r.Value);
+		}
+
+		public void CloneInnerRow(MouseEventArgs e, DashboardColumn parentColumn, DashboardRow row)
+		{
+			var r = Source.Rows.Find(row);
+			//TODO add copy implementation !!!
+
 			//Source.Rows.AddAfter(r, r.Value);
 		}
 
