@@ -128,12 +128,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public SVGMapEditorVm()
 		{
-			PlaybackOptions = new MapPlaybackOptions()
-			{
-				PlayStep = TimeSpan.FromSeconds(3600),
-				PlayDuration = TimeSpan.FromSeconds(5),
-				LoadMode = MapPlaybackOptions.LoadModeEnum.Cache
-			};
+
 		}
 
 		#region Methods
@@ -453,17 +448,24 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				return;
 			}
 
+			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
+			if(isCacheMode && 
+				(this.PlaybackOptions.PlayStep != this.PlaybackCache.Value.PlayStep || this.PlaybackCache.Value.Steps.First().From != this.AutoplayTagDateRangeFilter.MinDate
+				|| this.PlaybackCache.Value.Steps.Last().To != this.AutoplayTagDateRangeFilter.MaxDate))
+			{
+				throw new Exception("Cache is outdated. The date range has been changed");
+			}
+
 			this.IsAutoPlayOn.Value = true;
 
 			// Initialize playback timer
 			_playbackTimer = new Timer(this.PlaybackOptions.PlayDuration.TotalMilliseconds);
 			_playbackTimer.AutoReset = false;
 
-			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
 
 			// Initalize dates for the first two segments
 			var dateRangeFilter = this.AutoplayTagDateRangeFilter;
-			var dateSegmentSize = this.PlaybackOptions.PlayStep;
+			var dateSegmentSize = isCacheMode ? this.PlaybackCache.Value.PlayStep : this.PlaybackOptions.PlayStep;
 			var currentSegmentMinDate = dateRangeFilter.MinDate;
 			var currentSegmentMaxDate = (currentSegmentMinDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMinDate + dateSegmentSize) : dateRangeFilter.MaxDate;
 			var nextSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
@@ -579,6 +581,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.PlaybackCacheBeingUpdated = true;
 
 			var mapCache = new MapPlaybackCache();
+			mapCache.PlayStep = PlaybackOptions.PlayStep;
 
 			var dateSegmentSize = this.PlaybackOptions.PlayStep;
 			var stepFromDate = this.TagDateRangeFilter.MinDate;
@@ -962,6 +965,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (start == null) start = TagDateRangeFilter.MinDate;
 			if (end == null) end = TagDateRangeFilter.MaxDate;
+
+			// if dates didnt change - call ShowTags explicitly instead of relying on TagRange filter ValueChange event
 			if(start == TagDateRangeFilter.CurrentMinDate && end == TagDateRangeFilter.CurrentMaxDate)
 			{
 				await ShowTags();

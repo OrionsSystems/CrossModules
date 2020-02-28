@@ -26,7 +26,12 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 		public string DefaultCircleColor { get; set; } = "#0000FF";
 
 		public MapPlaybackCache MapPlaybackCache { get; set; }
-		public MapPlaybackOptions MapPlaybackOptions { get; set; }
+		public MapPlaybackOptions MapPlaybackOptions { get; set; } = new MapPlaybackOptions
+		{
+			LoadMode = MapPlaybackOptions.LoadModeEnum.Cache,
+			PlayDuration = TimeSpan.FromSeconds(5),
+			PlayStep = TimeSpan.FromDays(1)
+		};
 
 		public HeatmapRenderingMode HeatmapMode { get; set; } = HeatmapRenderingMode.Masks;
 		public bool HeatmapCustomNormalization { get; set; } = false;
