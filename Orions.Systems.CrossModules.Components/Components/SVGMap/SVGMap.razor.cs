@@ -2,6 +2,7 @@
 using Microsoft.JSInterop;
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -30,7 +31,11 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (!string.IsNullOrEmpty(Zone))
 			{
-				await JsInterop.InvokeAsync<object>("Orions.MapZone.RemoveClassById", new object[] { Zone, _hideElementCSS });
+				var zones = Zone.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
+
+				foreach (var zone in zones) {
+					await JsInterop.InvokeAsync<object>("Orions.MapZone.RemoveClassById", new object[] { zone, _hideElementCSS });
+				}
 			}
 
 			await base.OnInitializedAsync();
