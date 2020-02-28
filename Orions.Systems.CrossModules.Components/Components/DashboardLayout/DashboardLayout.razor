@@ -2,9 +2,12 @@
 
 @using Orions.Node.Common
 @using Syncfusion.EJ2.Blazor.Popups
+@using Microsoft.JSInterop
+@using System.IO
 
 @inherits DashboardLayoutComponent
 
+@inject IJSRuntime JSRuntime
 @inject IMatToaster Toaster
 
 <div class="container-fluid">
@@ -21,16 +24,40 @@
 
 			@if (!HideModeOption)
 			{
-				<div class="float-right">
-					<button class="btn btn-dark  mr-2" @onclick="OnBackToList">List</button>
-					@if (IsEditMode)
-					{
-						<button class="btn btn-dark mr-4" @onclick="OnSave">Save</button>
-					}
-					<div class="d-inline-block">
-						<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-					</div>
-				</div>
+		<div class="float-right">
+
+			<a class="btn dashboard-cmd-btn" @onclick="OnBackToList">
+				<EjsTooltip Content="@("Back to list of dashboards")">
+					<MatIcon Icon="@MatIconNames.Storage"></MatIcon>
+				</EjsTooltip>
+			</a>
+
+			@if (IsEditMode)
+			{
+				<a class="btn dashboard-cmd-btn" @onclick="OnSave">
+					<EjsTooltip Content="@("Save dashboard")">
+						<MatIcon Icon="@MatIconNames.Save"></MatIcon>
+					</EjsTooltip>
+				</a>
+				<a class="btn dashboard-cmd-btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
+					<EjsTooltip Content="@("Import dashboard")">
+						<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
+					</EjsTooltip>
+				</a>
+				<a class="btn dashboard-cmd-btn" @onclick="ExportProject">
+					<EjsTooltip Content="@("Export dashboard")">
+						<MatIcon Icon="@MatIconNames.File_copy"></MatIcon>
+					</EjsTooltip>
+				</a>
+			}
+
+			<div class="d-inline-block ml-2">
+				<EjsTooltip Content="@("Switch to Live or design mode")">
+					<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
+				</EjsTooltip>
+			</div>
+		
+		</div>
 			}
 
 		</div>
@@ -64,19 +91,25 @@
 										<div class="dashboard-element-commands">
 											@if (column.Size > 1)
 											{
-												<a class="dashboard-element-commands-split-horisontal" title=" Split column horizontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
-													<IconSplitHorisontal></IconSplitHorisontal>
+												<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
+													<EjsTooltip Content="@("Split column horizontal")">
+														<IconSplitHorisontal></IconSplitHorisontal>
+													</EjsTooltip>
 												</a>
 											}
 											@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
 											{
-												<a class="dashboard-element-commands-split-vertical" title=" Split column vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
-													<IconSplitVertical></IconSplitVertical>
+												<a class="btn dashboard-element-commands-split-vertical"  @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
+													<EjsTooltip Content="@("Split column vertical")">
+														<IconSplitVertical></IconSplitVertical>
+													</EjsTooltip>
 												</a>
 											}
-											<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+											<EjsTooltip Content="@("Delete column")">
 												<IconClose></IconClose>
-											</a>
+											</EjsTooltip>
+										</a>
 										</div>
 									}
 
@@ -84,9 +117,11 @@
 									<div class="dashboard-widget-container">
 										@if (IsEditMode && Vm.HasPreviousColumn(row, column))
 										{
-											<div class="dashboard-content-prev" title="Increase size into left">
-												<a @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
-													<IconArrowLeft></IconArrowLeft>
+											<div class="dashboard-content-prev">
+												<a class="btn" @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
+													<EjsTooltip Content="@("Increase column size into left")">
+														<IconArrowLeft></IconArrowLeft>
+													</EjsTooltip>
 												</a>
 											</div>
 										}
@@ -95,11 +130,11 @@
 											@if (column.InnerRows.Count == 0)
 											{
 												<div class="dashboard-widget-add">
-													<EjsTooltip Content="@("Add widget")">
-														<a class="dashboard-widget-add-icon" title="Add Widget" @onclick="(e => Vm.OpenWidgetModal(e, column))">
-															<IconAdd></IconAdd>
+														<a class="dashboard-widget-add-icon" @onclick="(e => Vm.OpenWidgetModal(e, column))">
+															<EjsTooltip Content="@("Add widget")">
+																<IconAdd></IconAdd>
+															</EjsTooltip>
 														</a>
-													</EjsTooltip>
 												</div>
 											}
 											else
@@ -117,18 +152,24 @@
 																			<div class="dashboard-element-commands">
 																				@if (column.Size > 1)
 																				{
-																					<a class="dashboard-element-commands-split-horisontal" title=" Split column horizontal" @onclick="@(el => { Vm.SplitColumn(el, innerRow, innerColumn); })">
-																						<IconSplitHorisontal></IconSplitHorisontal>
+																					<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, innerRow, innerColumn); })">
+																						<EjsTooltip Content="@("Split inner column horizontal")">
+																							<IconSplitHorisontal></IconSplitHorisontal>
+																						</EjsTooltip>
 																					</a>
 																				}
 																				@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
 																				{
-																					<a class="dashboard-element-commands-split-vertical" title=" Split column vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, innerRow, innerColumn); })">
-																						<IconSplitVertical></IconSplitVertical>
+																					<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, innerRow, innerColumn); })">
+																						<EjsTooltip Content="@("Split inner column vertical")">
+																							<IconSplitVertical></IconSplitVertical>
+																						</EjsTooltip>
 																					</a>
 																				}
-																				<a class="dashboard-element-commands-delete" title="Delete element" @onclick="@(el => { Vm.DeleteColumn(el, innerRow, innerColumn, column); })">
-																					<IconClose></IconClose>
+																				<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, innerRow, innerColumn, column); })">
+																					<EjsTooltip Content="@("Delete inner column")">
+																						<IconClose></IconClose>
+																					</EjsTooltip>
 																				</a>
 																			</div>
 																		}
@@ -157,14 +198,20 @@
 																						@innerColumn.Widget.Label
 																					</div>
 																					<div class="dashboard-widget-commands">
-																						<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, innerColumn))">
-																							<IconSettings></IconSettings>
+																						<a class="btn dashboard-widget-command-settings" @onclick="(e => Vm.OpenWidgetProperty(e, innerColumn))">
+																							<EjsTooltip Content="@("Widget property")">
+																								<IconSettings></IconSettings>
+																							</EjsTooltip>
 																						</a>
-																						<a class="dashboard-widget-command-visible @(innerColumn.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
-																							<IconVisible></IconVisible>
+																						<a class="btn dashboard-widget-command-visible @(innerColumn.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, innerColumn))">
+																							<EjsTooltip Content="@("Enable/disable widget")">
+																								<IconVisible></IconVisible>
+																							</EjsTooltip>
 																						</a>
-																						<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, innerColumn))">
-																							<IconClean></IconClean>
+																						<a class="btn dashboard-widget-command-clean" @onclick="(e => Vm.CleanWidget(e, innerColumn))">
+																							<EjsTooltip Content="@("Clean widget")">
+																								<IconClean></IconClean>
+																							</EjsTooltip>
 																						</a>
 																					</div>
 																				</div>
@@ -185,7 +232,9 @@
 																								</div>
 																								<div class="dashboard-widget-commands">
 																									<a class="dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
-																										<IconVisible></IconVisible>
+																										<EjsTooltip Content="@("Enable/disable widget")">
+																											<IconVisible></IconVisible>
+																										</EjsTooltip>
 																									</a>
 																								</div>
 																							</div>
@@ -201,7 +250,7 @@
 														</div>
 													}
 													<div class="dashboard-widget-inner-add">
-														<a class="btn btn-outline-dark" title="Add inner row" @onclick="@(el => { Vm.AddInnerRow(el, row, column); })"> Add</a>
+														<a class="btn btn-outline-dark" style="padding: 5px 10px !important;" title="Add inner row" @onclick="@(el => { Vm.AddInnerRow(el, row, column); })"> Add</a>
 													</div>
 												</div>
 											}
@@ -220,14 +269,20 @@
 														@column.Widget.Label
 													</div>
 													<div class="dashboard-widget-commands">
-														<a class="dashboard-widget-command-settings" title="Properties" @onclick="(e => Vm.OpenWidgetProperty(e, column))">
-															<IconSettings></IconSettings>
+														<a class="btn dashboard-widget-command-settings" @onclick="(e => Vm.OpenWidgetProperty(e, column))">
+															<EjsTooltip Content="@("Widget properties")">
+																<IconSettings></IconSettings>
+															</EjsTooltip>
 														</a>
-														<a class="dashboard-widget-command-visible @(column.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" title="Clean Widget" @onclick="(e => Vm.ToggleVisibility(e, column))">
-															<IconVisible></IconVisible>
+														<a class="btn dashboard-widget-command-visible @(column.Widget.IsVisibile ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, column))">
+															<EjsTooltip Content="@("Enable or disable widget")">
+																<IconVisible></IconVisible>
+															</EjsTooltip>
 														</a>
-														<a class="dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
-															<IconClean></IconClean>
+														<a class="btn dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
+															<EjsTooltip Content="@("Clean Widget")">
+																<IconClean></IconClean>
+															</EjsTooltip>
 														</a>
 													</div>
 												</div>
@@ -247,8 +302,10 @@
 																	@slWdg.Label
 																</div>
 																<div class="dashboard-widget-commands">
-																	<a class="dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
-																		<IconVisible></IconVisible>
+																	<a class="btn dashboard-widget-command-visible @(slWdg.IsVisibile ? "dashboard-widget-command-enable" : "")">
+																		<EjsTooltip Content="@("Enable or disable widget")">
+																			<IconVisible></IconVisible>
+																		</EjsTooltip>
 																	</a>
 																</div>
 															</div>
@@ -259,9 +316,11 @@
 										}
 										@if (IsEditMode && Vm.HasNextColumn(row, column))
 										{
-											<div class="dashboard-content-next" title="Increase size into right">
-												<a @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-													<IconArrowRight></IconArrowRight>
+											<div class="dashboard-content-next">
+												<a class="btn" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
+													<EjsTooltip Content="@("Increase column size into right")">
+														<IconArrowRight></IconArrowRight>
+													</EjsTooltip>
 												</a>
 											</div>
 										}
@@ -275,20 +334,24 @@
 										@if (true || column.ShowBetweenCommands)
 										{
 											<div class="dashboard-swap-column" @onclick="(e => Vm.OnSwapColumns(e, row, column))">
-												<IconSwapColumn></IconSwapColumn>
+												<EjsTooltip Content="@("Swap columns")">
+													<IconSwapColumn></IconSwapColumn>
+												</EjsTooltip>
 											</div>
 											<div id="@column.Id"
-												  class="dashboard-dragbar"
+												  class="btn dashboard-dragbar"
 												  @onmousedown="Vm.OnMouseDownDraging"
 												  @onmousemove="(e => Vm.OnMouseMoveDraging(e, row, column))">
-												<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-													  viewBox="0 0 30 30">
-													<g>
-														<rect x="13.54" y="0.81" width="2.91" height="28.38" />
-														<polygon points="12.04,20.72 12.04,9.39 6.16,15" />
-														<polygon points="17.96,20.96 17.96,9.63 23.84,15.24" />
-													</g>
-												</svg>
+												<EjsTooltip Content="@("Move in element by draging")">
+													<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+														  viewBox="0 0 30 30">
+														<g>
+															<rect x="13.54" y="0.81" width="2.91" height="28.38" />
+															<polygon points="12.04,20.72 12.04,9.39 6.16,15" />
+															<polygon points="17.96,20.96 17.96,9.63 23.84,15.24" />
+														</g>
+													</svg>
+												</EjsTooltip>
 											</div>
 										}
 
@@ -306,14 +369,18 @@
 							<div class="dashboard-between-row-container">
 								@if (firstRowId != row.Id)
 								{
-									<div class="dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
-										<IconSwapRow></IconSwapRow>
-									</div>
+									<a class="btn dashboard-swap-row" @onclick="(e => Vm.OnSwapRows(e, row))">
+										<EjsTooltip Content="@("Swap rows")">
+											<IconSwapRow></IconSwapRow>
+										</EjsTooltip>
+									</a>
 								}
 
-								<div class="dahsboard-clone-row" @onclick="(e => Vm.CloneRow(e, row))">
-									<IconClone></IconClone>
-								</div>
+								<a class="btn dahsboard-clone-row" @onclick="(e => Vm.CloneRow(e, row))">
+									<EjsTooltip Content="@("Clone row")">
+										<IconClone></IconClone>
+									</EjsTooltip>
+								</a>
 							</div>
 						</div>
 					}
@@ -436,6 +503,34 @@
 	<div class="modal-backdrop fade show"></div>
 }
 
+@if (Vm.IsShowModalImportProject)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered " role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Import Dashboard</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.IsShowModalImportProject = false; })">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12">
+							This operation will lose all current data will re and it
+						</div>
+						<div class="col-lg-12">
+							<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(arg); })" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
 @code{
 
 	private bool isShowRenameDashboardModal;
@@ -514,6 +609,32 @@
 	private async Task OpenRenameDialog()
 	{
 		isShowRenameDashboardModal = true;
+	}
+
+	private async void ExportProject()
+	{
+		var projectJson = Vm.LoadDashboardAsJson();
+
+		var fileName = "exported-" + Data?.Name + ".json";
+
+		await JSRuntime.InvokeAsync<object>("Orions.FileSaveAs.init", new object[] { fileName, projectJson });
+	}
+
+	private async Task HandleInputFileSelection(IFileListEntry[] files)
+	{
+		var file = files.FirstOrDefault();
+		if (file != null)
+		{
+			using (var ms = new MemoryStream())
+			{
+				await file.Data.CopyToAsync(ms);
+				var res = ms.ToArray();
+
+				Vm.ImportProject(res);
+
+				Vm.IsShowModalImportProject = false;
+			}
+		}
 	}
 
 }

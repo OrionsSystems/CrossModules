@@ -38,6 +38,17 @@ h5.modal-title {
     START DASHBOARD LAYOUT COMPONENT
 */
 
+.dashboard-cmd-btn .material-icons {
+	cursor: pointer;
+	opacity: 0.5;
+	transition: 0.5s;
+}
+
+.dashboard-cmd-btn:hover .material-icons {
+	opacity: 1;
+	transition: 0.5s;
+}
+
 .dashboard-header {
 	margin-bottom: 23px;
 }
@@ -70,6 +81,10 @@ h5.modal-title {
 	background-color: #f4f4f49e;
 	/*padding: 15px 5px;*/
 }
+
+	.dashboard-row-container .btn {
+		padding: 0px !important;
+	}
 
 .dashboard-content > .dashboard-element-commands {
 	position: relative;

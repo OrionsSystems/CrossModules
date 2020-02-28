@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Infrastructure.Reporting;
+using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -46,6 +47,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsShowModalWidget { get; set; }
 		public bool IsShowProperty { get; private set; }
+		public bool IsShowModalImportProject { get; set; }
 
 		private DashboardColumn SelectedColumn { get; set; }
 
@@ -116,8 +118,6 @@ namespace Orions.Systems.CrossModules.Components
 
 			return vm;
 		}
-
-		
 
 		public async Task<Response> SaveChangesAsync()
 		{
@@ -223,6 +223,24 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			await Task.WhenAll(tasks);
+		}
+
+		public void ImportProject(byte[] bytes)
+		{
+			var json = Encoding.Default.GetString(bytes);
+
+			if (string.IsNullOrWhiteSpace(json)) return;
+
+			var res = JsonHelper.Deserialize<DashboardData>(json);
+
+			//update and save
+			if (res != null) Source = res;
+
+		}
+
+		public string LoadDashboardAsJson()
+		{
+			return JsonHelper.Serialize(Source);
 		}
 
 		#region Dashboad Desing Operations
