@@ -1,5 +1,7 @@
 ﻿@using Microsoft.JSInterop;
 @using Syncfusion.EJ2.Blazor.Inputs;
+@using Syncfusion.EJ2.Blazor.Notifications;
+@using Orions.Systems.CrossModules.Components.Components.Toast;
 @inherits SVGMapEditorBase
 
 <div id="@ComponentContainerId" class="svg-map-editor-container">
@@ -32,7 +34,7 @@
 		</button>
 
 
-		@if (this.Vm.PlaybackOptions.LoadMode == SVGMapEditorVm.MapPlaybackOptions.LoadModeEnum.Cache)
+		@if (this.Vm.PlaybackOptions.LoadMode == SVGMapEditorVm.MapPlaybackOptions.LoadModeEnum.Cache && !this.Vm.IsReadOnly)
 		{
 			<button @onclick=@Vm.RefreshMapDataCache class="btn btn-dark" title="Update Playback Cache">
 				<svg width="22px" height="16px" viewBox="0 0 22 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -192,18 +194,18 @@
 		}
 	}
 </div>
+<Toast @ref="this.Vm.Toaster">
+</Toast>
 
 @code{
 	public void TagInfoMouseOut(MouseEventArgs e)
 	{
 		this.Vm.ShowingHyperTagInfo.Value = false;
 	}
-
 	public async Task<object> OverlayEntryPropertyGridLoader()
 	{
 		return Vm.CurrentPropertyGridObject;
 	}
-
 	public async Task<object> TagPropertyGridLoader()
 	{
 		return Vm.CurrentTagBeingShown;

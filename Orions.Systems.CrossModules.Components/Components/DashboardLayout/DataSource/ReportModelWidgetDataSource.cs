@@ -57,8 +57,10 @@ namespace Orions.Systems.CrossModules.Components
 			if (MetadataSetId.HasValue)
 			{
 				var metadataSetStage = reportModelConfig.DataSource as MetadataSetReportDataSourceStageConfig;
-				if(metadataSetStage != null)
+				if (metadataSetStage != null)
 					metadataSetStage.MetadataSetId = MetadataSetId;
+				else
+					Logger.Instance?.Warning(this, nameof(OnGenerateFilteredReportResultAsync), "Failed to apply MetadataSetId, since source stage is not a metadataset stage");
 			}
 
 			var helper = new ReportModelHelper();
