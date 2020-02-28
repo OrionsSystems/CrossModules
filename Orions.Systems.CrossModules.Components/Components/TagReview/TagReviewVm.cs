@@ -17,6 +17,10 @@ namespace Orions.Systems.CrossModules.Components
 		private HyperMetadataSet _metadataSet;
 		private MasksHeatmapRenderer _renderer;
 
+		public bool ShowFragmentAndSlice { get; set; } = true;
+
+		public string FabricService { get; set; } = "";
+
 		public TagReviewVm()
 		{
 		}
@@ -135,6 +139,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
+			if (this._metadataSet == null)
+				return;
+
 			if (startDate.HasValue)
 			{
 				this._metadataSet.FromDate = startDate.Value;

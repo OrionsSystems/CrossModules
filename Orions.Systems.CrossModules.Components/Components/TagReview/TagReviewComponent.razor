@@ -11,7 +11,9 @@
 				}
 				else
 				{
-					<TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@DataContext.Store" ColumnsNumber="@Vm.ColumnsNumber" RowsNumber="@Vm.InitialRowsNumber" DashApiPort="@Vm.DashApiPort" />
+					<TagGrid HyperTags="@DataContext.HyperTags.Value" HyperStore="@DataContext.Store" ColumnsNumber="@Vm.ColumnsNumber" 
+								FabricService="@Vm.FabricService"
+								ShowFragmentAndSlice="@Vm.ShowFragmentAndSlice" RowsNumber="@Vm.InitialRowsNumber" DashApiPort="@Vm.DashApiPort" />
 				}
 			</div>
 

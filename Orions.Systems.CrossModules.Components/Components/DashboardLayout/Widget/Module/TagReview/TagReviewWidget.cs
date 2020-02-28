@@ -19,6 +19,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public int InitialRowsNumber { get; set; } = 3;
 
+		public bool ShowFragmentAndSliceInfo { get; set; } = true;
+
+		[HelpText("If we want the images in the display to be processed with a Fabric service on request, this is the name")]
+		public string FabricService { get; set; }
+
 		public TagReviewWidget()
 		{
 			this.Label = "Tag Review";

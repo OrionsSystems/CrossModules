@@ -17,6 +17,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected override bool AutoCreateVm => false;
 
+		public TagReviewComponentBase()
+		{
+		}
+
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			//await this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);

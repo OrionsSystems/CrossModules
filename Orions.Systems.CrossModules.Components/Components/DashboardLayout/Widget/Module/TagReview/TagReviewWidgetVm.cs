@@ -16,6 +16,14 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
+		protected override void OnWidgetSet(IDashboardWidget widget)
+		{
+			base.OnWidgetSet(widget);
+
+			TagReviewVm.Value.ShowFragmentAndSlice = this.Widget.ShowFragmentAndSliceInfo;
+			TagReviewVm.Value.FabricService = this.Widget.FabricService;
+		}
+
 		public override async Task HandleFiltersChangedAsync()
 		{
 			//throw new NotImplementedException();
