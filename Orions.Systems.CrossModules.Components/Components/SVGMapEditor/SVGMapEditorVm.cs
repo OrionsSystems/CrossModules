@@ -962,9 +962,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.ShowingControlPropertyGrid.Value = true;
 		}
 
-		public async Task SetFilter(DateTime? start, DateTime? end, string[] filterLabels)
+		public async Task SetFilterAsync(DateTime? start, DateTime? end, string[] filterLabels)
 		{
-
 			this._filterLabels = filterLabels;
 
 			if (start == null) start = TagDateRangeFilter.MinDate;
