@@ -82,6 +82,10 @@ h5.modal-title {
 	/*padding: 15px 5px;*/
 }
 
+	.dashboard-row-container .btn {
+		padding: 0px !important;
+	}
+
 .dashboard-content > .dashboard-element-commands {
 	position: relative;
 	line-height: initial;
