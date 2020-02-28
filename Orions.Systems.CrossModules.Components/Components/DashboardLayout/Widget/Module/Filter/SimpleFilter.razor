@@ -133,7 +133,7 @@
 	public async Task OnApply(MouseEventArgs args)
 	{
 		// There is a bug when using Value and we remove the last item, so using this is more reliable.
-		string text = MultiSelect.Text;
+		string text = MultiSelect?.Text;
 		string[] filters = text?.Split(',', StringSplitOptions.RemoveEmptyEntries) ?? new string[] { };
 
 		this.Vm.Filters = filters;
