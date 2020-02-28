@@ -2,9 +2,12 @@
 
 @using Orions.Node.Common
 @using Syncfusion.EJ2.Blazor.Popups
+@using Microsoft.JSInterop
+@using System.IO
 
 @inherits DashboardLayoutComponent
 
+@inject IJSRuntime JSRuntime
 @inject IMatToaster Toaster
 
 <div class="container-fluid">
@@ -21,16 +24,40 @@
 
 			@if (!HideModeOption)
 			{
-				<div class="float-right">
-					<button class="btn btn-dark  mr-2" @onclick="OnBackToList">List</button>
-					@if (IsEditMode)
-					{
-						<button class="btn btn-dark mr-4" @onclick="OnSave">Save</button>
-					}
-					<div class="d-inline-block">
-						<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
-					</div>
-				</div>
+		<div class="float-right">
+
+			<a class="btn dashboard-cmd-btn" @onclick="OnBackToList">
+				<EjsTooltip Content="@("Back to list of dashboards")">
+					<MatIcon Icon="@MatIconNames.Storage"></MatIcon>
+				</EjsTooltip>
+			</a>
+
+			@if (IsEditMode)
+			{
+				<a class="btn dashboard-cmd-btn" @onclick="OnSave">
+					<EjsTooltip Content="@("Save dashboard")">
+						<MatIcon Icon="@MatIconNames.Save"></MatIcon>
+					</EjsTooltip>
+				</a>
+				<a class="btn dashboard-cmd-btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
+					<EjsTooltip Content="@("Import dashboard")">
+						<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
+					</EjsTooltip>
+				</a>
+				<a class="btn dashboard-cmd-btn" @onclick="ExportProject">
+					<EjsTooltip Content="@("Export dashboard")">
+						<MatIcon Icon="@MatIconNames.File_copy"></MatIcon>
+					</EjsTooltip>
+				</a>
+			}
+
+			<div class="d-inline-block ml-2">
+				<EjsTooltip Content="@("Switch to Live or design mode")">
+					<SlideToggle Checked="@IsPreviewMode" CheckedChanged="ChangeMode" Label="Live Mode" Disabled="DisableModeOption"></SlideToggle>
+				</EjsTooltip>
+			</div>
+		
+		</div>
 			}
 
 		</div>
@@ -436,6 +463,34 @@
 	<div class="modal-backdrop fade show"></div>
 }
 
+@if (Vm.IsShowModalImportProject)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered " role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Import Dashboard</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.IsShowModalImportProject = false; })">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12">
+							This operation will lose all current data will re and it
+						</div>
+						<div class="col-lg-12">
+							<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(arg); })" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
 @code{
 
 	private bool isShowRenameDashboardModal;
@@ -514,6 +569,32 @@
 	private async Task OpenRenameDialog()
 	{
 		isShowRenameDashboardModal = true;
+	}
+
+	private async void ExportProject()
+	{
+		var projectJson = Vm.LoadDashboardAsJson();
+
+		var fileName = "exported-" + Data?.Name + ".json";
+
+		await JSRuntime.InvokeAsync<object>("Orions.FileSaveAs.init", new object[] { fileName, projectJson });
+	}
+
+	private async Task HandleInputFileSelection(IFileListEntry[] files)
+	{
+		var file = files.FirstOrDefault();
+		if (file != null)
+		{
+			using (var ms = new MemoryStream())
+			{
+				await file.Data.CopyToAsync(ms);
+				var res = ms.ToArray();
+
+				Vm.ImportProject(res);
+
+				Vm.IsShowModalImportProject = false;
+			}
+		}
 	}
 
 }

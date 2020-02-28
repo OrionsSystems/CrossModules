@@ -38,6 +38,17 @@ h5.modal-title {
     START DASHBOARD LAYOUT COMPONENT
 */
 
+.dashboard-cmd-btn .material-icons {
+	cursor: pointer;
+	opacity: 0.5;
+	transition: 0.5s;
+}
+
+.dashboard-cmd-btn:hover .material-icons {
+	opacity: 1;
+	transition: 0.5s;
+}
+
 .dashboard-header {
 	margin-bottom: 23px;
 }
