@@ -36,7 +36,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			if (this.Widget	is ActiveFilterReportChartWidget active && active.AllowFiltrationTarget)
+			if (this.Widget is ActiveFilterReportChartWidget active && active.AllowFiltrationTarget)
 				await RefreshReportResultData();
 		}
 

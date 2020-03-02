@@ -71,16 +71,19 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		Vm.OnReportResultChanged += OnChangeDataSource;
+		Vm.OnReportResultChanged += OnReportResultChanged;
 
 		await Vm.RefreshReportResultData();
 
 		await base.OnInitializedAsync();
 	}
 
-	private void OnChangeDataSource()
+	private void OnReportResultChanged()
 	{
-		if (Vm.ReportChartData == null) return;
+		Data.Clear(); // Prevents from re-adding things every time.
+
+		if (Vm.ReportChartData == null)
+			return;
 
 		var total = 0;
 		foreach (var series in Vm.ReportChartData.Series)
@@ -98,7 +101,9 @@
 		}
 
 		if (Widget.CustomItems.Any())
+		{
 			Data.AddRange(Widget.CustomItems);
+		}
 
 		if (total != 0)
 		{

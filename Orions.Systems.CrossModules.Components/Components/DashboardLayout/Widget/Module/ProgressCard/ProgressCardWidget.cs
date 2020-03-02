@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class ProgressCardWidget : ReportChartWidget
+   public class ProgressCardWidget : ActiveFilterReportChartWidget
    {
       public List<CardItem> CustomItems { get; set; } = new List<CardItem>();
 
