@@ -50,7 +50,7 @@ namespace Orions.Systems.CrossModules.Components
          {
             var dnsSafehost = (_store as NetStore).CurrentConnection.Uri.DnsSafeHost;
             var assetId = HyperTagId.HyperId.AssetId.Value.Guid.ToString();
-            return $"http://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
+            return $"https://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
          }
       }
       public string PlayerId

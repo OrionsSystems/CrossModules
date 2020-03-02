@@ -102,8 +102,8 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					var config = new StandardsBasedNetStoreServerConfig();
 					JsonHelper.Populate(item.Json, config);
-					if (config.HttpPort.HasValue)
-						streamingPort = config.HttpPort.Value;
+					if (config.HttpsPort.HasValue)
+						streamingPort = config.HttpsPort.Value;
 				}
 			}
 
