@@ -53,6 +53,10 @@ h5.modal-title {
 	margin-bottom: 23px;
 }
 
+.widget-slide-container .dashboard-header {
+	margin: 0px;
+}
+
 .dashboard-title {
 	display: inline-block;
 }
@@ -90,10 +94,20 @@ h5.modal-title {
 	position: relative;
 	line-height: initial;
 	z-index: 99998;
-	float: right;
-	margin: 2px 15px;
 	opacity: 0.2;
 	transition: 0.5s;
+	height: 20px;
+}
+
+.dashboard-element-commands .dashboard-element-commands-prev {
+	float: left;
+}
+
+.dashboard-element-commands .dashboard-element-commands-split-horisontal,
+.dashboard-element-commands .dashboard-element-commands-split-vertical,
+.dashboard-element-commands .dashboard-element-commands-delete,
+.dashboard-element-commands .dashboard-element-commands-next {
+	float: right;
 }
 
 .dashboard-widget-inner-container .dashboard-element-commands {
@@ -730,6 +744,7 @@ h5.modal-title {
 	color: #365c7e;
 	text-transform: uppercase;
 	letter-spacing: 2px;
+	display: inline-flex;
 }
 
 .widget-single-analytics-container {
@@ -757,10 +772,9 @@ widget-single-analytics-icon {
 	margin-left: 10px;
 	display: inline-flex;
 	opacity: .5;
-	font-size: 40px;
+	font-size: 18px;
 	vertical-align: middle;
-	margin-top: -8px;
-	letter-spacing: 6px;
+	margin-top: -7px;
 }
 
 /*    END WIDGET DASHBOARD  */
