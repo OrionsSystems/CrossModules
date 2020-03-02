@@ -29,9 +29,8 @@
 		this.Vm.TagReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
 		this.Vm.TagReviewVm.Value.InitialRowsNumber = this.Widget.InitialRowsNumber;
 		this.Vm.TagReviewVm.Value.HeatmapSettings = this.Widget.HeatmapSettings;
-		await this.Vm.TagReviewVm.Value.Initialize(store, Widget.MetadataSetId.Value.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
 
-		
+		await this.Vm.TagReviewVm.Value.Initialize(store, Widget.MetadataSetId?.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
 	}
 }
 
