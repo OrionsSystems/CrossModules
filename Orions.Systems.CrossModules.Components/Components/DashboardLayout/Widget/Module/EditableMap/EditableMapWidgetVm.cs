@@ -30,7 +30,6 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.DefaultCameraColor = this.Widget.DefaultCameraColor;
 			vm.DefaultCircleColor = this.Widget.DefaultCircleColor;
 			vm.PlaybackCache = this.Widget.MapPlaybackCache;
-			vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
 			vm.HeatmapMode = this.Widget.HeatmapMode;
 			vm.HeatmapCustomNormalization = this.Widget.HeatmapCustomNormalization;
 			vm.HeatmapNormalizationMinOverlaps = this.Widget.HeatmapNormalizationMinOverlaps;

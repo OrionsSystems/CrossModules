@@ -52,11 +52,18 @@
 					</g>
 				</svg>
 			</button>
+			@if (this.Vm.PlaybackCacheBeingUpdated)
+			{
+				<div>
+					<ProgressLine Percentage="@this.Vm.PlaybackCacheUpdateProgress.Value"
+								  IsShowTitle="true"
+								  Title="@this.Vm.PlaybackCacheUpdateStatus.Value"
+								  IsShowPercentage="true">
+					</ProgressLine>
+				</div>
+			}
 		}
-		@if (this.Vm.PlaybackCacheBeingUpdated)
-		{
-			<span>Updating...</span>
-		}
+
 	</div>
 	<div class="map-container">
 		@ChildContent
@@ -216,7 +223,6 @@
 	}
 
 		.svg-map-editor-container .buttons-container {
-			height: 40px;
 		}
 
 		.svg-map-editor-container .map-container {

@@ -89,7 +89,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public TagDateRangeFilterOptions AutoplayTagDateRangeFilter { get; set; } = new TagDateRangeFilterOptions();
 		public ViewModelProperty<bool> HomographiesDetected { get; set; } = false;
 		public ViewModelProperty<bool> IsAutoPlayOn { get; set; } = false;
-		public MapPlaybackOptions PlaybackOptions { get; set; }
+		public MapPlaybackOptions PlaybackOptions { get; set; } = new MapPlaybackOptions
+		{
+			LoadMode = MapPlaybackOptions.LoadModeEnum.Live,
+			PlayDuration = TimeSpan.FromSeconds(5),
+			PlayStep = TimeSpan.FromHours(1)
+		};
 		public ViewModelProperty<MapPlaybackCache> PlaybackCache { get; set; }
 		public ViewModelProperty<bool> PlaybackCacheBeingUpdated { get; set; } = false;
 
@@ -128,8 +133,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public string CurrentlySelectedZoneId { get; set; }
-
 		public Toast.Toast Toaster { get; set; }
+		public ViewModelProperty<double> PlaybackCacheUpdateProgress { get; set; } = 0;
+		public ViewModelProperty<string> PlaybackCacheUpdateStatus { get; set; } = "";
 		#endregion // Properties
 
 		public SVGMapEditorVm()
@@ -586,6 +592,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public async Task RefreshMapDataCache()
 		{
 			this.PlaybackCacheBeingUpdated = true;
+			this.PlaybackCacheUpdateProgress.Value = 0;
+			this.PlaybackCacheUpdateStatus.Value = "Updating ...";
 
 			var mapCache = new MapPlaybackCache();
 			mapCache.PlayStep = PlaybackOptions.PlayStep;
@@ -598,7 +606,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				From = stepFromDate,
 				To = stepToDate
 			});
-
 
 			while (stepToDate != this.TagDateRangeFilter.MaxDate)
 			{
@@ -613,28 +620,48 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			var stepTasks = new List<Task<List<ZoneDataSet>>>();
 			var stepToDatasetMappings = new Dictionary<PlaybackStepCache, Task<List<ZoneDataSet>>>();
+			var totalStepCount = mapCache.Steps.Count;
+			PlaybackCacheUpdateProgress.Value = 0;
+
+			this.PlaybackCacheUpdateStatus.Value = "Collecting hyper tag data ...";
 			foreach (var step in mapCache.Steps)
 			{
 				var task = GetZoneDataSetsForDateRange(step.From, step.To);
+				task.ContinueWith(t =>
+				{
+					PlaybackCacheUpdateProgress.Value += 50.0 / totalStepCount;
+				});
 				stepTasks.Add(task);
 				stepToDatasetMappings[step] = task;
 			}
-
 			await Task.WhenAll(stepTasks);
 
 			var heatmapRenderer = InstantiateHeatmapRendererWithSettings();
+			var heatmapTasks = new Dictionary<ZoneDataSet, Task<UniImage>>();
+			this.PlaybackCacheUpdateStatus.Value = "Rendering heatmaps ...";
 			foreach (var kv in stepToDatasetMappings)
 			{
 				var zoneDataSets = kv.Key.ZoneDataSets = kv.Value.Result;
 
 				foreach (var ds in zoneDataSets)
 				{
-					ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false);
+					//ds.Heatmap = await heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false);
+					var heatmapTask = heatmapRenderer.GenerateFromTagsAsync(ds.Tags, ds.Zone.FixedCameraEnhancementId.Value, false);
+					heatmapTask.ContinueWith(t =>
+					{
+						PlaybackCacheUpdateProgress.Value += (48.0 / zoneDataSets.Count) / totalStepCount; // leave 2% for cache saving task
+					});
+					heatmapTasks[ds] = heatmapTask;
 				}
 			}
 
+			await Task.WhenAll(heatmapTasks.Values);
+
 			this.PlaybackCache.Value = mapCache;
+			this.PlaybackCacheUpdateStatus.Value = "Saving cached data ...";
 			await this.OnMapPlayebackCacheUpdated?.Invoke(mapCache);
+
+			PlaybackCacheUpdateProgress.Value += 2; // leave 2% for cache saving task
 
 			this.PlaybackCacheBeingUpdated.Value = false;
 		}
