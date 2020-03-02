@@ -53,6 +53,10 @@ h5.modal-title {
 	margin-bottom: 23px;
 }
 
+.widget-slide-container .dashboard-header {
+	margin: 0px;
+}
+
 .dashboard-title {
 	display: inline-block;
 }
@@ -90,10 +94,20 @@ h5.modal-title {
 	position: relative;
 	line-height: initial;
 	z-index: 99998;
-	float: right;
-	margin: 2px 15px;
 	opacity: 0.2;
 	transition: 0.5s;
+	height: 20px;
+}
+
+.dashboard-element-commands .dashboard-element-commands-prev {
+	float: left;
+}
+
+.dashboard-element-commands .dashboard-element-commands-split-horisontal,
+.dashboard-element-commands .dashboard-element-commands-split-vertical,
+.dashboard-element-commands .dashboard-element-commands-delete,
+.dashboard-element-commands .dashboard-element-commands-next {
+	float: right;
 }
 
 .dashboard-widget-inner-container .dashboard-element-commands {

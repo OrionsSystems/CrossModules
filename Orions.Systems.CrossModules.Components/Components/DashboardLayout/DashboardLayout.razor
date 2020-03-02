@@ -111,43 +111,52 @@
 								<div class="dashboard-content">
 									@if (IsEditMode)
 									{
-										<div class="dashboard-element-commands">
-											@if (column.Size > 1)
-											{
-												<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
-													<EjsTooltip Content="@("Split column horizontal")">
-														<IconSplitHorisontal></IconSplitHorisontal>
-													</EjsTooltip>
-												</a>
-											}
-											@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
-											{
-												<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
-													<EjsTooltip Content="@("Split column vertical")">
-														<IconSplitVertical></IconSplitVertical>
-													</EjsTooltip>
-												</a>
-											}
-											<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
-												<EjsTooltip Content="@("Delete column")">
-													<IconClose></IconClose>
+									<div class="dashboard-element-commands">
+										@if (Vm.HasPreviousColumn(row, column))
+										{
+											<a class="btn dashboard-element-commands-prev" @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
+												<EjsTooltip Content="@("Increase column size into left")">
+													<IconArrowLeft></IconArrowLeft>
 												</EjsTooltip>
 											</a>
-										</div>
+										}
+										@if (column.Size > 1)
+										{
+											<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
+												<EjsTooltip Content="@("Split column horizontal")">
+													<IconSplitHorisontal></IconSplitHorisontal>
+												</EjsTooltip>
+											</a>
+										}
+										@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
+										{
+											<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
+												<EjsTooltip Content="@("Split column vertical")">
+													<IconSplitVertical></IconSplitVertical>
+												</EjsTooltip>
+											</a>
+										}
+										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+											<EjsTooltip Content="@("Delete column")">
+												<IconClose></IconClose>
+											</EjsTooltip>
+										</a>
+
+										@if (Vm.HasNextColumn(row, column))
+										{
+											<a class="btn dashboard-element-commands-next" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
+												<EjsTooltip Content="@("Increase column size into right")">
+													<IconArrowRight></IconArrowRight>
+												</EjsTooltip>
+											</a>
+										}
+
+									</div>
 									}
 
 									<div class="clearfix"></div>
 									<div class="dashboard-widget-container">
-										@if (IsEditMode && Vm.HasPreviousColumn(row, column))
-										{
-											<div class="dashboard-content-prev">
-												<a class="btn" @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
-													<EjsTooltip Content="@("Increase column size into left")">
-														<IconArrowLeft></IconArrowLeft>
-													</EjsTooltip>
-												</a>
-											</div>
-										}
+
 										@if (column.Widget == null)
 										{
 											@if (column.InnerRows.Count == 0)
@@ -360,16 +369,7 @@
 												}
 											}
 										}
-										@if (IsEditMode && Vm.HasNextColumn(row, column))
-										{
-											<div class="dashboard-content-next">
-												<a class="btn" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-													<EjsTooltip Content="@("Increase column size into right")">
-														<IconArrowRight></IconArrowRight>
-													</EjsTooltip>
-												</a>
-											</div>
-										}
+
 									</div>
 								</div>
 
