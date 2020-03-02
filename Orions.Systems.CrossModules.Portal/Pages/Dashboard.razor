@@ -4,6 +4,7 @@
 
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
+@using Orions.Common
 
 @inherits PortalBaseComponent
 
@@ -107,9 +108,26 @@ else
 
 	private async Task LoadTaggedDashboards(string tag)
 	{
-		var datas = await HyperStore.FindAllAsync<DashboardData>();
+		TaggedDashboardList.Clear();
 
-		TaggedDashboardList = datas.Where(it => it.Tag == tag).ToList();
+		var findDocArgs = new FindHyperDocumentsArgs(typeof(DashboardData), true);
+		var conditions = new MultiScopeCondition(AndOr.Or);
+
+		conditions.AddCondition(new ScopeCondition("Tag", tag));
+
+		findDocArgs.DescriptorConditions = conditions;
+
+		var documents = await HyperStore.ExecuteAsync(findDocArgs);
+
+		if (!findDocArgs.ExecutionResult.IsNotSuccess || documents != null)
+		{
+			foreach (var doc in documents)
+			{
+				var dashboard = doc?.GetPayload<DashboardData>();
+
+				if (dashboard != null) TaggedDashboardList.Add(dashboard);
+			}
+		}
 
 		isLoadedTaggedDashboard = true;
 	}
