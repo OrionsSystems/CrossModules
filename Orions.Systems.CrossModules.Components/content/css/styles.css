@@ -730,6 +730,7 @@ h5.modal-title {
 	color: #365c7e;
 	text-transform: uppercase;
 	letter-spacing: 2px;
+	display: inline-flex;
 }
 
 .widget-single-analytics-container {
@@ -757,10 +758,9 @@ widget-single-analytics-icon {
 	margin-left: 10px;
 	display: inline-flex;
 	opacity: .5;
-	font-size: 40px;
+	font-size: 18px;
 	vertical-align: middle;
-	margin-top: -8px;
-	letter-spacing: 6px;
+	margin-top: -7px;
 }
 
 /*    END WIDGET DASHBOARD  */
