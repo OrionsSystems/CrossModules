@@ -19,6 +19,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool ShowFragmentAndSlice { get; set; } = true;
 
+		public bool ExtractMode { get; set; } = true;
+
 		public string FabricService { get; set; } = "";
 
 		public TagReviewVm()

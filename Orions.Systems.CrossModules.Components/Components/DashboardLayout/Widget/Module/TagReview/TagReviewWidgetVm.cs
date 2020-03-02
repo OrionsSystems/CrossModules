@@ -20,7 +20,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			base.OnWidgetSet(widget);
 
-			TagReviewVm.Value.ShowFragmentAndSlice = this.Widget.ShowFragmentAndSliceInfo;
+			TagReviewVm.Value.ShowFragmentAndSlice = this.Widget.ShowFragmentAndSlice;
+			TagReviewVm.Value.ExtractMode = this.Widget.ExtractMode;
 			TagReviewVm.Value.FabricService = this.Widget.FabricService;
 		}
 

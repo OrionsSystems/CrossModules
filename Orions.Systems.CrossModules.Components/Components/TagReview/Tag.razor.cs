@@ -39,14 +39,29 @@ namespace Orions.Systems.CrossModules.Components
       }
 
       [Parameter]
-      public string FabricService
+      public bool ExtractMode
       {
-         get => this.Vm.FabricService;
+         get
+         {
+            return this.Vm.ExtractMode;
+         }
 
          set
          {
             if (Vm != null)
-               Vm.FabricService = value;
+               Vm.ExtractMode = value;
+         }
+      }
+
+      [Parameter]
+      public string FabricService
+      {
+         get => this.Vm.FabricServiceId;
+
+         set
+         {
+            if (Vm != null)
+               Vm.FabricServiceId = value;
          }
       }
 

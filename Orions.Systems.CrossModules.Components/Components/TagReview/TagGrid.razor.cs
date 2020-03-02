@@ -26,6 +26,9 @@ namespace Orions.Systems.CrossModules.Components
       public bool ShowFragmentAndSlice { get; set; } = true;
 
       [Parameter]
+      public bool ExtractMode { get; set; } = true;
+
+      [Parameter]
       public string FabricService { get; set; } = "";
 
       public TagGridBase()

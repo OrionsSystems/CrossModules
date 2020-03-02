@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Orions.Infrastructure.HyperSemantic;
+using System.Drawing.Imaging;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -68,7 +69,9 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowFragmentAndSlice { get; set; }
 
-      public string FabricService { get; set; }
+      public bool ExtractMode { get; set; }
+
+      public string FabricServiceId { get; set; }
 
       public HyperTagVm()
       {
@@ -145,6 +148,56 @@ namespace Orions.Systems.CrossModules.Components
          IsExpanded = false;
       }
 
+      static Pen g_pen = new Pen(Brushes.White, 2);
+
+      protected byte[] RenderTag(HyperTag tag, byte[] imageData)
+      {
+         if (imageData == null || imageData.Length == 0)
+            return imageData;
+
+         using (var bitmapStream = new MemoryStream(imageData))
+         {
+            using (Bitmap bitmap = new Bitmap(bitmapStream))
+            {
+               using (var g = Graphics.FromImage(bitmap))
+               {
+                  foreach (var component in tag.GetElements<HyperTagGeometry>())
+                  {
+                     var rect = component.GeometryItem.BoundingBox;
+                     if (component.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
+                        rect = component.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(rect, bitmap.Width, bitmap.Height);
+
+                     //DrawLabel(g, tag, rect);
+
+                     var geometry = tag.GetElement<HyperTagGeometry>();
+                     if (geometry.GeometryItem.Shape is UniPolygon2f polygonX)
+                     {
+                        UniPolygon2f polygon = polygonX;
+                        if (geometry.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
+                        {
+                           polygon = geometry.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(polygonX, bitmap.Width, bitmap.Height);
+                           g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
+
+                        }
+
+                        g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
+                     }
+                     else
+                     {
+                        g.DrawRectangle(g_pen, new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+                     }
+                  }
+               }
+
+               using (var writeStream = new MemoryStream())
+               {
+                  bitmap.Save(writeStream, ImageFormat.Jpeg);
+                  return writeStream.ToArray();
+               }
+            }
+         }
+      }
+
       private async Task<byte[]> LoadImage(HyperTag tag)
       {
          var ids = this.HyperTagId;
@@ -155,13 +208,23 @@ namespace Orions.Systems.CrossModules.Components
             AssetId = ids.HyperId.AssetId.Value,
             FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
             SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-            GeometryItem = geometry?.GeometryItem,
-            FabricService = this.FabricService,
+            GeometryItem = ExtractMode ? geometry?.GeometryItem : null,
+            FabricServiceId = this.FabricServiceId,
          };
 
-         var sliceResult = await _store.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);
+         var sliceResult = await _store.ExecuteAsync(args2);
 
-         return sliceResult[0].Image.Data;
+         if (sliceResult == null || sliceResult.Length == 0 || sliceResult[0].Image?.Data == null)
+            return null;
+
+         byte[] imageData = sliceResult[0].Image.Data;
+         if (ExtractMode == false)
+         {
+            imageData = RenderTag(tag, imageData);
+         }
+
+
+         return imageData;
       }
    }
 }
