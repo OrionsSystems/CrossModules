@@ -144,7 +144,7 @@ namespace Orions.Systems.CrossModules.Components
       {
          IsExpanded = false;
       }
-
+            
       private async Task<byte[]> LoadImage(HyperTag tag)
       {
          var ids = this.HyperTagId;
@@ -156,7 +156,7 @@ namespace Orions.Systems.CrossModules.Components
             FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
             SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
             GeometryItem = geometry?.GeometryItem,
-            FabricService = this.FabricService,
+            FabricServiceId = this.FabricService,
          };
 
          var sliceResult = await _store.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);

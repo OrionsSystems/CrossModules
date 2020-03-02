@@ -19,9 +19,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
 	public class SVGMapEditorVm : BlazorVm
 	{
+		#region Private fields
 		private Helpers.MasksHeatmapRenderer.RenderingMode _heatmapRendererMode => HeatmapRenderingModeToRenderersModes(HeatmapMode);
 
 		private Helpers.MasksHeatmapRenderer _heatmapRenderer;
+
+		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
+
+		private string _componentContainerId;
+		
+		private string[] _filterLabels;
+		#endregion // Private fields
 
 		#region Properties
 		public IHyperArgsSink HyperArgsSink { get; set; }
@@ -42,7 +50,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public int TagRequestMaxCountLimit { get { return _tagRequestMaxCountLimit; } set { if (value > 0) _tagRequestMaxCountLimit = value; } }
 
 		public ViewModelProperty<bool> ShowingControlPropertyGrid { get; set; } = false;
-		public OverlayEntry CurrentPropertyGridObject { get; set; }
+		public ViewModelProperty<OverlayEntry> CurrentPropertyGridObject { get; set; }
 		public ViewModelProperty<bool> ShowingHyperTagInfo { get; set; } = false;
 		public ViewModelProperty<HyperTag> CurrentTagBeingShown { get; set; } = new ViewModelProperty<HyperTag>();
 		public double HyperTagInfoXPos { get; set; }
@@ -123,11 +131,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public Toast.Toast Toaster { get; set; }
 		#endregion // Properties
-
-		private List<ZoneDataSet> ZoneDataSets = new List<ZoneDataSet>();
-
-		private string _componentContainerId;
-		private string[] _filterLabels;
 
 		public SVGMapEditorVm()
 		{

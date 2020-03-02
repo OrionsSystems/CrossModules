@@ -113,7 +113,7 @@
 
 	}
 
-	@if (Vm.ShowingControlPropertyGrid)
+	@if (Vm.ShowingControlPropertyGrid.Value)
 	{
 		<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
 			<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -156,13 +156,10 @@
 
 	@if (Vm.ShowingHyperTagInfo.Value)
 	{
-		@*<div style="top:@(this.Vm.HyperTagInfoYPos)px;left:@(this.Vm.HyperTagInfoXPos)px" class="tag-info-popup bg-secondary" () =>this.Vm.ShowingHyperTagInfo.Value = false>*@
-
-
 		<div style="z-index:1;top:@(this.Vm.HyperTagInfoYPos)px;left:@(this.Vm.HyperTagInfoXPos)px" class="tag-info-popup bg-secondary">
 			<div class="relative-container tag-info-popup-container">
 				<div class="controls-container">
-					<a class="btn btn-sm btn-outline-dark props-btn" title="Properties" @onclick="(e => Vm.OpenTagProperties())">P</a>
+					<a class="btn btn-sm btn-outline-dark props-btn" title="Properties" @onclick="async () => Vm.OpenTagProperties()">P</a>
 					<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.CloseHyperTagInfoPopup())">X</a>
 				</div>
 				<img src="@Vm.TagInfoImageBase64Url" />
@@ -198,17 +195,13 @@
 </Toast>
 
 @code{
-	public void TagInfoMouseOut(MouseEventArgs e)
-	{
-		this.Vm.ShowingHyperTagInfo.Value = false;
-	}
 	public async Task<object> OverlayEntryPropertyGridLoader()
 	{
-		return Vm.CurrentPropertyGridObject;
+		return Vm.CurrentPropertyGridObject.Value;
 	}
 	public async Task<object> TagPropertyGridLoader()
 	{
-		return Vm.CurrentTagBeingShown;
+		return Vm.CurrentTagBeingShown.Value;
 	}
 }
 
