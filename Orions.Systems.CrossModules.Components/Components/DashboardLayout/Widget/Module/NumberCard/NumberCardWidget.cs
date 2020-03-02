@@ -2,7 +2,7 @@
 
 namespace Orions.Systems.CrossModules.Components
 {
-   public class NumberCardWidget : ReportChartWidget
+   public class NumberCardWidget : ActiveFilterReportChartWidget
    {
       public SeparatorConfiguration SepratorsSettings { get; set; } = new SeparatorConfiguration() { Height = 1 };
 

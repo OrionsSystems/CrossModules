@@ -1,6 +1,6 @@
 ﻿namespace Orions.Systems.CrossModules.Components
 {
-   public class TransportationCardWidget : ReportChartWidget
+   public class TransportationCardWidget : ActiveFilterReportChartWidget
    {
       public string Color { get; set; } = "#c8c2c2";
 
