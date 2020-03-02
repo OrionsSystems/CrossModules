@@ -16,6 +16,9 @@ namespace Orions.Systems.CrossModules.Components
 {
    public class HyperTagVm : BlazorVm
    {
+      static object g_penSyncRoot = new object();
+      static Pen g_pen = new Pen(Brushes.White, 2);
+
       private IHyperArgsSink _store;
       private HyperTag _hyperTag;
       private int _dashApiPort;
@@ -148,8 +151,6 @@ namespace Orions.Systems.CrossModules.Components
          IsExpanded = false;
       }
 
-      static Pen g_pen = new Pen(Brushes.White, 2);
-
       protected byte[] RenderTag(HyperTag tag, byte[] imageData)
       {
          if (imageData == null || imageData.Length == 0)
@@ -169,22 +170,25 @@ namespace Orions.Systems.CrossModules.Components
 
                      //DrawLabel(g, tag, rect);
 
-                     var geometry = tag.GetElement<HyperTagGeometry>();
-                     if (geometry.GeometryItem.Shape is UniPolygon2f polygonX)
+                     lock (g_penSyncRoot) // Pen is not thread safe
                      {
-                        UniPolygon2f polygon = polygonX;
-                        if (geometry.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
+                        var geometry = tag.GetElement<HyperTagGeometry>();
+                        if (geometry.GeometryItem.Shape is UniPolygon2f polygonX)
                         {
-                           polygon = geometry.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(polygonX, bitmap.Width, bitmap.Height);
+                           UniPolygon2f polygon = polygonX;
+                           if (geometry.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
+                           {
+                              polygon = geometry.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(polygonX, bitmap.Width, bitmap.Height);
+                              g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
+
+                           }
+
                            g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
-
                         }
-
-                        g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
-                     }
-                     else
-                     {
-                        g.DrawRectangle(g_pen, new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+                        else
+                        {
+                           g.DrawRectangle(g_pen, new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+                        }
                      }
                   }
                }

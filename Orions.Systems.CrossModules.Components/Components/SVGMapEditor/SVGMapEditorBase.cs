@@ -81,7 +81,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		[JSInvokable]
 		public async Task CloseHyperTagInfoPopup()
 		{
-			this.Vm.ShowingHyperTagInfo.Value = false;
+			if(this.Vm.ShowingHyperTagProperties.Value != true)
+			{
+				this.Vm.ShowingHyperTagInfo.Value = false;
+			}
 		}
 
 		[JSInvokable]
