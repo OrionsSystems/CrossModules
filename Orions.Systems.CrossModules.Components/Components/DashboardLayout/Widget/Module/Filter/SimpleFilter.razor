@@ -54,9 +54,9 @@
 			@if (Vm.Widget.ShowPeriodSelection)
 			{
 				<div class="button-group-section button-group-container">
-					<div id="button-group-control">
+					<div class="button-group-control">
 						<div class="row">
-							
+
 							<Syncfusion.EJ2.Blazor.Buttons.EjsButton Content="Cview"
 																				  CssClass="e-small"
 																				  OnClick="@(_ => @Vm.OnChangeView())" />
@@ -90,12 +90,12 @@
 				</EjsProgressButton>
 
 				@*<EjsProgressButton @ref="ClearAllButton"
-									 Duration="9999999"
-									 OnClick="@OnClearAll"
-									 Content="Clear All"
-									 CssClass="simple-filter-btn-item">
-				<ProgressButtonEvents></ProgressButtonEvents>
-			</EjsProgressButton>*@
+											 Duration="9999999"
+											 OnClick="@OnClearAll"
+											 Content="Clear All"
+											 CssClass="simple-filter-btn-item">
+						<ProgressButtonEvents></ProgressButtonEvents>
+					</EjsProgressButton>*@
 
 			</div>
 		</div>
@@ -165,9 +165,15 @@
 		margin: 10px;
 	}
 
+	.button-group-control .row {
+		 width: 100%;
+		 text-align: right;
+		 display: inline-block;
+	}
+
 	.simple-filter-container .simple-filter-btn-container {
 		display: block;
-		padding: 7px;
+		padding: 7px 14px 7px 7px;
 		float: right;
 	}
 
