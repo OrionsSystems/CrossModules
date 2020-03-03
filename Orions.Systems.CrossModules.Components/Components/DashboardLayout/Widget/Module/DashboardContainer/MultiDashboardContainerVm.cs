@@ -28,13 +28,15 @@ namespace Orions.Systems.CrossModules.Components
 
 			var context = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
 
-			//this.Widget.ChangeCurrentDashboard(context.View);
+			bool dashboardChanged = this.Widget.ChangeCurrentDashboard(context.View);
 
-			//if (CurrentDashboardData.Id = 
 			CurrentDashboardData = await GetDashboardAsync();
-			
+
 			if (ChildDashboardVm != null)
+			{
+				ChildDashboardVm.ClearWidgets(); // Drop all the widgets from the old dashboard.
 				await ChildDashboardVm.FromParent_HandleFiltersChangedAsync(this.DashboardVm.FilterGroups);
+			}
 
 			this.RaiseNotify(nameof(CurrentDashboardData));
 		}
