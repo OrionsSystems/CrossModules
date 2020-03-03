@@ -1,0 +1,48 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<MultiDashboardContainerVm, MultiDashboardContainerWidget>
+
+	<div class="@Widget.Class">
+		@if (Vm.CurrentDashboardData != null)
+		{
+			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+			<DashboardLayout HyperStore="@HyperStore"
+									Data="@Vm.CurrentDashboardData"
+									ParrentDashboardId="@Widget.CurrentDashboard?.Id"
+									EnableBetweenBox="true"
+									IsPreviewMode="true"
+									DisableModeOption="true"
+									HideModeOption="true"
+									IsHideTitle="true">
+			</DashboardLayout>
+
+			<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+		}
+		else
+		{
+			<div>---</div>
+			@*<Loader Settings="@Widget.LoaderSettings"></Loader>*@
+		}
+	</div>
+
+
+@code {
+
+	//public bool Showing { get; set; } = false;
+
+	protected override void OnStateHasChanged()
+	{
+		base.OnStateHasChanged();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		//Showing = true;
+		StateHasChanged();
+	}
+
+}
