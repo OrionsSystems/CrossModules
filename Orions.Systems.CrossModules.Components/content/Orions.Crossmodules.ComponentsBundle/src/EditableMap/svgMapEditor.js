@@ -68,8 +68,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         zoomScaleSensitivity: 0.4,
         controlIconsEnabled: true,
         onZoom: onZoomHandler,
-        dblClickZoomEnabled: false,
-        panEnabled: !isReadOnly
+        dblClickZoomEnabled: false
     })
 
     var draw = SVG(rootSelector + ' .svg-pan-zoom_viewport');
