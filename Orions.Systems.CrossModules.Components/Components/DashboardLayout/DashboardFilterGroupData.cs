@@ -94,6 +94,15 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+
+		string _view = "";
+
+		public string View 
+		{ 
+			get => _view; 
+			set => SetValue(ref _view, value); 
+		}
+
 		public DashboardFilterGroupData()
 		{
 		}
