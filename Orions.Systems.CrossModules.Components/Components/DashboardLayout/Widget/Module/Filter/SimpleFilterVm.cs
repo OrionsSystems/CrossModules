@@ -13,7 +13,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public PeriodDefinition[] AvailablePeriods { get; set; } = new PeriodDefinition[]
 			{
-				new PeriodDefinition() { Period = TimePeriods.Minute, PeriodsCount = 15 },
+				//new PeriodDefinition() { Period = TimePeriods.Minute, PeriodsCount = 15 },
 				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 1 },
 				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 4 },
 				new PeriodDefinition() { Period = TimePeriods.Hour, PeriodsCount = 12 },
