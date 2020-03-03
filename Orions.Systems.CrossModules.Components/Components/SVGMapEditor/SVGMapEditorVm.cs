@@ -138,6 +138,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<string> PlaybackCacheUpdateStatus { get; set; } = "";
 		#endregion // Properties
 
+		#region Events
+		public event ZoneSelectedEventHandler ZoneSelected;
+		public delegate void ZoneSelectedEventHandler(ZoneOverlayEntry zone);
+		#endregion
+
 		public SVGMapEditorVm()
 		{
 
@@ -426,7 +431,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (mapOverlayZonesWithHomographyAssigned.Any())
 			{
-				if (earliestDate > TagDateRangeFilter.MinDate)
+				if (earliestDate > TagDateRangeFilter.MinDate && TagDateRangeFilter.MinDate != default(DateTime))
 				{
 					earliestDate = TagDateRangeFilter.MinDate;
 				}
@@ -434,7 +439,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				{
 					latestDate = TagDateRangeFilter.MaxDate;
 				}
-				TagDateRangeFilter.InitRangeSlider(earliestDate.Value, latestDate.Value, this.TagDateRangeFilter.CurrentMinDate, this.TagDateRangeFilter.CurrentMaxDate);
+
+				TagDateRangeFilter.InitRangeSlider(
+					earliestDate.Value, 
+					latestDate.Value,
+					this.TagDateRangeFilter.CurrentMinDate != default(DateTime) ? this.TagDateRangeFilter.CurrentMinDate : earliestDate.Value,
+					this.TagDateRangeFilter.CurrentMaxDate != default(DateTime) ? this.TagDateRangeFilter.CurrentMaxDate : latestDate.Value);
 				this.RaiseNotify("TagDateRangeFilter");
 			}
 
@@ -973,6 +983,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public void SelectZone(ZoneOverlayEntryJsModel zone)
 		{
 			this.CurrentlySelectedZoneId = zone.Id;
+
+			var zoneOverlayEntry = this.MapOverlay.Value.Entries.SingleOrDefault(z => z.Id == zone.Id) as ZoneOverlayEntry;
+			this.ZoneSelected?.Invoke(zoneOverlayEntry);
 
 			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
 		}
