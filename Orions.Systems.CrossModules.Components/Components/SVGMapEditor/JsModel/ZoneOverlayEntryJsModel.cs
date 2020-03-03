@@ -15,6 +15,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 		public string MetadataSetId { get; set; }
 
 		public string FixedCameraEnhancementId { get; set; }
+		public string View { get; set; }
 
 		public override string EntryType => "zone";
 
@@ -25,7 +26,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 				Alias = zoneDomain.Alias,
 				FixedCameraEnhancementId = zoneDomain.FixedCameraEnhancementId.HasValue ? zoneDomain.FixedCameraEnhancementId.Value.Id : null,
 				Points = zoneDomain.Points,
-				MetadataSetId = zoneDomain.MetadataSetId.HasValue ? zoneDomain.MetadataSetId.Value.Id : null
+				MetadataSetId = zoneDomain.MetadataSetId.HasValue ? zoneDomain.MetadataSetId.Value.Id : null,
+				View = zoneDomain.View
 			};
 
 			BaseOverlayEntryJsModel.MapBasePropertiesFromDomainModel(zoneDomain, model);
@@ -44,6 +46,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 			domain.MetadataSetId = this.MetadataSetId != null ? HyperDocumentId.Create<HyperMetadataSet>(this.MetadataSetId) : (HyperDocumentId?)null;
 			domain.FixedCameraEnhancementId = this.FixedCameraEnhancementId != null ? HyperDocumentId.Create<FixedCameraEnhancedData>(this.FixedCameraEnhancementId) : (HyperDocumentId?)null;
 
+			domain.View = this.View;
 			return domain;
 		}
 	}
