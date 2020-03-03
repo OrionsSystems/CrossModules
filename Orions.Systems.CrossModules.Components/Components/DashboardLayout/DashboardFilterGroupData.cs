@@ -114,6 +114,8 @@ namespace Orions.Systems.CrossModules.Components
 			this.Period = null;
 			this.FilterTarget = null;
 			this.FilterLabels = null;
+
+			this.View = null;
 		}
 	}
 }
