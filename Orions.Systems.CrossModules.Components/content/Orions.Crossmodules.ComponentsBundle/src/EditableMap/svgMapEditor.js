@@ -67,7 +67,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
     let panZoomCtrl = svgPanZoom(svg, {
         zoomScaleSensitivity: 0.4,
         controlIconsEnabled: true,
-        onZoom: onZoomHandler
+        onZoom: onZoomHandler,
+        dblClickZoomEnabled: false
     })
 
     var draw = SVG(rootSelector + ' .svg-pan-zoom_viewport');
