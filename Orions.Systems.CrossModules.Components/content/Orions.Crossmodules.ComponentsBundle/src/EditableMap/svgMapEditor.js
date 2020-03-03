@@ -79,7 +79,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
     let globalClickEventHandler = () => {
         document.querySelector(rootSelector + " .heatmapBtn").setAttribute('disabled', 'disabled')
-        document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
+        //document.querySelector(rootSelector + " .realMasksMapBtn").setAttribute('disabled', 'disabled')
         componentReference.invokeMethodAsync("CloseHyperTagInfoPopup")
     }
 

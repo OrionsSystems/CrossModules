@@ -34,6 +34,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		#region Properties
 		public IHyperArgsSink HyperArgsSink { get; set; }
+		public string FabricServiceId { get; set; }
 		public IJSRuntime JsRuntime { get; set; }
 		public HyperDocumentId? MapOverlayId { get; set; }
 		public HyperDocumentId? MetadataSetId { get; set; }
@@ -815,7 +816,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				UseCustomNormalizationSettings = HeatmapCustomNormalization,
 				MinimumNumberOfOverlaps = HeatmapNormalizationMinOverlaps,
 				MaximumNumberOfOverlaps = HeatmapNormalizationMaxOverlaps,
-				RenderingMode = heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage
+				RenderingMode = heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage,
+				FabricServiceId = this.FabricServiceId
 			};
 			var helper = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, settings);
 			return helper;
@@ -842,7 +844,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				AssetId = ids.HyperId.AssetId.Value,
 				FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
 				SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-				GeometryItem = geometry?.GeometryItem
+				GeometryItem = geometry?.GeometryItem,
+				FabricServiceId = this.FabricServiceId
 			};
 
 			var sliceResult = await HyperArgsSink.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);

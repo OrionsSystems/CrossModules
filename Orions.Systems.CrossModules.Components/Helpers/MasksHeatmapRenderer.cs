@@ -75,6 +75,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			public int NumberOfBatchesToProcess { get; set; } = int.MaxValue;
 
 			public RenderingMode RenderingMode { get; set; } = RenderingMode.Masks;
+			public string FabricServiceId { get; internal set; }
 		}
 
 		public void CancelGeneration()
@@ -303,7 +304,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 						AssetId = tagsForSlice.Key.AssetId.Value,
 						TrackId = tagsForSlice.Key.TrackId.Value,
 						FragmentId = tagsForSlice.Key.FragmentId.Value,
-						SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value }
+						SliceIds = new HyperSliceId[] { tagsForSlice.Key.SliceId.Value },
+						FabricServiceId = this._settings.FabricServiceId
 					};
 
 					var result = await _hyperStore.ExecuteAsync(args) ?? new RetrieveFragmentFramesArgs.SliceResult[0];
@@ -539,7 +541,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				AssetId = hyperId.AssetId.Value,
 				FragmentId = hyperId.FragmentId.Value,
-				SliceIds = new HyperSliceId[] { hyperId.SliceId.Value }
+				SliceIds = new HyperSliceId[] { hyperId.SliceId.Value },
+				FabricServiceId = this._settings.FabricServiceId
 			};
 
 			var res = await _hyperStore.ExecuteAsyncThrows(args);
