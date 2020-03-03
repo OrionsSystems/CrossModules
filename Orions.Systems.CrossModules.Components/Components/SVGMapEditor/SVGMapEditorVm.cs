@@ -249,8 +249,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this._componentContainerId = componentContainerId;
 				this._componentJsReference = thisReference;
 
-				await Task.Delay(5000);
-
 				if (MapOverlayId != null)
 				{
 					var retrieveArgs = new RetrieveHyperDocumentArgs(MapOverlayId.Value);
@@ -999,7 +997,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.CurrentlySelectedZoneId = zone.Id;
 
 			var zoneOverlayEntry = this.MapOverlay.Value.Entries.SingleOrDefault(z => z.Id == zone.Id) as ZoneOverlayEntry;
-			this.ZoneSelected?.Invoke(zoneOverlayEntry);
+			if (this.IsReadOnly)
+			{
+				this.ZoneSelected?.Invoke(zoneOverlayEntry);
+			}
 
 			RaiseNotify(nameof(HeatmapAvailableForSelectedZone));
 		}

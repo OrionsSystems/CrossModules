@@ -534,10 +534,15 @@ export class Zone extends BaseControl {
 
         // init text name control
         function initNameControl() {
-            let getNameLabelFontSize = () => {
+            let getNameLabelFontSizeFloat = () => {
                 var height = self.polygon.height();
 
                 var fontSize = height / 8
+
+                return fontSize;
+            }
+            let getNameLabelFontSize = () => {
+                let fontSize = getNameLabelFontSizeFloat()
 
                 return `${fontSize}px`;
             }
@@ -549,7 +554,7 @@ export class Zone extends BaseControl {
             var htmlInput = document.createElement('input');
             htmlInput.setAttribute('type', 'text')
             htmlInput.setAttribute('value', zoneName)
-            nameLabel.center(nameDrawPoint.x, nameDrawPoint.y);
+            nameLabel.attr({ x: nameDrawPoint.x - nameLabel.node.textLength.baseVal.value / 2, y: nameDrawPoint.y - getNameLabelFontSizeFloat() / 2 });
             let nameInput = self.svgNode.foreignObject(nameLabel.bbox().width, nameLabel.bbox().height).move(nameDrawPoint.x, nameDrawPoint.y)
             nameInput.node.style.fontSize = getNameLabelFontSize();
             nameInput.node.style.visibility = 'collapse';
@@ -581,7 +586,7 @@ export class Zone extends BaseControl {
 
             self.polygon.on('resize', function (ev) {
                 let nameDrawPoint = { x: self.polygon.cx(), y: self.polygon.cy() };
-                nameLabel.center(nameDrawPoint.x, nameDrawPoint.y);
+                nameLabel.attr({ x: nameDrawPoint.x - nameLabel.node.textLength.baseVal.value / 2, y: nameDrawPoint.y - getNameLabelFontSizeFloat() / 2 });
                 nameLabel.node.style.fontSize = getNameLabelFontSize();
             })
         }
