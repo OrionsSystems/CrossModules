@@ -35,6 +35,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.HeatmapNormalizationMinOverlaps = this.Widget.HeatmapNormalizationMinOverlaps;
 			vm.HeatmapNormalizationMaxOverlaps = this.Widget.HeatmapNormalizationMaxOverlaps;
 
+			vm.ZoneSelected += Vm_ZoneSelected;
+
 			if (this.Widget.MapPlaybackOptions != null)
 				vm.PlaybackOptions = this.Widget.MapPlaybackOptions;
 
@@ -65,6 +67,11 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			};
 
 			return Task.CompletedTask;
+		}
+
+		private void Vm_ZoneSelected(ZoneOverlayEntry zone)
+		{
+			System.Diagnostics.Debug.WriteLine($"Svg map zone selected {zone.Alias}");
 		}
 
 		public override async Task HandleFiltersChangedAsync()

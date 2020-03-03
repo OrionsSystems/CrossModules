@@ -64,6 +64,12 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			this.Store = store;
 
+			if(metadataSetId == null)
+			{
+				MetadataSetLoadFailed.Value = true;
+				return;
+			}
+
 			MetadataSetId = new HyperDocumentId(metadataSetId, typeof(HyperMetadataSet));
 
 			var metadataSetFilter = await store.ExecuteAsync(new RetrieveHyperDocumentArgs(MetadataSetId));
