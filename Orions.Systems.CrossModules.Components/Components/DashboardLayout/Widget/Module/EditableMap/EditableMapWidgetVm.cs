@@ -71,12 +71,21 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		private void Vm_ZoneSelected(ZoneOverlayEntry zone)
 		{
-			System.Diagnostics.Debug.WriteLine($"Svg map zone selected {zone.Alias}");
+			//System.Diagnostics.Debug.WriteLine($"Svg map zone selected {zone.Alias}");
+
+			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+			if (filter == null)
+				return;
+
+			filter.View = zone.View;
+			var t = this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 
 		public override async Task HandleFiltersChangedAsync()
 		{
 			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+			if (filter == null)
+				return;
 
 			var startDate = filter.StartTime;
 			var endDate = filter.EndTime;
