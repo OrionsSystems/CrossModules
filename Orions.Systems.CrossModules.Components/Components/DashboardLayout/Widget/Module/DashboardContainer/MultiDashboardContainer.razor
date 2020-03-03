@@ -39,7 +39,7 @@
 	{
 		base.OnStateHasChanged();
 
-		Vm.ChildDashboardVm = DashboardLayout.Vm;
+		Vm.ChildDashboardVm = DashboardLayout?.Vm;
 	}
 
 	protected override async Task OnInitializedAsync()
