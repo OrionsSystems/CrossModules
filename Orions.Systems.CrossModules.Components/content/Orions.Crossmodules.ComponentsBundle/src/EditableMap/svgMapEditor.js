@@ -264,6 +264,7 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
                     alias: z.overlayEntry.alias,
                     fixedCameraEnhancementId: z.overlayEntry.fixedCameraEnhancementId == null ? null : z.overlayEntry.fixedCameraEnhancementId,
                     metadataSetId: z.overlayEntry.metadataSetId == null ? null : z.overlayEntry.metadataSetId,
+                    view: z.overlayEntry.view
                 }
             }),
             circles: circles.filter(c => c.persist).map(c => {
