@@ -56,6 +56,11 @@
 				<div class="button-group-section button-group-container">
 					<div id="button-group-control">
 						<div class="row">
+							
+							<Syncfusion.EJ2.Blazor.Buttons.EjsButton Content="CHANGE VIEW"
+																				  CssClass="e-small"
+																				  OnClick="@(_ => @Vm.OnChangeView())" />
+
 							@foreach (var periodDefinition in Vm.AvailablePeriods)
 							{
 								<Syncfusion.EJ2.Blazor.Buttons.EjsButton Content="@periodDefinition.ToString()"

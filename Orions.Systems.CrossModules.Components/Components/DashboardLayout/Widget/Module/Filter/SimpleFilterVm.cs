@@ -110,6 +110,18 @@ namespace Orions.Systems.CrossModules.Components
 			if (e.PropertyName == nameof(DashboardFilterGroupData.EndTime))
 				this.RaiseNotify(nameof(EndDate));
 		}
+		
+		public void OnChangeView()
+		{
+			var filterGroup = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+			if (filterGroup == null)
+				return;
+
+			if (filterGroup.View == "test")
+				filterGroup.View = "test2";
+			else
+				filterGroup.View = "test";
+		}
 
 		public void OnPeriodClick(PeriodDefinition period)
 		{
