@@ -120,6 +120,20 @@
 												</EjsTooltip>
 											</a>
 										}
+
+										@if (Vm.HasNextColumn(row, column))
+										{
+											<a class="btn dashboard-element-commands-next" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
+												<EjsTooltip Content="@("Increase column size into right")">
+													<IconArrowRight></IconArrowRight>
+												</EjsTooltip>
+											</a>
+										}
+										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+											<EjsTooltip Content="@("Delete column")">
+												<IconClose></IconClose>
+											</EjsTooltip>
+										</a>
 										@if (column.Size > 1)
 										{
 											<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
@@ -136,20 +150,9 @@
 												</EjsTooltip>
 											</a>
 										}
-										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
-											<EjsTooltip Content="@("Delete column")">
-												<IconClose></IconClose>
-											</EjsTooltip>
-										</a>
 
-										@if (Vm.HasNextColumn(row, column))
-										{
-											<a class="btn dashboard-element-commands-next" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-												<EjsTooltip Content="@("Increase column size into right")">
-													<IconArrowRight></IconArrowRight>
-												</EjsTooltip>
-											</a>
-										}
+
+
 
 									</div>
 									}

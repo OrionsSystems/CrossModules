@@ -719,6 +719,7 @@ h5.modal-title {
 	/*width: 70%;*/
 	flex: 0 0 75%;
 	max-width: 75%;
+	padding-left: 10px;
 }
 
 .progress-line .stat-value {
