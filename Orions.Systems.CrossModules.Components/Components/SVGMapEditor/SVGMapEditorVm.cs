@@ -34,6 +34,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		#region Properties
 		public IHyperArgsSink HyperArgsSink { get; set; }
+		public string FabricServiceId { get; set; }
 		public IJSRuntime JsRuntime { get; set; }
 		public HyperDocumentId? MapOverlayId { get; set; }
 		public HyperDocumentId? MetadataSetId { get; set; }
@@ -137,6 +138,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public Toast.Toast Toaster { get; set; }
 		public ViewModelProperty<double> PlaybackCacheUpdateProgress { get; set; } = 0;
 		public ViewModelProperty<string> PlaybackCacheUpdateStatus { get; set; } = "";
+
+		public ViewModelProperty<bool> MapOverlayBeingSaved { get; set; } = new ViewModelProperty<bool>(false);
 		#endregion // Properties
 
 		#region Events
@@ -295,16 +298,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
 			foreach (var zone in overlayJsModel.Zones)
 			{
-				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
-				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
-				if (!IsReadOnly)
-				{
-					zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
-				}
+				AddZoneEventHandlerMappings(zone);
 			}
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });
@@ -323,6 +317,22 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 
 			await ShowTags();
+		}
+
+		private void AddZoneEventHandlerMappings(ZoneOverlayEntryJsModel zone)
+		{
+			zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
+			zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
+			zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneNameChanged", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
+			zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
+			zone.EventHandlerMappings.Add("controlDeleted", "DeleteZone");
+			if (!IsReadOnly)
+			{
+				zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
+			}
 		}
 
 		public async Task RemoveTagCirclesForZone(string zoneId)
@@ -723,22 +733,37 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.addCameraTool", new object[] { this._componentContainerId });
 		}
 
-		public async Task GetAndSaveMapOverlay()
+		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
 		{
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.saveMapOverlay", new object[] { this._componentContainerId });
+			var zoneDomainModel = zone.ToDomainModel();
+			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
+
+			var jsModel = ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
+			AddZoneEventHandlerMappings(jsModel);
+
+			return jsModel;
 		}
 
 		public async Task UpdateZone(ZoneOverlayEntryJsModel zoneModel)
 		{
-			var zone = ZoneDataSets.SingleOrDefault(z => z.Zone.Id == zoneModel.Id)?.Zone;
+			var zone = this.MapOverlay.Value.Entries.SingleOrDefault(z => z.Id == zoneModel.Id) as ZoneOverlayEntry;
+			zone.Points = zoneModel.Points;
+			zone.Name = zoneModel.Name;
+
+			var zoneDataSet = ZoneDataSets.SingleOrDefault(z => z.Zone.Id == zoneModel.Id);
 
 			// if there is data (tags) loaded for the zone
-			if (zone != null)
+			if (zoneDataSet != null)
 			{
-				zone.Points = zoneModel.Points;
-
-				await UpdateSvgMapZone(zone);
+				await UpdateSvgMapZone(zoneDataSet.Zone);
 			}
+		}
+
+		public async Task DeleteZone(ZoneOverlayEntryJsModel zone)
+		{
+			var zoneToDelete = this.MapOverlay.Value.Entries.SingleOrDefault(z => z.Id == zone.Id);
+
+			this.MapOverlay.Value.Entries.Remove(zoneToDelete);
 		}
 
 		private async Task<List<ZoneDataSet>> GetZoneDataSetsForDateRange(DateTime from, DateTime to, bool populateWithHeatmaps = false)
@@ -809,18 +834,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				UseCustomNormalizationSettings = HeatmapCustomNormalization,
 				MinimumNumberOfOverlaps = HeatmapNormalizationMinOverlaps,
 				MaximumNumberOfOverlaps = HeatmapNormalizationMaxOverlaps,
-				RenderingMode = heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage
+				RenderingMode = heatmapMode ? _heatmapRendererMode : Helpers.MasksHeatmapRenderer.RenderingMode.RealImage,
+				FabricServiceId = this.FabricServiceId
 			};
 			var helper = new Helpers.MasksHeatmapRenderer(HyperArgsSink, null, settings);
 			return helper;
-		}
-
-		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
-		{
-			var zoneDomainModel = zone.ToDomainModel();
-			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
-
-			return ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
 		}
 
 		private async Task<byte[]> LoadTagImage(HyperTag tag)
@@ -833,7 +851,8 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				AssetId = ids.HyperId.AssetId.Value,
 				FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
 				SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-				GeometryItem = geometry?.GeometryItem
+				GeometryItem = geometry?.GeometryItem,
+				FabricServiceId = this.FabricServiceId
 			};
 
 			var sliceResult = await HyperArgsSink.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);
@@ -986,14 +1005,16 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			return new UniPoint2f(resultPoint.X, resultPoint.Y);
 		}
 
-		public async Task SaveMapOverlay(MapOverlay overlay)
+		public async Task SaveMapOverlay()
 		{
-			this.MapOverlay.Value = overlay;
+			this.MapOverlayBeingSaved.Value = true;
 
 			// Save Hyper doc
 			var doc = new HyperDocument(MapOverlay.Value);
 			var storeDocArgs = new StoreHyperDocumentArgs(doc);
 			await this.HyperArgsSink.ExecuteAsync(storeDocArgs);
+
+			this.MapOverlayBeingSaved.Value = false;
 		}
 
 		public void SelectZone(ZoneOverlayEntryJsModel zone)

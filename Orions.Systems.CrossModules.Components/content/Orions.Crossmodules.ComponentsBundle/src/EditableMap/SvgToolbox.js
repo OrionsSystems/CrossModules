@@ -174,6 +174,7 @@ class BaseControl {
         this.resizeControls.forEach(c => c.control.remove())
 
         this.onRemoveEventHandlers.forEach(h => h(self))
+        this.controlGroup.fire('controlDeleted')
     }
 
     onRemove(callback) {
@@ -574,7 +575,7 @@ export class Zone extends BaseControl {
                 self.isEditingName.set(true);
                 nameLabel.node.style.visibility = 'collapse';
                 nameInput.node.style.visibility = 'visible';
-                htmlInput.style.background ='none';
+                htmlInput.style.background = 'none';
                 htmlInput.focus()
             })
             self.isEditingName.onChange((oldValue, newValue) => {
@@ -583,8 +584,10 @@ export class Zone extends BaseControl {
                     nameInput.node.style.visibility = 'collapse';
                 }
             })
-
-            
+            self.name.onChange((oldValue, newValue) => {
+                self.overlayEntry.name = newValue
+                self.controlGroup.fire('zoneNameChanged');
+            })
 
             self.controlGroup.add(nameInput);
             self.controlGroup.add(nameLabel)

@@ -18,6 +18,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 
 		public bool IsReadOnly { get; set; } = false;
 		public int TagRequestMaxCountLimit { get; set; } = 200;
+		public string FabricServiceId { get; set; } = "";
 
 		public TagDateRangeFilterOptions TagDateRangeFilter { get; set; }
 

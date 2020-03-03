@@ -51,13 +51,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		[JSInvokable]
-		public async Task SaveMapOverlay(JsModel.MapOverlayJsModel overlay)
-		{
-			var mapOverlay = overlay.ToDomainModel();
-			await this.Vm.SaveMapOverlay(mapOverlay);
-		}
-
-		[JSInvokable]
 		public async Task<JsModel.ZoneOverlayEntryJsModel> AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
 		{
 			zone = Vm.AddNewZoneToVm(zone);
@@ -96,6 +89,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			{
 				this.Vm.ShowingHyperTagInfo.Value = false;
 			}
+		}
+
+		[JSInvokable]
+		public async Task DeleteZone(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
+		{
+			await this.Vm.DeleteZone(zone);
 		}
 
 		[JSInvokable]
