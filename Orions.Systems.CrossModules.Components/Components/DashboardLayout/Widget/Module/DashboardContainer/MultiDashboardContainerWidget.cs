@@ -30,11 +30,11 @@ namespace Orions.Systems.CrossModules.Components
 			this.Label = "Multi Dashboard container";
 		}
 
-		public void ChangeCurrentDashboard(string view)
-		{
-			this.CurrentDashboard = Items.FirstOrDefault(it => it.View == view)?.Dashboard;
-			//this.RaiseNotify(nameof(CurrentDashboard));
-		}
+		//public void ChangeCurrentDashboard(string view)
+		//{
+		//	this.CurrentDashboard = Items.FirstOrDefault(it => it.View == view)?.Dashboard;
+		//	//this.RaiseNotify(nameof(CurrentDashboard));
+		//}
 
 		public override string GetIcon()
 		{
