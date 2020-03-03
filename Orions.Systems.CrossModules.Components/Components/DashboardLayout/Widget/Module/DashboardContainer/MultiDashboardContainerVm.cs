@@ -14,6 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public DashboardData CurrentDashboardData { get; private set; }
 
+		public DashboardVm ChildDashboardVm { get; set; }
 
 		public MultiDashboardContainerVm()
 		{
@@ -28,6 +29,9 @@ namespace Orions.Systems.CrossModules.Components
 			this.Widget.ChangeCurrentDashboard(context.View);
 
 			CurrentDashboardData = await GetDashboardAsync();
+			
+			if (ChildDashboardVm != null)
+				await ChildDashboardVm.FromParent_HandleFiltersChangedAsync(this.DashboardVm.FilterGroups);
 
 			this.RaiseNotify(nameof(CurrentDashboardData));
 		}

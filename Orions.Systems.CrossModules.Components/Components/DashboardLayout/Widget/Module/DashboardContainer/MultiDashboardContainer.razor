@@ -8,7 +8,8 @@
 			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-			<DashboardLayout HyperStore="@HyperStore"
+			<DashboardLayout ref="@DashboardLayout"
+								  HyperStore="@HyperStore"
 									Data="@Vm.CurrentDashboardData"
 									ParrentDashboardId="@Widget.CurrentDashboard?.Id"
 									EnableBetweenBox="true"
@@ -32,9 +33,13 @@
 
 	//public bool Showing { get; set; } = false;
 
+	DashboardLayout DashboardLayout { get; set; }
+
 	protected override void OnStateHasChanged()
 	{
 		base.OnStateHasChanged();
+
+		Vm.ChildDashboardVm = DashboardLayout.Vm;
 	}
 
 	protected override async Task OnInitializedAsync()
