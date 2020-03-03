@@ -39,6 +39,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			await this.Vm.Initialize(ComponentContainerId, thisReference);
 		}
 
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			if (Vm.IsMapOverlayInitialized && Vm.MapInitialized == false)
+			{
+				Vm.MapInitialized = true;
+				await this.Vm.InitializeMapJs();
+			}
+
+			await base.OnAfterRenderAsync(firstRender);
+		}
+
 		[JSInvokable]
 		public async Task SaveMapOverlay(JsModel.MapOverlayJsModel overlay)
 		{

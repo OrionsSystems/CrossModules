@@ -29,6 +29,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		private string _componentContainerId;
 		
 		private string[] _filterLabels;
+		private DotNetObjectReference<SVGMapEditorBase> _componentJsReference;
 		#endregion // Private fields
 
 		#region Properties
@@ -143,6 +144,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public delegate void ZoneSelectedEventHandler(ZoneOverlayEntry zone);
 		#endregion
 
+		public ViewModelProperty<bool> IsMapOverlayInitialized = new ViewModelProperty<bool>(false);
+		public bool MapInitialized { get; set; } = false;
+
 		public SVGMapEditorVm()
 		{
 
@@ -241,7 +245,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		{
 			try
 			{
+				this.IsMapOverlayInitialized.Value = false;
 				this._componentContainerId = componentContainerId;
+				this._componentJsReference = thisReference;
+
+				await Task.Delay(5000);
+
 				if (MapOverlayId != null)
 				{
 					var retrieveArgs = new RetrieveHyperDocumentArgs(MapOverlayId.Value);
@@ -266,47 +275,52 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					}
 				}
 
-				var editorConfig = new SvgEditorConfig
-				{
-					CameraColor = this.DefaultCameraColor,
-					ZoneColor = this.DefaultZoneColor,
-					CircleColor = this.DefaultCircleColor,
-					IsReadOnly = this.IsReadOnly
-				};
-
-				var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
-				foreach (var zone in overlayJsModel.Zones)
-				{
-					zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
-					zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
-					zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
-					zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
-					zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
-					zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
-				}
-
-				await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { componentContainerId, thisReference, overlayJsModel, editorConfig });
-
-				this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
-				if (this.HomographiesDetected)
-				{
-					if (this.TagDateFilterPreInitialized)
-					{
-						InitializeTagFilter();
-					}
-					else
-					{
-						await InitializeTagFilter();
-					}
-				}
-
-				await ShowTags();
-
+				IsMapOverlayInitialized.Value = true;
+				RaiseNotify(nameof(IsMapOverlayInitialized));
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.Assert(false, ex.Message);
 			}
+		}
+
+		public async Task InitializeMapJs()
+		{
+			var editorConfig = new SvgEditorConfig
+			{
+				CameraColor = this.DefaultCameraColor,
+				ZoneColor = this.DefaultZoneColor,
+				CircleColor = this.DefaultCircleColor,
+				IsReadOnly = this.IsReadOnly
+			};
+
+			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
+			foreach (var zone in overlayJsModel.Zones)
+			{
+				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
+				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
+				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
+				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
+				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
+			}
+
+			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });
+
+			this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
+			if (this.HomographiesDetected)
+			{
+				if (this.TagDateFilterPreInitialized)
+				{
+					InitializeTagFilter();
+				}
+				else
+				{
+					await InitializeTagFilter();
+				}
+			}
+
+			await ShowTags();
 		}
 
 		public async Task RemoveTagCirclesForZone(string zoneId)
