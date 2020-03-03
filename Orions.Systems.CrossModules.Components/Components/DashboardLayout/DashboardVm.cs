@@ -99,6 +99,14 @@ namespace Orions.Systems.CrossModules.Components
 			LoadAvailableWidget();
 		}
 
+		public void ClearWidgets()
+		{
+			lock (_syncRoot)
+			{
+				_widgetsVms.Clear();
+			}
+		}
+
 		/// <summary>
 		/// When running as part of another dashboard, synchronize to its filtering system.
 		/// </summary>
