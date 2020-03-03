@@ -301,6 +301,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
 				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
 				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
+				if (!IsReadOnly)
+				{
+					zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
+				}
 			}
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });

@@ -66,9 +66,9 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		[JSInvokable]
-		public async Task OpenSvgControlProps(string id)
+		public async Task OpenSvgControlProps(JsModel.ZoneOverlayEntryJsModel zone, SvgComponentEvent e)
 		{
-			this.Vm.OpenSvgControlProps(id);
+			this.Vm.OpenSvgControlProps(zone.Id);
 		}
 
 		[JSInvokable]

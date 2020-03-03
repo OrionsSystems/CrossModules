@@ -513,23 +513,28 @@ export class Zone extends BaseControl {
                 .move(vertex[0] - (self.resizeControlWidth) / 2, vertex[1] - (self.resizeControlWidth) / 2)
                 .attr({ 'stroke-width': self.resizeControlStrokeWidth, 'stroke': '#6e6e6e', fill: 'white' });
             resizeControl.attr({ mapObjectType: 'edit-control' })
-            resizeControl.draggable();
-            //self.controlGroup.add(resizeControl);
+
+            if (!self.isReadOnly) {
+                resizeControl.draggable();
+            }
             self.resizeControls.push({ vIndex: i, control: resizeControl })
-            resizeControl.on('dragmove', function (ev) {
-                let vIndex = i;
-                let newVertArray = polygon.array();
-                newVertArray[vIndex] = [ev.detail.box.x + self.resizeControlScaledWidth / 2, ev.detail.box.y + self.resizeControlScaledWidth / 2];
-                polygon.plot(newVertArray);
 
-                self.overlayEntry.points = self.polygon.array().map(p => { return { x: p[0], y: p[1] } })
+            if (!self.isReadOnly) {
+                resizeControl.on('dragmove', function (ev) {
+                    let vIndex = i;
+                    let newVertArray = polygon.array();
+                    newVertArray[vIndex] = [ev.detail.box.x + self.resizeControlScaledWidth / 2, ev.detail.box.y + self.resizeControlScaledWidth / 2];
+                    polygon.plot(newVertArray);
 
-                polygon.fire('resize')
-            })
+                    self.overlayEntry.points = self.polygon.array().map(p => { return { x: p[0], y: p[1] } })
 
-            resizeControl.on('dragend', function () {
-               self.controlGroup.fire('zoneHasBeenResized')
-            })
+                    polygon.fire('resize')
+                })
+
+                resizeControl.on('dragend', function () {
+                   self.controlGroup.fire('zoneHasBeenResized')
+                })
+            }
         }
 
         // init text name control

@@ -68,7 +68,8 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         zoomScaleSensitivity: 0.4,
         controlIconsEnabled: true,
         onZoom: onZoomHandler,
-        dblClickZoomEnabled: false
+        dblClickZoomEnabled: false,
+        panEnabled: !isReadOnly
     })
 
     var draw = SVG(rootSelector + ' .svg-pan-zoom_viewport');
@@ -149,9 +150,6 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
 
         newZone.onRemove((z) => {
             zones.splice(zones.findIndex(el => el == z), 1)
-        })
-        newZone.onDblClick(() => {
-            componentReference.invokeMethodAsync("OpenSvgControlProps", newZone.overlayEntry.id)
         })
 
         for (var key in zoneOverlayEntry.eventHandlerMappings) {
