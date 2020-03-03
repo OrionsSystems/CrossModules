@@ -40,18 +40,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		Dictionary<string, DashboardFilterGroupData> _dynamicFiltersByGroup { get; set; } = new Dictionary<string, DashboardFilterGroupData>();
 
-		public UniPair<string, DashboardFilterGroupData>[] FilterGroups
-		{
-			get
-			{
-				lock (_syncRoot)
-				{
-					return _dynamicFiltersByGroup.Select(it => new UniPair<string, DashboardFilterGroupData>(it.Key, it.Value)).ToArray();
-				}
-			}
-		}
-
-
 		/// <summary>
 		/// The Propertyy grid has its own Vm, but we assign it one from here, to make sure it uses this one, so we can control it.
 		/// </summary>
@@ -79,7 +67,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		Dictionary<IDashboardWidget, WidgetVm> _widgetsVms = new Dictionary<IDashboardWidget, WidgetVm>();
 
-
 		public DashboardVm()
 		{
 			lock (g_syncRoot)
@@ -91,26 +78,6 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			LoadAvailableWidget();
-		}
-
-		/// <summary>
-		/// When running as part of another dashboard, synchronize to its filtering system.
-		/// </summary>
-		/// <param name="context"></param>
-		/// <returns></returns>
-		public async Task FromParent_HandleFiltersChangedAsync(UniPair<string, DashboardFilterGroupData>[] filterPairs)
-		{
-			// Reset to match the parent.
-			lock (_syncRoot)
-			{
-				_dynamicFiltersByGroup.Clear();
-				foreach (var pair in filterPairs)
-				{
-					_dynamicFiltersByGroup[pair.Key] = pair.Value;
-				}
-			}
-
-			await this.UpdateDynamicWidgetsFilteringAsync();
 		}
 
 		protected virtual void OnSourceSet()
