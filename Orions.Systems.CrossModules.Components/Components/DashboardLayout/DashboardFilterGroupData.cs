@@ -97,6 +97,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		string _view = "";
 
+		[UniJsonIgnore]
 		public string View 
 		{ 
 			get => _view; 
