@@ -295,16 +295,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var overlayJsModel = MapOverlayJsModel.CreateFromDomainModel(this.MapOverlay.Value);
 			foreach (var zone in overlayJsModel.Zones)
 			{
-				zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
-				zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
-				zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
-				if (!IsReadOnly)
-				{
-					zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
-				}
+				AddZoneEventHandlerMappings(zone);
 			}
 
 			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });
@@ -323,6 +314,21 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			}
 
 			await ShowTags();
+		}
+
+		private void AddZoneEventHandlerMappings(ZoneOverlayEntryJsModel zone)
+		{
+			zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
+			zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
+			zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneNameChanged", "UpdateZone");
+			zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
+			zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
+			if (!IsReadOnly)
+			{
+				zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
+			}
 		}
 
 		public async Task RemoveTagCirclesForZone(string zoneId)
@@ -820,7 +826,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var zoneDomainModel = zone.ToDomainModel();
 			this.MapOverlay.Value.Entries.Add(zoneDomainModel);
 
-			return ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
+			var jsModel = ZoneOverlayEntryJsModel.CreateFromDomainModel(zoneDomainModel);
+			AddZoneEventHandlerMappings(jsModel);
+
+			return jsModel;
 		}
 
 		private async Task<byte[]> LoadTagImage(HyperTag tag)

@@ -360,8 +360,17 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config) {
         }
 
         componentReference.invokeMethodAsync("AddNewZoneToVm", newZoneOverlayEntry)
-            .then(resp => {
-                newZoneControl.overlayEntry = resp
+            .then(zoneOverlayEntry => {
+                newZoneControl.overlayEntry = zoneOverlayEntry
+
+                for (var key in zoneOverlayEntry.eventHandlerMappings) {
+                    let eventName = key
+                    newZoneControl.on(eventName, function (e) {
+                        let svgEvent = { clientX: e.clientX, clientY: e.clientY }
+
+                        componentReference.invokeMethodAsync(zoneOverlayEntry.eventHandlerMappings[eventName], newZoneControl.overlayEntry, svgEvent)
+                    })
+                }
             })
     }
 
