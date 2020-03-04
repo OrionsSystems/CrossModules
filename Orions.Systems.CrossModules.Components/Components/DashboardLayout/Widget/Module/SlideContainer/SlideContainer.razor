@@ -27,9 +27,10 @@
 					@foreach (var wdg in Vm.Widget.Data)
 					{
 						<div class="widget-slide-container-data @(Vm.IsActiveElement(wdg.Id) ? "active" : "")">
-							@if (wdg != null && wdg.IsVisible)
+							@if (wdg != null && wdg.IsVisible && Vm.IsActiveElement(wdg.Id))
 							{
-								<WidgetDynamicComponent DataContext="@DashboardVm.ObtainWidgetVm(wdg)"
+								<WidgetDynamicComponent @key="@wdg.Id"
+																DataContext="@DashboardVm.ObtainWidgetVm(wdg)"
 																DashboardVm="DashboardVm" />
 							}
 						</div>
