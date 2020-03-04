@@ -14,6 +14,8 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("Format the ToolTip content.")]
 			public string Format { get; set; }
 
+			public double Opacity { get; set; } = 0.75;
+
 			[HelpText("Options to customize the ToolTip text.")]
 			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
 		}
