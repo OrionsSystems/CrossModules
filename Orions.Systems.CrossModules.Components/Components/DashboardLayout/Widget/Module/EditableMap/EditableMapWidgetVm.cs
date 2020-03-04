@@ -35,6 +35,7 @@ namespace Orions.Systems.CrossModules.Components.Components.DashboardLayout.Widg
 			vm.HeatmapNormalizationMinOverlaps = this.Widget.HeatmapNormalizationMinOverlaps;
 			vm.HeatmapNormalizationMaxOverlaps = this.Widget.HeatmapNormalizationMaxOverlaps;
 			vm.FabricServiceId = this.Widget.FabricServiceId;
+			vm.ExtractMode = this.Widget.ExtractMode;
 
 			vm.ZoneSelected += Vm_ZoneSelected;
 

@@ -14,6 +14,8 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("Format the ToolTip content.")]
 			public string Format { get; set; }
 
+			public double Opacity { get; set; } = 0.75;
+
 			[HelpText("Options to customize the ToolTip text.")]
 			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
 		}
@@ -69,6 +71,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			//public int Interval { get; set; } = 1;
 			//public int Maximum { get; set; }
+
+			[HelpText("Used to format the axis label that accepts any global string format like 'C', 'n1', 'P' etc. It also accepts placeholder like '{value}°C' in which value represent the axis label, e.g, 20°C.")]
+			public string LabelFormat { get; set; }
 
 			public ChartAxisLineStyle LineStyle { get; set; } = new ChartAxisLineStyle();
 

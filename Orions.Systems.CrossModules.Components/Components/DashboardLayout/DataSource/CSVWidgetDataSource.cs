@@ -41,7 +41,7 @@ namespace Orions.Systems.CrossModules.Components
 				while (!reader.EndOfStream)
 				{
 					string line = reader.ReadLine();
-					System.Diagnostics.Debug.WriteLine(line);
+					//System.Diagnostics.Debug.WriteLine(line);
 
 					if (!String.IsNullOrWhiteSpace(line))
 					{
@@ -53,6 +53,7 @@ namespace Orions.Systems.CrossModules.Components
 							for (var i = 0; i < values.Length; i++)
 							{
 								if (i == 0) continue;
+
 								var colDef = new ComputationReportColumnTemplate() { Title = values[i] };
 								colDefList.Add(colDef);
 							}
@@ -95,13 +96,11 @@ namespace Orions.Systems.CrossModules.Components
 
 				var cells = new List<ReportRowCell>();
 
-				var dataCells = columnData.Select(it => new ReportRowCell() { Values = new[] { it } }).ToArray();
-				reportData.AddRow(new ReportRow() { Cells = dataCells });
-			}
+				var rowTemplate = reportData.RowsDefinitions[rowIndex - 1];
 
-			//// We want to filter at the end, to ensure both data and definitions are synchronized filtered.
-			//if (context.DynamicFilter != null)
-			//	reportData.FilterWith(context.DynamicFilter);
+				var dataCells = columnData.Select(it => new ReportRowCell() { Values = new[] { it } }).ToArray();
+				reportData.AddRow(new ReportRow() { Cells = dataCells, Template = rowTemplate });
+			}
 
 			return Task.FromResult<Report>(reportData);
 		}

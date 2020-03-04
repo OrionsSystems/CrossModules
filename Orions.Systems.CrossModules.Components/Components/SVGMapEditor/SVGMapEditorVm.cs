@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
+using Orions.Systems.CrossModules.Components.Helpers;
 using Syncfusion.EJ2.Blazor.Notifications;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
@@ -141,6 +143,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public ViewModelProperty<bool> MapOverlayBeingSaved { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<bool> NextHyperTagInfoIsBeingLoaded { get; set; } = new ViewModelProperty<bool>(false);
+		
+		public ViewModelProperty<bool> IsMapOverlayInitialized = new ViewModelProperty<bool>(false);
+		public bool MapInitialized { get; set; } = false;
+		public bool ExtractMode { get; set; }
 		#endregion // Properties
 
 		#region Events
@@ -148,8 +154,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public delegate void ZoneSelectedEventHandler(ZoneOverlayEntry zone);
 		#endregion
 
-		public ViewModelProperty<bool> IsMapOverlayInitialized = new ViewModelProperty<bool>(false);
-		public bool MapInitialized { get; set; } = false;
 
 		public SVGMapEditorVm()
 		{
@@ -163,7 +167,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			string zoneId = this.CurrentlySelectedZoneId;
 			await OpenPopupMap(zoneId, true);
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.makePopupDraggable", new object[] { _componentContainerId });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.makePopupDraggable", new object[] { _componentContainerId });
 		}
 
 		public async Task OpenRealMasksMapAsync()
@@ -302,7 +306,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				AddZoneEventHandlerMappings(zone);
 			}
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.init", new object[] { _componentContainerId, _componentJsReference, overlayJsModel, editorConfig });
 
 			this.HomographiesDetected.Value = this.GetMapOverlayZonesWithHomographyAssigned().Any();
 			if (this.HomographiesDetected)
@@ -346,7 +350,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			if (circlesToRemove.Any())
 			{
-				await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
+				await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
 			}
 		}
 
@@ -358,8 +362,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.InitializeAutoplayTagDateRangeFilter();
 			}
 
-			//TagDateRangeFilter.InitRangeSlider(TagDateRangeFilter.MinDate, TagDateRangeFilter.MaxDate, this.TagDateFilterPreInitialized);
-
 			this.TagDateRangeFilter.ValueChanged += () =>
 			{
 				this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
@@ -369,15 +371,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
 			};
 
-			//return;
-
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 
 			var earliestDateTasks = new List<Task<HyperDocument[]>>();
 			var latestDateTasks = new List<Task<HyperDocument[]>>();
 
-			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
+			for (var zoneIndex = 0; zoneIndex < mapOverlayZonesWithHomographyAssigned.Count; zoneIndex++)
 			{
+				var zone = mapOverlayZonesWithHomographyAssigned[zoneIndex];
 				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
 				var metadataSetFilter = await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(metadataSetId.Value));
 
@@ -427,8 +428,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 					docsTask = HyperArgsSink.ExecuteAsync(lastTagFindArgs).AsTask();
 					latestDateTasks.Add(docsTask);
-
-
+				}
+				else
+				{
+					mapOverlayZonesWithHomographyAssigned.Remove(zone);
+					zoneIndex--;
 				}
 			}
 			await Task.WhenAll(earliestDateTasks);
@@ -721,17 +725,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public async Task AddCircleTool()
 		{
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.addCircleTool", new object[] { this._componentContainerId });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.addCircleTool", new object[] { this._componentContainerId });
 		}
 
 		public async Task AddAreaTool()
 		{
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.addAreaTool", new object[] { this._componentContainerId });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.addAreaTool", new object[] { this._componentContainerId });
 		}
 
 		public async Task AddCameraTool()
 		{
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.addCameraTool", new object[] { this._componentContainerId });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.addCameraTool", new object[] { this._componentContainerId });
 		}
 
 		public ZoneOverlayEntryJsModel AddNewZoneToVm(JsModel.ZoneOverlayEntryJsModel zone)
@@ -852,13 +856,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				AssetId = ids.HyperId.AssetId.Value,
 				FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
 				SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-				GeometryItem = geometry?.GeometryItem,
+				GeometryItem = ExtractMode ? geometry?.GeometryItem : null,
 				FabricServiceId = this.FabricServiceId
 			};
 
 			var sliceResult = await HyperArgsSink.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);
 
-			return sliceResult[0].Image.Data;
+			var imageData = sliceResult[0].Image.Data;
+			if (ExtractMode == false)
+			{
+				imageData = TagRenderHelper.RenderTag(tag, imageData);
+			}
+
+			return imageData;
 		}
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
@@ -895,7 +905,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				OverlayEntry = JsonSerializer.Serialize(kv.Key, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })
 			}).ToArray();
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.update", new object[] { this._componentContainerId, circlesToRemove, false, "batch" });
 
 			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
 			{
@@ -950,7 +960,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				updateDetailsBatch.Add(updateDetails);
 			}
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetailsBatch, false, "batch" });
 		}
 
 		private List<HyperTag> FilterTagsByHomographyArea(IEnumerable<HyperTag> tags, HyperTagGeometry homographyGeometry, ZoneOverlayEntry zone)
@@ -1005,12 +1015,12 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private UniPoint2f MapHomographyPoint(UniPoint2f bottomCenter, UniPoint2f[] pointsSrc, UniPoint2f[] pointsDst)
 		{
-			var cvSrcPoints = pointsSrc.Select(p => new OpenCvSharp.Point2d(p.X, p.Y));
-			var cvDstPoints = pointsDst.Select(p => new OpenCvSharp.Point2d(p.X, p.Y));
+			var cvSrcPoints = pointsSrc.Select(p => new PointF(p.X, p.Y)).ToArray();
+			var cvDstPoints = pointsDst.Select(p => new PointF(p.X, p.Y)).ToArray();
 
-			OpenCvSharp.Mat hCv = OpenCvSharp.Cv2.FindHomography(cvSrcPoints, cvDstPoints);
+			var hCv = Emgu.CV.CvInvoke.FindHomography(cvSrcPoints, cvDstPoints);
 
-			OpenCvSharp.Point2f resultPoint = OpenCvSharp.Cv2.PerspectiveTransform(new OpenCvSharp.Point2f[] { new OpenCvSharp.Point2f(bottomCenter.X, bottomCenter.Y) }, hCv)[0];
+			var resultPoint = Emgu.CV.CvInvoke.PerspectiveTransform(new PointF[] { new PointF(bottomCenter.X, bottomCenter.Y) }, hCv)[0];
 
 			return new UniPoint2f(resultPoint.X, resultPoint.Y);
 		}
@@ -1085,7 +1095,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				OverlayEntry = progGridObjectSerialized
 			};
 
-			await JsRuntime.InvokeAsync<object>("window.Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetails, true, "single" });
+			await JsRuntime.InvokeAsync<object>("Orions.SvgMapEditor.update", new object[] { this._componentContainerId, updateDetails, true, "single" });
 
 			this.ShowingControlPropertyGrid.Value = false;
 		}
@@ -1139,7 +1149,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				_heatmapRenderer.Dispose();
 			}
 
-			JsRuntime.InvokeVoidAsync("window.Orions.SvgMapEditor.destroy", new object[] { this._componentContainerId });
+			JsRuntime.InvokeVoidAsync("Orions.SvgMapEditor.destroy", new object[] { this._componentContainerId });
 		}
 		#endregion // Methods
 
