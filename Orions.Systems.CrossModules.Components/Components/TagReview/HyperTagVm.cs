@@ -11,14 +11,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Orions.Infrastructure.HyperSemantic;
 using System.Drawing.Imaging;
+using Orions.Systems.CrossModules.Components.Helpers;
 
 namespace Orions.Systems.CrossModules.Components
 {
    public class HyperTagVm : BlazorVm
    {
-      static object g_penSyncRoot = new object();
-      static Pen g_pen = new Pen(Brushes.White, 2);
-
       private IHyperArgsSink _store;
       private HyperTag _hyperTag;
       private int _dashApiPort;
@@ -151,57 +149,6 @@ namespace Orions.Systems.CrossModules.Components
          IsExpanded = false;
       }
 
-      protected byte[] RenderTag(HyperTag tag, byte[] imageData)
-      {
-         if (imageData == null || imageData.Length == 0)
-            return imageData;
-
-         using (var bitmapStream = new MemoryStream(imageData))
-         {
-            using (Bitmap bitmap = new Bitmap(bitmapStream))
-            {
-               using (var g = Graphics.FromImage(bitmap))
-               {
-                  foreach (var component in tag.GetElements<HyperTagGeometry>())
-                  {
-                     var rect = component.GeometryItem.BoundingBox;
-                     if (component.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
-                        rect = component.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(rect, bitmap.Width, bitmap.Height);
-
-                     //DrawLabel(g, tag, rect);
-
-                     lock (g_penSyncRoot) // Pen is not thread safe
-                     {
-                        var geometry = tag.GetElement<HyperTagGeometry>();
-                        if (geometry.GeometryItem.Shape is UniPolygon2f polygonX)
-                        {
-                           UniPolygon2f polygon = polygonX;
-                           if (geometry.GeometryItem.SpaceMode == GeometryItem.SpaceModes.XSpace)
-                           {
-                              polygon = geometry.GeometryItem.ConvertFromAbsoluteXSpaceToRealWorldSpace(polygonX, bitmap.Width, bitmap.Height);
-                              g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
-
-                           }
-
-                           g.DrawPolygon(g_pen, polygon.Points.Select(it => new PointF(it.X, it.Y))?.ToArray());
-                        }
-                        else
-                        {
-                           g.DrawRectangle(g_pen, new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
-                        }
-                     }
-                  }
-               }
-
-               using (var writeStream = new MemoryStream())
-               {
-                  bitmap.Save(writeStream, ImageFormat.Jpeg);
-                  return writeStream.ToArray();
-               }
-            }
-         }
-      }
-
       private async Task<byte[]> LoadImage(HyperTag tag)
       {
          var ids = this.HyperTagId;
@@ -224,7 +171,7 @@ namespace Orions.Systems.CrossModules.Components
          byte[] imageData = sliceResult[0].Image.Data;
          if (ExtractMode == false)
          {
-            imageData = RenderTag(tag, imageData);
+            imageData = TagRenderHelper.RenderTag(tag, imageData);
          }
 
 

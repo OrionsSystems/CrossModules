@@ -13,6 +13,7 @@ using Orions.Infrastructure.HyperMedia.MapOverlay;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
+using Orions.Systems.CrossModules.Components.Helpers;
 using Syncfusion.EJ2.Blazor.Notifications;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
@@ -141,6 +142,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public ViewModelProperty<bool> MapOverlayBeingSaved { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<bool> NextHyperTagInfoIsBeingLoaded { get; set; } = new ViewModelProperty<bool>(false);
+		
+		public ViewModelProperty<bool> IsMapOverlayInitialized = new ViewModelProperty<bool>(false);
+		public bool MapInitialized { get; set; } = false;
+		public bool ExtractMode { get; set; }
 		#endregion // Properties
 
 		#region Events
@@ -148,8 +153,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public delegate void ZoneSelectedEventHandler(ZoneOverlayEntry zone);
 		#endregion
 
-		public ViewModelProperty<bool> IsMapOverlayInitialized = new ViewModelProperty<bool>(false);
-		public bool MapInitialized { get; set; } = false;
 
 		public SVGMapEditorVm()
 		{
@@ -852,13 +855,19 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				AssetId = ids.HyperId.AssetId.Value,
 				FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
 				SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-				GeometryItem = geometry?.GeometryItem,
+				GeometryItem = ExtractMode ? geometry?.GeometryItem : null,
 				FabricServiceId = this.FabricServiceId
 			};
 
 			var sliceResult = await HyperArgsSink.ExecuteAsync<RetrieveFragmentFramesArgs.SliceResult[]>(args2);
 
-			return sliceResult[0].Image.Data;
+			var imageData = sliceResult[0].Image.Data;
+			if (ExtractMode == false)
+			{
+				imageData = TagRenderHelper.RenderTag(tag, imageData);
+			}
+
+			return imageData;
 		}
 
 		private Dictionary<CircleOverlayEntryJsModel, HyperTag> _circlesToTagsMappings = new Dictionary<CircleOverlayEntryJsModel, HyperTag>();
