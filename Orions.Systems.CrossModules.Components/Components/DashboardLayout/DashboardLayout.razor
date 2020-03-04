@@ -545,10 +545,17 @@
 							This operation will lose all current data will re and it
 						</div>
 						<div class="col-lg-12">
+							<div class="form-check">
+								<input id="importAsNewCheckbox" class="form-check-input" type="checkbox" checked="@ImportDashboardAsNew" />
+								<label class="form-check-label" for="importAsNewCheckbox">Don't replace dashboard if exist.</label>
+							</div>
+
+						</div>
+						<div class="col-lg-12">
 							<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(arg); })" />
 						</div>
 					</div>
-				</div>
+					</div>
 			</div>
 		</div>
 	</div>
@@ -560,6 +567,7 @@
 
 	private bool isShowRenameDashboardModal;
 	private bool IsEditMode { get { return !IsPreviewMode; } }
+	private bool ImportDashboardAsNew = true;
 
 	[Parameter]
 	public bool IsPreviewMode { get; set; } = false;
@@ -655,7 +663,7 @@
 				await file.Data.CopyToAsync(ms);
 				var res = ms.ToArray();
 
-				Vm.ImportProject(res);
+				Vm.ImportProject(res, ImportDashboardAsNew);
 
 				Vm.IsShowModalImportProject = false;
 			}
