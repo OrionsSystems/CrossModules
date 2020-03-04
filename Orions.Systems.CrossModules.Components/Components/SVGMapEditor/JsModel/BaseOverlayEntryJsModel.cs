@@ -14,7 +14,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel
 		public bool IsSelectable { get; set; } = true;
 		public bool IsDraggable { get; set; } = true;
 
-		public Dictionary<string, string> EventHandlerMappings { get; } = new Dictionary<string, string>();
+		public Dictionary<string, OverlayEntryEventHandlerInfo> EventHandlerMappings { get; } = new Dictionary<string, OverlayEntryEventHandlerInfo>();
 
 		public abstract string EntryType { get; }
 

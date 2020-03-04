@@ -108,11 +108,12 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config, edi
         circles.push(newCircle);
 
         for (var key in circleOverlayEntry.eventHandlerMappings) {
+            let eventHandlerInfo = circleOverlayEntry.eventHandlerMappings[key]
             newCircle.on(key, function (e) {
                 let svgEvent = { clientX: e.clientX, clientY: e.clientY}
-
-                componentReference.invokeMethodAsync(circleOverlayEntry.eventHandlerMappings[key], newCircle.overlayEntry, svgEvent)
-            })
+                
+                componentReference.invokeMethodAsync(eventHandlerInfo.componentMethodName, newCircle.overlayEntry, svgEvent)
+            }, eventHandlerInfo.stopPropagation)
         }
 
         newCircle.onRemove((c) => {
@@ -147,11 +148,12 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config, edi
 
         for (var key in zoneOverlayEntry.eventHandlerMappings) {
             let eventName = key
+            let eventHandlerInfo = zoneOverlayEntry.eventHandlerMappings[key]
             newZone.on(eventName, function (e) {
                 let svgEvent = { clientX: e.clientX, clientY: e.clientY }
-
-                componentReference.invokeMethodAsync(zoneOverlayEntry.eventHandlerMappings[eventName], newZone.overlayEntry, svgEvent)
-            })
+                
+                componentReference.invokeMethodAsync(eventHandlerInfo.componentMethodName, newZone.overlayEntry, svgEvent)
+            }, eventHandlerInfo.stopPropagation)
         }
 
         return newZone;
@@ -291,13 +293,15 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config, edi
             .then(zoneOverlayEntry => {
                 newZoneControl.overlayEntry = zoneOverlayEntry
 
+                let eventHandlerInfo = zoneOverlayEntry.eventHandlerMappings[eventName]
+
                 for (var key in zoneOverlayEntry.eventHandlerMappings) {
                     let eventName = key
                     newZoneControl.on(eventName, function (e) {
                         let svgEvent = { clientX: e.clientX, clientY: e.clientY }
 
-                        componentReference.invokeMethodAsync(zoneOverlayEntry.eventHandlerMappings[eventName], newZoneControl.overlayEntry, svgEvent)
-                    })
+                        componentReference.invokeMethodAsync(eventHandlerInfo.componentMethodName, newZoneControl.overlayEntry, svgEvent)
+                    }, eventHandlerInfo.stopPropagation)
                 }
             })
     }

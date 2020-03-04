@@ -450,7 +450,7 @@ export class Zone extends BaseControl {
         this.controlGroup.remove();
     }
 
-    on(eventName, callback) {
+    on(eventName, callback, stopPropagation) {
         if (eventName == 'startResize') {
             this.resizeControls.forEach(c => c.control.on('dragstart', (ev) => {
                 callback(ev)
@@ -474,7 +474,13 @@ export class Zone extends BaseControl {
             })
         }
         else {
-            this.controlGroup.on(eventName, callback)
+            this.controlGroup.on(eventName, (ev) => {
+                if (stopPropagation) {
+                    ev.stopPropagation();
+                }
+
+                callback(ev)
+            })
         }
     }
 
@@ -664,8 +670,14 @@ export class CircleZone extends BaseControl {
         this.controlGroup.remove();
     }
 
-    on(eventName, callback) {
-        this.circle.on(eventName, callback)
+    on(eventName, callback, stopPropagation) {
+        this.circle.on(eventName, (ev) => {
+            if (stopPropagation) {
+                ev.stopPropagation();
+            }
+
+            callback(ev)
+        })
     }
 
     initializeControls() {

@@ -171,7 +171,9 @@
 						<a class="btn btn-sm btn-outline-dark props-btn" title="Properties" @onclick="async () => Vm.OpenTagProperties()">P</a>
 						<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.CloseHyperTagInfoPopup())">X</a>
 					</div>
-					<img src="@Vm.TagInfoImageBase64Url" />
+					<OverlayLoader IsLoading="this.Vm.NextHyperTagInfoIsBeingLoaded.Value">
+						<img src="@Vm.TagInfoImageBase64Url" />
+					</OverlayLoader>
 				</div>
 			</div>
 			@if (Vm.ShowingHyperTagProperties.Value)
@@ -275,6 +277,7 @@ else
 				position: absolute;
 				width: 100%;
 				text-align: right;
+				z-index:1;
 			}
 
 				.svg-map-editor-container .tag-info-popup .controls-container a {
@@ -336,12 +339,13 @@ else
 		}
 
 			.svg-map-editor-container .playback-controls-container .playback-buttons-container {
-				width: 100px;
+				width: 80px;
 				float: left;
+				margin-top:10px;
 			}
 
 			.svg-map-editor-container .playback-controls-container .date-range-slider {
-				width: calc(100% - 100px);
+				width: calc(100% - 80px);
 				float: left;
 			}
 </style>

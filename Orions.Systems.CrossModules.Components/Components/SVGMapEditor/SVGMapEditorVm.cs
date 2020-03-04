@@ -140,6 +140,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		public ViewModelProperty<string> PlaybackCacheUpdateStatus { get; set; } = "";
 
 		public ViewModelProperty<bool> MapOverlayBeingSaved { get; set; } = new ViewModelProperty<bool>(false);
+		public ViewModelProperty<bool> NextHyperTagInfoIsBeingLoaded { get; set; } = new ViewModelProperty<bool>(false);
 		#endregion // Properties
 
 		#region Events
@@ -321,17 +322,17 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		private void AddZoneEventHandlerMappings(ZoneOverlayEntryJsModel zone)
 		{
-			zone.EventHandlerMappings.Add("startResize", "RemoveTagCirclesForZone");
-			zone.EventHandlerMappings.Add("zoneIsBeingDragged", "RemoveTagCirclesForZone");
-			zone.EventHandlerMappings.Add("zoneHasBeenDragged", "UpdateZone");
-			zone.EventHandlerMappings.Add("zoneHasBeenResized", "UpdateZone");
-			zone.EventHandlerMappings.Add("zoneNameChanged", "UpdateZone");
-			zone.EventHandlerMappings.Add("zoneSelected", "SelectZone");
-			zone.EventHandlerMappings.Add("zoneLostSelection", "UnselectZone");
-			zone.EventHandlerMappings.Add("controlDeleted", "DeleteZone");
+			zone.EventHandlerMappings.Add("startResize", new OverlayEntryEventHandlerInfo { ComponentMethodName = "RemoveTagCirclesForZone" });
+			zone.EventHandlerMappings.Add("zoneIsBeingDragged", new OverlayEntryEventHandlerInfo { ComponentMethodName = "RemoveTagCirclesForZone" });
+			zone.EventHandlerMappings.Add("zoneHasBeenDragged", new OverlayEntryEventHandlerInfo { ComponentMethodName = "UpdateZone" });
+			zone.EventHandlerMappings.Add("zoneHasBeenResized", new OverlayEntryEventHandlerInfo { ComponentMethodName = "UpdateZone" });
+			zone.EventHandlerMappings.Add("zoneNameChanged", new OverlayEntryEventHandlerInfo { ComponentMethodName = "UpdateZone" });
+			zone.EventHandlerMappings.Add("zoneSelected", new OverlayEntryEventHandlerInfo { ComponentMethodName = "SelectZone" });
+			zone.EventHandlerMappings.Add("zoneLostSelection", new OverlayEntryEventHandlerInfo { ComponentMethodName = "UnselectZone" });
+			zone.EventHandlerMappings.Add("controlDeleted", new OverlayEntryEventHandlerInfo { ComponentMethodName = "DeleteZone" });
 			if (!IsReadOnly)
 			{
-				zone.EventHandlerMappings.Add("dblclick", "OpenSvgControlProps");
+				zone.EventHandlerMappings.Add("dblclick", new OverlayEntryEventHandlerInfo { ComponentMethodName = "OpenSvgControlProps" });
 			}
 		}
 
@@ -934,7 +935,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					IsSelectable = false,
 					IsDraggable = false
 				};
-				circle.EventHandlerMappings.Add("click", "ShowTagInfo");
+				circle.EventHandlerMappings.Add("click", new OverlayEntryEventHandlerInfo { ComponentMethodName = "ShowTagInfo", StopPropagation = true });
 
 				_circlesToTagsMappings.Add(circle, tag);
 
@@ -979,18 +980,29 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.ShowingHyperTagProperties.Value = true;
 		}
 
+		private int _tagImageLoadCounter = 0;
 		public async Task ShowTagInfo(CircleOverlayEntryJsModel circle, double pageX, double pageY)
 		{
-			this.ShowingHyperTagInfo.Value = false;
-
-			var tagToShow = _circlesToTagsMappings.Single(kv => kv.Key.Id == circle.Id).Value;
-			this.CurrentTagBeingShown.Value = tagToShow;
-
-			this.TagInfoImage = await LoadTagImage(tagToShow);
+			this.NextHyperTagInfoIsBeingLoaded.Value = true;
+			_tagImageLoadCounter++;
 
 			this.HyperTagInfoXPos = pageX - 100;
 			this.HyperTagInfoYPos = pageY - 100;
 			this.ShowingHyperTagInfo.Value = true;
+
+			var tagToShow = _circlesToTagsMappings.Single(kv => kv.Key.Id == circle.Id).Value;
+			this.CurrentTagBeingShown.Value = tagToShow;
+
+			this.TagInfoImage.Value = null;
+
+			await Task.Delay(5000);
+			this.TagInfoImage.Value = await LoadTagImage(tagToShow);
+
+			_tagImageLoadCounter--;
+			if(_tagImageLoadCounter == 0)
+			{
+				this.NextHyperTagInfoIsBeingLoaded.Value = false;
+			}
 		}
 
 		private UniPoint2f MapHomographyPoint(UniPoint2f bottomCenter, UniPoint2f[] pointsSrc, UniPoint2f[] pointsDst)
