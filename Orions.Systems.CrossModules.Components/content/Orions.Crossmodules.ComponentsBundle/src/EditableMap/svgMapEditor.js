@@ -293,9 +293,9 @@ function SvgMapEditor(rootElementId, componentReference, mapOverlay, config, edi
             .then(zoneOverlayEntry => {
                 newZoneControl.overlayEntry = zoneOverlayEntry
 
-                let eventHandlerInfo = zoneOverlayEntry.eventHandlerMappings[eventName]
 
                 for (var key in zoneOverlayEntry.eventHandlerMappings) {
+                    let eventHandlerInfo = zoneOverlayEntry.eventHandlerMappings[key]
                     let eventName = key
                     newZoneControl.on(eventName, function (e) {
                         let svgEvent = { clientX: e.clientX, clientY: e.clientY }

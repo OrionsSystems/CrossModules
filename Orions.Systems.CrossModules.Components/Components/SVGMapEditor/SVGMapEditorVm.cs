@@ -358,8 +358,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.InitializeAutoplayTagDateRangeFilter();
 			}
 
-			//TagDateRangeFilter.InitRangeSlider(TagDateRangeFilter.MinDate, TagDateRangeFilter.MaxDate, this.TagDateFilterPreInitialized);
-
 			this.TagDateRangeFilter.ValueChanged += () =>
 			{
 				this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
@@ -369,15 +367,14 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.RaiseNotify($"{nameof(this.TagDateRangeFilter)}.{nameof(this.TagDateRangeFilter.CurrentMaxDate)}");
 			};
 
-			//return;
-
 			var mapOverlayZonesWithHomographyAssigned = GetMapOverlayZonesWithHomographyAssigned();
 
 			var earliestDateTasks = new List<Task<HyperDocument[]>>();
 			var latestDateTasks = new List<Task<HyperDocument[]>>();
 
-			foreach (var zone in mapOverlayZonesWithHomographyAssigned)
+			for (var zoneIndex = 0; zoneIndex < mapOverlayZonesWithHomographyAssigned.Count; zoneIndex++)
 			{
+				var zone = mapOverlayZonesWithHomographyAssigned[zoneIndex];
 				var metadataSetId = zone.MetadataSetId ?? this.MetadataSetId;
 				var metadataSetFilter = await HyperArgsSink.ExecuteAsync(new RetrieveHyperDocumentArgs(metadataSetId.Value));
 
@@ -427,8 +424,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 					docsTask = HyperArgsSink.ExecuteAsync(lastTagFindArgs).AsTask();
 					latestDateTasks.Add(docsTask);
-
-
+				}
+				else
+				{
+					mapOverlayZonesWithHomographyAssigned.Remove(zone);
+					zoneIndex--;
 				}
 			}
 			await Task.WhenAll(earliestDateTasks);
