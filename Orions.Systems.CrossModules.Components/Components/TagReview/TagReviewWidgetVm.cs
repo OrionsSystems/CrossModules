@@ -22,12 +22,12 @@ namespace Orions.Systems.CrossModules.Components
 
 			TagReviewVm.Value.ShowFragmentAndSlice = this.Widget.ShowFragmentAndSlice;
 			TagReviewVm.Value.ExtractMode = this.Widget.ExtractMode;
-			TagReviewVm.Value.FabricService = this.Widget.FabricService;
+			TagReviewVm.Value.FabricServiceId = this.Widget.FabricService;
 		}
 
 		public override async Task HandleFiltersChangedAsync()
 		{
-			if (this.HyperStore == null || this.TagReviewVm.Value.Store == null)
+			if (this.HyperStore == null || this.TagReviewVm.Value.HyperStore == null)
 				return;
 
 			//throw new NotImplementedException();

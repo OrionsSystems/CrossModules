@@ -15,56 +15,22 @@ namespace Orions.Systems.CrossModules.Components
       public HyperTag Tag { get; set; }
 
       [Parameter]
-      public IHyperArgsSink HyperStore { get; set; }
+      public ITagReviewContext Context
+      {
+         get
+         {
+            return this.Vm.Context;
+         }
 
-      [Parameter]
-      public int DashApiPort { get; set; }
+         set
+         {
+            if (Vm != null)
+               Vm.Context = value;
+         }
+      }
 
       [Inject]
       public IJSRuntime JsRuntime { get; set; }
-
-      [Parameter]
-      public bool ShowFragmentAndSlice
-      {
-         get
-         {
-            return this.Vm.ShowFragmentAndSlice;
-         }
-
-         set
-         {
-            if (Vm != null)
-               Vm.ShowFragmentAndSlice = value;
-         }
-      }
-
-      [Parameter]
-      public bool ExtractMode
-      {
-         get
-         {
-            return this.Vm.ExtractMode;
-         }
-
-         set
-         {
-            if (Vm != null)
-               Vm.ExtractMode = value;
-         }
-      }
-
-      [Parameter]
-      public string FabricService
-      {
-         get => this.Vm.FabricServiceId;
-
-         set
-         {
-            if (Vm != null)
-               Vm.FabricServiceId = value;
-         }
-      }
-
 
       public TagBase()
       {
@@ -72,10 +38,8 @@ namespace Orions.Systems.CrossModules.Components
 
       protected override async Task OnParametersSetAsync()
       {
-         if (Tag != null && HyperStore != null)
-         {
-            await this.Vm.Initialize(Tag, HyperStore, DashApiPort);
-         }
+         if (Tag != null)
+            await this.Vm.Initialize(Tag);
 
          await base.OnParametersSetAsync();
       }

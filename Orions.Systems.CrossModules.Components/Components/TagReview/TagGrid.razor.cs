@@ -11,25 +11,7 @@ namespace Orions.Systems.CrossModules.Components
    public class TagGridBase : BaseOrionsComponent
    {
       [Parameter]
-      public List<HyperTag> HyperTags { get; set; }
-
-      [Parameter]
-      public int ColumnsNumber { get; set; } = 4;
-
-      [Parameter]
-      public IHyperArgsSink HyperStore { get; set; }
-
-      [Parameter]
-      public int DashApiPort { get; set; }
-
-      [Parameter]
-      public bool ShowFragmentAndSlice { get; set; } = true;
-
-      [Parameter]
-      public bool ExtractMode { get; set; } = true;
-
-      [Parameter]
-      public string FabricService { get; set; } = "";
+      public ITagReviewContext Context { get; set; }
 
       public TagGridBase()
       {

@@ -11,7 +11,7 @@ using Orions.Systems.CrossModules.Components.Helpers;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class TagReviewVm : BlazorVm
+	public class TagReviewVm : BlazorVm, ITagReviewContext
 	{
 		private int _smallestPageSize;
 		private HyperMetadataSet _metadataSet;
@@ -21,25 +21,25 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool ExtractMode { get; set; } = true;
 
-		public string FabricService { get; set; } = "";
-
-		public TagReviewVm()
-		{
-		}
-
+		public string FabricServiceId { get; set; } = "";
+		
 		public HyperDocumentId MetadataSetId { get; private set; }
 
-		public IHyperArgsSink Store { get; set; }
+		public IHyperArgsSink HyperStore { get; set; }
 
-		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
+		public ViewModelProperty<List<HyperTag>> HyperTags { get; set; } = new ViewModelProperty<List<HyperTag>>();
+
 		public int DashApiPort { get; set; }
-		//public UniFilterData Filter { get; private set; }
+		
 		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
 		public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
 		public ViewModelProperty<bool> MetadataSetLoadFailed { get; set; } = new ViewModelProperty<bool>(false);
+
 		public int ColumnsNumber { get; set; } = 4;
+
 		public int InitialRowsNumber { get; set; } = 2;
+
 		public ViewModelProperty<bool> IsVmShowingHeatmapProp { get; set; } = new ViewModelProperty<bool>(false);
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 		public MasksHeatmapRenderer.HeatmapSettings HeatmapSettings { get; set; } = new MasksHeatmapRenderer.HeatmapSettings();
@@ -62,9 +62,13 @@ namespace Orions.Systems.CrossModules.Components
 		public string PlayerUri { get; set; }
 		public string PlayerId { get; set; }
 
+		public TagReviewVm()
+		{
+		}
+
 		public async Task Initialize(IHyperArgsSink store, string metadataSetId, int smallestPageSize)
 		{
-			this.Store = store;
+			this.HyperStore = store;
 
 			if(metadataSetId == null)
 			{
@@ -104,7 +108,7 @@ namespace Orions.Systems.CrossModules.Components
 			var streamingPort = 8585;
 			var retrieveConfigurationArgs = new RetrieveConfigurationArgs();
 
-			var result = await Store.ExecuteAsync(retrieveConfigurationArgs);
+			var result = await HyperStore.ExecuteAsync(retrieveConfigurationArgs);
 
 			foreach (var item in result)
 			{
@@ -133,7 +137,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void ShowHeatmap()
 		{
-			_renderer = new MasksHeatmapRenderer(this.Store, this._metadataSet, HeatmapSettings);
+			_renderer = new MasksHeatmapRenderer(this.HyperStore, this._metadataSet, HeatmapSettings);
 			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
 			IsVmShowingHeatmapProp.Value = true;
 			Task.Run(_renderer.RunGenerationAsync);
@@ -211,10 +215,10 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var countArgs = new CountHyperDocumentsArgs(typeof(HyperTag));
 
-			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, this._metadataSet);
+			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperStore, this._metadataSet);
 			countArgs.DescriptorConditions.AddCondition(conditions.Result);
 
-			var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.Store, countArgs);
+			var totalTags = await CountHyperDocumentsArgs.CountAsync<HyperTag>(this.HyperStore, countArgs);
 
 			TotalPages.Value = (int)(totalTags % PageSize == 0 ? totalTags / PageSize : totalTags / PageSize + 1);
 
@@ -223,19 +227,19 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task LoadHyperTags()
 		{
-			if (this.Store == null)
+			if (this.HyperStore == null)
 				return;
 
 			TagsAreBeingLoaded = true;
 
 			var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
 
-			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(Store, _metadataSet);
+			var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperStore, _metadataSet);
 			findArgs.DescriptorConditions.AddCondition(conditions.Result);
 			findArgs.Skip = PageSize * (PageNumber - 1);
 			findArgs.Limit = PageSize;
 
-			var docs = await Store.ExecuteAsync(findArgs);
+			var docs = await HyperStore.ExecuteAsync(findArgs);
 
 			var hyperTags = new List<HyperTag>();
 			foreach (var doc in docs)

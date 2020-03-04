@@ -19,9 +19,7 @@ namespace Orions.Systems.CrossModules.Components
       static object g_penSyncRoot = new object();
       static Pen g_pen = new Pen(Brushes.White, 2);
 
-      private IHyperArgsSink _store;
       private HyperTag _hyperTag;
-      private int _dashApiPort;
       private IHyperTagHyperIds HyperTagId;
 
       // Data props
@@ -48,15 +46,18 @@ namespace Orions.Systems.CrossModules.Components
             return null;
          }
       }
+
       public string PlayerUri
       {
          get
          {
-            var dnsSafehost = (_store as NetStore).CurrentConnection.Uri.DnsSafeHost;
+            var dnsSafehost = (Context?.HyperStore as NetStore).CurrentConnection.Uri.DnsSafeHost;
+
             var assetId = HyperTagId.HyperId.AssetId.Value.Guid.ToString();
-            return $"https://{dnsSafehost}:{_dashApiPort}/dash/{assetId}/asset.mpd";
+            return $"https://{dnsSafehost}:{Context.DashApiPort}/dash/{assetId}/asset.mpd";
          }
       }
+
       public string PlayerId
       {
          get
@@ -70,29 +71,22 @@ namespace Orions.Systems.CrossModules.Components
       // Event callbacks
       public EventCallback<string> OnPlayButtonClicked { get; set; }
 
-      public bool ShowFragmentAndSlice { get; set; }
-
-      public bool ExtractMode { get; set; }
-
-      public string FabricServiceId { get; set; }
+      public ITagReviewContext Context { get; set; }
 
       public HyperTagVm()
       {
       }
 
-      public async Task Initialize(HyperTag tag, IHyperArgsSink store, int dashApiPort)
+      public async Task Initialize(HyperTag tag)
       {
-         _store = store;
-
          this._hyperTag = tag;
-         this._dashApiPort = dashApiPort;
 
          this.HyperTagLabel.Value = tag.GetElement<HyperTagLabel>()?.Label ?? "";
 
          var ids = tag.GetElements<IHyperTagHyperIds>().FirstOrDefault(e => e.HyperId.TrackId.Value.Type == HyperTrackTypes.Video);
          this.HyperTagId = ids;
 
-         if (this.ShowFragmentAndSlice)
+         if (this.Context?.ShowFragmentAndSlice == true)
             this.HyperTagFragmentSliceLabel = $"@ {ids.HyperId.FragmentId}:{ids.HyperId.SliceId}";
 
          var startAtElement = tag.GetElements<HyperTagTime>().FirstOrDefault(t => t.TimeType == HyperTagTime.TimeTypes.StreamTime);
@@ -204,6 +198,9 @@ namespace Orions.Systems.CrossModules.Components
 
       private async Task<byte[]> LoadImage(HyperTag tag)
       {
+         if (Context?.HyperStore == null)
+            return null;
+
          var ids = this.HyperTagId;
 
          var geometry = tag.GetElement<HyperTagGeometry>();
@@ -212,17 +209,17 @@ namespace Orions.Systems.CrossModules.Components
             AssetId = ids.HyperId.AssetId.Value,
             FragmentId = ids.HyperId.HasFullFragmentData ? ids.HyperId.FragmentId.Value : new HyperFragmentId(0),
             SliceIds = new HyperSliceId[] { ids.HyperId.HasFullSliceData ? ids.HyperId.SliceId.Value : new HyperSliceId(0) },
-            GeometryItem = ExtractMode ? geometry?.GeometryItem : null,
-            FabricServiceId = this.FabricServiceId,
+            GeometryItem = this.Context?.ExtractMode == true ? geometry?.GeometryItem : null,
+            FabricServiceId = this.Context?.FabricServiceId,
          };
 
-         var sliceResult = await _store.ExecuteAsync(args2);
+         var sliceResult = await Context.HyperStore.ExecuteAsync(args2);
 
          if (sliceResult == null || sliceResult.Length == 0 || sliceResult[0].Image?.Data == null)
             return null;
 
          byte[] imageData = sliceResult[0].Image.Data;
-         if (ExtractMode == false)
+         if (this.Context?.ExtractMode != true)
          {
             imageData = RenderTag(tag, imageData);
          }

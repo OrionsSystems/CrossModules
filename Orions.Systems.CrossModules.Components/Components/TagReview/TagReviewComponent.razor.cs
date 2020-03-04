@@ -12,9 +12,6 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class TagReviewComponentBase : BaseBlazorComponent<TagReviewVm>
 	{
-		[Parameter]
-		public UniFilterData Filter { get; set; }
-
 		protected override bool AutoCreateVm => false;
 
 		public TagReviewComponentBase()

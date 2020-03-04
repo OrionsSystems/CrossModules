@@ -6,26 +6,25 @@
 	<div class="fluid-container">
 		<div class="row">
 			@{
-				var tagEnumerator = this.HyperTags.GetEnumerator();
-				HyperTag tag;
-
-				while (tagEnumerator.MoveNext())
+				if (this.Context != null)
 				{
-					@for (int colIndex = 1; colIndex <= this.ColumnsNumber; colIndex++)
+					var tagEnumerator = this.Context.HyperTags.Value.GetEnumerator();
+					HyperTag tag;
+
+					while (tagEnumerator.MoveNext())
 					{
+						@for (int colIndex = 1; colIndex <= this.Context.ColumnsNumber; colIndex++)
 						{
 							tag = tagEnumerator.Current;
-						}
 
-						@if (tag != null)
-						{
-							<div class="col widget-container">
-								<Tag Tag="@tag" HyperStore="@HyperStore" DashApiPort="@DashApiPort" 
-									  ExtractMode="@this.ExtractMode" FabricService="@this.FabricService" ShowFragmentAndSlice="@this.ShowFragmentAndSlice"/>
-							</div>
-						}
-						{
-							if (colIndex != ColumnsNumber) // we don't need to move to the next element since its the last element in the row and MoveNext is gonna be called in "while" loop above
+							@if (tag != null)
+							{
+								<div class="col widget-container">
+									<Tag Tag="@tag" Context="@this.Context"/>
+								</div>
+							}
+
+							if (colIndex != Context?.ColumnsNumber) // we don't need to move to the next element since its the last element in the row and MoveNext is gonna be called in "while" loop above
 							{
 								var nextColumnExists = tagEnumerator.MoveNext();
 								if (!nextColumnExists)
@@ -34,8 +33,9 @@
 								}
 							}
 						}
+
+						<div class="w-100"></div>
 					}
-					<div class="w-100"></div>
 				}
 			}
 			</div>
