@@ -72,6 +72,9 @@ namespace Orions.Systems.CrossModules.Components
 			//public int Interval { get; set; } = 1;
 			//public int Maximum { get; set; }
 
+			[HelpText("Used to format the axis label that accepts any global string format like 'C', 'n1', 'P' etc. It also accepts placeholder like '{value}°C' in which value represent the axis label, e.g, 20°C.")]
+			public string LabelFormat { get; set; }
+
 			public ChartAxisLineStyle LineStyle { get; set; } = new ChartAxisLineStyle();
 
 			public ChartAxisMajorTickLines MajorTickLines { get; set; } = new ChartAxisMajorTickLines();
