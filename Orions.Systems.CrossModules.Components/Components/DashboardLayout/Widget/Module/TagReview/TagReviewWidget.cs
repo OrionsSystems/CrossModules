@@ -22,7 +22,7 @@ namespace Orions.Systems.CrossModules.Components
 		public bool ShowFragmentAndSlice { get; set; } = false;
 
 		[HelpText("Only show the extracted images of the tags, not the whole image")]
-		public bool ExtractMode { get; set; } = true;
+		public bool ExtractMode { get; set; } = false;
 
 		[HelpText("If we want the images in the display to be processed with a Fabric service on request, this is the name")]
 		public string FabricService { get; set; }

@@ -32,6 +32,12 @@ namespace Orions.Systems.CrossModules.Components
 			set
 			{
 				_source = value;
+
+				//lock (_syncRoot)
+				//{
+				//	_widgetsVms.Clear();
+				//}
+
 				OnSourceSet();
 			}
 		}
@@ -93,6 +99,14 @@ namespace Orions.Systems.CrossModules.Components
 			LoadAvailableWidget();
 		}
 
+		public void ClearWidgets()
+		{
+			lock (_syncRoot)
+			{
+				_widgetsVms.Clear();
+			}
+		}
+
 		/// <summary>
 		/// When running as part of another dashboard, synchronize to its filtering system.
 		/// </summary>
@@ -121,7 +135,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 
 			// Create the Vms for all the widgets of this dashboard.
-			foreach (var row in this.Source.Rows)
+			foreach (var row in this.Source?.Rows ?? new LinkedList<DashboardRow>())
 			{
 				foreach (var column in row.Columns)
 				{

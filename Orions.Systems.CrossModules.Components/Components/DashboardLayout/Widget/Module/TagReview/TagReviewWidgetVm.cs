@@ -27,6 +27,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public override async Task HandleFiltersChangedAsync()
 		{
+			if (this.HyperStore == null || this.TagReviewVm.Value.Store == null)
+				return;
+
 			//throw new NotImplementedException();
 
 			var filter = this.DashboardVm.ObtainFilterGroup(Widget.FilterGroup);

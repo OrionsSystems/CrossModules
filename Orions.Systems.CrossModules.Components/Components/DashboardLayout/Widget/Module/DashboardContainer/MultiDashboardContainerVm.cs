@@ -16,6 +16,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public DashboardVm ChildDashboardVm { get; set; }
 
+		//string _lastView = null;
+
 		public MultiDashboardContainerVm()
 		{
 		}
@@ -26,12 +28,15 @@ namespace Orions.Systems.CrossModules.Components
 
 			var context = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
 
-			this.Widget.ChangeCurrentDashboard(context.View);
+			bool dashboardChanged = this.Widget.ChangeCurrentDashboard(context.View);
 
 			CurrentDashboardData = await GetDashboardAsync();
-			
+
 			if (ChildDashboardVm != null)
+			{
+				ChildDashboardVm.ClearWidgets(); // Drop all the widgets from the old dashboard.
 				await ChildDashboardVm.FromParent_HandleFiltersChangedAsync(this.DashboardVm.FilterGroups);
+			}
 
 			this.RaiseNotify(nameof(CurrentDashboardData));
 		}
@@ -39,9 +44,7 @@ namespace Orions.Systems.CrossModules.Components
 		public async Task<DashboardData> GetDashboardAsync()
 		{
 			if (string.IsNullOrWhiteSpace(this.Widget.CurrentDashboard?.Id))
-			{
 				return null;
-			}
 
 			var documentId = HyperDocumentId.Create<DashboardData>(this.Widget.CurrentDashboard?.Id);
 			var args = new RetrieveHyperDocumentArgs(documentId);
@@ -51,12 +54,6 @@ namespace Orions.Systems.CrossModules.Components
 				return null;
 
 			var dashboard = doc?.GetPayload<DashboardData>();
-
-			if (dashboard == null)
-				return null;
-
-			(this.ParentVm as DashboardVm).Source = dashboard;
-
 			return dashboard;
 		}
 	}

@@ -66,6 +66,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public string Name { get; set; }
 		public string Stack { get; set; }
+
 		public List<ReportSeriesChartDataItem> Data { get; set; } = new List<ReportSeriesChartDataItem>();
 
 		public UniIconResource Icon { get; set; }
@@ -91,7 +92,10 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				int value;
 				var result = int.TryParse(Value, out value);
-				if (!result) return null;
+
+				if (!result) 
+					return null;
+
 				return value;
 			}
 		}
@@ -102,7 +106,10 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				DateTime value;
 				var result = DateTime.TryParse(Value, out value);
-				if (!result) return null;
+
+				if (!result) 
+					return null;
+
 				return value;
 			}
 		}
@@ -113,7 +120,10 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				double value;
 				var result = double.TryParse(Value, out value);
-				if (!result) return null;
+
+				if (!result) 
+					return null;
+
 				return value;
 			}
 		}
@@ -125,6 +135,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		public DateTime? StartTime => RowTemplate.StartDateTime;
 		public DateTime? EndTime => RowTemplate.EndDateTime;
+
+		public ReportSeriesChartDataItem()
+		{
+		}
 
 		//public DateTime? DatePosition { get; set; }
 		//public string StreamPosition { get; set; }

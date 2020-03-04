@@ -6,8 +6,6 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class MultiDashboardContainerWidget : DashboardWidget
 	{
-		public DashboardLayout DashboardLayout;
-
 		public class Item
 		{
 			[HelpText("The Id of the dashboard to use", HelpTextAttribute.Priorities.Mandatory)]
@@ -30,10 +28,14 @@ namespace Orions.Systems.CrossModules.Components
 			this.Label = "Multi Dashboard container";
 		}
 
-		public void ChangeCurrentDashboard(string view)
+		public bool ChangeCurrentDashboard(string view)
 		{
+			var original = this.CurrentDashboard;
+
 			this.CurrentDashboard = Items.FirstOrDefault(it => it.View == view)?.Dashboard;
 			//this.RaiseNotify(nameof(CurrentDashboard));
+
+			return this.CurrentDashboard?.Id == original?.Id;
 		}
 
 		public override string GetIcon()

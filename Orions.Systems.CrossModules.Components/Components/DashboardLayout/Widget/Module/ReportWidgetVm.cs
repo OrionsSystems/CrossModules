@@ -14,7 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 	/// Base class for Report specific widgets.
 	/// </summary>
 	public class ReportWidgetVm<WidgetType> : WidgetVm<WidgetType>
-		where WidgetType : IDashboardWidget
+		where WidgetType : IReportDashboardWidget
 	{
 		public Report Report { get; private set; }
 
@@ -126,7 +126,17 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		static ReportChartData LoadReportChartData(Report report, string[] includeCategoryFilters, string[] excludeCategoryFilters)
+		protected virtual string FormatData(object data)
+		{
+			string appendinx = "";
+
+			if (this.Widget?.AppendPercentageSign == true)
+				appendinx += "%";
+
+			return Convert.ToString(data) + appendinx;
+		}
+
+		ReportChartData LoadReportChartData(Report report, string[] includeCategoryFilters, string[] excludeCategoryFilters)
 		{
 			var result = new ReportChartData();
 
@@ -184,7 +194,7 @@ namespace Orions.Systems.CrossModules.Components
 							chartItem = new ReportSeriesChartDataItem
 							{
 								CategoryName = columnTitle,
-								Value = Convert.ToString(data),
+								Value = FormatData(data),
 								Label = label,
 
 								RowTemplate = row.Template,

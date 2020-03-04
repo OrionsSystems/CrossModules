@@ -8,7 +8,7 @@
 			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
 			<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
-			<DashboardLayout ref="@DashboardLayout"
+			<DashboardLayout @ref="@DashboardLayout"
 								  HyperStore="@HyperStore"
 									Data="@Vm.CurrentDashboardData"
 									ParrentDashboardId="@Widget.CurrentDashboard?.Id"
@@ -24,7 +24,6 @@
 		else
 		{
 			<div>No Area Selected</div>
-			@*<Loader Settings="@Widget.LoaderSettings"></Loader>*@
 		}
 	</div>
 
@@ -33,7 +32,7 @@
 
 	//public bool Showing { get; set; } = false;
 
-	DashboardLayout DashboardLayout { get; set; }
+	DashboardLayout DashboardLayout;
 
 	protected override void OnStateHasChanged()
 	{
@@ -45,6 +44,8 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		Vm.ChildDashboardVm = DashboardLayout?.Vm;
 
 		//Showing = true;
 		StateHasChanged();

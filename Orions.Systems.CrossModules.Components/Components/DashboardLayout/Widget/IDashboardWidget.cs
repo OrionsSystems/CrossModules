@@ -15,4 +15,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		bool IsVisible { get; set; }
 	}
+
+	public interface IReportDashboardWidget : IDashboardWidget
+	{
+		public bool AppendPercentageSign { get; set; }
+	}
 }

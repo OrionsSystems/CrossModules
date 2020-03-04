@@ -994,8 +994,6 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			this.CurrentTagBeingShown.Value = tagToShow;
 
 			this.TagInfoImage.Value = null;
-
-			await Task.Delay(5000);
 			this.TagInfoImage.Value = await LoadTagImage(tagToShow);
 
 			_tagImageLoadCounter--;

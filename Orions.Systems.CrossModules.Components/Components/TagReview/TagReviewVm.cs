@@ -28,7 +28,9 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		public HyperDocumentId MetadataSetId { get; private set; }
+
 		public IHyperArgsSink Store { get; set; }
+
 		public ViewModelProperty<List<HyperTag>> HyperTags = new ViewModelProperty<List<HyperTag>>();
 		public int DashApiPort { get; set; }
 		//public UniFilterData Filter { get; private set; }
@@ -221,6 +223,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task LoadHyperTags()
 		{
+			if (this.Store == null)
+				return;
+
 			TagsAreBeingLoaded = true;
 
 			var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
