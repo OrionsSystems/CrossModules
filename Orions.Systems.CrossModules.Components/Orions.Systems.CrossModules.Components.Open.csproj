@@ -67,7 +67,7 @@
 	<ItemGroup>
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />
-		<PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
+		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
 		<PackageReference Include="SkiaSharp" Version="1.68.1.1" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
@@ -84,9 +84,4 @@
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<None Update="cvextern.dll">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
 </Project>
