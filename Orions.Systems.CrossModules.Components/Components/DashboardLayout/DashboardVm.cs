@@ -275,7 +275,7 @@ namespace Orions.Systems.CrossModules.Components
 			await Task.WhenAll(tasks);
 		}
 
-		public void ImportProject(byte[] bytes)
+		public void ImportProject(byte[] bytes, bool isNew = true)
 		{
 			var json = Encoding.Default.GetString(bytes);
 
@@ -283,6 +283,9 @@ namespace Orions.Systems.CrossModules.Components
 				return;
 
 			var res = JsonHelper.Deserialize<DashboardData>(json);
+			
+			if(isNew) 
+				res.Id = IdHelper.GenerateId();
 
 			//update and save
 			if (res != null) 
