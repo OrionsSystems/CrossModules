@@ -10,7 +10,7 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool IsShowCardIcons { get; set; }
 
-      public bool MyProperty { get; set; }
+      public bool ShowElementTitle { get; set; } = true;
 
       public NumberCardWidget()
       {
