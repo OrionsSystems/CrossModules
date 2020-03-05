@@ -391,6 +391,27 @@ h5.modal-title {
 	padding: 4px 15px !important;
 }
 
+	.dashboard-modal-widget-header a {
+		margin: auto 15px;
+	}
+
+		.dashboard-modal-widget-header a svg {
+			height: 25px;
+			width: 25px
+		}
+
+	.dashboard-modal-widget-header .dashboard-widget-command-paste {
+		opacity: 0.2;
+		transition: 0.5s;
+	}
+
+		.dashboard-modal-widget-header .dashboard-widget-command-paste:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
+
+
+
 .dashboard-modal-widget-body {
 	padding: 0px !important;
 }

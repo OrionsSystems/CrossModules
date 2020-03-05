@@ -10,6 +10,8 @@
 @inject IJSRuntime JSRuntime
 @inject IMatToaster Toaster
 
+@inject ILocalStorageService LocalStore
+
 <div class="container-fluid">
 
 	<div class="dashboard-header row">
@@ -111,50 +113,50 @@
 								<div class="dashboard-content">
 									@if (IsEditMode)
 									{
-									<div class="dashboard-element-commands">
-										@if (Vm.HasPreviousColumn(row, column))
-										{
-											<a class="btn dashboard-element-commands-prev" @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
-												<EjsTooltip Content="@("Increase column size into left")">
-													<IconArrowLeft></IconArrowLeft>
+										<div class="dashboard-element-commands">
+											@if (Vm.HasPreviousColumn(row, column))
+											{
+												<a class="btn dashboard-element-commands-prev" @onclick="(e => Vm.IncreaseSizeLeft(e, row, column))">
+													<EjsTooltip Content="@("Increase column size into left")">
+														<IconArrowLeft></IconArrowLeft>
+													</EjsTooltip>
+												</a>
+											}
+
+											@if (Vm.HasNextColumn(row, column))
+											{
+												<a class="btn dashboard-element-commands-next" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
+													<EjsTooltip Content="@("Increase column size into right")">
+														<IconArrowRight></IconArrowRight>
+													</EjsTooltip>
+												</a>
+											}
+											<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
+												<EjsTooltip Content="@("Delete column")">
+													<IconClose></IconClose>
 												</EjsTooltip>
 											</a>
-										}
-
-										@if (Vm.HasNextColumn(row, column))
-										{
-											<a class="btn dashboard-element-commands-next" @onclick="(e => Vm.IncreaseSizeRight(e, row, column))">
-												<EjsTooltip Content="@("Increase column size into right")">
-													<IconArrowRight></IconArrowRight>
-												</EjsTooltip>
-											</a>
-										}
-										<a class="btn dashboard-element-commands-delete" @onclick="@(el => { Vm.DeleteColumn(el, row, column); })">
-											<EjsTooltip Content="@("Delete column")">
-												<IconClose></IconClose>
-											</EjsTooltip>
-										</a>
-										@if (column.Size > 1)
-										{
-											<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
-												<EjsTooltip Content="@("Split column horizontal")">
-													<IconSplitHorisontal></IconSplitHorisontal>
-												</EjsTooltip>
-											</a>
-										}
-										@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
-										{
-											<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
-												<EjsTooltip Content="@("Split column vertical")">
-													<IconSplitVertical></IconSplitVertical>
-												</EjsTooltip>
-											</a>
-										}
+											@if (column.Size > 1)
+											{
+												<a class="btn dashboard-element-commands-split-horisontal" @onclick="@(el => { Vm.SplitColumn(el, row, column); })">
+													<EjsTooltip Content="@("Split column horizontal")">
+														<IconSplitHorisontal></IconSplitHorisontal>
+													</EjsTooltip>
+												</a>
+											}
+											@if (column.InnerRows != null && column.Widget == null && column.InnerRows.Count == 0)
+											{
+												<a class="btn dashboard-element-commands-split-vertical" @onclick="@(el => { Vm.InitSplitElementVerical(el, row, column); })">
+													<EjsTooltip Content="@("Split column vertical")">
+														<IconSplitVertical></IconSplitVertical>
+													</EjsTooltip>
+												</a>
+											}
 
 
 
 
-									</div>
+										</div>
 									}
 
 									<div class="clearfix"></div>
@@ -266,6 +268,11 @@
 																								<IconVisible></IconVisible>
 																							</EjsTooltip>
 																						</a>
+																						<a class="btn dashboard-widget-command-settings" @onclick="(e => CopyWidget(e, innerColumn.Widget))">
+																							<EjsTooltip Content="@("Copy inner widget")">
+																								<IconClone></IconClone>
+																							</EjsTooltip>
+																						</a>
 																						<a class="btn dashboard-widget-command-clean" @onclick="(e => Vm.CleanWidget(e, innerColumn))">
 																							<EjsTooltip Content="@("Clean widget")">
 																								<IconClean></IconClean>
@@ -289,6 +296,11 @@
 																									@slWdg.Label
 																								</div>
 																								<div class="dashboard-widget-commands">
+																									<a class="btn dashboard-widget-command-settings" @onclick="(e => Vm.OpenWidgetProperty(e, innerColumn))">
+																										<EjsTooltip Content="@("Widget property")">
+																											<IconSettings></IconSettings>
+																										</EjsTooltip>
+																									</a>
 																									<a class="dashboard-widget-command-visible @(slWdg.IsVisible ? "dashboard-widget-command-enable" : "")">
 																										<EjsTooltip Content="@("Enable/disable widget")">
 																											<IconVisible></IconVisible>
@@ -335,6 +347,11 @@
 														<a class="btn dashboard-widget-command-visible @(column.Widget.IsVisible ? "dashboard-widget-command-enable" : "")" @onclick="(e => Vm.ToggleVisibility(e, column))">
 															<EjsTooltip Content="@("Enable or disable widget")">
 																<IconVisible></IconVisible>
+															</EjsTooltip>
+														</a>
+														<a class="btn dashboard-widget-command-settings" @onclick="(e => CopyWidget(e, column.Widget))">
+															<EjsTooltip Content="@("Copy widget")">
+																<IconClone></IconClone>
 															</EjsTooltip>
 														</a>
 														<a class="btn dashboard-widget-command-clean" title="Clean Widget" @onclick="(e => Vm.CleanWidget(e, column))">
@@ -438,6 +455,11 @@
 			<div class="modal-content">
 				<div class="modal-header dashboard-modal-widget-header">
 					<h5 class="modal-title">Available Widgets</h5>
+					<a class="btn dashboard-widget-command-paste" @onclick="ReadSavedWidget">
+						<EjsTooltip Content="@("Paste copied wodget")">
+							<IconClone></IconClone>
+						</EjsTooltip>
+					</a>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.IsShowModalWidget = false; })">
 						<span aria-hidden="true">&times;</span>
 					</button>
@@ -555,7 +577,7 @@
 							<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(arg); })" />
 						</div>
 					</div>
-					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -670,4 +692,24 @@
 		}
 	}
 
+	const string widget_copy_key = "widget_copy";
+
+	private async void CopyWidget(MouseEventArgs e, IDashboardWidget widget)
+	{
+		var widgetStr = Vm.SerializeWidget(widget);
+		await LocalStore.SetItemAsync(widget_copy_key, widgetStr);
+	}
+
+	private async void ReadSavedWidget(MouseEventArgs e)
+	{
+		var widgetStr = await LocalStore.GetItemAsync<string>(widget_copy_key);
+		if (string.IsNullOrWhiteSpace(widgetStr)) return;
+		Vm.LoadSavedWidget(widgetStr);
+		StateHasChanged();
+	}
+
+	//private async void ClearLocalStorage()
+	//{
+	//	await LocalStore.ClearAsync();
+	//}
 }

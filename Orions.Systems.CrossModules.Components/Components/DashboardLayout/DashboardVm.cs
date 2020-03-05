@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Orions.Infrastructure.Reporting;
 using System.Text;
 
 namespace Orions.Systems.CrossModules.Components
@@ -297,6 +296,18 @@ namespace Orions.Systems.CrossModules.Components
 			return JsonHelper.Serialize(Source);
 		}
 
+		public string SerializeWidget(IDashboardWidget widget) {
+			return JsonHelper.Serialize(widget);
+		}
+
+		public void LoadSavedWidget(string json)
+		{
+			var widget =  JsonHelper.Deserialize<DashboardWidget>(json);
+			if (widget == null) return;
+			SelectedColumn.Widget = widget;
+			IsShowModalWidget = false;
+		}
+
 		#region Dashboad Desing Operations
 
 		public void OnAddRow()
@@ -507,6 +518,12 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			IsShowProperty = true;
 			SelectedColumn = column;
+		}
+
+		public void OpenWidgetProperty(MouseEventArgs e, IDashboardWidget widget)
+		{
+			IsShowProperty = true;
+			SelectedWidget = widget;
 		}
 
 		public void AddSelectedWidget(MouseEventArgs e, Type widgetType)
