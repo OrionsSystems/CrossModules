@@ -189,13 +189,13 @@ h5.modal-title {
 	display: flex;
 }
 
-	.dashboard-widget-container > .dashboard-widget-add {
-		padding: 30px 15px;
-	}
+.dashboard-widget-container > .dashboard-widget-add {
+	padding: 30px 15px;
+}
 
-	.dashboard-widget-container > .dashboard-widget-container-flex {
-		padding: 30px 15px;
-	}
+.dashboard-widget-container > .dashboard-widget-container-flex {
+	padding: 30px 15px;
+}
 
 .dashboard-widget-container:hover .dashboard-content-next,
 .dashboard-widget-container:hover .dashboard-content-prev {
@@ -953,6 +953,7 @@ widget-single-analytics-icon {
 
 .icon-transport-widget {
 }
+
 	.icon-transport-widget .icon-transport-widget-0 {
 		fill: #1F2E38;
 	}
@@ -1003,6 +1004,33 @@ widget-single-analytics-icon {
 
 	.icon-transport-widget .icon-transport-widget-12 {
 		fill: #CDD1D3;
+	}
+
+.icon-dropnav {
+}
+
+	.icon-dropnav .icon-dropnav-item-0 {
+		fill: #3B566A;
+	}
+
+	.icon-dropnav .icon-dropnav-item-1 {
+		fill: #4FBF9F;
+	}
+
+	.icon-dropnav .icon-dropnav-item-2 {
+		fill: #ECF0F3;
+	}
+
+	.icon-dropnav .icon-dropnav-item-3 {
+		fill: #28A2DB;
+	}
+
+	.icon-dropnav .icon-dropnav-item-4 {
+		fill: #E66454;
+	}
+
+	.icon-dropnav .icon-dropnav-item-5 {
+		fill: #D5D6DC;
 	}
 
 /* End Icons */
