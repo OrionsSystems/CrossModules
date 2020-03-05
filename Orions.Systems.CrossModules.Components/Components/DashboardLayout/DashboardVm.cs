@@ -520,12 +520,6 @@ namespace Orions.Systems.CrossModules.Components
 			SelectedColumn = column;
 		}
 
-		public void OpenWidgetProperty(MouseEventArgs e, IDashboardWidget widget)
-		{
-			IsShowProperty = true;
-			SelectedWidget = widget;
-		}
-
 		public void AddSelectedWidget(MouseEventArgs e, Type widgetType)
 		{
 			if (widgetType != null && SelectedColumn != null) 
