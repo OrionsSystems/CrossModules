@@ -85,6 +85,11 @@
 					SvgIcon = series.SvgIcon()
 				};
 
+				if (Widget.EnableRoundValue && item.DoubleValue != null) {
+					var res = Math.Round(item.DoubleValue.Value, Widget.RoundPrecision);
+					item.Value = res.ToString();
+				}
+
 				Data.Add(item);
 			}
 		}

@@ -12,6 +12,10 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowElementTitle { get; set; } = true;
 
+      public bool EnableRoundValue { get; set; }
+
+      public int RoundPrecision { get; set; } = 0;
+
       public NumberCardWidget()
       {
          this.Label = "Number Card";
