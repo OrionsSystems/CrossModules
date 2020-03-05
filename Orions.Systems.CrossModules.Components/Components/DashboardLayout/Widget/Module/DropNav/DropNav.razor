@@ -1,0 +1,41 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits DashboardComponent<DropNavVm, DropNavWidget>
+
+@using Syncfusion.EJ2.Blazor.DropDowns
+
+<div class="widget-content-report @Widget.Class">
+
+	<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+	<TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+	<div class="widget-content-report-view">
+		<EjsDropDownList TValue="string"
+							  TItem="@DropNavWidget.NavigationItem"
+							  Placeholder="@Widget.Placeholder"
+							  AllowFiltering="@Widget.AllowFiltering"
+							  PopupHeight="@Widget.PopupHeight"
+							  PopupWidth="@Widget.PopupWidth"
+							  CssClass="@Widget.CssClass"
+							  Readonly="@Widget.Readonly"
+							  ShowClearButton="@Widget.ShowClearButton"
+							  ValueChanged="@Vm.OnSelectStory"
+							  DataSource="@Widget.Navigations">
+			<DropDownListFieldSettings Value="@(nameof(DropNavWidget.NavigationItem.View))" 
+												Text="@(nameof(DropNavWidget.NavigationItem.Label))"></DropDownListFieldSettings>
+		</EjsDropDownList>
+	</div>
+
+	<SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+
+</div>
+
+@code {
+
+	protected override async Task OnInitializedAsync()
+	{
+
+		await base.OnInitializedAsync();
+	}
+	
+}
