@@ -43,8 +43,8 @@
 						<EjsDateRangePicker @ref="DateRangePicker"
 												  @bind-StartDate="@Vm.StartDate"
 												  @bind-EndDate="@Vm.EndDate"
-												  Min="@(new DateTime(2019, 10, 1))"
-												  Max="@(new DateTime(2019, 12, 31))"
+												  Min="@Vm.MinDate"
+												  Max="@Vm.MaxDate"
 												  Placeholder="Select Time Range"></EjsDateRangePicker>
 					</div>
 				}

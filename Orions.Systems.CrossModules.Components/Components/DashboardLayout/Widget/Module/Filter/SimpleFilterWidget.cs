@@ -14,21 +14,29 @@ namespace Orions.Systems.CrossModules.Components
 		/// <summary>
 		/// Persist the previous selection of the user.
 		/// </summary>
-		[UniBrowsable(false)]
+		[UniJsonIgnore]
+      [UniBrowsable(false)]
       public string[] Filters { get; set; }
 
+      [UniJsonIgnore]
       [UniBrowsable(false)]
       public DateTime? StartDate { get; set; }
 
+      [UniJsonIgnore]
       [UniBrowsable(false)]
       public DateTime? EndDate { get; set; }
 
+      [UniJsonIgnore]
       [UniBrowsable(false)]
       public PeriodDefinition Period { get; set; }
 
-		#endregion
+      #endregion
 
-		public bool ShowTextLabelSelection { get; set; } = true;
+      public DateTime? MinDate { get; set; } = new DateTime(2019, 11, 1);
+
+      public DateTime? MaxDate { get; set; } = new DateTime(2019, 12, 31);
+
+      public bool ShowTextLabelSelection { get; set; } = true;
 
       public bool ShowDateTimeSelection { get; set; } = true;
 
