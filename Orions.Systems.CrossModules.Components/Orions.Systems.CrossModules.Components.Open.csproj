@@ -74,6 +74,7 @@
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
 		<PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+		<PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,7 +82,6 @@
 		<PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
 		<PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
 		<PackageReference Include="Orions.SDK" Version="2.42.0-preview.*" />
-		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
 	</ItemGroup>
 
 </Project>
