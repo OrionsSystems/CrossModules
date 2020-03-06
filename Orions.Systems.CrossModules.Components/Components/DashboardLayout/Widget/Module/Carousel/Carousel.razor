@@ -1,0 +1,82 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+@inherits DashboardComponent<CarouselVm, CarouselWidget>
+@using BlazorStrap
+
+<div class="widget-content-report @Widget.Class">
+
+    <SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
+    <TitleCard Settings="Widget.TitleSettings"></TitleCard>
+
+    <div class="widget-content-report-view">
+        @if (Vm.Data.Any())
+        {
+            <BSCarousel NumberOfItems="@Vm.Data.Count">
+                <BSCarouselIndicators NumberOfItems="@Vm.Data.Count"></BSCarouselIndicators>
+                <div class="carousel-inner">
+                    @for (int i = 0; i < Vm.Data.Count - 1; i++)
+                    {
+                        @if (Widget.IsActionLinkEnabled)
+                        {
+                            <BSCarouselItem src="@Vm.Data[i].Source" alt="@Vm.Data[i].Alt" ActionLink="@Vm.Data[i].ActionLink" ActionLinkTarget="@Vm.Data[i].ActionLinkTarget">
+                                @if (Widget.IsShowCaption)
+                                {
+                                    <BSCarouselCaption CaptionText="@Vm.Data[i].Caption"></BSCarouselCaption>
+
+                                }
+                                @if (Widget.IsShowCaptionHeader)
+                                {
+                                    <BSCarouselCaption HeaderText="@Vm.Data[i].Header"></BSCarouselCaption>
+                                }
+                            </BSCarouselItem>
+                        }
+                        else
+                        {
+                            <BSCarouselItem src="@Vm.Data[i].Source" alt="@Vm.Data[i].Alt">
+                                @if (Widget.IsShowCaption)
+                                {
+                                    <BSCarouselCaption CaptionText="@Vm.Data[i].Caption"></BSCarouselCaption>
+
+                                }
+                                @if (Widget.IsShowCaptionHeader)
+                                {
+                                    <BSCarouselCaption HeaderText="@Vm.Data[i].Header"></BSCarouselCaption>
+                                }
+                            </BSCarouselItem>
+                        }
+
+                    }
+                </div>
+                <BSCarouselControl CarouselDirection="CarouselDirection.Previous" NumberOfItems="@Vm.Data.Count"></BSCarouselControl>
+                <BSCarouselControl CarouselDirection="CarouselDirection.Next" NumberOfItems="@Vm.Data.Count"></BSCarouselControl>
+
+            </BSCarousel>
+        }
+    </div>
+
+    <SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
+
+    @if (Vm.Report == null && Vm.IsLoadedReportResult)
+    {
+        <div class="widget-missing-report">
+            Missing report data!
+        </div>
+    }
+
+    @if (!Vm.IsLoadedReportResult)
+    {
+        <Loader Settings="@Widget.LoaderSettings"></Loader>
+    }
+
+</div>
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        Vm.OnReportResultChanged += Vm.OnChangeDataSource;
+
+        await Vm.RefreshReportResultData();
+
+        await base.OnInitializedAsync();
+    }
+}
