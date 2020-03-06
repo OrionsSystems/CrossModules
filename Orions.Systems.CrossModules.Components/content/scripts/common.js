@@ -454,3 +454,16 @@ window.addEventListener("resize", function () {
       }
    };
 })();
+
+window.Orions.CodeMirror = {
+   init: function (componentInstance, config, textArea, initialCode) {
+
+      var cm = CodeMirror.fromTextArea(Config.Ref, {
+         value: Config.Data,
+         //mode: { name: "javascript", json: true },
+         lineNumbers: true
+      });
+
+      return new Promise(() => { });
+   }
+};

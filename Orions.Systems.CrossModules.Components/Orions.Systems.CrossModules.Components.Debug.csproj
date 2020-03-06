@@ -29,6 +29,11 @@
 		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+
+		<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\codemirror\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\codemirror\theme\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		
 	</ItemGroup>
 
 	<ItemGroup>
@@ -71,6 +76,8 @@
 		<None Remove="content\css\propertyGrid.css" />
 		<None Remove="content\scripts\svgMapEditor.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
+		<None Remove="content\codemirror\codemirror.css" />
+		<None Remove="content\codemirror\codemirror.js" />
 	</ItemGroup>
 
 	<ItemGroup>
