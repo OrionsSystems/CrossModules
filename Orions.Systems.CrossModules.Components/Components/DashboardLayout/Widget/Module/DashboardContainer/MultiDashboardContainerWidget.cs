@@ -35,7 +35,7 @@ namespace Orions.Systems.CrossModules.Components
 			this.CurrentDashboard = Items.FirstOrDefault(it => it.View == view)?.Dashboard;
 			//this.RaiseNotify(nameof(CurrentDashboard));
 
-			return this.CurrentDashboard?.Id == original?.Id;
+			return this.CurrentDashboard?.Id != original?.Id;
 		}
 
 		public override string GetIcon()

@@ -34,11 +34,14 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (ChildDashboardVm != null)
 			{
-				ChildDashboardVm.ClearWidgets(); // Drop all the widgets from the old dashboard.
+				if (dashboardChanged)
+					ChildDashboardVm.ClearWidgets(); // Drop all the widgets from the old dashboard.
+
 				await ChildDashboardVm.FromParent_HandleFiltersChangedAsync(this.DashboardVm.FilterGroups);
 			}
 
-			this.RaiseNotify(nameof(CurrentDashboardData));
+			if (dashboardChanged)
+				this.RaiseNotify(nameof(CurrentDashboardData));
 		}
 
 		public async Task<DashboardData> GetDashboardAsync()

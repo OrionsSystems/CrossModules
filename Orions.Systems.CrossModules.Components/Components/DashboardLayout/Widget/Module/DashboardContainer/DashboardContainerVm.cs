@@ -16,12 +16,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		public string ParrentDashboardId { get { return this.Widget.Dashboard?.Id; } }
 
-		public async Task<DashboardData> SetDashboardAsync()
+		public async Task<DashboardData> GetDashboardAsync()
 		{
 			if (string.IsNullOrWhiteSpace(this.Widget.Dashboard?.Id))
-			{
 				return null;
-			}
 
 			var documentId = HyperDocumentId.Create<DashboardData>(this.Widget.Dashboard?.Id);
 			var args = new RetrieveHyperDocumentArgs(documentId);
@@ -31,12 +29,6 @@ namespace Orions.Systems.CrossModules.Components
 				return null;
 
 			var dashboard = doc?.GetPayload<DashboardData>();
-
-			if (dashboard == null)
-				return null;
-
-			(this.ParentVm as DashboardVm).Source = dashboard;
-
 			return dashboard;
 		}
 	}

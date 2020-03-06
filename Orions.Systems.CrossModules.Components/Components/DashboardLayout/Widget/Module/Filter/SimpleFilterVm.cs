@@ -27,6 +27,23 @@ namespace Orions.Systems.CrossModules.Components
 			public string Text { get; set; }
 		}
 
+		public DateTime MinDate
+		{
+			get
+			{
+				return this.Widget?.MinDate ?? new DateTime(2019, 1, 1);
+			}
+		}
+
+		public DateTime MaxDate
+		{
+			get
+			{
+				return this.Widget?.MaxDate ?? new DateTime(2019, 12, 31);
+			}
+		}
+
+
 		public DateTime? StartDate
 		{
 			get

@@ -40,7 +40,7 @@
 	{
 		await base.OnInitializedAsync();
 
-		Dashboard = await this.Vm.SetDashboardAsync();
+		Dashboard = await this.Vm.GetDashboardAsync();
 
 		Showing = true;
 		StateHasChanged();
