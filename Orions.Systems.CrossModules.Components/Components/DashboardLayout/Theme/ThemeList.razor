@@ -1,0 +1,123 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@using Orions.Node.Common
+
+@inherits BaseBlazorComponent<ThemeVm>
+
+<div class="container-fluid theme-container-list">
+
+	<button class="btn btn-outline-dark mb-2" @onclick="@Vm.CreateTheme">Create New Theme</button>
+
+	<h3 class="theme-container-list-title">CSS Themes</h3>
+
+	@if (Vm.DataList.Any() && Vm.IsLoadedDataResult)
+	{
+		var rowIndex = 0;
+
+		<div class="table-responsive">
+			<table class="table table-striped table-bordered table-hover">
+				<thead>
+					<tr>
+						<th width="1%" class="nowrap center"></th>
+						<th width="5%" class="nowrap center">Group</th>
+						<th>Name</th>
+						<th width="30%" class="nowrap center"></th>
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var item in Vm.DataList)
+					{
+						rowIndex++;
+
+						<tr @key="item.Id">
+							<td class="center nowrap">@rowIndex</td>
+							<td class="center">@item.Group</td>
+							<td class="theme-list-name">@item.Name</td>
+							<td class="center theme-cmd">
+								<a class="btn btn-sm theme-cmd-view" @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">
+									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
+								</a>
+								<a class="btn btn-sm theme-cmd-edit" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })"> 
+									<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
+								</a>
+								<a class="btn btn-sm theme-cmd-delete" @onclick="@(async e => { await Vm.DeleteTheme(item); })"> 
+									<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
+								</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+
+	@if (!Vm.IsLoadedDataResult)
+	{
+		<div style="position:relative;">
+			<div class="loading-bar"></div>
+		</div>
+	}
+
+</div>
+
+
+@if (Vm.IsShowProperty)
+{
+	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body">
+							<PropertyGrid @ref="propGrid"
+											  Loader="Vm.LoadTheme"
+											  CancelVisible="true"
+											  HyperStore="HyperStore"
+											  OKVisible="true"
+											  CancelCommand="Vm.OnCancelProperty"
+											  OkCommand="Vm.OnOkProperty">
+							</PropertyGrid>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+	private PropertyGrid _propGrid;
+	public PropertyGrid propGrid
+	{
+		get => _propGrid;
+		set
+		{
+			_propGrid = value;
+			Vm.PropertyGridVm = value.Vm;
+		}
+	}
+
+	[Parameter]
+	public IHyperArgsSink HyperStore
+	{
+		get { return Vm.HyperStore; }
+		set { Vm.HyperStore = value; }
+	}
+
+	[Parameter]
+	public EventCallback<StyleTheme> OnOpenTheme
+	{
+		get => Vm.OnOpenTheme;
+		set => Vm.OnOpenTheme = value;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await Vm.InitAsync();
+	}
+}

@@ -1034,3 +1034,45 @@ widget-single-analytics-icon {
 	}
 
 /* End Icons */
+
+
+
+/* Start theme component */
+
+.theme-cmd {
+}
+
+	.theme-cmd a {
+		cursor: pointer;
+		padding: 0px;
+		opacity: 0.3;
+		transition: 0.5s;
+	}
+
+		.theme-cmd a:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
+
+	.theme-cmd .theme-cmd-delete {
+		color: red !important;
+	}
+
+.theme-edit-container {
+}
+
+.theme-edit-cmd {
+	display: inline-block;
+	text-align: right;
+}
+
+	.theme-edit-cmd a {
+		cursor:pointer;
+	}
+
+	.theme-edit-container .theme-edit-textarea {
+		width: 100%;
+		border: 1px solid lightgray;
+	}
+
+/* End theme component*/

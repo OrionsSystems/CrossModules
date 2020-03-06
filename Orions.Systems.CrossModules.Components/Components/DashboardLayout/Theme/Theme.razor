@@ -1,0 +1,63 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@using Orions.Node.Common
+@using Syncfusion.EJ2.Blazor.Popups
+@using Microsoft.JSInterop
+@using System.IO
+
+
+@inherits BaseBlazorComponent<ThemeVm>
+
+	<div class="container-fluid theme-edit-container">
+
+
+		@if (Vm.SelectedData != null)
+		{
+		<div class="row">
+			<div class="col-lg-8">
+				<h3>Css Theme - @Vm.SelectedData.Name</h3>
+			</div>
+			<div class="col-lg-4 theme-edit-cmd">
+				<a class="btn theme-cmd-cancel">
+					<MatIcon Class="theme-cmd-icon" Icon="@MatIconNames.Apps" @onclick="@BackToThemeList"></MatIcon> 
+					<div class="theme-cmd-text">Back</div>
+				</a>
+				<a class="btn theme-cmd-save">
+					<MatIcon Class="theme-cmd-icon" Icon="@MatIconNames.Save" @onclick="@Vm.SaveChangesAsync"></MatIcon> 
+					<div class="theme-cmd-text"> Save </div>
+				</a>
+			</div>
+		</div>
+			<div class="row">
+				<div class="col-lg-12">
+					<label for="themeStyleId">Edit css:</label>
+					<textarea id="themeStyleId" class="theme-edit-textarea" rows="50" cols="20" @bind="@Vm.SelectedData.Styles"></textarea>
+				</div>
+			</div>		
+		}
+
+	</div>
+
+@code {
+
+	[Parameter]
+	public IHyperArgsSink HyperStore { get { return Vm.HyperStore; } set { Vm.HyperStore = value; } }
+
+	[Parameter]
+	public string ThemeId { get; set; }
+
+	[Parameter]
+	public EventCallback<bool> OnClickBack { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await Vm.InitTheme(ThemeId);
+	}
+
+	private async Task BackToThemeList()
+	{
+		await OnClickBack.InvokeAsync(true);
+	}
+}
