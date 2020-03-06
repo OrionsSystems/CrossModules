@@ -479,7 +479,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.RaiseNotify("TagDateRangeFilter");
 			}
 
-			this.InitializeAutoplayTagDateRangeFilter();
+			if(AutoplayTagDateRangeFilter == null)
+			{
+				this.InitializeAutoplayTagDateRangeFilter();
+			}
 
 			this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
 			this.TagsAreBeingLoaded.Value = false;

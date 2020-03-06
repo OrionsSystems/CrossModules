@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,12 +45,7 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 		public MasksHeatmapRenderer.HeatmapSettings HeatmapSettings { get; set; } = new MasksHeatmapRenderer.HeatmapSettings();
 
-		public ViewModelProperty<DateTime?> MetadataSetMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
-		public ViewModelProperty<DateTime?> MetadataSetMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
-		public ViewModelProperty<DateTime?> FilterMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
-		public ViewModelProperty<DateTime?> FilterMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
-		public DateTime? HeatMapMinDate { get; set; }
-		public DateTime? HeatMapMaxDate { get; set; }
+		public ViewModelProperty<TagReviewFilterState> FilterState { get; set; } = new ViewModelProperty<TagReviewFilterState>(new TagReviewFilterState());
 
 		public DateRangeSlider HeatmanRangeSlider { get; set; }
 		public ViewModelProperty<string> HeatmapRenderingStatus { get; set; } = new ViewModelProperty<string>();
@@ -148,25 +144,22 @@ namespace Orions.Systems.CrossModules.Components
 				var latestTag = (await HyperStore.ExecuteAsync(lastTagFindArgs))[0].GetPayload<HyperTag>();
 				var latestDate = latestTag.GetUniversalDateTimeFromElements();
 
-				this.MetadataSetMinDate.Value = earliestDate.Value;
-				if(FilterMinDate == null)
+				this.FilterState.Value.MetadataSetMinDate.Value = earliestDate.Value;
+				if(FilterState.Value.FilterMinDate.Value == null)
 				{
-					this.FilterMinDate.Value = earliestDate.Value;
-					this.HeatMapMinDate = earliestDate.Value;
+					this.FilterState.Value.FilterMinDate.Value = earliestDate.Value;
+					this.FilterState.Value.HeatMapMinDate.Value = earliestDate.Value;
 				}
-				this.MetadataSetMaxDate.Value = latestDate.Value;
-				if(FilterMaxDate == null)
+				this.FilterState.Value.MetadataSetMaxDate.Value = latestDate.Value;
+				if(FilterState.Value.FilterMaxDate.Value == null)
 				{
-					this.FilterMaxDate.Value = latestDate.Value;
-					this.HeatMapMaxDate = latestDate.Value;
+					this.FilterState.Value.FilterMaxDate.Value = latestDate.Value;
+					this.FilterState.Value.HeatMapMaxDate.Value = latestDate.Value;
 				}
 			}
 		}
 
-		private void ImageProp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(_renderer.ImageProp.Value)}";
-		}
+
 
 		private async Task<int> GetDashApiPort()
 		{
@@ -191,12 +184,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task FilterTags(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
-			//this.Filter = filter;
 			FitlerMetadataSet(startDate, endDate, filterLabels);
-			FilterMinDate = startDate ?? MetadataSetMinDate;
-			FilterMaxDate = endDate ?? MetadataSetMaxDate;
-			HeatMapMinDate = startDate ?? FilterMinDate;
-			HeatMapMaxDate = endDate ?? FilterMaxDate;
+			FilterState.Value.FilterMinDate.Value = startDate ?? FilterState.Value.MetadataSetMinDate;
+			FilterState.Value.FilterMaxDate.Value = endDate ?? FilterState.Value.MetadataSetMaxDate;
+			FilterState.Value.HeatMapMinDate.Value = startDate ?? FilterState.Value.FilterMinDate;
+			FilterState.Value.HeatMapMaxDate.Value = endDate ?? FilterState.Value.FilterMaxDate;
 
 			PageNumber.Value = 1;
 
@@ -223,17 +215,38 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			_renderer = new MasksHeatmapRenderer(this.HyperStore, this._metadataSet, HeatmapSettings);
 
-			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
-			_renderer.StatusProp.PropertyChanged += (sender, e) => this.HeatmapRenderingStatus.Value = _renderer.StatusProp.Value;
-			_renderer.PertcantageLabel.PropertyChanged += (sender, e) => this.HeatmapRenderPerecentage.Value = _renderer.PertcantageLabel.Value;
+			_renderer.ImageProp.PropertyChanged += HetmapRendererImageProp_PropertyChanged;
+			_renderer.StatusProp.PropertyChanged +=	HetmapRendererStatusProp_PropertyChanged;
+			_renderer.PertcantageLabel.PropertyChanged += HeatmapRendererPercentageProp_PropertyChanged;
 
-			var dateRange = this.HeatMapMaxDate.HasValue && this.HeatMapMinDate.HasValue ? new DateTime[] { this.HeatMapMinDate.Value, this.HeatMapMaxDate.Value } : null;
+			var dateRange = this.FilterState.Value.HeatMapMaxDate.Value.HasValue && this.FilterState.Value.HeatMapMinDate.Value.HasValue ?
+				new DateTime[] { this.FilterState.Value.HeatMapMinDate.Value.Value, this.FilterState.Value.HeatMapMaxDate.Value.Value } 
+				: null;
 			Task.Run(() => _renderer.RunGenerationAsync(dateRange));
+		}
+
+		private void HeatmapRendererPercentageProp_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			this.HeatmapRenderPerecentage.Value = _renderer.PertcantageLabel.Value;
+		}
+
+		private void HetmapRendererStatusProp_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			System.Diagnostics.Debug.WriteLine($"HetmapRendererStatusProp_PropertyChanged: {_renderer.StatusProp.Value}");
+
+			this.HeatmapRenderingStatus.Value = _renderer.StatusProp.Value;
+		}
+
+		private void HetmapRendererImageProp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			HeatmapImgProp.Value = $"data:image/jpg;base64, {Convert.ToBase64String(_renderer.ImageProp.Value)}";
 		}
 
 		public void CancelCurrrentHeatmapGeneration()
 		{
-			_renderer.ImageProp.PropertyChanged -= ImageProp_PropertyChanged;
+			_renderer.ImageProp.PropertyChanged -= HetmapRendererImageProp_PropertyChanged;
+			_renderer.StatusProp.PropertyChanged -= HetmapRendererStatusProp_PropertyChanged;
+			_renderer.PertcantageLabel.PropertyChanged -= HeatmapRendererPercentageProp_PropertyChanged;
 			_renderer.CancelGeneration();
 		}
 
@@ -247,10 +260,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void HeatmapDateRangeChanged(DateTime[] newRange)
 		{
-			this.HeatMapMinDate = newRange[0];
-			this.HeatMapMaxDate = newRange[1];
+			this.FilterState.Value.HeatMapMinDate.Value = newRange[0];
+			this.FilterState.Value.HeatMapMaxDate.Value = newRange[1];
 			RunHeatmapGenerationForCurrentDateFilter();
-			//CancelCurrrentHeatmapGeneration();
 		}
 
 		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
@@ -363,5 +375,17 @@ namespace Orions.Systems.CrossModules.Components
 				await LoadHyperTags();
 			}
 		}
+
+		#region Inner classes
+		public class TagReviewFilterState
+		{
+			public ViewModelProperty<DateTime?> MetadataSetMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public ViewModelProperty<DateTime?> MetadataSetMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public ViewModelProperty<DateTime?> FilterMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public ViewModelProperty<DateTime?> FilterMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public ViewModelProperty<DateTime?> HeatMapMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public ViewModelProperty<DateTime?> HeatMapMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		}
+		#endregion
 	}
 }

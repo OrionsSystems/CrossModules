@@ -6,6 +6,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DateRangeSlider.Util
 {
 	public class ThrottleAction<T>
 	{
+		public bool ThrottlingIsInProgress { get; private set; }
+
 		private Action<T> _callback;
 		private int _timeout;
 		private object _raiseLock = new object();
@@ -23,6 +25,8 @@ namespace Orions.Systems.CrossModules.Components.Components.DateRangeSlider.Util
 		{
 			lock (_raiseLock)
 			{
+				ThrottlingIsInProgress = true;
+
 				_callbackParam = callbackParam;
 
 				if (_timer == null)
@@ -42,8 +46,11 @@ namespace Orions.Systems.CrossModules.Components.Components.DateRangeSlider.Util
 
 		public void TimerElapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+
 			_timer.Dispose();
 			_timer = null;
+
+			ThrottlingIsInProgress = false;
 
 			this._callback.Invoke(_callbackParam);
 		}

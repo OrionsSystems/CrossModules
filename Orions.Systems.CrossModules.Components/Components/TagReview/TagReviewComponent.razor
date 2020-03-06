@@ -70,7 +70,7 @@
 				</div>
 			</div>
 
-			@if(Vm.IsVmShowingHeatmapProp.Value)
+			@if (Vm.IsVmShowingHeatmapProp.Value)
 			{
 				<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block">
 					<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -79,20 +79,17 @@
 								<OverlayLoader IsLoading="@(this.Vm.HeatmapImgProp.Value == null)">
 									<img src="@Vm.HeatmapImgProp.Value" alt="Loading.." />
 								</OverlayLoader>
-							</div>
-							<div>
-								<DateRangeSlider 
-												 MinDate="@this.Vm.FilterMinDate"
-												 MaxDate="@this.Vm.FilterMaxDate"
-												 CurrentMinDate="@this.Vm.HeatMapMinDate"
-												 CurrentMaxDate="@this.Vm.HeatMapMaxDate"
+								<DateRangeSlider MinDate="@this.Vm.FilterState.Value.FilterMinDate"
+												 MaxDate="@this.Vm.FilterState.Value.FilterMaxDate"
+												 CurrentMinDate="@this.Vm.FilterState.Value.HeatMapMinDate"
+												 CurrentMaxDate="@this.Vm.FilterState.Value.HeatMapMaxDate"
 												 DateRangeChanged="@this.Vm.HeatmapDateRangeChanged" />
 								<div>
 									@this.Vm.HeatmapRenderingStatus @this.Vm.HeatmapRenderPerecentage
 								</div>
-							</div>
-							<div class="right-controls">
-								<input type="button" class="btn btn-dark form-control" value="Close" @onclick="Vm.CloseHeatmap" />
+								<div class="right-controls">
+									<input type="button" class="btn btn-dark form-control" value="Close" @onclick="Vm.CloseHeatmap" />
+								</div>
 							</div>
 						</div>
 					</div>
