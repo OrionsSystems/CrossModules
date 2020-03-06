@@ -16,6 +16,26 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
+		public void Initialize()
+		{
+			var store = this.HyperStore;
+
+			this.TagReviewVm.Value.ColumnsNumber = this.Widget.ColumnsNumber;
+			this.TagReviewVm.Value.InitialRowsNumber = this.Widget.InitialRowsNumber;
+			this.TagReviewVm.Value.HeatmapSettings = this.Widget.HeatmapSettings;
+			this.TagReviewVm.Value.FilterState.Value.MetadataSetMinDate.Value = this.Widget.Cache.MetadataSetMinDate;
+			this.TagReviewVm.Value.FilterState.Value.MetadataSetMaxDate.Value = this.Widget.Cache.MetadataSetMaxDate;
+
+			this.TagReviewVm.Value.OnMetadatasetEdgeDatesUpdated = async delegate (DateTime from, DateTime to)
+			{
+				this.Widget.Cache.MetadataSetMinDate = from;
+				this.Widget.Cache.MetadataSetMaxDate = to;
+				this.DashboardVm.SaveChangesAsync();
+			};
+
+			this.TagReviewVm.Value.Initialize(store, Widget.MetadataSetId?.Id, Widget.ColumnsNumber * Widget.InitialRowsNumber);
+		}
+
 		protected override void OnWidgetSet(IDashboardWidget widget)
 		{
 			base.OnWidgetSet(widget);

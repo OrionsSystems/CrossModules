@@ -69,6 +69,8 @@ namespace Orions.Systems.CrossModules.Components
 		public string PlayerUri { get; set; }
 		public string PlayerId { get; set; }
 
+		public Func<DateTime, DateTime, Task> OnMetadatasetEdgeDatesUpdated;
+
 		public TagReviewVm()
 		{
 		}
@@ -147,19 +149,17 @@ namespace Orions.Systems.CrossModules.Components
 				this.FilterState.Value.MetadataSetMinDate.Value = earliestDate.Value;
 				if(FilterState.Value.FilterMinDate.Value == null)
 				{
-					this.FilterState.Value.FilterMinDate.Value = earliestDate.Value;
 					this.FilterState.Value.HeatMapMinDate.Value = earliestDate.Value;
 				}
 				this.FilterState.Value.MetadataSetMaxDate.Value = latestDate.Value;
 				if(FilterState.Value.FilterMaxDate.Value == null)
 				{
-					this.FilterState.Value.FilterMaxDate.Value = latestDate.Value;
 					this.FilterState.Value.HeatMapMaxDate.Value = latestDate.Value;
 				}
+
+				this.OnMetadatasetEdgeDatesUpdated?.Invoke(earliestDate.Value, latestDate.Value);
 			}
 		}
-
-
 
 		private async Task<int> GetDashApiPort()
 		{
@@ -185,10 +185,10 @@ namespace Orions.Systems.CrossModules.Components
 		public async Task FilterTags(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
 			FitlerMetadataSet(startDate, endDate, filterLabels);
-			FilterState.Value.FilterMinDate.Value = startDate ?? FilterState.Value.MetadataSetMinDate;
-			FilterState.Value.FilterMaxDate.Value = endDate ?? FilterState.Value.MetadataSetMaxDate;
-			FilterState.Value.HeatMapMinDate.Value = startDate ?? FilterState.Value.FilterMinDate;
-			FilterState.Value.HeatMapMaxDate.Value = endDate ?? FilterState.Value.FilterMaxDate;
+			FilterState.Value.FilterMinDate.Value = startDate;
+			FilterState.Value.FilterMaxDate.Value = endDate;
+			FilterState.Value.HeatMapMinDate.Value = startDate ?? FilterState.Value.MetadataSetMinDate;
+			FilterState.Value.HeatMapMaxDate.Value = endDate ?? FilterState.Value.MetadataSetMaxDate;
 
 			PageNumber.Value = 1;
 
@@ -383,6 +383,20 @@ namespace Orions.Systems.CrossModules.Components
 			public ViewModelProperty<DateTime?> MetadataSetMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> FilterMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> FilterMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+			public DateTime? HeatmapEdgeMinDate 
+			{ 
+				get 
+				{
+					return this.FilterMinDate.Value ?? this.MetadataSetMinDate.Value;
+				} 
+			}
+			public DateTime? HeatmapEdgeMaxDate
+			{
+				get
+				{
+					return this.FilterMaxDate.Value ?? this.MetadataSetMaxDate.Value;
+				}
+			}
 			public ViewModelProperty<DateTime?> HeatMapMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> HeatMapMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 		}

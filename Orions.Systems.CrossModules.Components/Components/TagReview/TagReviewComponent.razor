@@ -79,8 +79,8 @@
 								<OverlayLoader IsLoading="@(this.Vm.HeatmapImgProp.Value == null)">
 									<img src="@Vm.HeatmapImgProp.Value" alt="Loading.." />
 								</OverlayLoader>
-								<DateRangeSlider MinDate="@this.Vm.FilterState.Value.FilterMinDate"
-												 MaxDate="@this.Vm.FilterState.Value.FilterMaxDate"
+								<DateRangeSlider MinDate="@this.Vm.FilterState.Value.HeatmapEdgeMinDate"
+												 MaxDate="@this.Vm.FilterState.Value.HeatmapEdgeMaxDate"
 												 CurrentMinDate="@this.Vm.FilterState.Value.HeatMapMinDate"
 												 CurrentMaxDate="@this.Vm.FilterState.Value.HeatMapMaxDate"
 												 DateRangeChanged="@this.Vm.HeatmapDateRangeChanged" />
