@@ -84,7 +84,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			_ctSource.Cancel();
 		}
 
-		public async Task RunGenerationAsync()
+		public async Task RunGenerationAsync(DateTime[] timeRange = null)
 		{
 			_keepWorking = true;
 			_ctSource = new CancellationTokenSource();
@@ -97,6 +97,12 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 				_frames = new ConcurrentFixedSizeQueue<List<HeatPoint>>(int.MaxValue);
 
 				ProtectOriginalMetadataSet();
+
+				if(timeRange != null && timeRange.Length == 2)
+				{
+					_metadataSet.FromDate = timeRange[0];
+					_metadataSet.ToDate = timeRange[1];
+				}
 
 				//TryAddTagType(nameof(HyperTagGeometry), nameof(HyperTagGeometryMask));
 
@@ -806,6 +812,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			}
 		}
 
+		private DateTime[] _timeRange;
 		/// <summary>
 		/// Calculates total amount of tags according to metadata set.
 		/// </summary>
@@ -835,6 +842,10 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				mainArgs.DocumentConditions.AddCondition(hyperTagIdscondition);
 			}
+			//if (tagFilterConditions != null)
+			//{
+			//	mainArgs.DocumentConditions.AddCondition(tagFilterConditions);
+			//}
 		}
 
 		public static SKImage GenerateMaskFromValuesMatrix(uint[,] matrix, int width, int height, uint? overrideNormalizationMin, uint? overrideNormalizationMax)

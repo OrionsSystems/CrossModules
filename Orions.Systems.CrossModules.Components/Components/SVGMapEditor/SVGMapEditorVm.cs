@@ -587,7 +587,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 							CurrentlyShownHeatmapZoneDataSet = ZoneDataSets.Single(ds => ds.Zone.Id == CurrentlyShownHeatmapZoneDataSet.Zone.Id);
 						}
 
-						HeatmapImgProp.Value = CurrentlyShownHeatmapZoneDataSet.Heatmap.DataBase64Link;
+						HeatmapImgProp.Value = CurrentlyShownHeatmapZoneDataSet.Heatmap?.DataBase64Link;
 					}
 
 					if (isCacheMode)
@@ -676,6 +676,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				stepToDatasetMappings[step] = task;
 			}
 			await Task.WhenAll(stepTasks);
+			foreach(var step in stepToDatasetMappings)
+			{
+				step.Key.ZoneDataSets = step.Value.Result;
+			}
 
 			var heatmapRenderer = InstantiateHeatmapRendererWithSettings();
 			var heatmapTasks = new Dictionary<ZoneDataSet, Task<UniImage>>();
@@ -695,8 +699,11 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 					heatmapTasks[ds] = heatmapTask;
 				}
 			}
-
 			await Task.WhenAll(heatmapTasks.Values);
+			foreach(var ds in heatmapTasks)
+			{
+				ds.Key.Heatmap = ds.Value.Result;
+			}
 
 			this.PlaybackCache.Value = mapCache;
 			this.PlaybackCacheUpdateStatus.Value = "Saving cached data ...";

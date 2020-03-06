@@ -1,144 +1,176 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 @inherits TagReviewComponentBase
 
-	<div class="metadatareview-component">
-		@if (Vm.MetadataSetLoadFailed == false)
-		{
-			<div class="metadatareview-grid">
-				@if (Vm.TagsAreBeingLoaded || Vm.HyperTags == null)
-				{
-					<span>Loading...</span>
-				}
-				else
-				{
-					<TagGrid Context="@DataContext"/>
-				}
-			</div>
+@using  Orions.Systems.CrossModules.Components.Components;
 
-			@if (this.Vm.HyperTags != null && this.Vm.HyperTags.Value.Any())
+<div class="metadatareview-component">
+	@if (Vm.MetadataSetLoadFailed == false)
+	{
+		<div class="metadatareview-grid">
+			@if (Vm.TagsAreBeingLoaded || Vm.HyperTags == null)
 			{
-				<div class="metadatareview-page-controls">
-					<ul class="pagination">
+				<span>Loading...</span>
+			}
+			else
+			{
+				<TagGrid Context="@DataContext" />
+			}
+		</div>
 
-						@{
-							var currentPageNumber = this.DataContext.PageNumber.Value;
-							var prevPageNumber = this.DataContext.PageNumber - 1;
-							var nextPageNumber = this.DataContext.PageNumber + 1;
-						}
-						@if (prevPageNumber > 0)
-						{
-							<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(prevPageNumber.ToString()); }">@prevPageNumber</a></li>
-						}
-						<li class="page-item active"><a class="page-link" @onclick="async () => { await Vm.ChangePage(currentPageNumber.ToString()); }">@currentPageNumber</a></li>
-						@if (nextPageNumber <= this.DataContext.TotalPages)
-						{
-							<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(nextPageNumber.ToString()); }">@nextPageNumber</a></li>
-						}
-						@if (nextPageNumber == 2 && Vm.TotalPages > 2)
-						{
-							<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(3.ToString()); }">3</a></li>
-						}
-
-					</ul>
-
-					<div class="input-group mb-3 page-select">
-						<div class="input-group-prepend">
-							<label class="input-group-text" for="inputGroupSelect01">Page size</label>
-						</div>
-						<select class="custom-select" id="inputGroupSelect01" value="@Vm.PageSize.Value" @onchange="async (e) => await Vm.ChangePageSize(int.Parse(e.Value as string))">
-							@foreach (var pageSizeOption in Vm.PageSizeOptions)
-							{
-								<option value="@pageSizeOption">@pageSizeOption</option>
-							}
-						</select>
-					</div>
-
-					<div class="go-to-page-control">
-						<span>Go to page: </span>
-						<input type="number" min="1" max="@Vm.TotalPages.Value" class="form-control page-number-input" value="@Vm.PageNumber.Value" @onchange="async (e) => await Vm.ChangePage(e.Value as string)" />
-					</div>
+		@if (this.Vm.HyperTags != null && this.Vm.HyperTags.Value.Any())
+		{
+			<div class="metadatareview-page-controls">
+				<ul class="pagination">
 
 					@{
-						this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);
+						var currentPageNumber = this.DataContext.PageNumber.Value;
+						var prevPageNumber = this.DataContext.PageNumber - 1;
+						var nextPageNumber = this.DataContext.PageNumber + 1;
+					}
+					@if (prevPageNumber > 0)
+					{
+						<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(prevPageNumber.ToString()); }">@prevPageNumber</a></li>
+					}
+					<li class="page-item active"><a class="page-link" @onclick="async () => { await Vm.ChangePage(currentPageNumber.ToString()); }">@currentPageNumber</a></li>
+					@if (nextPageNumber <= this.DataContext.TotalPages)
+					{
+						<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(nextPageNumber.ToString()); }">@nextPageNumber</a></li>
+					}
+					@if (nextPageNumber == 2 && Vm.TotalPages > 2)
+					{
+						<li class="page-item"><a class="page-link" @onclick="async () => { await Vm.ChangePage(3.ToString()); }">3</a></li>
 					}
 
-					<div class="total-pages">Total pages: @DataContext.TotalPages.Value</div>
-					<div class="right-controls">
-						<input type="button" class="btn btn-dark form-control" value="Heatmap" @onclick="Vm.ShowHeatmap" />
+				</ul>
+
+				<div class="input-group mb-3 page-select">
+					<div class="input-group-prepend">
+						<label class="input-group-text" for="inputGroupSelect01">Page size</label>
 					</div>
+					<select class="custom-select" id="inputGroupSelect01" value="@Vm.PageSize.Value" @onchange="async (e) => await Vm.ChangePageSize(int.Parse(e.Value as string))">
+						@foreach (var pageSizeOption in Vm.PageSizeOptions)
+						{
+							<option value="@pageSizeOption">@pageSizeOption</option>
+						}
+					</select>
 				</div>
-				@if (Vm.IsVmShowingHeatmapProp.Value)
-				{
-					<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block;">
-						<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-							<div class="modal-content">
-								<div class="modal-body heatmap-img-container">
-									<img src="@Vm.HeatmapImgProp.Value" />
+
+				<div class="go-to-page-control">
+					<span>Go to page: </span>
+					<input type="number" min="1" max="@Vm.TotalPages.Value" class="form-control page-number-input" value="@Vm.PageNumber.Value" @onchange="async (e) => await Vm.ChangePage(e.Value as string)" />
+				</div>
+
+				@{
+					this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);
+				}
+
+				<div class="total-pages">Total pages: @DataContext.TotalPages.Value</div>
+				<div class="right-controls">
+					<input type="button" class="btn btn-dark form-control" value="Heatmap" @onclick="Vm.ShowHeatmap" />
+				</div>
+			</div>
+
+			@if(Vm.IsVmShowingHeatmapProp.Value)
+			{
+				<div class="modal fade show view-popup" tabindex="-1" role="dialog" style="display: block">
+					<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+						<div class="modal-content">
+							<div class="modal-body heatmap-img-container">
+								<OverlayLoader IsLoading="@(this.Vm.HeatmapImgProp.Value == null)">
+									<img src="@Vm.HeatmapImgProp.Value" alt="Loading.." />
+								</OverlayLoader>
+							</div>
+							<div>
+								<DateRangeSlider 
+												 MinDate="@this.Vm.FilterMinDate"
+												 MaxDate="@this.Vm.FilterMaxDate"
+												 CurrentMinDate="@this.Vm.HeatMapMinDate"
+												 CurrentMaxDate="@this.Vm.HeatMapMaxDate"
+												 DateRangeChanged="@this.Vm.HeatmapDateRangeChanged" />
+								<div>
+									@this.Vm.HeatmapRenderingStatus @this.Vm.HeatmapRenderPerecentage
 								</div>
-								<div class="right-controls">
-									<input type="button" class="btn btn-dark form-control" value="Close" @onclick="Vm.CloseHeatmap" />
-								</div>
+							</div>
+							<div class="right-controls">
+								<input type="button" class="btn btn-dark form-control" value="Close" @onclick="Vm.CloseHeatmap" />
 							</div>
 						</div>
 					</div>
-				}
+				</div>
 			}
-			else if (!Vm.TagsAreBeingLoaded && Vm.HyperTags != null)
-			{
-				<span>No data found</span>
-			}
-		}
-		else
-		{
-			<span>Cannot load metadataset</span>
-		}
 
-	</div>
+		}
+		else if (!Vm.TagsAreBeingLoaded && Vm.HyperTags != null)
+		{
+			<span>No data found</span>
+		}
+	}
+	else
+	{
+		<span>Cannot load metadataset</span>
+	}
+
+</div>
 
 
 <style>
-    .metadatareview-component .metadatareview-grid {
-    }
-
-    .metadatareview-page-controls .pagination {
-        margin-right:10px;
-        float: left;
-    }
-
-        .metadatareview-page-controls .pagination .page-link {
-            cursor: pointer;
-        }
-
-    .metadatareview-page-controls .page-select {
-        width: 155px;
-        float: left;
-    }
-
-    .metadatareview-page-controls .go-to-page-control {
-        float: left;
-        margin-left: 20px;
-    }
-
-    .metadatareview-page-controls .go-to-page-control input{
-        display:inline-block;
-        width:auto;
-    }
-
-    .metadatareview-page-controls .total-pages {
-        float: right;
-        margin-left: 20px;
-        margin-top: 8px;
-    }
-
-	.metadatareview-page-controls .right-controls{
-		float:right;
+	.metadatareview-component .metadatareview-grid {
 	}
 
-	.metadatareview-component .heatmap-img-container img{
-        height: 100%;
-        width: 100%;
-        object-fit: contain;
-    }
+	.metadatareview-page-controls .pagination {
+		margin-right: 10px;
+		float: left;
+	}
 
+		.metadatareview-page-controls .pagination .page-link {
+			cursor: pointer;
+		}
+
+	.metadatareview-page-controls .page-select {
+		width: 155px;
+		float: left;
+	}
+
+	.metadatareview-page-controls .go-to-page-control {
+		float: left;
+		margin-left: 20px;
+	}
+
+		.metadatareview-page-controls .go-to-page-control input {
+			display: inline-block;
+			width: auto;
+		}
+
+	.metadatareview-page-controls .total-pages {
+		float: right;
+		margin-left: 20px;
+		margin-top: 8px;
+	}
+
+	.metadatareview-page-controls .right-controls {
+		float: right;
+	}
+
+	.metadatareview-component .heatmap-img-container img {
+		min-height: 400px;
+		height: 100%;
+		width: 100%;
+		object-fit: contain;
+	}
+
+		.metadatareview-component .heatmap-img-container img:after {
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #fff;
+			font-family: 'Helvetica';
+			font-weight: 300;
+			line-height: 2;
+			text-align: center;
+			content: attr(alt);
+		}
 </style>
 

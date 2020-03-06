@@ -44,6 +44,17 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<string> HeatmapImgProp { get; set; } = new ViewModelProperty<string>();
 		public MasksHeatmapRenderer.HeatmapSettings HeatmapSettings { get; set; } = new MasksHeatmapRenderer.HeatmapSettings();
 
+		public ViewModelProperty<DateTime?> MetadataSetMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		public ViewModelProperty<DateTime?> MetadataSetMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		public ViewModelProperty<DateTime?> FilterMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		public ViewModelProperty<DateTime?> FilterMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		public DateTime? HeatMapMinDate { get; set; }
+		public DateTime? HeatMapMaxDate { get; set; }
+
+		public DateRangeSlider HeatmanRangeSlider { get; set; }
+		public ViewModelProperty<string> HeatmapRenderingStatus { get; set; } = new ViewModelProperty<string>();
+		public ViewModelProperty<string> HeatmapRenderPerecentage { get; set; } = new ViewModelProperty<string>();
+
 		public List<int> PageSizeOptions
 		{
 			get
@@ -91,10 +102,64 @@ namespace Orions.Systems.CrossModules.Components
 
 				await LoadTotalPages();
 				await LoadHyperTags();
+
+				await InitializeMetadatasetEdgeDates();
 			}
 			else
 			{
 				MetadataSetLoadFailed.Value = true;
+			}
+		}
+
+		private async Task InitializeMetadatasetEdgeDates()
+		{
+			if (_metadataSet != null)
+			{
+				var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+				var conditions = await MetaDataSetHelper.GenerateFilterFromMetaDataSetAsync(HyperStore, _metadataSet);
+				findArgs.DescriptorConditions.AddCondition(conditions.Result);
+
+				findArgs.Limit = 1;
+				findArgs.OrderByFields = new OrderByField[]
+				{
+						new OrderByField()
+						{
+							Ascending = true,
+							DescriptorField = true,
+							FieldName = "Elements.UniversalTime"
+						}
+				};
+
+				var earliestTag = (await HyperStore.ExecuteAsync(findArgs))[0].GetPayload<HyperTag>();
+				var earliestDate = earliestTag.GetUniversalDateTimeFromElements();
+
+				var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
+				lastTagFindArgs.DescriptorConditions.AddCondition(conditions.Result);
+				lastTagFindArgs.OrderByFields = new OrderByField[]
+				{
+						new OrderByField()
+						{
+							Ascending = false,
+							DescriptorField = true,
+							FieldName = "Elements.UniversalTime"
+						}
+				};
+				lastTagFindArgs.Limit = 1;
+				var latestTag = (await HyperStore.ExecuteAsync(lastTagFindArgs))[0].GetPayload<HyperTag>();
+				var latestDate = latestTag.GetUniversalDateTimeFromElements();
+
+				this.MetadataSetMinDate.Value = earliestDate.Value;
+				if(FilterMinDate == null)
+				{
+					this.FilterMinDate.Value = earliestDate.Value;
+					this.HeatMapMinDate = earliestDate.Value;
+				}
+				this.MetadataSetMaxDate.Value = latestDate.Value;
+				if(FilterMaxDate == null)
+				{
+					this.FilterMaxDate.Value = latestDate.Value;
+					this.HeatMapMaxDate = latestDate.Value;
+				}
 			}
 		}
 
@@ -128,6 +193,10 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			//this.Filter = filter;
 			FitlerMetadataSet(startDate, endDate, filterLabels);
+			FilterMinDate = startDate ?? MetadataSetMinDate;
+			FilterMaxDate = endDate ?? MetadataSetMaxDate;
+			HeatMapMinDate = startDate ?? FilterMinDate;
+			HeatMapMaxDate = endDate ?? FilterMaxDate;
 
 			PageNumber.Value = 1;
 
@@ -137,18 +206,51 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void ShowHeatmap()
 		{
-			_renderer = new MasksHeatmapRenderer(this.HyperStore, this._metadataSet, HeatmapSettings);
-			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
 			IsVmShowingHeatmapProp.Value = true;
-			Task.Run(_renderer.RunGenerationAsync);
+
+			RunHeatmapGenerationForCurrentDateFilter();
+		}
+
+		public void RunHeatmapGenerationForCurrentDateFilter()
+		{
+			this.HeatmapImgProp.Value = null;
+			this.HeatmapRenderingStatus.Value = "Initializing heatmap renderer...";
+			this.HeatmapRenderPerecentage.Value = "";
+
+			if (_renderer != null)
+			{
+				CancelCurrrentHeatmapGeneration();
+			}
+			_renderer = new MasksHeatmapRenderer(this.HyperStore, this._metadataSet, HeatmapSettings);
+
+			_renderer.ImageProp.PropertyChanged += ImageProp_PropertyChanged;
+			_renderer.StatusProp.PropertyChanged += (sender, e) => this.HeatmapRenderingStatus.Value = _renderer.StatusProp.Value;
+			_renderer.PertcantageLabel.PropertyChanged += (sender, e) => this.HeatmapRenderPerecentage.Value = _renderer.PertcantageLabel.Value;
+
+			var dateRange = this.HeatMapMaxDate.HasValue && this.HeatMapMinDate.HasValue ? new DateTime[] { this.HeatMapMinDate.Value, this.HeatMapMaxDate.Value } : null;
+			Task.Run(() => _renderer.RunGenerationAsync(dateRange));
+		}
+
+		public void CancelCurrrentHeatmapGeneration()
+		{
+			_renderer.ImageProp.PropertyChanged -= ImageProp_PropertyChanged;
+			_renderer.CancelGeneration();
 		}
 
 		public void CloseHeatmap()
 		{
-			_renderer.ImageProp.PropertyChanged -= ImageProp_PropertyChanged;
-			_renderer.CancelGeneration();
+			CancelCurrrentHeatmapGeneration();
+
 			IsVmShowingHeatmapProp.Value = false;
 			HeatmapImgProp.Value = null;
+		}
+
+		public void HeatmapDateRangeChanged(DateTime[] newRange)
+		{
+			this.HeatMapMinDate = newRange[0];
+			this.HeatMapMaxDate = newRange[1];
+			RunHeatmapGenerationForCurrentDateFilter();
+			//CancelCurrrentHeatmapGeneration();
 		}
 
 		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
@@ -177,39 +279,8 @@ namespace Orions.Systems.CrossModules.Components
 						return elements[elements.Count() - 1];
 				}).ToArray();
 			}
-			//if (filter is MultiFilterData multiFilter)
-			//{
-			//	foreach (var subFilter in multiFilter.Elements)
-			//	{
-			//		SetMetadataSetFilter(subFilter);
-			//	}
-			//}
-			//else
-			//{
-			//	SetMetadataSetFilter(filter);
-			//}
 		}
 
-		//private void SetMetadataSetFilter(IUniFilterData filter)
-		//{
-		//	if (filter is DateTimeFilterData dateTimefilter)
-		//	{
-		//		this._metadataSet.FromDate = dateTimefilter.StartTime;
-		//		this._metadataSet.ToDate = dateTimefilter.EndTime;
-		//	}
-
-		//	if (filter is TextFilterData textFilterData)
-		//	{
-		//		this._metadataSet.TextFilters = textFilterData.LabelsArray?.Select(it =>
-		//		{
-		//			var elements = it.Split(":");
-		//			if (elements.Count() == 0)
-		//				return String.Empty;
-		//			else
-		//				return elements[elements.Count() - 1];
-		//		}).ToArray();
-		//	}
-		//}
 
 		public async Task LoadTotalPages()
 		{

@@ -1,0 +1,34 @@
+﻿@inherits DateRangeSliderBase
+@namespace Orions.Systems.CrossModules.Components
+@using Syncfusion.EJ2.Blazor.Inputs;
+
+<div class="date-range-slider-container">
+	@if (this.IsInitialized)
+	{
+		<EjsSlider @ref="SliderObj"
+				   Type="SliderType.Range"
+				   TValue="double[]"
+				   Max="this.SliderMax"
+				   Value="this.SliderValue"
+				   CssClass="date-range-slider">
+			<SliderEvents TValue="double[]"
+						  ValueChange="@(e => base.OnSliderValueChange(e))"
+						  OnChange="@(e => base.OnSliderChange(e))">
+			</SliderEvents>
+		</EjsSlider>
+		<div class="date-range-display">
+			From: @this.CurrentMinDate.Value To: @this.CurrentMaxDate.Value
+		</div>
+	}
+</div>
+
+<style>
+	.date-range-slider-container{
+		width:100%;
+		padding: 10px;
+	}
+
+	.date-range-slider-container .date-range-slider{
+		width:calc(100% - 20px);
+	}
+</style>
