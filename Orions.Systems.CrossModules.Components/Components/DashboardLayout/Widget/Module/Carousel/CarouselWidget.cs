@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Orions.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
     public class CarouselWidget : ReportBaseWidget
     {
-
-        public bool IsActionLinkEnabled { get; set; }
-        public bool IsShowCaption { get; set; }
-        public bool IsShowCaptionHeader { get; set; }
+ 
+        [HelpText("Carousel options")]
+        public CarouselConfiguration Settings { get; set; } = new CarouselConfiguration();
 
         public CarouselWidget()
         {

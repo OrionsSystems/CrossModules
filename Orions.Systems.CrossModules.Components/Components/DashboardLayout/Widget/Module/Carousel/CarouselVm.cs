@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Components
 
         public void OnChangeDataSource()
         {
-            if (ReportChartData == null) return;
+            if (Report == null || ReportChartData == null) return;
             Data.Clear();
 
             foreach (var series in ReportChartData.Series)
