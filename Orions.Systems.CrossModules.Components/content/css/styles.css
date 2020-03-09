@@ -1067,8 +1067,15 @@ widget-single-analytics-icon {
 }
 
 	.theme-edit-cmd a {
-		cursor:pointer;
+		cursor: pointer;
+		opacity: 0.7;
+		transition: 0.5s;
 	}
+
+		.theme-edit-cmd a:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
 
 	.theme-edit-container .theme-edit-textarea {
 		width: 100%;

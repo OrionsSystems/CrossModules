@@ -27,7 +27,8 @@
 			<div class="row">
 				<div class="col-lg-12">
 					<label for="themeStyleId">Edit css:</label>
-					<CodeMirror Class="theme-edit-textarea" Id="themeStyleId" Data="@Vm.SelectedData.Styles"></CodeMirror>
+					<CodeMirror Class="theme-edit-textarea" Id="themeStyleId" Data="@Vm.SelectedData.Styles" OnChange="@GetThemeValue"></CodeMirror>
+					@*<textarea id="themeStyleId" class="theme-edit-textarea" rows="50" cols="20" @bind="@Vm.SelectedData.Styles"></textarea>*@
 				</div>
 			</div>		
 		}
@@ -55,5 +56,9 @@
 	private async Task BackToThemeList()
 	{
 		await OnClickBack.InvokeAsync(true);
+	}
+
+	private void GetThemeValue(string value) {
+		Vm.SelectedData.Styles = value;
 	}
 }

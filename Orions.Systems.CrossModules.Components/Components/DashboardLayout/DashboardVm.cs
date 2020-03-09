@@ -308,6 +308,23 @@ namespace Orions.Systems.CrossModules.Components
 			IsShowModalWidget = false;
 		}
 
+		public async Task<StyleTheme> GetThemeAsync()
+		{
+			if (string.IsNullOrWhiteSpace(this.Source.Theme?.Id))
+				return null;
+
+			var documentId = HyperDocumentId.Create<StyleTheme>(this.Source.Theme?.Id);
+			var args = new RetrieveHyperDocumentArgs(documentId);
+			var doc = await HyperStore.ExecuteAsync(args);
+
+			if (args.ExecutionResult.IsNotSuccess)
+				return null;
+
+			var theme = doc?.GetPayload<StyleTheme>();
+			return theme;
+		}
+
+
 		#region Dashboad Desing Operations
 
 		public void OnAddRow()
