@@ -556,6 +556,24 @@ h5.modal-title {
 	cursor: pointer;
 }
 
+.dashboard-list-header {
+	text-align: right;
+}
+
+.dashboard-list-header a {
+	cursor: pointer;
+	opacity: 0.5;
+	transition: 0.5s;
+}
+
+	.dashboard-list-header a:hover {
+		opacity: 1;
+		transition: 0.5s;
+	}
+
+.dashboard-list-header-cmd-label {
+}
+
 
 .modal-dashboard-widget-container {
 	box-sizing: border-box;
@@ -609,6 +627,25 @@ h5.modal-title {
 	height: 38px;
 }
 
+
+.dashboard-list-cmd-label {
+	font-size: 11px;
+}
+
+.dashboard-list-cmd-container a {
+	cursor: pointer;
+	opacity: 0.5;
+	transition: 0.5s;
+}
+
+	.dashboard-list-cmd-container a:hover {
+		opacity: 1;
+		transition: 0.5s;
+	}
+
+.dashboard-list-cmd-delete {
+	color: red !important;
+}
 
 /* End Modal - Widget List*/
 
@@ -1038,6 +1075,10 @@ widget-single-analytics-icon {
 
 
 /* Start theme component */
+
+.theme-list-name a{
+	curosor:pointer;
+}
 
 .theme-cmd {
 }

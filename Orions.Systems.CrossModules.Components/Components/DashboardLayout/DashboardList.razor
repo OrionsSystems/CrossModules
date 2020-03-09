@@ -2,6 +2,7 @@
 
 @using Orions.Node.Common
 @using Orions.Infrastructure.HyperMedia
+@using System.IO
 
 @inherits BaseBlazorComponent<DashboardListVm>
 
@@ -9,7 +10,19 @@
 
 <div class="container-fluid">
 
-	<button class="btn btn-outline-dark mb-2" @onclick="@(async ev => { await Vm.SelectDashboardAsync(new DashboardData(), false, true); })">Create</button>
+	<div class="row">
+		<div class="dashboard-list-header col-lg-12">
+			<a class="btn" @onclick="@(async ev => { await Vm.SelectDashboardAsync(new DashboardData(), false, true); })">
+				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
+				<div class="dashboard-list-header-cmd-label">Create</div>
+			</a>
+			<a class="btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
+				<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
+				<div class="dashboard-list-header-cmd-label">Import</div>
+			</a>
+		</div>
+	</div>
+
 
 	@if (Vm.DataList.Any() && Vm.IsLoadedDataResult)
 	{
@@ -45,16 +58,28 @@
 							<td class="center">
 								@if (!string.IsNullOrWhiteSpace(item.Tag))
 								{
-									<a href="@(MyNavigationManager.Uri + "/" + item.Tag)">
+									<a href="@(MyNavigationManager.Uri + "/" + item.Tag)" class="badge badge-secondary">
 										@item.Tag
 									</a>
 								}
 							</td>
-							<td class="center">
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })"> Design</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })"> View</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.DeleteDashboard(item); })"> Delete</button>
-								<button class="btn btn-sm btn-outline-dark" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })"> Edit</button>
+							<td class="center dashboard-list-cmd-container">
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })">
+									<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
+									<div class="dashboard-list-cmd-label">Design</div>
+								</a>
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })">
+									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
+									<div class="dashboard-list-cmd-label">View</div>
+								</a>
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
+									<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
+									<div class="dashboard-list-cmd-label">Edit</div>
+								</a>
+								<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(async e => { await Vm.DeleteDashboard(item); })">
+									<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
+									<div class="dashboard-list-cmd-label">Delete</div>
+								</a>
 							</td>
 						</tr>
 					}
@@ -71,6 +96,40 @@
 	}
 
 </div>
+
+@if (Vm.IsShowModalImportProject)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered " role="document">
+			<div class="modal-content">
+				<div class="modal-header dashboard-modal-widget-header">
+					<h5 class="modal-title">Import Dashboard</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.IsShowModalImportProject = false; })">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="row">
+						<div class="col-lg-12">
+							<div class="form-check">
+								<input id="importAsNewCheckbox" class="form-check-input" type="checkbox" checked="@ImportDashboardAsNew" />
+								<label class="form-check-label" for="importAsNewCheckbox">Don't replace dashboard if exist.</label>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12">
+							<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(arg); })" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
 
 @if (Vm.IsShowProperty)
 {
@@ -133,6 +192,8 @@
 
 @code{
 
+	private bool ImportDashboardAsNew = true;
+
 	PropertyGrid _propGrid;
 	PropertyGrid propGrid
 	{
@@ -170,5 +231,21 @@
 		await Vm.InitAsync();
 	}
 
+	private async Task HandleInputFileSelection(IFileListEntry[] files)
+	{
+		var file = files.FirstOrDefault();
+		if (file != null)
+		{
+			using (var ms = new MemoryStream())
+			{
+				await file.Data.CopyToAsync(ms);
+				var res = ms.ToArray();
+
+				await Vm.ImportProject(res, ImportDashboardAsNew);
+
+				Vm.IsShowModalImportProject = false;
+			}
+		}
+	}
 
 }

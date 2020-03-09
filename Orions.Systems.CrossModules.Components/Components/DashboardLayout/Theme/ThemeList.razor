@@ -32,7 +32,7 @@
 						<tr @key="item.Id">
 							<td class="center nowrap">@rowIndex</td>
 							<td class="center">@item.Group</td>
-							<td class="theme-list-name">@item.Name</td>
+							<td class="theme-list-name"><a @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">@item.Name</a></td>
 							<td class="center theme-cmd">
 								<a class="btn btn-sm theme-cmd-view" @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
