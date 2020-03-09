@@ -1,5 +1,6 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
+using Orions.Systems.CrossModules.Components.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -25,11 +26,19 @@ namespace Orions.Systems.CrossModules.Components
 			this.TagReviewVm.Value.HeatmapSettings = this.Widget.HeatmapSettings;
 			this.TagReviewVm.Value.FilterState.Value.MetadataSetMinDate.Value = this.Widget.Cache.MetadataSetMinDate;
 			this.TagReviewVm.Value.FilterState.Value.MetadataSetMaxDate.Value = this.Widget.Cache.MetadataSetMaxDate;
+			this.TagReviewVm.Value.HeatmapPlaybackCache = this.Widget.Cache.HeatmapCache;
+			this.TagReviewVm.Value.HeatmapPlaybackSettings = this.Widget.HeatmapPlaybackSettings;
 
 			this.TagReviewVm.Value.OnMetadatasetEdgeDatesUpdated = async delegate (DateTime from, DateTime to)
 			{
 				this.Widget.Cache.MetadataSetMinDate = from;
 				this.Widget.Cache.MetadataSetMaxDate = to;
+				this.DashboardVm.SaveChangesAsync();
+			};
+
+			this.TagReviewVm.Value.OnHeatmapCacheUpdated = async delegate (HeatmapStepCache cache)
+			{
+				this.Widget.Cache.HeatmapCache = cache;
 				this.DashboardVm.SaveChangesAsync();
 			};
 

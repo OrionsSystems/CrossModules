@@ -69,7 +69,11 @@ namespace Orions.Systems.CrossModules.Components
 		public string PlayerUri { get; set; }
 		public string PlayerId { get; set; }
 
+		public bool PlaybackRunning { get; set; } = false;
+		public _HeatmapPlaybackSettings HeatmapPlaybackSettings { get; set; }
+		public HeatmapStepCache HeatmapPlaybackCache { get; set; }
 		public Func<DateTime, DateTime, Task> OnMetadatasetEdgeDatesUpdated;
+		public Func<HeatmapStepCache, Task> OnHeatmapCacheUpdated;
 
 		public TagReviewVm()
 		{
@@ -111,6 +115,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		private async Task InitializeMetadatasetEdgeDates()
 		{
+			FilterState.Value.HeatMapMinDate.Value = this.FilterState.Value.MetadataSetMinDate;
+			FilterState.Value.HeatMapMaxDate.Value = this.FilterState.Value.MetadataSetMaxDate;
+
 			if (_metadataSet != null)
 			{
 				var findArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
@@ -147,7 +154,7 @@ namespace Orions.Systems.CrossModules.Components
 				var latestDate = latestTag.GetUniversalDateTimeFromElements();
 
 				this.FilterState.Value.MetadataSetMinDate.Value = earliestDate.Value;
-				if(FilterState.Value.FilterMinDate.Value == null)
+				if(this.FilterState.Value.HeatMapMinDate.Value == null)
 				{
 					this.FilterState.Value.HeatMapMinDate.Value = earliestDate.Value;
 				}
@@ -219,10 +226,7 @@ namespace Orions.Systems.CrossModules.Components
 			_renderer.StatusProp.PropertyChanged +=	HetmapRendererStatusProp_PropertyChanged;
 			_renderer.PertcantageLabel.PropertyChanged += HeatmapRendererPercentageProp_PropertyChanged;
 
-			var dateRange = this.FilterState.Value.HeatMapMaxDate.Value.HasValue && this.FilterState.Value.HeatMapMinDate.Value.HasValue ?
-				new DateTime[] { this.FilterState.Value.HeatMapMinDate.Value.Value, this.FilterState.Value.HeatMapMaxDate.Value.Value } 
-				: null;
-			Task.Run(() => _renderer.RunGenerationAsync(dateRange));
+			Task.Run(() => _renderer.RunGenerationAsync(this.FilterState.Value.HeatMapMinDate.Value, this.FilterState.Value.HeatMapMaxDate.Value));
 		}
 
 		private void HeatmapRendererPercentageProp_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -265,6 +269,56 @@ namespace Orions.Systems.CrossModules.Components
 			RunHeatmapGenerationForCurrentDateFilter();
 		}
 
+		public async Task UpdateHeatmapPlaybackCache()
+		{
+			this.CancelCurrrentHeatmapGeneration();
+			this.HeatmapRenderingStatus.Value = "Updating cache..";
+			var cacheHelper = new HeatmapCacheHelper(HyperStore, HeatmapSettings);
+			cacheHelper.GenerationProgress += (completionPercent) =>
+			{
+				this.HeatmapRenderPerecentage.Value = $"{completionPercent.ToString("0.0")}%";
+			};
+			var cache = await cacheHelper.CreateCache(this.FilterState.Value.HeatmapEdgeMinDate.Value, this.FilterState.Value.HeatmapEdgeMaxDate.Value, _metadataSet, 
+				this.HeatmapPlaybackSettings != null ? this.HeatmapPlaybackSettings.StepPeriod : TimeSpan.FromHours(1));
+
+			this.OnHeatmapCacheUpdated?.Invoke(cache);
+
+			this.HeatmapPlaybackCache = cache;
+			this.HeatmapRenderingStatus.Value = "Cache updated";
+		}
+
+		public async Task RunHeatmapPlayback()
+		{
+			if(HeatmapPlaybackCache == null)
+			{
+				return;
+			}
+
+			this.CancelCurrrentHeatmapGeneration();
+			PlaybackRunning = true;
+
+			foreach (var step in this.HeatmapPlaybackCache.Steps)
+			{
+				if (!PlaybackRunning)
+				{
+					break;
+				}
+
+				this.FilterState.Value.HeatMapMinDate = step.From;
+				this.FilterState.Value.HeatMapMaxDate = step.To;
+				this.HeatmapImgProp.Value = step.ImageData != null ? $"data:image/jpg;base64, {Convert.ToBase64String(step.ImageData)}" : null;
+
+				await Task.Delay(HeatmapPlaybackSettings != null ? (int)HeatmapPlaybackSettings.StepPlayDuration.TotalMilliseconds : 3000);
+			}
+
+			PlaybackRunning = false;
+		}
+
+		public void StopHeatmapPlayback()
+		{
+			PlaybackRunning = false;
+		}
+
 		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
 		{
 			if (this._metadataSet == null)
@@ -292,7 +346,6 @@ namespace Orions.Systems.CrossModules.Components
 				}).ToArray();
 			}
 		}
-
 
 		public async Task LoadTotalPages()
 		{
@@ -399,6 +452,12 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			public ViewModelProperty<DateTime?> HeatMapMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> HeatMapMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
+		}
+
+		public class _HeatmapPlaybackSettings
+		{
+			public TimeSpan StepPlayDuration { get; set; }
+			public TimeSpan StepPeriod { get; set; }
 		}
 		#endregion
 	}

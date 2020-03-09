@@ -62,6 +62,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		public ViewModelProperty<byte[]> ImageProp { get; set; } = new ViewModelProperty<byte[]>();
 		public ViewModelProperty<long> ItemsProcessed { get; set; } = new ViewModelProperty<long>(0);
 		public ViewModelProperty<string> PertcantageLabel { get; set; } = new ViewModelProperty<string>(string.Empty);
+		public event Action<double> PertcantageProcessedUpdated;
 
 		public class HeatmapSettings
 		{
@@ -84,7 +85,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			_ctSource.Cancel();
 		}
 
-		public async Task RunGenerationAsync(DateTime[] timeRange = null)
+		public async Task RunGenerationAsync(DateTime? from, DateTime? to)
 		{
 			_keepWorking = true;
 			_ctSource = new CancellationTokenSource();
@@ -98,15 +99,23 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 				ProtectOriginalMetadataSet();
 
-				if(timeRange != null && timeRange.Length == 2)
+				if (from.HasValue)
 				{
-					_metadataSet.FromDate = timeRange[0];
-					_metadataSet.ToDate = timeRange[1];
+					_metadataSet.FromDate = from;
+				}
+				if (to.HasValue)
+				{
+					_metadataSet.ToDate = to;
 				}
 
-				//TryAddTagType(nameof(HyperTagGeometry), nameof(HyperTagGeometryMask));
-
 				await CountTagsTotalAsync();
+
+				if (this.TotalCountProp.Value == 0)
+				{
+					_lastImage = await GetFirstImageForMetadatasetAssetAsync(from);
+					ImageProp.Value = _lastImage.Data;
+					PertcantageProcessedUpdated?.Invoke(100);
+				}
 
 				var batchSize = 100;
 				var batchesNum = Math.Ceiling((double)TotalCountProp.Value / batchSize);
@@ -216,8 +225,10 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 					await RerenderAsync();
 
-					ItemsProcessed.Value += tagDocs.Count();
+					var tagDocsCount = tagDocs.Count();
+					ItemsProcessed.Value += tagDocsCount;
 					PertcantageLabel.Value = ((double)100 * ItemsProcessed.Value / TotalCountProp.Value).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture) + "%";
+					PertcantageProcessedUpdated?.Invoke(100 * tagDocsCount / (double)TotalCountProp.Value);
 				}
 			}
 			catch (Exception ex)
@@ -228,6 +239,55 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 			{
 				source.SetResult(true);
 			}
+		}
+
+		private async Task<UniImage> GetFirstImageForMetadatasetAssetAsync(DateTime? from)
+		{
+			var retrieveAssetArgs = new RetrieveAssetsArgs
+			{
+				AssetsIds = _metadataSet.AssetIds
+			};
+
+			var assets = (await _hyperStore.ExecuteAsyncThrows(retrieveAssetArgs));
+			HyperAsset assetToGetSliceFrom = null;
+			foreach (var asset in assets)
+			{
+				var retrieveTrackArgs = new RetrieveTrackArgs
+				{
+					AssetId = asset.Id,
+					TrackId = asset.DefaultVideoTrackId.Value
+				};
+
+				asset.AddTrack(await _hyperStore.RetrieveTrackAsync(asset.Id, asset.DefaultVideoTrackId.Value, null, false));
+
+				if (from >= asset.TimeStampUTC && from <= asset.TimeStampUTC + asset.GetDuration().Value)
+				{
+					assetToGetSliceFrom = asset;
+				}
+			}
+
+			if (assetToGetSliceFrom == null)
+			{
+				assetToGetSliceFrom = assets[0];
+				from = assetToGetSliceFrom.TimeStampUTC;
+			}
+
+			var assetStartTime = assetToGetSliceFrom.TimeStampUTC;
+			from = from ?? assetStartTime;
+
+			var startingPosition = from - assetStartTime;
+
+			var beginningHyperId = await assetToGetSliceFrom.DefaultVideoTrack.FindAtAsync(_hyperStore, assetToGetSliceFrom.Id, (ulong)startingPosition.Value.TotalMilliseconds, HyperSeek.SeekModes.Estimated, false);
+
+			var args = new RetrieveFragmentFramesArgs
+			{
+				AssetId = _metadataSet.AssetIds.First(),
+				SliceIds = new HyperSliceId[] { beginningHyperId.Value.SliceId }
+			};
+
+			var res = await _hyperStore.ExecuteAsyncThrows(args);
+
+			return res.First().Image;
 		}
 
 		/// <summary>
