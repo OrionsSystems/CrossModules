@@ -81,13 +81,18 @@
 								</OverlayLoader>
 								<div class="heatmap-conrols">
 									<div class="buttons">
-										<button @onclick="async () => await this.Vm.RunHeatmapPlayback()" disabled="@(this.Vm.PlaybackRunning && this.Vm.HeatmapPlaybackCache != null)" class="btn btn-dark">
+										<button @onclick="async () => await this.Vm.RunHeatmapPlayback()" disabled="@(this.Vm.PlaybackRunning || this.Vm.HeatmapPlaybackCache == null || this.Vm.PlaybackCacheIsBeingUpdated)" class="btn btn-dark">
 											<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="play-circle" class="svg-inline--fa fa-play-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M371.7 238l-176-107c-15.8-8.8-35.7 2.5-35.7 21v208c0 18.4 19.8 29.8 35.7 21l176-101c16.4-9.1 16.4-32.8 0-42zM504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256z"></path></svg>
 										</button>
 										<button @onclick="this.Vm.StopHeatmapPlayback" class="btn btn-dark" disabled="@(!this.Vm.PlaybackRunning)">
 											<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="stop-circle" class="svg-inline--fa fa-stop-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504 256C504 119 393 8 256 8S8 119 8 256s111 248 248 248 248-111 248-248zm-448 0c0-110.5 89.5-200 200-200s200 89.5 200 200-89.5 200-200 200S56 366.5 56 256zm296-80v160c0 8.8-7.2 16-16 16H176c-8.8 0-16-7.2-16-16V176c0-8.8 7.2-16 16-16h160c8.8 0 16 7.2 16 16z"></path></svg>
 										</button>
-										<button @onclick="this.Vm.UpdateHeatmapPlaybackCache" class="btn btn-dark" title="Update Playback Cache">
+
+										@{
+											var updateBtnHidden = Vm.PlaybackCacheIsBeingUpdated ? "hidden" : "";
+											var cancelUpdateBtnHidden = !Vm.PlaybackCacheIsBeingUpdated ? "hidden" : "";
+										}
+										<button @onclick="this.Vm.UpdateHeatmapPlaybackCache" class="btn btn-dark @updateBtnHidden" title="Update Playback Cache">
 											<svg width="22px" height="16px" viewBox="0 0 22 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 												<g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
 													<g id="Outlined" transform="translate(-237.000000, -202.000000)">
@@ -103,6 +108,9 @@
 												</g>
 											</svg>
 										</button>
+										<button @onclick="this.Vm.CancelCacheUpdate" class="btn btn-dark @cancelUpdateBtnHidden" title="Cancel cache update">
+											<svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="window-close" class="svg-inline--fa fa-window-close fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 32H48C21.5 32 0 53.5 0 80v352c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V80c0-26.5-21.5-48-48-48zm0 394c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V86c0-3.3 2.7-6 6-6h404c3.3 0 6 2.7 6 6v340zM356.5 194.6L295.1 256l61.4 61.4c4.6 4.6 4.6 12.1 0 16.8l-22.3 22.3c-4.6 4.6-12.1 4.6-16.8 0L256 295.1l-61.4 61.4c-4.6 4.6-12.1 4.6-16.8 0l-22.3-22.3c-4.6-4.6-4.6-12.1 0-16.8l61.4-61.4-61.4-61.4c-4.6-4.6-4.6-12.1 0-16.8l22.3-22.3c4.6-4.6 12.1-4.6 16.8 0l61.4 61.4 61.4-61.4c4.6-4.6 12.1-4.6 16.8 0l22.3 22.3c4.7 4.6 4.7 12.1 0 16.8z"></path></svg>
+										</button>
 									</div>
 									<DateRangeSlider MinDate="@this.Vm.FilterState.Value.HeatmapEdgeMinDate"
 													 MaxDate="@this.Vm.FilterState.Value.HeatmapEdgeMaxDate"
@@ -110,7 +118,7 @@
 													 CurrentMaxDate="@this.Vm.FilterState.Value.HeatMapMaxDate"
 													 DateRangeChanged="@this.Vm.HeatmapDateRangeChanged"
 													 EnableChangeEvent="@(!this.Vm.PlaybackRunning)"
-													 Disabled="@(this.Vm.PlaybackRunning)"
+													 Disabled="@(this.Vm.PlaybackRunning || this.Vm.PlaybackCacheIsBeingUpdated)"
 													 CssClass="heatmap-date-range-slider" />
 								</div>
 								<div>

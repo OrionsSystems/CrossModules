@@ -3,6 +3,10 @@
     used from a library project/package.
 */
 
+.hidden{
+	display:none !important;
+}
+
 .my-component {
 	border: 2px dashed red;
 	padding: 1em;

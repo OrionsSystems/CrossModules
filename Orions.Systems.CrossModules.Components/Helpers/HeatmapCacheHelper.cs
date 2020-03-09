@@ -12,6 +12,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		private IHyperArgsSink _store;
 		private MasksHeatmapRenderer.HeatmapSettings _heatmapSettings;
 		private double _percentageCompleted = 0;
+		private Dictionary<HeatmapCacheStep, MasksHeatmapRenderer> _stepToTasksMappings = new Dictionary<HeatmapCacheStep, MasksHeatmapRenderer>();
+		public bool GenerationWasCanceled { get; set; } = false;
 
 		public event Action<double> GenerationProgress;
 
@@ -24,6 +26,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 		public async Task<HeatmapStepCache> CreateCache(DateTime startDate, DateTime endDate, HyperMetadataSet metadataSet, TimeSpan stepLength)
 		{
 			_percentageCompleted = 0;
+			GenerationWasCanceled = false;
 			GenerationProgress?.Invoke(0);
 
 			var newCache = new HeatmapStepCache()
@@ -31,10 +34,10 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 				MetadataSetId = metadataSet.Id
 			};
 
-			var stepToTasksMappings = new Dictionary<HeatmapCacheStep, MasksHeatmapRenderer>();
+			_stepToTasksMappings = new Dictionary<HeatmapCacheStep, MasksHeatmapRenderer>();
 			var tasks = new List<Task>();
 			var tasksCompleted = 0;
-			while(startDate < endDate)
+			while (startDate < endDate)
 			{
 				var step = new HeatmapCacheStep
 				{
@@ -53,7 +56,7 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 					{
 						tasksCompleted++;
 					});
-				stepToTasksMappings[step] = renderer;
+				_stepToTasksMappings[step] = renderer;
 				tasks.Add(task);
 
 				startDate = startDate + stepLength;
@@ -63,8 +66,8 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			await Task.WhenAll(tasks);
 
-			newCache.Steps.AddRange(stepToTasksMappings.Keys);
-			foreach(var kv in stepToTasksMappings)
+			newCache.Steps.AddRange(_stepToTasksMappings.Keys);
+			foreach (var kv in _stepToTasksMappings)
 			{
 				var step = kv.Key;
 				step.ImageData = kv.Value.ImageProp.Value;
@@ -72,7 +75,18 @@ namespace Orions.Systems.CrossModules.Components.Helpers
 
 			return newCache;
 		}
+
+		public void CancelCacheGeneration()
+		{
+			this.GenerationWasCanceled = true;
+			foreach (var step in _stepToTasksMappings)
+			{
+				step.Value.CancelGeneration();
+			}
+		}
 	}
+
+
 
 	public class HeatmapStepCache
 	{

@@ -75,6 +75,8 @@ namespace Orions.Systems.CrossModules.Components
 		public Func<DateTime, DateTime, Task> OnMetadatasetEdgeDatesUpdated;
 		public Func<HeatmapStepCache, Task> OnHeatmapCacheUpdated;
 
+		public bool PlaybackCacheIsBeingUpdated { get; set; } = false;
+
 		public TagReviewVm()
 		{
 		}
@@ -269,22 +271,42 @@ namespace Orions.Systems.CrossModules.Components
 			RunHeatmapGenerationForCurrentDateFilter();
 		}
 
+		private HeatmapCacheHelper _heatmapCacheHelper;
 		public async Task UpdateHeatmapPlaybackCache()
 		{
+			this.PlaybackCacheIsBeingUpdated = true;
+
 			this.CancelCurrrentHeatmapGeneration();
 			this.HeatmapRenderingStatus.Value = "Updating cache..";
-			var cacheHelper = new HeatmapCacheHelper(HyperStore, HeatmapSettings);
-			cacheHelper.GenerationProgress += (completionPercent) =>
+			_heatmapCacheHelper = new HeatmapCacheHelper(HyperStore, HeatmapSettings);
+			_heatmapCacheHelper.GenerationProgress += (completionPercent) =>
 			{
 				this.HeatmapRenderPerecentage.Value = $"{completionPercent.ToString("0.0")}%";
 			};
-			var cache = await cacheHelper.CreateCache(this.FilterState.Value.HeatmapEdgeMinDate.Value, this.FilterState.Value.HeatmapEdgeMaxDate.Value, _metadataSet, 
+			var cache = await _heatmapCacheHelper.CreateCache(this.FilterState.Value.HeatmapEdgeMinDate.Value, this.FilterState.Value.HeatmapEdgeMaxDate.Value, _metadataSet, 
 				this.HeatmapPlaybackSettings != null ? this.HeatmapPlaybackSettings.StepPeriod : TimeSpan.FromHours(1));
 
-			this.OnHeatmapCacheUpdated?.Invoke(cache);
+			if (!_heatmapCacheHelper.GenerationWasCanceled)
+			{
+				this.OnHeatmapCacheUpdated?.Invoke(cache);
 
-			this.HeatmapPlaybackCache = cache;
-			this.HeatmapRenderingStatus.Value = "Cache updated";
+				this.HeatmapPlaybackCache = cache;
+				this.HeatmapRenderingStatus.Value = "Cache updated";
+			}
+			else
+			{
+				this.HeatmapRenderingStatus.Value = "Cache generation canceled";
+			}
+
+
+			this._heatmapCacheHelper = null;
+			this.PlaybackCacheIsBeingUpdated = false;
+		}
+
+		public void CancelCacheUpdate()
+		{
+			_heatmapCacheHelper.CancelCacheGeneration();
+			PlaybackCacheIsBeingUpdated = false;
 		}
 
 		public async Task RunHeatmapPlayback()
