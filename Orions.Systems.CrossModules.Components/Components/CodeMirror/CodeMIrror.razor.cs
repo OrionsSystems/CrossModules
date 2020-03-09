@@ -15,6 +15,13 @@ namespace Orions.Systems.CrossModules.Components
 			set { Config.Data = value; } 
 		}
 
+		[Parameter]
+		public string Mode
+		{
+			get { return Config.Mode; }
+			set { Config.Mode = value; }
+		}
+
 		protected IDisposable thisReference;
 		protected CodeMirrorConfig Config { get; set; } = new CodeMirrorConfig();
 
@@ -41,5 +48,7 @@ namespace Orions.Systems.CrossModules.Components
 		public string Name { get; set; }
 
 		public string Data { get; set; }
+
+		public string Mode { get; set; } = "css";
 	}
 }
