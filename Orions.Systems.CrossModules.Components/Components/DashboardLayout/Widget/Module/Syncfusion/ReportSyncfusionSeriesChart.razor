@@ -41,7 +41,7 @@
 
 					<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
 											 Minimum="@Widget.YAxisSettings.Minimum"
-											 LineStyle="@Widget.YAxisSettings.LineStyle" 
+											 LineStyle="@Widget.YAxisSettings.LineStyle"
 											 LabelFormat="@Widget.YAxisSettings.LabelFormat"
 											 Visible="@Widget.YAxisSettings.Visible"
 											 MajorTickLines="@Widget.YAxisSettings.MajorTickLines"
@@ -49,6 +49,7 @@
 
 					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
 											 ValueType="@Widget.XAxisSettings.ValueType"
+											 LabelFormat="@Widget.XAxisSettings.LabelFormat"
 											 IntervalType="@Widget.XAxisSettings.IntervalType"
 											 Skeleton="@Widget.XAxisSettings.Skeleton"
 											 Interval="@Widget.XAxisSettings.Interval"
@@ -68,7 +69,7 @@
 												 TextStyle="@Widget.TooltipSettings.TextStyle"
 												 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
 
-					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
+					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming" 
 											 EnablePinchZooming="@Widget.EnablePinchZooming"
 											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
 											 EnablePan="@Widget.EnablePan"
