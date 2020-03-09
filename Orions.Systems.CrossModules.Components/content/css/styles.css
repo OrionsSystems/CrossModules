@@ -1076,6 +1076,25 @@ widget-single-analytics-icon {
 
 /* Start theme component */
 
+.theme-container-list-title {
+	padding: 20px 0px;
+}
+
+.theme-list-header {
+	text-align: right;
+}
+
+	.theme-list-header a {
+		cursor: pointer;
+		opacity: 0.5;
+		transition: 0.5s;
+	}
+
+		.theme-list-header a:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
+
 .theme-list-name a{
 	curosor:pointer;
 }
