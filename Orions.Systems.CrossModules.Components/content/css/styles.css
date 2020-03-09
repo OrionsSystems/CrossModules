@@ -53,6 +53,14 @@ h5.modal-title {
 	margin-bottom: 23px;
 }
 
+.widget-content-report-slide {
+	padding:0px !important;
+}
+
+.widget-slide-container-data .container-fluid {
+	padding: 0px;
+}
+
 .widget-slide-container .dashboard-header {
 	margin: 0px;
 }
