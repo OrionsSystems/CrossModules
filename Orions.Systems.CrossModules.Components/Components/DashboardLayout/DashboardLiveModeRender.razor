@@ -52,10 +52,10 @@
 }
 
 
-@if (!string.IsNullOrWhiteSpace(DashboardVm.Source.Theme?.Id))
+@if (theme != null)
 {
 	<style>
-		@theme
+		@((MarkupString)theme)
 	</style>
 }
 
@@ -70,7 +70,7 @@
 	[Parameter]
 	public DashboardVm DashboardVm { get; set; }
 
-	private MarkupString theme;
+	private string theme;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -79,11 +79,13 @@
 		theme = await LoadThemeRaw();
 	}
 
-	private async Task<MarkupString> LoadThemeRaw()
+	private async Task<string> LoadThemeRaw()
 	{
 		var theme = await DashboardVm.GetThemeAsync();
 
-		return new MarkupString(theme.Styles ?? String.Empty);
+		if (theme == null) return null;
+
+		return theme.Styles;
 	}
 
 }
