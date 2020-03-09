@@ -51,14 +51,41 @@
 	}
 }
 
+
+@if (theme != null)
+{
+	<style>
+		@((MarkupString)theme)
+	</style>
+}
+
+
+@if (DashboardVm.Source.EnableStyles)
+{
+	@((MarkupString)DashboardVm.Source.Styles)
+}
+
 @code{
 
 	[Parameter]
 	public DashboardVm DashboardVm { get; set; }
 
-}
+	private string theme;
 
-@if (DashboardVm.Source.EnableStyles)
-{
-	@((MarkupString)DashboardVm.Source.Styles)
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		theme = await LoadThemeRaw();
+	}
+
+	private async Task<string> LoadThemeRaw()
+	{
+		var theme = await DashboardVm.GetThemeAsync();
+
+		if (theme == null) return null;
+
+		return theme.Styles;
+	}
+
 }

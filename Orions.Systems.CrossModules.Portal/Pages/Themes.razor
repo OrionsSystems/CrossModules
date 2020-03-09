@@ -1,0 +1,43 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/themes"
+@page "/theme/{ThemeId}"
+
+@inherits PortalBaseComponent
+
+@inject NavigationManager NavigationManager
+
+@using Orions.Infrastructure.HyperMedia
+
+@if (IsEditMode)
+{
+	<Theme HyperStore="@HyperStore" ThemeId="@ThemeId" OnClickBack="@OnClickBack"></Theme>
+}
+else { 
+	<ThemeList HyperStore="@HyperStore" OnOpenTheme="@OnOpenTheme"></ThemeList>
+}
+
+
+@code{
+
+	[Parameter]
+	public string ThemeId { get; set; }
+
+	private bool IsEditMode { get { return !string.IsNullOrWhiteSpace(ThemeId); } }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+	private void OnOpenTheme(StyleTheme data) 
+	{ 
+		if(data != null && !string.IsNullOrWhiteSpace(data.Id))
+			NavigationManager.NavigateTo("/theme/" + data.Id, true);
+	}
+
+	private void OnClickBack(bool forceLoad) 
+	{ 
+		NavigationManager.NavigateTo("/themes", forceLoad);
+	}
+
+}

@@ -454,3 +454,23 @@ window.addEventListener("resize", function () {
       }
    };
 })();
+
+window.Orions.CodeMirror = {
+   init: function (componentInstance, config) {
+
+      var cm = CodeMirror.fromTextArea(config.ref, {
+         value: config.data,
+         mode: config.mode,
+         lineNumbers: true,
+         extraKeys: { "Ctrl-Space": "autocomplete" }
+      });
+
+      cm.on('change', function (cm) {
+         componentInstance.invokeMethodAsync('NotifyChange', cm.getValue()).then(null, function (err) {
+            throw new Error(err);
+         });
+      });
+
+      return new Promise(() => { });
+   }
+};
