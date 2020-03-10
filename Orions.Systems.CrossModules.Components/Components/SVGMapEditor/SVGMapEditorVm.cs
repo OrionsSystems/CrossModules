@@ -479,7 +479,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 				this.RaiseNotify("TagDateRangeFilter");
 			}
 
-			this.InitializeAutoplayTagDateRangeFilter();
+			if(AutoplayTagDateRangeFilter == null)
+			{
+				this.InitializeAutoplayTagDateRangeFilter();
+			}
 
 			this.TagDateRangeFilterChanged?.Invoke(this.TagDateRangeFilter);
 			this.TagsAreBeingLoaded.Value = false;
@@ -503,8 +506,10 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 			var isCacheMode = this.PlaybackOptions.LoadMode == MapPlaybackOptions.LoadModeEnum.Cache;
 			if (isCacheMode &&
-				(this.PlaybackOptions.PlayStep != this.PlaybackCache.Value.PlayStep || this.PlaybackCache.Value.Steps.First().From != this.AutoplayTagDateRangeFilter.MinDate
-				|| this.PlaybackCache.Value.Steps.Last().To != this.AutoplayTagDateRangeFilter.MaxDate))
+				(this.PlaybackCache.Value == null ||
+					this.PlaybackOptions.PlayStep != this.PlaybackCache.Value.PlayStep || 
+					this.PlaybackCache.Value.Steps.First().From != this.AutoplayTagDateRangeFilter.MinDate	||
+					this.PlaybackCache.Value.Steps.Last().To != this.AutoplayTagDateRangeFilter.MaxDate))
 			{
 				Toaster.ShowWarning("Please regenerate the playback cache or switch to the live playback mode");
 				return;
@@ -525,12 +530,15 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			var nextSegmentMaxDate = (currentSegmentMaxDate + dateSegmentSize) < dateRangeFilter.MaxDate ? (currentSegmentMaxDate + dateSegmentSize) : dateRangeFilter.MaxDate;
 
 			// Initialize data sets for the first two segments
-			List<ZoneDataSet> currentTagSets;
-			List<ZoneDataSet> nextTagSets;
+			List<ZoneDataSet> currentTagSets = null;
+			List<ZoneDataSet> nextTagSets = null;
 			if (isCacheMode)
 			{
 				currentTagSets = await GetTagsForDateRangeFromCache(currentSegmentMinDate, currentSegmentMaxDate);
-				nextTagSets = await GetTagsForDateRangeFromCache(currentSegmentMaxDate, nextSegmentMaxDate);
+				if(currentSegmentMaxDate != nextSegmentMaxDate) // if there is more than one step in playback
+				{
+					nextTagSets = await GetTagsForDateRangeFromCache(currentSegmentMaxDate, nextSegmentMaxDate);
+				}
 			}
 			else
 			{
@@ -551,7 +559,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 			_playbackTimer.Start();
 			_playbackTimer.Elapsed += (object sender, ElapsedEventArgs e) =>
 			{
-				if (!this.IsAutoPlayOn)
+				if (!this.IsAutoPlayOn || currentSegmentMaxDate >= dateRangeFilter.MaxDate)
 				{
 					_playbackTimer.Stop();
 					return;

@@ -456,12 +456,19 @@ window.addEventListener("resize", function () {
 })();
 
 window.Orions.CodeMirror = {
-   init: function (componentInstance, config, textArea, initialCode) {
+   init: function (componentInstance, config) {
 
-      var cm = CodeMirror.fromTextArea(Config.Ref, {
-         value: Config.Data,
-         //mode: { name: "javascript", json: true },
-         lineNumbers: true
+      var cm = CodeMirror.fromTextArea(config.ref, {
+         value: config.data,
+         mode: config.mode,
+         lineNumbers: true,
+         extraKeys: { "Ctrl-Space": "autocomplete" }
+      });
+
+      cm.on('change', function (cm) {
+         componentInstance.invokeMethodAsync('NotifyChange', cm.getValue()).then(null, function (err) {
+            throw new Error(err);
+         });
       });
 
       return new Promise(() => { });

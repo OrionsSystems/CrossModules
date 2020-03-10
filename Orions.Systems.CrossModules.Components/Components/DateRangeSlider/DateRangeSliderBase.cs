@@ -10,6 +10,15 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class DateRangeSliderBase : ComponentBase
 	{
+		[Parameter]
+		public bool Disabled { get; set; } = false;
+
+		[Parameter]
+		public bool EnableChangeEvent { get; set; } = true;
+
+		[Parameter]
+		public string CssClass { get; set; }
+
 		private DateTime? _minDate;
 
 		[Parameter]
@@ -21,8 +30,11 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			set 
 			{ 
-				_minDate = value;
-				CalculateSliderValue();
+				if(DateRangeChangedThrottleEventCallback?.ThrottlingIsInProgress == false)
+				{
+					_minDate = value;
+					CalculateSliderValue();
+				}
 			}
 		}
 
@@ -36,9 +48,12 @@ namespace Orions.Systems.CrossModules.Components
 				return _maxDate; 
 			}
 			set 
-			{ 
-				_maxDate = value;
-				CalculateSliderValue();
+			{
+				if (DateRangeChangedThrottleEventCallback?.ThrottlingIsInProgress == false)
+				{
+					_maxDate = value;
+					CalculateSliderValue();
+				}
 			}
 		}
 
@@ -47,7 +62,14 @@ namespace Orions.Systems.CrossModules.Components
 		public DateTime? CurrentMinDate
 		{
 			get { return _currentMinDate ?? MinDate; }
-			set { _currentMinDate = value; }
+			set 
+			{
+				if (DateRangeChangedThrottleEventCallback?.ThrottlingIsInProgress == false)
+				{
+					_currentMinDate = value;
+					CalculateSliderValue();
+				}
+			}
 		}
 
 		private DateTime? _currentMaxDate;
@@ -55,7 +77,14 @@ namespace Orions.Systems.CrossModules.Components
 		public DateTime? CurrentMaxDate
 		{
 			get { return _currentMaxDate ?? MaxDate; }
-			set { _currentMaxDate = value; }
+			set 
+			{
+				if (DateRangeChangedThrottleEventCallback?.ThrottlingIsInProgress == false)
+				{
+					_currentMaxDate = value;
+					CalculateSliderValue();
+				}
+			}
 		}
 
 		[Parameter]
@@ -87,11 +116,16 @@ namespace Orions.Systems.CrossModules.Components
 			return base.SetParametersAsync(parameters);
 		}
 
+		protected override void OnAfterRender(bool firstRender)
+		{
+			base.OnAfterRender(firstRender);
+		}
+
 		protected override void OnParametersSet()
 		{
 			System.Diagnostics.Debug.WriteLine($"{nameof(DateRangeSlider)} component: {nameof(OnParametersSet)}");
 
-			if (DateRangeChanged.HasDelegate)
+			if (DateRangeChanged.HasDelegate && DateRangeChangedThrottleEventCallback == null)
 			{
 				Action<DateTime[]> throttleCallback = delegate (DateTime[] range)
 				{
@@ -124,8 +158,8 @@ namespace Orions.Systems.CrossModules.Components
 			if (IsInitialized)
 			{
 				var maxSliderValue = (this.MaxDate - this.MinDate).Value.TotalSeconds;
-				this.CurrentMinDate = MinDate.Value.AddSeconds((MaxDate - MinDate).Value.TotalSeconds * (sliderValue[0] / maxSliderValue));
-				this.CurrentMaxDate = MinDate.Value.AddSeconds((MaxDate - MinDate).Value.TotalSeconds * (sliderValue[1] / maxSliderValue));
+				this._currentMinDate = MinDate.Value.AddSeconds((MaxDate - MinDate).Value.TotalSeconds * (sliderValue[0] / maxSliderValue));
+				this._currentMaxDate = MinDate.Value.AddSeconds((MaxDate - MinDate).Value.TotalSeconds * (sliderValue[1] / maxSliderValue));
 			}
 		}
 
@@ -134,8 +168,6 @@ namespace Orions.Systems.CrossModules.Components
 			System.Diagnostics.Debug.WriteLine($"Component: {nameof(DateRangeSlider)}, Event: ValueChange. Slider value changed to [{e.Value[0]}, {e.Value[1]}]");
 
 			RecalculateDatesBasedOnSliderValue(e.Value);
-
-			DateRangeChangedThrottleEventCallback?.Invoke(new DateTime[] { this.CurrentMinDate.Value, this.CurrentMaxDate.Value });
 		}
 
 		protected void OnSliderChange(SliderChangeEventArgs<double[]> e)
@@ -143,7 +175,9 @@ namespace Orions.Systems.CrossModules.Components
 			System.Diagnostics.Debug.WriteLine($"Component: {nameof(DateRangeSlider)}, Event: Change. Slider value changed to [{e.Value[0]}, {e.Value[1]}]");
 
 			RecalculateDatesBasedOnSliderValue(e.Value);
+			this.SliderValue = e.Value;
 
+			if(EnableChangeEvent) DateRangeChangedThrottleEventCallback?.Invoke(new DateTime[] { this.CurrentMinDate.Value, this.CurrentMaxDate.Value });
 		}
 	}
 }

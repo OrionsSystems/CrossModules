@@ -16,6 +16,11 @@ namespace Orions.Systems.CrossModules.Components
 		public double Percentage { get; set; }
 		public int PercentagePrecision { get; set; } = 2;
 		public bool ShouldShowInLegend { get; set; } = true;
+
+		public string PercentageString
+		{
+			get{ return $"{Percentage} %"; }
+		}
 	}
 
 	public class ReportChartData
@@ -47,15 +52,16 @@ namespace Orions.Systems.CrossModules.Components
 			Series.Clear();
 		}
 
-		public void MapIcons(IconMapping mapping) 
+		public void MapIcons(IconMapping mapping)
 		{
 			if (mapping == null)
 				return;
 
-			foreach (var item in Series) 
+			foreach (var item in Series)
 			{
 				var documentId = mapping.TryMap(item.Name);
-				if (documentId != null) {
+				if (documentId != null)
+				{
 					item.IconDocument = documentId;
 				}
 			}
@@ -73,7 +79,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public HyperDocumentId? IconDocument { get; set; }
 
-		public string SvgIcon() {
+		public string SvgIcon()
+		{
 			if (Icon == null || Icon.Type != UniIconResource.Types.Svg) return String.Empty;
 
 			return Encoding.UTF8.GetString(Icon.Data);
@@ -93,7 +100,7 @@ namespace Orions.Systems.CrossModules.Components
 				int value;
 				var result = int.TryParse(Value, out value);
 
-				if (!result) 
+				if (!result)
 					return null;
 
 				return value;
@@ -107,7 +114,7 @@ namespace Orions.Systems.CrossModules.Components
 				DateTime value;
 				var result = DateTime.TryParse(Value, out value);
 
-				if (!result) 
+				if (!result)
 					return null;
 
 				return value;
@@ -121,7 +128,7 @@ namespace Orions.Systems.CrossModules.Components
 				double value;
 				var result = double.TryParse(Value, out value);
 
-				if (!result) 
+				if (!result)
 					return null;
 
 				return value;

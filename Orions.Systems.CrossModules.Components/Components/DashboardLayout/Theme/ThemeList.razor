@@ -6,9 +6,17 @@
 
 <div class="container-fluid theme-container-list">
 
-	<button class="btn btn-outline-dark mb-2" @onclick="@Vm.CreateTheme">Create New Theme</button>
-
-	<h3 class="theme-container-list-title">CSS Themes</h3>
+	<div class="row mb-2">
+		<div class="col-lg-8">
+			<h3 class="theme-container-list-title">CSS Themes</h3>
+		</div>
+		<div class="col-lg-4 theme-list-header">
+			<a class="btn " @onclick="@Vm.CreateTheme">
+				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
+				<div class="dashboard-list-header-cmd-label">Create New</div>
+			</a>
+		</div>
+	</div>
 
 	@if (Vm.DataList.Any() && Vm.IsLoadedDataResult)
 	{
@@ -32,7 +40,7 @@
 						<tr @key="item.Id">
 							<td class="center nowrap">@rowIndex</td>
 							<td class="center">@item.Group</td>
-							<td class="theme-list-name">@item.Name</td>
+							<td class="theme-list-name"><a @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">@item.Name</a></td>
 							<td class="center theme-cmd">
 								<a class="btn btn-sm theme-cmd-view" @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>

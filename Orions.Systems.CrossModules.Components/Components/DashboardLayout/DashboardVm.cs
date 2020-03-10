@@ -62,6 +62,8 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public PropertyGridVm PropGridVm { get; set; } = new PropertyGridVm();
 
+		public StyleTheme Theme { get; set; }
+
 		public bool IsShowModalWidget { get; set; }
 		public bool IsShowProperty { get; private set; }
 		public bool IsShowModalImportProject { get; set; }
@@ -307,6 +309,27 @@ namespace Orions.Systems.CrossModules.Components
 			SelectedColumn.Widget = widget;
 			IsShowModalWidget = false;
 		}
+
+		public async Task LoadAttahcedTheme() {
+			Theme = await GetThemeAsync();
+		}
+
+		public async Task<StyleTheme> GetThemeAsync()
+		{
+			if (string.IsNullOrWhiteSpace(this.Source.Theme?.Id))
+				return null;
+
+			var documentId = HyperDocumentId.Create<StyleTheme>(this.Source.Theme?.Id);
+			var args = new RetrieveHyperDocumentArgs(documentId);
+			var doc = await HyperStore.ExecuteAsync(args);
+
+			if (args.ExecutionResult.IsNotSuccess)
+				return null;
+
+			var theme = doc?.GetPayload<StyleTheme>();
+			return theme;
+		}
+
 
 		#region Dashboad Desing Operations
 

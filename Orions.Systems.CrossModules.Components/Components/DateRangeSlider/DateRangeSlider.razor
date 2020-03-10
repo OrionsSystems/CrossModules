@@ -2,7 +2,7 @@
 @namespace Orions.Systems.CrossModules.Components
 @using Syncfusion.EJ2.Blazor.Inputs;
 
-<div class="date-range-slider-container">
+<div class="date-range-slider-container @CssClass">
 	@if (this.IsInitialized)
 	{
 		<EjsSlider @ref="SliderObj"
@@ -10,7 +10,8 @@
 				   TValue="double[]"
 				   Max="this.SliderMax"
 				   Value="this.SliderValue"
-				   CssClass="date-range-slider">
+				   CssClass="date-range-slider"
+				   Enabled="@(!this.Disabled)">
 			<SliderEvents TValue="double[]"
 						  ValueChange="@(e => base.OnSliderValueChange(e))"
 						  OnChange="@(e => base.OnSliderChange(e))">
@@ -23,12 +24,21 @@
 </div>
 
 <style>
-	.date-range-slider-container{
-		width:100%;
+	.date-range-slider-container {
+		width: 100%;
 		padding: 10px;
 	}
 
-	.date-range-slider-container .date-range-slider{
-		width:calc(100% - 20px);
-	}
+		.date-range-slider-container .date-range-display {
+			margin: 0 -10px;
+		}
+
+		.date-range-slider-container .date-range-slider {
+			width: calc(100% - 20px);
+		}
+
+		.date-range-slider-container .e-control-wrapper.e-slider-container.e-disabled .e-slider .e-handle {
+			background-color: #e3165b !important;
+			transform: scale(1) !important;
+		}
 </style>

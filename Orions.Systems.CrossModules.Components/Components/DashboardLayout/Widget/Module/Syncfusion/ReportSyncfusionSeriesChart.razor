@@ -21,7 +21,7 @@
 				<EjsChart @ref="Chartobj"
 							 Height="@Widget.Height"
 							 LegendSettings="@Widget.LegendConfigurations"
-							 Palettes="@Widget.Palettes"
+							 Palettes="@GetPalette()"
 							 Width="@Widget.Width"
 							 Title="@(Widget.ChartTitleSettings.EnableTitle ? Widget.ChartTitleSettings.Title : String.Empty)"
 							 TitleStyle="@Widget.ChartTitleSettings.TitleStyle"
@@ -41,7 +41,7 @@
 
 					<ChartPrimaryYAxis MajorGridLines="@Widget.YAxisSettings.GridLineSettings"
 											 Minimum="@Widget.YAxisSettings.Minimum"
-											 LineStyle="@Widget.YAxisSettings.LineStyle" 
+											 LineStyle="@Widget.YAxisSettings.LineStyle"
 											 LabelFormat="@Widget.YAxisSettings.LabelFormat"
 											 Visible="@Widget.YAxisSettings.Visible"
 											 MajorTickLines="@Widget.YAxisSettings.MajorTickLines"
@@ -49,6 +49,7 @@
 
 					<ChartPrimaryXAxis IsIndexed="@Widget.XAxisSettings.XAxisIsIndexed"
 											 ValueType="@Widget.XAxisSettings.ValueType"
+											 LabelFormat="@Widget.XAxisSettings.LabelFormat"
 											 IntervalType="@Widget.XAxisSettings.IntervalType"
 											 Skeleton="@Widget.XAxisSettings.Skeleton"
 											 Interval="@Widget.XAxisSettings.Interval"
@@ -154,7 +155,28 @@
 	private void OnChangeDataSource()
 	{
 		//this.Showing = true;
+
+		if (Widget.SeparateSeriesItems && Vm.ReportChartData != null && Vm.IsLoadedReportResult)
+		{
+			SeparateSeriesCategory();
+		}
+
 		this.StateHasChanged();
+	}
+
+	public void SeparateSeriesCategory()
+	{
+		if (Vm.ReportChartData.Series.Count != 1) return;
+
+		Vm.SeparateSeriesCategory();
+	}
+
+	private string[] GetPalette() 
+	{
+		if (Widget.Palettes != null && Widget.Palettes.Length > 0)
+			return Widget.Palettes;
+
+		return Vm.DashboardVm.Theme?.Palettes;
 	}
 
 }

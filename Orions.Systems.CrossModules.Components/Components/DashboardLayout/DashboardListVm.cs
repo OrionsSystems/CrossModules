@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
+
+using Orions.Common;
+using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
+
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Orions.Infrastructure.HyperMedia;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -13,9 +16,13 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public bool IsShowRenameDashboardModal { get; set; }
 
+		public bool IsShowModalImportProject { get; set; }
+
 		public bool IsShowProperty { get; private set; }
 
 		public bool IsLoadedDataResult { get; private set; }
+
+		public bool ShowConfirmDeleteDashboard { get; set; }
 
 		/// <summary>
 		/// The full dashboard data must be assigned here.
@@ -90,6 +97,18 @@ namespace Orions.Systems.CrossModules.Components
 			await LoadDashboarList();
 		}
 
+		public void ShowDeleteConfirmationDialog(DashboardData data) {
+			ShowConfirmDeleteDashboard = true;
+			SelectedDashboard = data;
+		}
+
+		public async Task OnDeleteDashboard() {
+			if (SelectedDashboard == null) return;
+			await DeleteDashboard(SelectedDashboard);
+
+			ShowConfirmDeleteDashboard = false;
+		}
+
 		public async Task DeleteDashboard(DashboardData data)
 		{
 			var args = new DeleteHyperDocumentArgs(HyperDocumentId.Create<DashboardData>(data.Id));
@@ -99,6 +118,26 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				DataList.RemoveAll(it => it.Id == data.Id);
 			}
+		}
+
+		public async Task ImportProject(byte[] bytes, bool isNew = true)
+		{
+			var json = Encoding.Default.GetString(bytes);
+
+			if (string.IsNullOrWhiteSpace(json))
+				return;
+
+			var res = JsonHelper.Deserialize<DashboardData>(json);
+
+			if (isNew)
+				res.Id = IdHelper.GenerateId();
+
+			//update and save
+			if (res == null) return;
+
+			SelectedDashboard = res;
+
+			await SaveChanges();
 		}
 
 		public async Task EditNameAsync(DashboardData data)

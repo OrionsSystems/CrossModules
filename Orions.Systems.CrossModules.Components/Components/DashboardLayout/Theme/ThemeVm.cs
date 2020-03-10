@@ -91,16 +91,6 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		//public async Task SaveChanges()
-		//{
-		//	var doc = new HyperDocument(SelectedData);
-
-		//	var args = new StoreHyperDocumentArgs(doc);
-		//	var res = await HyperStore.ExecuteAsync(args);
-
-		//	await LoadThemeList();
-		//}
-
 		public async Task<Response> SaveChangesAsync()
 		{
 			var doc = new HyperDocument(SelectedData);

@@ -30,9 +30,10 @@
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
-		<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\codemirror\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\codemirror\theme\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<!--<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\codemirror\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
+		<EmbeddedResource Include="content\codemirror\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\codemirror\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 		
 	</ItemGroup>
 
@@ -78,6 +79,12 @@
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 		<None Remove="content\codemirror\codemirror.css" />
 		<None Remove="content\codemirror\codemirror.js" />
+		<None Remove="content\codemirror\codemirror\theme\material.css" />
+		<None Remove="content\codemirror\codemirror\mode\css.js" />
+		<None Remove="content\codemirror\codemirror\addon\css-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\javascript-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\show-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\show-hint.css" />
 	</ItemGroup>
 
 	<ItemGroup>

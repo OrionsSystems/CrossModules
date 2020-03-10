@@ -1,4 +1,5 @@
 ﻿using Orions.Common;
+using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 
@@ -25,6 +26,11 @@ namespace Orions.Systems.CrossModules.Components
       [HelpText("Apply css styles to the bottom of the page")]
       [UniBrowsable(UniBrowsableAttribute.EditTypes.MultiLineText)]
       public string Styles { get; set; }
+
+
+      [HelpText("Attach theme to dashboard", HelpTextAttribute.Priorities.Optional)]
+      [HyperDocumentId.DocumentType(typeof(StyleTheme))]
+      public HyperDocumentId? Theme { get; set; }
 
       [DocumentDescriptor]
       public bool EnableStyles { get; set; } = true;

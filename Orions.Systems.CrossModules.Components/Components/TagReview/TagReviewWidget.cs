@@ -2,6 +2,7 @@
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Helpers;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -27,9 +28,25 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("If we want the images in the display to be processed with a Fabric service on request, this is the name")]
 		public string FabricService { get; set; }
 
+		public TagReviewVm._HeatmapPlaybackSettings HeatmapPlaybackSettings { get; set; } = new TagReviewVm._HeatmapPlaybackSettings
+		{
+			StepPeriod = TimeSpan.FromHours(6),
+			StepPlayDuration = TimeSpan.FromSeconds(2)
+		};
+
+		[UniBrowsable(false)]
+		public TagReviewWidgetCache Cache { get; set; } = new TagReviewWidgetCache();
+
 		public TagReviewWidget()
 		{
 			this.Label = "Tag Review";
 		}
+	}
+
+	public class TagReviewWidgetCache
+	{
+		public DateTime? MetadataSetMinDate { get; set; }
+		public DateTime? MetadataSetMaxDate { get; set; }
+		public HeatmapStepCache HeatmapCache { get; set; }
 	}
 }

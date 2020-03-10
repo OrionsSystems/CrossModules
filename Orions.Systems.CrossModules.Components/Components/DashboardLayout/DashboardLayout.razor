@@ -623,6 +623,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		await Vm.LoadAttahcedTheme();
+
 		await base.OnInitializedAsync();
 	}
 
