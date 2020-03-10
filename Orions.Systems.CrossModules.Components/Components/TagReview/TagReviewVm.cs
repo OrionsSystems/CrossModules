@@ -157,7 +157,7 @@ namespace Orions.Systems.CrossModules.Components
 				var latestDate = latestTag.GetUniversalDateTimeFromElements();
 
 				this.FilterState.Value.MetadataSetMinDate.Value = earliestDate.Value;
-				if (this.FilterState.Value.HeatMapMinDate.Value == null)
+				if (this.FilterState.Value.FilterMinDate.Value == null)
 				{
 					this.FilterState.Value.HeatMapMinDate.Value = earliestDate.Value;
 				}
