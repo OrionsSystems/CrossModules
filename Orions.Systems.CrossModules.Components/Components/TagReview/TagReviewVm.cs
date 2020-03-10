@@ -349,7 +349,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public void StopHeatmapPlayback()
 		{
-			_heatmapPlaybackCts.Cancel();
+			_heatmapPlaybackCts?.Cancel();
 			PlaybackRunning = false;
 		}
 
