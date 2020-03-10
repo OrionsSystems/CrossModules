@@ -22,7 +22,7 @@
 											 Height="@Widget.Height"
 											 Width="@Widget.Width"
 											 Theme="@Widget.Theme"
-											 Background="@Widget.Background" 
+											 Background="@Widget.Background"
 											 EnableSmartLabels="@Widget.EnableSmartLabels"
 											 EnableAnimation="@Widget.EnableAnimation"
 											 Center="@Widget.Center"
@@ -33,7 +33,7 @@
 					<AccumulationChartSeriesCollection>
 
 						@{
-							var _yName = Widget.ShowInPercentage ? nameof(ReportPieChartData.Percentage) : nameof(ReportPieChartData.Value);	
+							var _yName = Widget.ShowInPercentage ? nameof(ReportPieChartData.Percentage) : nameof(ReportPieChartData.Value);
 						}
 						<AccumulationChartSeries DataSource="@Data"
 														 XName="@nameof(ReportPieChartData.Label)"
@@ -43,8 +43,8 @@
 														 GroupTo="@Widget.SeriesSettings.GroupTo"
 														 Explode="@Widget.SeriesSettings.Explode"
 														 ExplodeAll="@Widget.SeriesSettings.ExplodeAll"
-														 Border="@Widget.SeriesSettings.Border" 
-														 Palettes="@Widget.SeriesSettings.Palettes" 
+														 Border="@Widget.SeriesSettings.Border"
+														 Palettes="@GetPalette()"
 														 InnerRadius="@Widget.InnerRadius">
 
 
@@ -157,6 +157,14 @@
 	protected override void OnStateHasChanged()
 	{
 		base.OnStateHasChanged();
+	}
+
+	private string[] GetPalette()
+	{
+		if (Widget.SeriesSettings?.Palettes != null && Widget.SeriesSettings.Palettes.Length > 0)
+			return Widget.SeriesSettings.Palettes;
+
+		return Vm.DashboardVm.Theme?.Palettes;
 	}
 
 }

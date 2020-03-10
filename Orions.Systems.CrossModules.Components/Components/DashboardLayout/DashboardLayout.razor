@@ -623,9 +623,9 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await base.OnInitializedAsync();
-
 		await Vm.LoadAttahcedTheme();
+
+		await base.OnInitializedAsync();
 	}
 
 	public async Task OnSave()
