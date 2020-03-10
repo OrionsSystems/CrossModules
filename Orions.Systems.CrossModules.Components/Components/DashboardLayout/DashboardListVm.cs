@@ -22,6 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsLoadedDataResult { get; private set; }
 
+		public bool ShowConfirmDeleteDashboard { get; set; }
+
 		/// <summary>
 		/// The full dashboard data must be assigned here.
 		/// </summary>
@@ -93,6 +95,18 @@ namespace Orions.Systems.CrossModules.Components
 			IsShowRenameDashboardModal = false;
 
 			await LoadDashboarList();
+		}
+
+		public void ShowDeleteConfirmationDialog(DashboardData data) {
+			ShowConfirmDeleteDashboard = true;
+			SelectedDashboard = data;
+		}
+
+		public async Task OnDeleteDashboard() {
+			if (SelectedDashboard == null) return;
+			await DeleteDashboard(SelectedDashboard);
+
+			ShowConfirmDeleteDashboard = false;
 		}
 
 		public async Task DeleteDashboard(DashboardData data)
