@@ -3,6 +3,7 @@ using Orions.Infrastructure.Reporting;
 using Syncfusion.EJ2.Blazor.Charts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -68,6 +69,19 @@ namespace Orions.Systems.CrossModules.Components
 
 			if (didModify)
 				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
+		}
+
+		public void SeparateSeriesCategory()
+		{
+			if (ReportChartData.Series.Count != 1) return;
+
+			var ser = ReportChartData.Series.FirstOrDefault();
+
+			var series = ser.Data.Select(it => new ReportSeriesChartData() { Data = new List<ReportSeriesChartDataItem> { it }, Name = it.Label }).ToList();
+
+			ReportChartData.Clean();
+			ReportChartData.Series.AddRange(series);
+			//ReportChartData.AddCategoryRange(series.Select(it => it.Name).ToArray());
 		}
 	}
 }

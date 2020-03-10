@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Orions.Common;
+using System;
 
 namespace Orions.Systems.CrossModules.Components
 {
    public class ReportSyncfusionSeriesChartWidget : ReportSyncfusionBaseChartWidget
    {
+      [HelpText("Option to separate every series items into series")]
+      public bool SeparateSeriesItems { get; set; } = false;
+
       public ReportSyncfusionSeriesChartWidget()
       {
          this.Label = "Series Chart";

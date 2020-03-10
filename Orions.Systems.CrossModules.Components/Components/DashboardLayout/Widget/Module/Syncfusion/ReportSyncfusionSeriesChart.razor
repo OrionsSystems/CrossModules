@@ -69,7 +69,7 @@
 												 TextStyle="@Widget.TooltipSettings.TextStyle"
 												 Enable="@Widget.TooltipSettings.IsEnable"></ChartTooltipSettings>
 
-					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming" 
+					<ChartZoomSettings EnableMouseWheelZooming="@Widget.EnableMouseWheelZooming"
 											 EnablePinchZooming="@Widget.EnablePinchZooming"
 											 EnableSelectionZooming="@Widget.EnableSelectionZooming"
 											 EnablePan="@Widget.EnablePan"
@@ -155,7 +155,20 @@
 	private void OnChangeDataSource()
 	{
 		//this.Showing = true;
+
+		if (Widget.SeparateSeriesItems && Vm.ReportChartData != null && Vm.IsLoadedReportResult)
+		{
+			SeparateSeriesCategory();
+		}
+
 		this.StateHasChanged();
+	}
+
+	public void SeparateSeriesCategory()
+	{
+		if (Vm.ReportChartData.Series.Count != 1) return;
+
+		Vm.SeparateSeriesCategory();
 	}
 
 }
