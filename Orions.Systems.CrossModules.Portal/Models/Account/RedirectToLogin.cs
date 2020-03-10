@@ -1,6 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.WebUtilities;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Systems.CrossModules.Portal.Providers;
 
 namespace Orions.Systems.CrossModules.Portal.Models
 {
@@ -12,6 +15,9 @@ namespace Orions.Systems.CrossModules.Portal.Models
 		[CascadingParameter]
 		private Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
+		[CascadingParameter(Name = "Provider")]
+		private AuthenticationStateProvider Provider { get; set; }
+
 		protected override async Task OnInitializedAsync()
 		{
 			var authenticationState = await AuthenticationStateTask;
@@ -19,6 +25,26 @@ namespace Orions.Systems.CrossModules.Portal.Models
 			if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
 			{
 				var returnUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+
+				var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
+
+				if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var token)
+					&& QueryHelpers.ParseQuery(uri.Query).TryGetValue("connstr", out var connectionString))
+				{
+					var authentication = new HyperAuthenticationInfo()
+					{
+						Auth = new Node.Common.HyperArgsAuthentication()
+						{
+							Token = token
+						}
+					};
+					await ((CustomAuthenticationStateProvider)Provider).Authenticated(
+						"external", connectionString, authentication);
+
+					NavigationManager.NavigateTo($"{returnUrl}", true);
+
+					return;
+				}
 
 				if (string.IsNullOrWhiteSpace(returnUrl))
 					NavigationManager.NavigateTo("login", true);

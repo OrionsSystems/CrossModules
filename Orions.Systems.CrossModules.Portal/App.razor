@@ -1,13 +1,16 @@
 ﻿@using Orions.Systems.CrossModules.Portal.Models
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
-                    <RedirectToLogin />
+                    <CascadingValue Value="@AuthenticationStateProvider" Name="Provider">
+                        <RedirectToLogin  />
+                    </CascadingValue>
                 </NotAuthorized>
-                <Authorizing>                    
+                <Authorizing>
                     <div class="col-12 mt-5">
                         <center>
                             <div class="col-4 card">
