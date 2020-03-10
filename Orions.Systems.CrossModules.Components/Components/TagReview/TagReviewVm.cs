@@ -333,6 +333,8 @@ namespace Orions.Systems.CrossModules.Components
 					this.FilterState.Value.HeatMapMaxDate = step.To;
 					this.HeatmapImgProp.Value = step.ImageData != null ? $"data:image/jpg;base64, {Convert.ToBase64String(step.ImageData)}" : null;
 
+					this.RaiseNotify("HeatmapImgProp");
+
 					try
 					{
 						await Task.Delay(HeatmapPlaybackSettings != null ? (int)HeatmapPlaybackSettings.StepPlayDuration.TotalMilliseconds : 3000, _heatmapPlaybackCts.Token);
