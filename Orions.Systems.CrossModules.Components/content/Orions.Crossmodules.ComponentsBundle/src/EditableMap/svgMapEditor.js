@@ -37,8 +37,27 @@ window.Orions.SvgMapEditor = {
         layoutEditor.addCameraTool()
     },
 
-    makePopupDraggable: function(rootElementId) {
-        $('#' + rootElementId + ' .draggable-popup .modal-dialog').draggable()
+    makePopupDraggable: function (rootElementId) {
+        let observerCallback = function (mutationsList, observer) {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'childList') {
+                    let addedNodes = Array.from(mutation.addedNodes);
+                    if (addedNodes.some(n => n.matches && n.matches('.draggable-popup'))) {
+                        let draggableNode = addedNodes.filter(n => n.matches('.draggable-popup'))[0];
+                        $(draggableNode).draggable();
+                        break;
+                    }
+                }
+            }
+
+            observer.disconnect();
+        }
+
+        let containerNode = document.getElementById(rootElementId);
+        let observerConfig = {childList: true}
+        const observer = new MutationObserver(observerCallback);
+
+        observer.observe(containerNode, observerConfig);
     },
 
     destroy: function (rootElementId) {
