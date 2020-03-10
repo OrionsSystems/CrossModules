@@ -345,6 +345,7 @@ namespace Orions.Systems.CrossModules.Components
 
 				PlaybackRunning = false;
 			}
+			_heatmapPlaybackCts = null;
 		}
 
 		public void StopHeatmapPlayback()
