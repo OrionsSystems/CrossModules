@@ -12,14 +12,14 @@
 			{
 				<div class="widget-slide-container">
 					<div class="widget-slide-container-nav row">
-						<div class="col-6 widget-slide-container-nav-icon @(Vm.IsFirstElementActive() ? "hidden" : "")">
-							<a @onclick="Vm.OnClickLeftArrow">
+						<div class="col-6 widget-slide-container-nav-icon">
+							<a @onclick="Vm.OnClickLeftArrow" class="@(Vm.IsFirstElementActive() ? "hidden" : "")">
 								<MatIcon Icon="@MatIconNames.Keyboard_arrow_left"></MatIcon>
 							</a>
 
 						</div>
-						<div class="col-6 widget-slide-container-nav-icon right @(Vm.IsLastElementActive() ? "hidden" : "")">
-							<a @onclick="Vm.OnClickRightArrow">
+						<div class="col-6 widget-slide-container-nav-icon right">
+							<a @onclick="Vm.OnClickRightArrow" class="@(Vm.IsLastElementActive() ? "hidden" : "")">
 								<MatIcon Icon="@MatIconNames.Keyboard_arrow_right"></MatIcon>
 							</a>
 						</div>
