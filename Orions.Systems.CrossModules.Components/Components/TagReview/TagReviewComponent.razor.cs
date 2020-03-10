@@ -17,12 +17,5 @@ namespace Orions.Systems.CrossModules.Components
 		public TagReviewComponentBase()
 		{
 		}
-
-		protected override async Task OnFirstAfterRenderAsync()
-		{
-			//await this.JsInterop.InvokeAsync<object>("Orions.TagReviewComponent.init", new object[0]);
-
-			await base.OnFirstAfterRenderAsync();
-		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Orions.Common;
@@ -23,7 +24,7 @@ namespace Orions.Systems.CrossModules.Components
 		public bool ExtractMode { get; set; } = true;
 
 		public string FabricServiceId { get; set; } = "";
-		
+
 		public HyperDocumentId MetadataSetId { get; private set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
@@ -31,7 +32,7 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<List<HyperTag>> HyperTags { get; set; } = new ViewModelProperty<List<HyperTag>>();
 
 		public int DashApiPort { get; set; }
-		
+
 		public ViewModelProperty<int> PageNumber { get; set; } = new ViewModelProperty<int>(1);
 		public ViewModelProperty<int> PageSize { get; set; } = new ViewModelProperty<int>(8);
 		public ViewModelProperty<int> TotalPages { get; set; } = new ViewModelProperty<int>();
@@ -48,8 +49,8 @@ namespace Orions.Systems.CrossModules.Components
 		public ViewModelProperty<TagReviewFilterState> FilterState { get; set; } = new ViewModelProperty<TagReviewFilterState>(new TagReviewFilterState());
 
 		public DateRangeSlider HeatmanRangeSlider { get; set; }
-		public ViewModelProperty<string> HeatmapRenderingStatus { get; set; } = new ViewModelProperty<string>();
-		public ViewModelProperty<string> HeatmapRenderPerecentage { get; set; } = new ViewModelProperty<string>();
+		public ViewModelProperty<string> StatusLabel { get; set; } = new ViewModelProperty<string>();
+		public ViewModelProperty<string> PercentageStatusLabel { get; set; } = new ViewModelProperty<string>();
 
 		public List<int> PageSizeOptions
 		{
@@ -85,7 +86,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			this.HyperStore = store;
 
-			if(metadataSetId == null)
+			if (metadataSetId == null)
 			{
 				MetadataSetLoadFailed.Value = true;
 				return;
@@ -156,12 +157,12 @@ namespace Orions.Systems.CrossModules.Components
 				var latestDate = latestTag.GetUniversalDateTimeFromElements();
 
 				this.FilterState.Value.MetadataSetMinDate.Value = earliestDate.Value;
-				if(this.FilterState.Value.HeatMapMinDate.Value == null)
+				if (this.FilterState.Value.HeatMapMinDate.Value == null)
 				{
 					this.FilterState.Value.HeatMapMinDate.Value = earliestDate.Value;
 				}
 				this.FilterState.Value.MetadataSetMaxDate.Value = latestDate.Value;
-				if(FilterState.Value.FilterMaxDate.Value == null)
+				if (FilterState.Value.FilterMaxDate.Value == null)
 				{
 					this.FilterState.Value.HeatMapMaxDate.Value = latestDate.Value;
 				}
@@ -215,8 +216,8 @@ namespace Orions.Systems.CrossModules.Components
 		public void RunHeatmapGenerationForCurrentDateFilter()
 		{
 			this.HeatmapImgProp.Value = null;
-			this.HeatmapRenderingStatus.Value = "Initializing heatmap renderer...";
-			this.HeatmapRenderPerecentage.Value = "";
+			this.StatusLabel.Value = "Initializing heatmap renderer...";
+			this.PercentageStatusLabel.Value = "";
 
 			if (_renderer != null)
 			{
@@ -225,7 +226,7 @@ namespace Orions.Systems.CrossModules.Components
 			_renderer = new MasksHeatmapRenderer(this.HyperStore, this._metadataSet, HeatmapSettings);
 
 			_renderer.ImageProp.PropertyChanged += HetmapRendererImageProp_PropertyChanged;
-			_renderer.StatusProp.PropertyChanged +=	HetmapRendererStatusProp_PropertyChanged;
+			_renderer.StatusProp.PropertyChanged += HetmapRendererStatusProp_PropertyChanged;
 			_renderer.PertcantageLabel.PropertyChanged += HeatmapRendererPercentageProp_PropertyChanged;
 
 			Task.Run(() => _renderer.RunGenerationAsync(this.FilterState.Value.HeatMapMinDate.Value, this.FilterState.Value.HeatMapMaxDate.Value));
@@ -233,14 +234,14 @@ namespace Orions.Systems.CrossModules.Components
 
 		private void HeatmapRendererPercentageProp_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			this.HeatmapRenderPerecentage.Value = _renderer.PertcantageLabel.Value;
+			this.PercentageStatusLabel.Value = _renderer.PertcantageLabel.Value;
 		}
 
 		private void HetmapRendererStatusProp_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			System.Diagnostics.Debug.WriteLine($"HetmapRendererStatusProp_PropertyChanged: {_renderer.StatusProp.Value}");
 
-			this.HeatmapRenderingStatus.Value = _renderer.StatusProp.Value;
+			this.StatusLabel.Value = _renderer.StatusProp.Value;
 		}
 
 		private void HetmapRendererImageProp_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -259,6 +260,7 @@ namespace Orions.Systems.CrossModules.Components
 		public void CloseHeatmap()
 		{
 			CancelCurrrentHeatmapGeneration();
+			StopHeatmapPlayback();
 
 			IsVmShowingHeatmapProp.Value = false;
 			HeatmapImgProp.Value = null;
@@ -274,16 +276,17 @@ namespace Orions.Systems.CrossModules.Components
 		private HeatmapCacheHelper _heatmapCacheHelper;
 		public async Task UpdateHeatmapPlaybackCache()
 		{
+			this.CleanStatusMessages();
 			this.PlaybackCacheIsBeingUpdated = true;
 
 			this.CancelCurrrentHeatmapGeneration();
-			this.HeatmapRenderingStatus.Value = "Updating cache..";
+			this.StatusLabel.Value = "Updating cache..";
 			_heatmapCacheHelper = new HeatmapCacheHelper(HyperStore, HeatmapSettings);
 			_heatmapCacheHelper.GenerationProgress += (completionPercent) =>
 			{
-				this.HeatmapRenderPerecentage.Value = $"{completionPercent.ToString("0.0")}%";
+				this.PercentageStatusLabel.Value = $"{completionPercent.ToString("0.0")}%";
 			};
-			var cache = await _heatmapCacheHelper.CreateCache(this.FilterState.Value.HeatmapEdgeMinDate.Value, this.FilterState.Value.HeatmapEdgeMaxDate.Value, _metadataSet, 
+			var cache = await _heatmapCacheHelper.CreateCache(this.FilterState.Value.HeatmapEdgeMinDate.Value, this.FilterState.Value.HeatmapEdgeMaxDate.Value, _metadataSet,
 				this.HeatmapPlaybackSettings != null ? this.HeatmapPlaybackSettings.StepPeriod : TimeSpan.FromHours(1));
 
 			if (!_heatmapCacheHelper.GenerationWasCanceled)
@@ -291,11 +294,11 @@ namespace Orions.Systems.CrossModules.Components
 				this.OnHeatmapCacheUpdated?.Invoke(cache);
 
 				this.HeatmapPlaybackCache = cache;
-				this.HeatmapRenderingStatus.Value = "Cache updated";
+				this.StatusLabel.Value = "Cache updated";
 			}
 			else
 			{
-				this.HeatmapRenderingStatus.Value = "Cache generation canceled";
+				this.StatusLabel.Value = "Cache generation canceled";
 			}
 
 
@@ -309,36 +312,51 @@ namespace Orions.Systems.CrossModules.Components
 			PlaybackCacheIsBeingUpdated = false;
 		}
 
+		private CancellationTokenSource _heatmapPlaybackCts;
 		public async Task RunHeatmapPlayback()
 		{
-			if(HeatmapPlaybackCache == null)
+			if (HeatmapPlaybackCache == null)
 			{
 				return;
 			}
 
 			this.CancelCurrrentHeatmapGeneration();
-			PlaybackRunning = true;
+			this.CleanStatusMessages();
 
-			foreach (var step in this.HeatmapPlaybackCache.Steps)
+			using (_heatmapPlaybackCts = new CancellationTokenSource())
 			{
-				if (!PlaybackRunning)
+				PlaybackRunning = true;
+
+				foreach (var step in this.HeatmapPlaybackCache.Steps)
 				{
-					break;
+					this.FilterState.Value.HeatMapMinDate = step.From;
+					this.FilterState.Value.HeatMapMaxDate = step.To;
+					this.HeatmapImgProp.Value = step.ImageData != null ? $"data:image/jpg;base64, {Convert.ToBase64String(step.ImageData)}" : null;
+
+					try
+					{
+						await Task.Delay(HeatmapPlaybackSettings != null ? (int)HeatmapPlaybackSettings.StepPlayDuration.TotalMilliseconds : 3000, _heatmapPlaybackCts.Token);
+					}
+					catch (TaskCanceledException)
+					{
+						break;
+					}
 				}
 
-				this.FilterState.Value.HeatMapMinDate = step.From;
-				this.FilterState.Value.HeatMapMaxDate = step.To;
-				this.HeatmapImgProp.Value = step.ImageData != null ? $"data:image/jpg;base64, {Convert.ToBase64String(step.ImageData)}" : null;
-
-				await Task.Delay(HeatmapPlaybackSettings != null ? (int)HeatmapPlaybackSettings.StepPlayDuration.TotalMilliseconds : 3000);
+				PlaybackRunning = false;
 			}
-
-			PlaybackRunning = false;
 		}
 
 		public void StopHeatmapPlayback()
 		{
+			_heatmapPlaybackCts.Cancel();
 			PlaybackRunning = false;
+		}
+
+		private void CleanStatusMessages()
+		{
+			this.StatusLabel.Value = "";
+			this.PercentageStatusLabel.Value = "";
 		}
 
 		private void FitlerMetadataSet(DateTime? startDate, DateTime? endDate, string[] filterLabels)
@@ -356,7 +374,7 @@ namespace Orions.Systems.CrossModules.Components
 				this._metadataSet.ToDate = endDate.Value;
 			}
 
-			if(filterLabels != null)
+			if (filterLabels != null)
 			{
 				this._metadataSet.TextFilters = filterLabels.Select(it =>
 				{
@@ -450,7 +468,6 @@ namespace Orions.Systems.CrossModules.Components
 				await LoadHyperTags();
 			}
 		}
-
 		#region Inner classes
 		public class TagReviewFilterState
 		{
@@ -458,12 +475,12 @@ namespace Orions.Systems.CrossModules.Components
 			public ViewModelProperty<DateTime?> MetadataSetMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> FilterMinDate { get; set; } = new ViewModelProperty<DateTime?>(null);
 			public ViewModelProperty<DateTime?> FilterMaxDate { get; set; } = new ViewModelProperty<DateTime?>(null);
-			public DateTime? HeatmapEdgeMinDate 
-			{ 
-				get 
+			public DateTime? HeatmapEdgeMinDate
+			{
+				get
 				{
 					return this.FilterMinDate.Value ?? this.MetadataSetMinDate.Value;
-				} 
+				}
 			}
 			public DateTime? HeatmapEdgeMaxDate
 			{
