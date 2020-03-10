@@ -113,7 +113,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 
 		public void Dispose()
 		{
-			Vm.Dispose();
+			Vm?.Dispose();
 		}
 	}
 
