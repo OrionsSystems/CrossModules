@@ -1,43 +1,46 @@
-﻿using Orions.Common;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
+
+using Orions.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    [Config(typeof(CarouselWidget))]
-    public class CarouselVm : ReportWidgetVm<CarouselWidget>
-    {
-        public List<Carousels> Data { get; set; } = new List<Carousels>();
+	[Config(typeof(CarouselWidget))]
+	public class CarouselVm : WidgetVm<CarouselWidget>
+	{
+		public bool IsDataInitialized { get; set; } = false;
+		public List<Carousels> Data { get; set; } = new List<Carousels>();
 
-        public CarouselVm()
-        {
-        }
+		public CarouselVm()
+		{
+		}
 
-        public void OnChangeDataSource()
-        {
-            if (Report == null || ReportChartData == null) return;
-            Data.Clear();
+		public void InitData()
+		{
+			Data = this.Widget.Settings.Navigations.Select(x => new Carousels
+			{
+				Source = x.ImageAsBase64,
+				Alt = x.View
+			}).ToList();
+			IsDataInitialized = true;
+		}
 
-            foreach (var series in ReportChartData.Series)
-            {
+		public void Switched()
+		{
 
-                for (int index = 0; index < series.Data.Count; index++)
-                {
-                    Carousels objCarousal;
-                    if (Data.Count <= index)
-                    {
-                        objCarousal = new Carousels();
-                        Data.Add(objCarousal);
-                    }
-                    else
-                        objCarousal = Data[index];
+		}
 
-                    PropertyInfo propertyInfo = objCarousal.GetType().GetProperty(series.Name);
-                    propertyInfo.SetValue(objCarousal, Convert.ChangeType(series.Data[index].Value, propertyInfo.PropertyType), null);
-                }
-            }
-        }
-    }
+		public void OnItemChange(string view)
+		{
+			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
+			if (filter == null)
+				return;
+
+			if (string.IsNullOrEmpty(view) == false && filter.View != view)
+			{
+				filter.View = view;
+				var t = this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
+			}
+		}
+	}
 }
