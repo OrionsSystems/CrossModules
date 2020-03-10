@@ -138,7 +138,12 @@ namespace Orions.Systems.CrossModules.Components
 						}
 				};
 
-				var earliestTag = (await HyperStore.ExecuteAsync(findArgs))[0].GetPayload<HyperTag>();
+				var results = await HyperStore.ExecuteAsync(findArgs);
+
+				if (results?.Length > 0 == false)
+					return;
+
+				var earliestTag = results[0].GetPayload<HyperTag>();
 				var earliestDate = earliestTag.GetUniversalDateTimeFromElements();
 
 				var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
