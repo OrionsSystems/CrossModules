@@ -81,6 +81,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BlazorStrap" Version="1.2.0" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />
