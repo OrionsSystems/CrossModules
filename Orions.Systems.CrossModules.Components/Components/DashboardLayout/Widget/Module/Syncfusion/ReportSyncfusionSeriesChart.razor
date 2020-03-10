@@ -21,7 +21,7 @@
 				<EjsChart @ref="Chartobj"
 							 Height="@Widget.Height"
 							 LegendSettings="@Widget.LegendConfigurations"
-							 Palettes="@Widget.Palettes"
+							 Palettes="@GetPalette()"
 							 Width="@Widget.Width"
 							 Title="@(Widget.ChartTitleSettings.EnableTitle ? Widget.ChartTitleSettings.Title : String.Empty)"
 							 TitleStyle="@Widget.ChartTitleSettings.TitleStyle"
@@ -169,6 +169,14 @@
 		if (Vm.ReportChartData.Series.Count != 1) return;
 
 		Vm.SeparateSeriesCategory();
+	}
+
+	private string[] GetPalette() 
+	{
+		if (Widget.Palettes != null && Widget.Palettes.Length > 0)
+			return Widget.Palettes;
+
+		return Vm.DashboardVm.Theme?.Palettes;
 	}
 
 }

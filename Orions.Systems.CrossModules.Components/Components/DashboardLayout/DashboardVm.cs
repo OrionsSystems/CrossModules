@@ -62,6 +62,8 @@ namespace Orions.Systems.CrossModules.Components
 		/// </summary>
 		public PropertyGridVm PropGridVm { get; set; } = new PropertyGridVm();
 
+		public StyleTheme Theme { get; set; }
+
 		public bool IsShowModalWidget { get; set; }
 		public bool IsShowProperty { get; private set; }
 		public bool IsShowModalImportProject { get; set; }
@@ -306,6 +308,10 @@ namespace Orions.Systems.CrossModules.Components
 			if (widget == null) return;
 			SelectedColumn.Widget = widget;
 			IsShowModalWidget = false;
+		}
+
+		public async Task LoadAttahcedTheme() {
+			Theme = await GetThemeAsync();
 		}
 
 		public async Task<StyleTheme> GetThemeAsync()
