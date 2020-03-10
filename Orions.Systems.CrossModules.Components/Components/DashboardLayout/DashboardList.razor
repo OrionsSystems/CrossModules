@@ -76,7 +76,7 @@
 									<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
 									<div class="dashboard-list-cmd-label">Edit</div>
 								</a>
-								<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(async e => { await Vm.DeleteDashboard(item); })">
+								<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
 									<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
 									<div class="dashboard-list-cmd-label">Delete</div>
 								</a>
@@ -130,7 +130,6 @@
 	<div class="modal-backdrop fade show"></div>
 }
 
-
 @if (Vm.IsShowProperty)
 {
 	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
@@ -157,7 +156,6 @@
 	<div class="modal-backdrop fade show"></div>
 }
 
-
 @if (Vm.IsShowRenameDashboardModal)
 {
 	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
@@ -182,6 +180,31 @@
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="(e => { Vm.IsShowRenameDashboardModal = false; })">Close</button>
 					<button type="button" class="btn btn-primary" @onclick="(async e => { await Vm.SaveChanges(); })">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
+@if (Vm.ShowConfirmDeleteDashboard)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete Dashboard</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.ShowConfirmDeleteDashboard = false; })">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p class="text-danger">Are you sure to delete dashboard?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" @onclick="@(async e => { await Vm.OnDeleteDashboard(); })">Delete</button>
+					<button type="button" class="btn btn-secondary" @onclick="(e => { Vm.ShowConfirmDeleteDashboard = false; })" data-dismiss="modal">Cancel</button>
 				</div>
 			</div>
 		</div>
