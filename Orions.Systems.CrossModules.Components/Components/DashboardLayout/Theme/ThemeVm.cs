@@ -22,6 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsLoadedDataResult { get; private set; }
 
+		public bool ShowConfirmDeleteTheme { get; set; }
+
 		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
 
 		IHyperArgsSink _hyperStore = null;
@@ -78,6 +80,20 @@ namespace Orions.Systems.CrossModules.Components
 			await SaveChangesAsync();
 
 			await LoadThemeList();
+		}
+
+		public void ShowDeleteConfirmationDialog(StyleTheme data)
+		{
+			ShowConfirmDeleteTheme = true;
+			SelectedData = data;
+		}
+
+		public async Task OnDeleteTheme()
+		{
+			if (SelectedData == null) return;
+			await DeleteTheme(SelectedData);
+
+			ShowConfirmDeleteTheme = false;
 		}
 
 		public async Task DeleteTheme(StyleTheme data)

@@ -1108,7 +1108,7 @@ widget-single-analytics-icon {
 		}
 
 .theme-list-name a{
-	curosor:pointer;
+	cursor:pointer;
 }
 
 .theme-cmd {
@@ -1116,7 +1116,6 @@ widget-single-analytics-icon {
 
 	.theme-cmd a {
 		cursor: pointer;
-		padding: 0px;
 		opacity: 0.3;
 		transition: 0.5s;
 	}
@@ -1128,6 +1127,10 @@ widget-single-analytics-icon {
 
 	.theme-cmd .theme-cmd-delete {
 		color: red !important;
+	}
+
+	.theme-cmd .theme-cmd-view {
+		color: #025302 !important;
 	}
 
 .theme-edit-container {
@@ -1155,3 +1158,8 @@ widget-single-analytics-icon {
 	}
 
 /* End theme component*/
+
+
+.CodeMirror {
+	height:auto !important;
+}
