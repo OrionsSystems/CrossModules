@@ -38,6 +38,8 @@ namespace Orions.Systems.CrossModules.Components
         [HelpText("Whether the carousel should support left/right swipe interactions on touchscreen devices.")]
         public bool Touch { get; set; } = true;
 
+        public int MaximumHeight { get; set; } = 400;
+
         public CarouselConfiguration()
         {
         }

@@ -18,7 +18,7 @@
                         Wrap="@Widget.Settings.Wrap">
                 <BSCarouselIndicators NumberOfItems="@Vm.Widget.Data.Count"></BSCarouselIndicators>
 
-                <div class="carousel-inner">
+                <div class="carousel-inner" style="max-height:@(Widget.Settings.MaximumHeight + "px")">
                     @foreach (var item in Vm.Widget.Data)
                     {
                         var base64 = Convert.ToBase64String(item.Source);
