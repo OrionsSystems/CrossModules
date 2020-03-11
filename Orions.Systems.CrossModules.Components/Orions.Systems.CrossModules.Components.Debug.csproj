@@ -95,7 +95,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BuildWebCompiler" Version="1.12.394" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />

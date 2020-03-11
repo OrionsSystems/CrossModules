@@ -730,12 +730,11 @@ h5 {
 }
 
 .separator-line-container {
-	width: 100%;
+	display:flex;
 }
 
 .separator-line {
 	display: inline-block;
-	margin: auto;
 }
 
 .widget-single-analytics-title {
