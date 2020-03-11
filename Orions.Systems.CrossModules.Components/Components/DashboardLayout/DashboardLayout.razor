@@ -498,18 +498,14 @@
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div class="card">
-						<div class="card-body">
-							<PropertyGrid Vm="Vm.PropGridVm"
-											  Loader="Vm.GetSelectedColumnWidget"
-											  CancelVisible="true"
-											  HyperStore="Vm.HyperStore"
-											  OKVisible="true"
-											  CancelCommand="Vm.OnCancelProperty"
-											  OkCommand="Vm.OnCancelProperty">
-							</PropertyGrid>
-						</div>
-					</div>
+					<PropertyGrid Vm="Vm.PropGridVm"
+									  Loader="Vm.GetSelectedColumnWidget"
+									  CancelVisible="true"
+									  HyperStore="Vm.HyperStore"
+									  OKVisible="true"
+									  CancelCommand="Vm.OnCancelProperty"
+									  OkCommand="Vm.OnCancelProperty">
+					</PropertyGrid>
 				</div>
 			</div>
 		</div>

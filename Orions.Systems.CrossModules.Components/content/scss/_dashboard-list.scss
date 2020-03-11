@@ -1,0 +1,21 @@
+﻿
+.dashboard-list-cmd-label {
+	font-size: 11px;
+}
+
+.dashboard-list-cmd-container {
+	a {
+		cursor: pointer;
+		opacity: 0.5;
+		transition: 0.5s;
+
+		&:hover {
+			opacity: 1;
+			transition: 0.5s;
+		}
+	}
+}
+
+.dashboard-list-cmd-delete {
+	color: red !important;
+}

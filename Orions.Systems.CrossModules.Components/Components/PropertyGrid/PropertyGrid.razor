@@ -2,185 +2,186 @@
 
 @inherits PropertyGridComponent
 
-@using Orions.SDK;
 @using Orions.Infrastructure.Common;
 @using Orions.Node.Common;
 @using Orions.Common;
 @using System.IO
 @using System.Text.RegularExpressions;
-@using Orions.Infrastructure.Common;
 
 <div class="prop-grid-container">
-	<div class="row mb-2">
-		<div class="col-md-12 prop-grid-header">
 
-			@if (Vm.BackButtonVisibleProp.Value)
-			{
-				<a onclick="@Vm.HomeCommand" title="Home" name="Home" class="btn prop-nav-btn">
-					<div class="prop-grid-icon">
-						<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
-							<title id="homeIconTitle">Home</title>
-							<path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
-						</svg>
-					</div>
-				</a>
+	<div class="prop-gid-container-data">
+		<div class="row mb-2">
+			<div class="col-md-12 prop-grid-header">
 
-				<a onclick="@Vm.BackCommand" title="Back" name="Back" class="btn prop-nav-btn">
-					<div class="prop-grid-icon">
-						<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-labelledby="backIconTitle">
-							<title id="backIconTitle">Back</title>
-							<path d="M11.48,7.26c.8.1,1.59.16,2.36.3A10.66,10.66,0,0,1,22,13.84a15.58,15.58,0,0,1,1.39,5.71c0,.46,0,.91,0,1.37,0,.2,0,.43-.24.51s-.35-.12-.45-.28a15.61,15.61,0,0,0-3.6-3.87,11.62,11.62,0,0,0-7.38-2.45c-.26,0-.35.07-.35.35q0,2.49,0,5a.6.6,0,0,1-.17.42c-.16.13-.32,0-.46-.13L.77,11.33c-.35-.32-.34-.42,0-.74l10-8.91c.15-.13.31-.32.5-.18a.71.71,0,0,1,.18.5c0,1.69,0,3.38,0,5.08C11.47,7.15,11.48,7.22,11.48,7.26Z" />
-						</svg>
-					</div>
-				</a>
-			}
-
-			<h5 class="prop-grid-header-title">@Vm.TrailProp.Value</h5>
-		</div>
-	</div>
-
-
-	@if (Vm.Utility.ListMode || Vm.Utility.CreatorMode)
-	{
-		<div class="row">
-			<div class="col px-0">
-				<select class="form-control" @onchange="OnCreatorItemSelect">
-					@foreach (var item in Vm.Utility.CreatorItems)
-					{
-						<option value="@item.Type.FullName">@item</option>
-					}
-				</select>
-			</div>
-		</div>
-
-		@if (!Vm.Utility.ReadOnlyMode)
-		{
-			<div class="row">
-				<div class="col text-center my-2">
-					<button class="btn btn-outline-dark center" onclick="@Vm.CreatorCreateCommand"> Create</button>
-				</div>
-			</div>
-		}
-
-	}
-
-	@if (Vm.Items.Any())
-	{
-
-		var groups = Vm.Items.GroupBy(it => it.GroupName).ToDictionary(el => el.Key, el => el.ToList());
-
-		@foreach (KeyValuePair<string, List<PropertyGridItemVm>> entry in groups)
-		{
-			var groupName = entry.Key;
-			var groupData = entry.Value;
-
-			<div class="row">
-				<div class="col">
-					<h6 class="prop-grid-group-title">@groupName</h6>
-				</div>
-			</div>
-			@foreach (var data in groupData)
-			{
-				<div class="row pgrid-row">
-					<div class="col-md-4 @GetVisualiaseClass(data)">
-						<div class="prop-grid-header-display" title="@data.DataProp.Value.TooltipDisplay">
-							@data.DataProp.Value.HeaderDisplay
-
-							@if (data.DataProp.Value.ShowHelp)
-							{
-								<a class="prop-grid-help-link">
-									<div class="prop-grid-icon float-right">
-										<svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="helpIconTitle">
-											<title id="helpIconTitle">@data.DataProp.Value.HelpText</title>
-											<path d="M12 14C12 12 13.576002 11.6652983 14.1186858 11.1239516 14.663127 10.5808518 15 9.82976635 15 9 15 7.34314575 13.6568542 6 12 6 11.1040834 6 10.2998929 6.39272604 9.75018919 7.01541737 9.49601109 7.30334431 9.29624369 7.64043912 9.16697781 8.01061095"></path>
-											<line x1="12" y1="17" x2="12" y2="17"></line>
-											<circle cx="12" cy="12" r="10"></circle>
-										</svg>
-									</div>
-								</a>
-							}
+				@if (Vm.BackButtonVisibleProp.Value)
+				{
+					<a onclick="@Vm.HomeCommand" title="Home" name="Home" class="btn prop-nav-btn">
+						<div class="prop-grid-icon">
+							<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="homeIconTitle">
+								<title id="homeIconTitle">Home</title>
+								<path d="M2 12L5 9.3M22 12L19 9.3M19 9.3L12 3L5 9.3M19 9.3V21H5V9.3"></path>
+							</svg>
 						</div>
-					</div>
-					<div class="col-md-6 pgrid-data">
+					</a>
 
-						@switch (data.DataProp.Value.EditableMode)
+					<a onclick="@Vm.BackCommand" title="Back" name="Back" class="btn prop-nav-btn">
+						<div class="prop-grid-icon">
+							<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-labelledby="backIconTitle">
+								<title id="backIconTitle">Back</title>
+								<path d="M11.48,7.26c.8.1,1.59.16,2.36.3A10.66,10.66,0,0,1,22,13.84a15.58,15.58,0,0,1,1.39,5.71c0,.46,0,.91,0,1.37,0,.2,0,.43-.24.51s-.35-.12-.45-.28a15.61,15.61,0,0,0-3.6-3.87,11.62,11.62,0,0,0-7.38-2.45c-.26,0-.35.07-.35.35q0,2.49,0,5a.6.6,0,0,1-.17.42c-.16.13-.32,0-.46-.13L.77,11.33c-.35-.32-.34-.42,0-.74l10-8.91c.15-.13.31-.32.5-.18a.71.71,0,0,1,.18.5c0,1.69,0,3.38,0,5.08C11.47,7.15,11.48,7.22,11.48,7.26Z" />
+							</svg>
+						</div>
+					</a>
+				}
+
+				<h5 class="prop-grid-header-title">@Vm.TrailProp.Value</h5>
+			</div>
+		</div>
+
+
+		@if (Vm.Utility.ListMode || Vm.Utility.CreatorMode)
+		{
+			<div class="row">
+				<div class="col px-0">
+					<select class="form-control" @onchange="OnCreatorItemSelect">
+						@foreach (var item in Vm.Utility.CreatorItems)
 						{
-							case PropertyGridItemUtilityData.EditableModes.Undefined:
-								<input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
-								break;
-							case PropertyGridItemUtilityData.EditableModes.CheckBox:
-								<div class="form-check">
-									<input type="checkbox" checked="@data.DataProp.Value.Instance" class="form-check-input " @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
-								</div>
-								break;
-							case PropertyGridItemUtilityData.EditableModes.TextBox:
-								<input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
-								break;
-							case PropertyGridItemUtilityData.EditableModes.MultiLineTextBox:
-								<textarea class="prop-grid-multuline" type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
-								break;
-							case PropertyGridItemUtilityData.EditableModes.Color:
-								<a>
-									@{
-										var uniColor = (UniColor)data.DataProp.Value.Instance;
-										var rgbColor = $"rgba({uniColor.R},{uniColor.G},{uniColor.B},{uniColor.A})";
-									}
-
-									<VanillaColorPicker ParentId="customId"
-														Class="form-control popup-parent"
-														Color="@rgbColor"
-														Popup="bottom"
-														Value="@rgbColor"
-														OnDone="(color => ChangeColor(data.DataProp.Value, color))"
-														EditorFormat="rgb">
-									</VanillaColorPicker>
-								</a>
-								break;
-							case PropertyGridItemUtilityData.EditableModes.Dropdown:
-								<select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
-									@foreach (var item in data.DataProp.Value.AvailableValueOptions)
-									{
-										<option value="@item">@item</option>
-									}
-								</select>
-								break;
-							case PropertyGridItemUtilityData.EditableModes.Custom:
-								var btn_command = data.CustomExpandCommand;
-								<button @onclick="btn_command" class="btn btn-outline-dark prop-grid-custom">@data.DataProp.Value.ValueDisplay</button>
-								break;
-							case PropertyGridItemUtilityData.EditableModes.ImageBrowseButton:
-								<img class="img-fluid" src="@GetImageSrc(data.DataProp.Value.Instance)" />
-								<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(data.DataProp.Value, arg); })" />
-								break;
-							case PropertyGridItemUtilityData.EditableModes.TextBrowseButton:
-								<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(data.DataProp.Value, arg); })" />
-								break;
-							case PropertyGridItemUtilityData.EditableModes.EditableDropdown:
-								<select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
-									@foreach (var item in data.DataProp.Value.AvailableValueOptions)
-									{
-										<option value="@item">@item</option>
-									}
-								</select>
-								break;
-							default:
-								break;
+							<option value="@item.Type.FullName">@item</option>
 						}
+					</select>
+				</div>
+			</div>
 
+			@if (!Vm.Utility.ReadOnlyMode)
+			{
+				<div class="row">
+					<div class="col text-center my-2">
+						<button class="btn btn-outline-dark center" onclick="@Vm.CreatorCreateCommand"> Create</button>
 					</div>
-					@if (data.DataProp.Value.CanDelete)
-					{
-						<div class="col-md-1">
-							<button class="btn btn-outline-dark" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
-						</div>
-					}
 				</div>
 			}
+
 		}
 
-	}
+		@if (Vm.Items.Any())
+		{
 
-	<div class="row mt-2">
+			var groups = Vm.Items.GroupBy(it => it.GroupName).ToDictionary(el => el.Key, el => el.ToList());
+
+			@foreach (KeyValuePair<string, List<PropertyGridItemVm>> entry in groups)
+			{
+				var groupName = entry.Key;
+				var groupData = entry.Value;
+
+				<div class="row">
+					<div class="col">
+						<h6 class="prop-grid-group-title">@groupName</h6>
+					</div>
+				</div>
+				@foreach (var data in groupData)
+				{
+					<div class="row pgrid-row">
+						<div class="col-md-4 @GetVisualiaseClass(data)">
+							<div class="prop-grid-header-display" title="@data.DataProp.Value.TooltipDisplay">
+								@data.DataProp.Value.HeaderDisplay
+
+								@if (data.DataProp.Value.ShowHelp)
+								{
+									<a class="prop-grid-help-link">
+										<div class="prop-grid-icon float-right">
+											<svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" aria-labelledby="helpIconTitle">
+												<title id="helpIconTitle">@data.DataProp.Value.HelpText</title>
+												<path d="M12 14C12 12 13.576002 11.6652983 14.1186858 11.1239516 14.663127 10.5808518 15 9.82976635 15 9 15 7.34314575 13.6568542 6 12 6 11.1040834 6 10.2998929 6.39272604 9.75018919 7.01541737 9.49601109 7.30334431 9.29624369 7.64043912 9.16697781 8.01061095"></path>
+												<line x1="12" y1="17" x2="12" y2="17"></line>
+												<circle cx="12" cy="12" r="10"></circle>
+											</svg>
+										</div>
+									</a>
+								}
+							</div>
+						</div>
+						<div class="col-md-6 pgrid-data">
+
+							@switch (data.DataProp.Value.EditableMode)
+							{
+								case PropertyGridItemUtilityData.EditableModes.Undefined:
+									<input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+									break;
+								case PropertyGridItemUtilityData.EditableModes.CheckBox:
+									<div class="form-check">
+										<input type="checkbox" checked="@data.DataProp.Value.Instance" class="form-check-input " @onchange="(eventArgs => { CheckboxChange(data.DataProp.Value, eventArgs.Value); })" />
+									</div>
+									break;
+								case PropertyGridItemUtilityData.EditableModes.TextBox:
+									<input type="text" class="form-control" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+									break;
+								case PropertyGridItemUtilityData.EditableModes.MultiLineTextBox:
+									<textarea class="prop-grid-multuline" type="text" value="@data.DataProp.Value.PrintValue()" @onchange="(eventArgs => { TextBoxChange(data.DataProp.Value, eventArgs.Value); })" />
+									break;
+								case PropertyGridItemUtilityData.EditableModes.Color:
+									<a>
+										@{
+											var uniColor = (UniColor)data.DataProp.Value.Instance;
+											var rgbColor = $"rgba({uniColor.R},{uniColor.G},{uniColor.B},{uniColor.A})";
+										}
+
+										<VanillaColorPicker ParentId="customId"
+																  Class="form-control popup-parent"
+																  Color="@rgbColor"
+																  Popup="bottom"
+																  Value="@rgbColor"
+																  OnDone="(color => ChangeColor(data.DataProp.Value, color))"
+																  EditorFormat="rgb">
+										</VanillaColorPicker>
+									</a>
+									break;
+								case PropertyGridItemUtilityData.EditableModes.Dropdown:
+									<select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs => { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+										@foreach (var item in data.DataProp.Value.AvailableValueOptions)
+										{
+											<option value="@item">@item</option>
+										}
+									</select>
+									break;
+								case PropertyGridItemUtilityData.EditableModes.Custom:
+									var btn_command = data.CustomExpandCommand;
+									<button @onclick="btn_command" class="btn btn-outline-dark prop-grid-custom">@data.DataProp.Value.ValueDisplay</button>
+									break;
+								case PropertyGridItemUtilityData.EditableModes.ImageBrowseButton:
+									<img class="img-fluid" src="@GetImageSrc(data.DataProp.Value.Instance)" />
+									<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(data.DataProp.Value, arg); })" />
+									break;
+								case PropertyGridItemUtilityData.EditableModes.TextBrowseButton:
+									<BlazorInputFile OnChange="(async(arg) => { await HandleInputFileSelection(data.DataProp.Value, arg); })" />
+									break;
+								case PropertyGridItemUtilityData.EditableModes.EditableDropdown:
+									<select class="form-control" value="@data.DataProp.Value.SelectedValueOption" @onchange="(eventArgs=> { DropdownChange(data.DataProp.Value, eventArgs.Value); })">
+										@foreach (var item in data.DataProp.Value.AvailableValueOptions)
+										{
+											<option value="@item">@item</option>
+										}
+									</select>
+									break;
+								default:
+									break;
+							}
+
+						</div>
+						@if (data.DataProp.Value.CanDelete)
+						{
+							<div class="col-md-1">
+								<button class="btn btn-outline-dark" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
+							</div>
+						}
+					</div>
+				}
+			}
+
+		}
+
+	</div>
+	<div class="row mt-2 prop-grid-nav">
 		<div class="col-md-12 k-right">
 			@if (Vm.OKVisible)
 			{
