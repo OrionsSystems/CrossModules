@@ -28,8 +28,11 @@ namespace Orions.Systems.CrossModules.Portal.Models
 
 				var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
 
-				if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var token)
-					&& QueryHelpers.ParseQuery(uri.Query).TryGetValue("connstr", out var connectionString))
+				QueryHelpers.ParseQuery(uri.Query).TryGetValue("token", out var token);
+				QueryHelpers.ParseQuery(uri.Query).TryGetValue("connstr", out var connectionString);
+
+				if (!string.IsNullOrWhiteSpace(token)
+					&& !string.IsNullOrWhiteSpace(connectionString))
 				{
 					var authentication = new HyperAuthenticationInfo()
 					{
@@ -38,6 +41,7 @@ namespace Orions.Systems.CrossModules.Portal.Models
 							Token = token
 						}
 					};
+
 					await ((CustomAuthenticationStateProvider)Provider).Authenticated(
 						"external", connectionString, authentication);
 
