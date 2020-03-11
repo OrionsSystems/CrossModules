@@ -1,13 +1,15 @@
 ﻿using Orions.Common;
 using System;
+using System.Collections.Generic;
 
 namespace Orions.Systems.CrossModules.Components
 {
-    public class CarouselWidget : ReportBaseWidget
+    public class CarouselWidget : DashboardWidget
     {
- 
         [HelpText("Carousel options")]
         public CarouselConfiguration Settings { get; set; } = new CarouselConfiguration();
+
+        public List<Carousels> Data { get; set; } = new List<Carousels>();
 
         public CarouselWidget()
         {

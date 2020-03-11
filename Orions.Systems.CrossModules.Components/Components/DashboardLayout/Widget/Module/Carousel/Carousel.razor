@@ -4,36 +4,39 @@
 
 <div class="widget-content-report @Widget.Class">
 
-    @if (Vm.Report != null && Vm.IsLoadedReportResult && Vm.Data.Count > 0)
+    @if (Vm.Widget.Data.Count > 0)
     {
         <SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>
         <TitleCard Settings="@Widget.TitleSettings"></TitleCard>
 
         <div class="widget-content-report-view">
-            <BSCarousel NumberOfItems="@Vm.Data.Count"
+            <BSCarousel NumberOfItems="@Vm.Widget.Data.Count"
                         Interval="@(!string.IsNullOrEmpty(Widget.Settings.Interval) ? Convert.ToInt32(Widget.Settings.Interval) : int.MaxValue)"
                         Pause="@(Widget.Settings.Pause == 0 ? "false" :"hover")"
                         Fade="@Widget.Settings.Fade"
                         Touch="@Widget.Settings.Touch"
                         Wrap="@Widget.Settings.Wrap">
-                <BSCarouselIndicators NumberOfItems="@Vm.Data.Count"></BSCarouselIndicators>
+                <BSCarouselIndicators NumberOfItems="@Vm.Widget.Data.Count"></BSCarouselIndicators>
 
                 <div class="carousel-inner">
-                    @foreach (var item in Vm.Data)
+                    @foreach (var item in Vm.Widget.Data)
                     {
-                        <BSCarouselItem src="@item.Source"
+                        var base64 = Convert.ToBase64String(item.Source);
+                        var imgSrc = String.Format("data:image/*;base64,{0}", base64);
+                        
+                        <BSCarouselItem src="@imgSrc"
                                         alt="@item.Alt"
                                         Interval="@(!string.IsNullOrEmpty(Widget.Settings.Interval) ? Convert.ToInt32(Widget.Settings.Interval) : int.MaxValue)"
                                         ActionLink="@(Widget.Settings.IsActionLinkEnabled? item.ActionLink:"")"
-                                        ActionLinkTarget="@(Widget.Settings.IsActionLinkEnabled ? item.ActionLinkTarget:"")">
+                                        ActionLinkTarget="@(Widget.Settings.IsActionLinkEnabled ? item.ActionLinkTarget.ToString():"")">
                             <BSCarouselCaption CaptionText="@(Widget.Settings.ShowCaption ? item.Caption:"")"
                                                HeaderText="@(Widget.Settings.ShowCaptionHeader ? item.Header:"")">
                             </BSCarouselCaption>
                         </BSCarouselItem>
                     }
                 </div>
-                <BSCarouselControl CarouselDirection="CarouselDirection.Previous" NumberOfItems="@Vm.Data.Count"></BSCarouselControl>
-                <BSCarouselControl CarouselDirection="CarouselDirection.Next" NumberOfItems="@Vm.Data.Count"></BSCarouselControl>
+                <BSCarouselControl CarouselDirection="CarouselDirection.Previous" NumberOfItems="@Vm.Widget.Data.Count"></BSCarouselControl>
+                <BSCarouselControl CarouselDirection="CarouselDirection.Next" NumberOfItems="@Vm.Widget.Data.Count"></BSCarouselControl>
 
             </BSCarousel>
         </div>
@@ -41,16 +44,11 @@
         <SeparatorLine Settings="@Widget.BottomSeparator"></SeparatorLine>
     }
 
-    @if (Vm.Report == null && Vm.IsLoadedReportResult && Vm.Data.Count == 0)
+    @if (Vm.Widget.Data.Count == 0)
     {
         <div class="widget-missing-report">
             Missing report data!
         </div>
-    }
-
-    @if (!Vm.IsLoadedReportResult)
-    {
-        <Loader Settings="@Widget.LoaderSettings"></Loader>
     }
 
 </div>
@@ -58,10 +56,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Vm.OnReportResultChanged += Vm.OnChangeDataSource;
-
-        await Vm.RefreshReportResultData();
-
         await base.OnInitializedAsync();
     }
 }
