@@ -136,18 +136,14 @@
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div class="card">
-						<div class="card-body">
-							<PropertyGrid @ref="propGrid"
-											  Loader="Vm.LoadDashboard"
-											  CancelVisible="true"
-											  HyperStore="HyperStore"
-											  OKVisible="true"
-											  CancelCommand="Vm.OnCancelProperty"
-											  OkCommand="Vm.OnOkProperty">
-							</PropertyGrid>
-						</div>
-					</div>
+					<PropertyGrid @ref="propGrid"
+									  Loader="Vm.LoadDashboard"
+									  CancelVisible="true"
+									  HyperStore="HyperStore"
+									  OKVisible="true"
+									  CancelCommand="Vm.OnCancelProperty"
+									  OkCommand="Vm.OnOkProperty">
+					</PropertyGrid>
 				</div>
 			</div>
 		</div>
