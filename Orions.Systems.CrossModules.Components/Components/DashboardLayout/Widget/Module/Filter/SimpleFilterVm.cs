@@ -89,9 +89,12 @@ namespace Orions.Systems.CrossModules.Components
 			set
 			{
 				//Widget.Filters = value;
+
 				var filterGroup = this.DashboardVm?.ObtainFilterGroup(this.Widget.FilterGroup);
 				if (filterGroup != null)
+				{
 					filterGroup.FilterLabels = value;
+				}
 			}
 		}
 
@@ -114,6 +117,17 @@ namespace Orions.Systems.CrossModules.Components
 
 		public SimpleFilterVm()
 		{
+		}
+
+		protected override void OnWidgetSet(IDashboardWidget widget)
+		{
+			var filterGroup = this.DashboardVm?.ObtainFilterGroup(this.Widget.FilterGroup);
+			if (filterGroup != null && this.Widget.PredefinedFilters?.Length > 0)
+			{
+				filterGroup.FilterLabels = this.Widget.PredefinedFilters;
+			}
+
+			base.OnWidgetSet(widget);
 		}
 
 		private void FilterGroup_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
