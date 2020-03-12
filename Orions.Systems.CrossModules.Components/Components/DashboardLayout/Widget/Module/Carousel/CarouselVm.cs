@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+
+using Microsoft.JSInterop;
 
 using Orions.Common;
 
@@ -22,12 +25,18 @@ namespace Orions.Systems.CrossModules.Components
 				Source = x.ImageAsBase64,
 				Alt = x.View
 			}).ToList();
+
+			OnItemChange(Data[0].Alt);
+
 			IsDataInitialized = true;
 		}
 
-		public void Switched()
+		[JSInvokable]
+		public Task Switched(int index)
 		{
+			OnItemChange(Data[index].Alt);
 
+			return Task.CompletedTask;
 		}
 
 		public void OnItemChange(string view)
