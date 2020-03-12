@@ -2,7 +2,7 @@
 
 @inherits DashboardComponent<DashboardContainerVm, DashboardContainerWidget>
 
-	<div class="@Widget.Class">
+	<div class="@Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 		@if (Showing)
 		{
 			@if (Dashboard != null)

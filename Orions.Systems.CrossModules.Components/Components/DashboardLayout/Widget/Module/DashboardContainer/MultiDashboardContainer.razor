@@ -2,7 +2,7 @@
 
 @inherits DashboardComponent<MultiDashboardContainerVm, MultiDashboardContainerWidget>
 
-	<div class="@Widget.Class">
+	<div class="@Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 		@if (Vm.CurrentDashboardData != null)
 		{
 			<SeparatorLine Settings="@Widget.TopSeparator"></SeparatorLine>

@@ -45,6 +45,13 @@ namespace Orions.Systems.CrossModules.Components
 
 		//public ReportInstruction.Targets FilterGroupTarget { get; set; } = ReportInstruction.Targets.Default;
 
+		[HelpText("Assign margin values to an element")]
+		public MarginConfig MarginWidget { get; set; } = new MarginConfig();
+
+		[HelpText("Assign padding values to an element")]
+		public PaddingConfig PaddingWidget { get; set; } = new PaddingConfig();
+
+
 		public DashboardWidget()
 		{
 			this.Id = IdGeneratorHelper.Generate("widget-");

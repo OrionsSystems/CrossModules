@@ -79,6 +79,13 @@ namespace Orions.Systems.CrossModules.Components
 
 			var series = ser.Data.Select(it => new ReportSeriesChartData() { Data = new List<ReportSeriesChartDataItem> { it }, Name = it.Label }).ToList();
 
+			//var series = ser.Data.Select(it => new ReportSeriesChartData() { Data = ser.Data.Select(d => new ReportSeriesChartDataItem() { 
+			//	Label = d.Label, 
+			//	Value = d.Label == it.Label ? d.Value : String.Empty, 
+			//	ColumnTemplate = d.ColumnTemplate, 
+			//	RowTemplate = d.RowTemplate
+			//}).ToList(), Name = it.Label }).ToList();
+
 			ReportChartData.Clean();
 			ReportChartData.Series.AddRange(series);
 			//ReportChartData.AddCategoryRange(series.Select(it => it.Name).ToArray());

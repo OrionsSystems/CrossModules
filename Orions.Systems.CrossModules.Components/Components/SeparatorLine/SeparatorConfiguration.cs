@@ -11,6 +11,12 @@ namespace Orions.Systems.CrossModules.Components
 			Right
 		}
 
+		[HelpText("Assign margin values to an element")]
+		public MarginConfig Margin { get; set; } = new MarginConfig();
+
+		[HelpText("Assign padding values to an element")]
+		public PaddingConfig Padding { get; set; } = new PaddingConfig();
+
 		[HelpText("CSS class name")]
 		public string CssClass { get; set; }
 

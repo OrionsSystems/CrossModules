@@ -7,7 +7,7 @@
 @using Syncfusion.EJ2.Blazor.Charts
 @using Syncfusion.EJ2.Blazor.SplitButtons
 
-<div class="widget-content-report @Widget.Class">
+<div class="widget-content-report @Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{

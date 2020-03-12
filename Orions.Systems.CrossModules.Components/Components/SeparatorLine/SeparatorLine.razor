@@ -4,7 +4,7 @@
 
 @if (Settings.Visible)
 {
-	<div class="separator-line-container @Settings.CssClass " style="justify-content: @GetJustifyContent();">
+	<div class="separator-line-container @Settings.CssClass " style="justify-content: @GetJustifyContent(); @Settings.Padding.GetInlineStyle() @Settings.Margin.GetInlineStyle()">
 		<div class="separator-line" style="@GetSeparatorLineStyles()"></div>
 	</div>
 }
