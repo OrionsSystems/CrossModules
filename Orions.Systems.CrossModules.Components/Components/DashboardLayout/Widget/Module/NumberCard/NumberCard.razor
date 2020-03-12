@@ -2,7 +2,7 @@
 
 @inherits DashboardComponent<NumberCardVm, NumberCardWidget>
 
-<div class="widget-content-report @Widget.Class">
+<div class="widget-content-report numbercard-container @Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 
 	@if (Vm.IsLoadedReportResult)
 	{

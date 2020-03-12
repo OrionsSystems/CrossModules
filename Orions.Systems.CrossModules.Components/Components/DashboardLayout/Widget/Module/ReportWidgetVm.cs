@@ -182,8 +182,9 @@ namespace Orions.Systems.CrossModules.Components
 					{
 						var row = rowData[rowIndex];
 
-						var label = row.Template.Title;
-						//var label = report.RowsDefinitions[rowIndex].Title;
+						var label = report.RowsDefinitions[rowIndex].Title;
+						if(string.IsNullOrWhiteSpace(label)) 
+							label = row.Template.Title;
 
 						var cell = row.Cells[columnIndex];
 						var data = cell.Values.FirstOrDefault();

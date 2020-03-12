@@ -44,12 +44,15 @@
 							<td class="center theme-cmd">
 								<a class="btn btn-sm theme-cmd-view" @onclick="@(async e => { await Vm.OpenThemeAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
+									<div class="theme-list-cmd-label">View</div>
 								</a>
-								<a class="btn btn-sm theme-cmd-edit" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })"> 
+								<a class="btn btn-sm theme-cmd-edit" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
+									<div class="theme-list-cmd-label">Edit</div>
 								</a>
-								<a class="btn btn-sm theme-cmd-delete" @onclick="@(async e => { await Vm.DeleteTheme(item); })"> 
+								<a class="btn btn-sm theme-cmd-delete" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
 									<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
+									<div class="theme-list-cmd-label">Delete</div>
 								</a>
 							</td>
 						</tr>
@@ -75,18 +78,39 @@
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
-					<div class="card">
-						<div class="card-body">
-							<PropertyGrid @ref="propGrid"
-											  Loader="Vm.LoadTheme"
-											  CancelVisible="true"
-											  HyperStore="HyperStore"
-											  OKVisible="true"
-											  CancelCommand="Vm.OnCancelProperty"
-											  OkCommand="Vm.OnOkProperty">
-							</PropertyGrid>
-						</div>
-					</div>
+					<PropertyGrid @ref="propGrid"
+									  Loader="Vm.LoadTheme"
+									  CancelVisible="true"
+									  HyperStore="HyperStore"
+									  OKVisible="true"
+									  CancelCommand="Vm.OnCancelProperty"
+									  OkCommand="Vm.OnOkProperty">
+					</PropertyGrid>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
+
+@if (Vm.ShowConfirmDeleteTheme)
+{
+	<div class="dashboard-modal modal fade show" id="widgetModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Delete Theme</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close" @onclick="(e => { Vm.ShowConfirmDeleteTheme = false; })">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p class="text-danger">Are you sure to delete theme?</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" @onclick="(e => { Vm.ShowConfirmDeleteTheme = false; })" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-danger" @onclick="@(async e => { await Vm.OnDeleteTheme(); })">Delete</button>
 				</div>
 			</div>
 		</div>

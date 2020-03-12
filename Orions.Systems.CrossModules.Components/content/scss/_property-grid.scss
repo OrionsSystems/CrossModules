@@ -1,0 +1,76 @@
+﻿
+.danger {
+	background-color: #e89393;
+	border-radius: 5px;
+}
+
+.warning {
+	background-color: #eadc98;
+	border-radius: 5px;
+}
+
+.pgrid-row {
+	border: solid 1px rgba(167, 165, 165, 0.39);
+	padding: 3px 7px;
+}
+
+.pgrid-data {
+	> .input[type="text"] {
+		width: 100%;
+	}
+}
+
+.prop-grid-header-display {
+	line-height: 40px;
+}
+
+.prop-grid-custom {
+	width: 100%;
+}
+
+.prop-grid-icon {
+	svg {
+		width: 24px;
+		height: 24px;
+		stroke: #69696b;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		fill: none;
+		color: #69696b;
+	}
+}
+
+.prop-nav-btn {
+	cursor: pointer;
+	padding: 5px 4px;
+}
+
+.popup-parent {
+	color: white;
+	font-family: sans-serif;
+	font-weight: 100;
+	text-align: center;
+
+	&:focus {
+		outline: 0.3em dashed rgba(255, 165, 0, 0.7);
+	}
+}
+
+.prop-grid-group-title {
+	padding-top: 10px;
+	font-weight: bold;
+}
+
+.prop-gid-container-data {
+	overflow-y: auto;
+	/*overflow-x: hidden;*/
+	max-height: calc(100vh - 300px);
+	padding: 20px;
+}
+
+
+.prop-grid-multuline {
+	width: 100%;
+	min-height: 60px;
+}

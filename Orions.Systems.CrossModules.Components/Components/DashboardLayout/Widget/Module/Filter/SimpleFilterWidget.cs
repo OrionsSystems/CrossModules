@@ -42,6 +42,8 @@ namespace Orions.Systems.CrossModules.Components
 
       public bool ShowPeriodSelection { get; set; } = true;
 
+      public string[] PredefinedFilters { get; set; } = new string[] { };
+
       public ReportFilterInstruction.Targets FilterTarget { get; set; }
 
       public SimpleFilterWidget()

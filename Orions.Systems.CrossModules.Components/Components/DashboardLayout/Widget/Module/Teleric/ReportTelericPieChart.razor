@@ -5,7 +5,7 @@
 @using Telerik.Blazor;
 @using Telerik.Blazor.Components;
 
-<div class="widget-content-report @Widget.Class">
+<div class="widget-content-report @Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{

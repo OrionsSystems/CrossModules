@@ -38,6 +38,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Content Remove="compilerconfig.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
 		<None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
 		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
@@ -74,7 +78,6 @@
 		<None Remove="content\scripts\common.js" />
 		<None Remove="content\scripts\kendoComponents.js" />
 		<None Remove="content\css\styles.css" />
-		<None Remove="content\css\propertyGrid.css" />
 		<None Remove="content\scripts\svgMapEditor.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 		<None Remove="content\codemirror\codemirror.css" />
@@ -88,7 +91,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BlazorStrap" Version="1.2.0" />
+	  <_ContentIncludedByDefault Remove="compilerconfig.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />
@@ -111,6 +117,10 @@
 
 	<ItemGroup>
 	  <Folder Include="content\Orions.Crossmodules.ComponentsBundle\dist\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="compilerconfig.json" />
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

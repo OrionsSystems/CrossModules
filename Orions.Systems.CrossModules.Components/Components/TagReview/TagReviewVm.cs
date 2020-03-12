@@ -138,7 +138,12 @@ namespace Orions.Systems.CrossModules.Components
 						}
 				};
 
-				var earliestTag = (await HyperStore.ExecuteAsync(findArgs))[0].GetPayload<HyperTag>();
+				var results = await HyperStore.ExecuteAsync(findArgs);
+
+				if (results?.Length > 0 == false)
+					return;
+
+				var earliestTag = results[0].GetPayload<HyperTag>();
 				var earliestDate = earliestTag.GetUniversalDateTimeFromElements();
 
 				var lastTagFindArgs = new FindHyperDocumentsArgs(typeof(HyperTag));
@@ -332,6 +337,8 @@ namespace Orions.Systems.CrossModules.Components
 					this.FilterState.Value.HeatMapMinDate = step.From;
 					this.FilterState.Value.HeatMapMaxDate = step.To;
 					this.HeatmapImgProp.Value = step.ImageData != null ? $"data:image/jpg;base64, {Convert.ToBase64String(step.ImageData)}" : null;
+
+					this.RaiseNotify("HeatmapImgProp");
 
 					try
 					{

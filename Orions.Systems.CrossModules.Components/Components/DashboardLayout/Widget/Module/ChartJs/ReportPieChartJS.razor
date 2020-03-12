@@ -10,7 +10,7 @@
 @using ChartJs.Blazor.ChartJS.Common.Properties
 @using ChartJs.Blazor.Util
 
-<div class="widget-content-report-piechart @Widget.Class ">
+<div class="widget-content-report-piechart @Widget.Class " style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 
 	@if (Vm.Report != null && Vm.IsLoadedReportResult)
 	{

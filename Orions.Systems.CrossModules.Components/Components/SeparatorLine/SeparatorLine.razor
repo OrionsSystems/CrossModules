@@ -4,7 +4,7 @@
 
 @if (Settings.Visible)
 {
-	<div class="separator-line-container @Settings.CssClass " style="text-align: @GetAligmentString();">
+	<div class="separator-line-container @Settings.CssClass " style="justify-content: @GetJustifyContent(); @Settings.Padding.GetInlineStyle() @Settings.Margin.GetInlineStyle()">
 		<div class="separator-line" style="@GetSeparatorLineStyles()"></div>
 	</div>
 }
@@ -19,14 +19,14 @@
 		await base.OnInitializedAsync();
 	}
 
-	private string GetAligmentString()
+	private string GetJustifyContent()
 	{
 		switch (Settings.Aligment)
 		{
 			case SeparatorConfiguration.SeparatorAligment.Left:
-				return "left";
+				return "flex-start";
 			case SeparatorConfiguration.SeparatorAligment.Right:
-				return "right";
+				return "flex-end";
 			default:
 				return "center";
 		}
