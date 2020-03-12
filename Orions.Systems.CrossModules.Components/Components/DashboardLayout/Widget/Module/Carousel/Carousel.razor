@@ -17,7 +17,9 @@
 				{
 					var activeClass = i == 0 ? "active" : string.Empty;
 
-					<li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@activeClass"></li>
+					var y = i;
+
+					<li data-target="#carouselExampleIndicators" data-slide-to="@i" class="@activeClass" @onclick="@(() => Vm.Switched(y))"></li>
 				}
 			</ol>
 			<div class="carousel-inner">
