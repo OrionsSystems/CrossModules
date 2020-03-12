@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using Orions.Common;
 
@@ -44,7 +45,11 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			public string View { get; set; }
 
-			public string ImageAsBase64 { get; set; }
+			[UniBrowsable(false)]
+			public string ImageAsBase64 => $"data:image/jpg;base64, {Convert.ToBase64String(ImageBinary)}";
+
+			[UniBrowsable(AdvancedType = UniBrowsableAttribute.AdvancedTypes.Mandatory, AllowCreate = false, Browsable = true, EditType = UniBrowsableAttribute.EditTypes.ImageFile)]
+			public byte[] ImageBinary { get; set; }
 		}
 
 		[HelpText("Navigation items")]
