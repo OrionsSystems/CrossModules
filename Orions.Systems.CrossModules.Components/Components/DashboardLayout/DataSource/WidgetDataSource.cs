@@ -23,6 +23,9 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("Remove prefix from all categories if find it")]
 		public string ExcludePrefix { get; set; }
 
+		[HelpText("Convert categories to uppercase")]
+		public bool Uppercase { get; set; } = true;
+
 		public WidgetDataSource()
 		{
 		}
