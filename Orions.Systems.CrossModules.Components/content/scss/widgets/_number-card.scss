@@ -1,0 +1,44 @@
+﻿
+.widget-single-analytics-container {
+	display: inline-flex;
+	vertical-align: middle;
+
+	.widget-single-analytics-icon {
+		vertical-align: middle;
+
+		img {
+			vertical-align: middle;
+			width: 30px;
+		}
+
+		svg {
+			width: 30px;
+			vertical-align: middle;
+			fill: rgb(57, 93, 127);
+			margin-top: 7px;
+		}
+	}
+
+	.widget-single-analytics-title {
+		font-size: 12px;
+		color: #365c7e;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		display: inline-flex;
+	}
+
+	.widget-single-analytics-value {
+		margin-left: 10px;
+		display: inline-flex;
+		opacity: .5;
+		font-size: 18px;
+		vertical-align: middle;
+		margin-top: -7px;
+	}
+}
+
+.numbercard-container {
+	padding: 0px 15px;
+}
+
+

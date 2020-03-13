@@ -147,70 +147,11 @@ app {
 }
 
 
-.loading-bar {
-	position: absolute;
-	top: calc(50% - 3px);
-	left: calc(50% - 250px);
-	width: 500px;
-	height: 6px;
-	background-color: white;
-	overflow: hidden;
-	box-shadow: 0 1px 3px rgba(0,0,0,0.2)
-}
-
-	.loading-bar::after {
-		content: '';
-		display: block;
-		width: 200px;
-		height: 100%;
-		background-color: #395D7F;
-		animation: progressbar-slide 1s infinite;
-		animation-timing-function: ease-in-out;
-	}
 
 
-@keyframes progressbar-slide {
-	0% {
-		transform: translateX(-200px);
-	}
 
-	70% {
-		transform: translateX(500px);
-	}
 
-	100% {
-		transform: translateX(500px);
-	}
-}
 
-.loader-dot {
-	height: 20px;
-	width: 20px;
-	border-radius: 50%;
-	display: inline-block;
-	-webkit-animation: grow 2.1s infinite ease-in-out both;
-	animation: grow 2.1s infinite ease-in-out both;
-}
-
-	.loader-dot.dot1 {
-		-webkit-animation-delay: -0.96s;
-		animation-delay: -0.96s;
-	}
-
-	.loader-dot.dot2 {
-		-webkit-animation-delay: -0.48s;
-		animation-delay: -0.48s;
-	}
-
-@-webkit-keyframes grow {
-	0%, 80%, 100% {
-		-webkit-transform: scale(0)
-	}
-
-	40% {
-		-webkit-transform: scale(1.0)
-	}
-}
 
 .nowrap {
 	white-space: nowrap;
