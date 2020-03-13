@@ -74,6 +74,8 @@
 
 	private void OnChangeDataSource()
 	{
+		Data.Clear();
+
 		if (Vm.ReportChartData != null)
 		{
 			foreach (var series in Vm.ReportChartData.Series)
