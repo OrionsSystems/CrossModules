@@ -24,20 +24,18 @@
 									</div>
 									<div class="widget-content-report-progress-line-progress">
 										<ProgressLine IsShowTitle="@Widget.ShowElementTitle"
-														  Title="@item.Title"
-														  IsShowPercentage="Widget.IsShowPercentage"
-														  Percentage="@item.Percentage"
-														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
+														  Source="@item"
+														  OnClickProgress="Vm.HandleOnClick"
+														  IsShowPercentage="Widget.IsShowPercentage"></ProgressLine>
 									</div>
 								}
 								else
 								{
 									<div class="widget-content-report-progress-line-progress">
 										<ProgressLine IsShowTitle="@Widget.ShowElementTitle"
-														  Title="@item.Title"
-														  IsShowPercentage="Widget.IsShowPercentage"
-														  Percentage="@item.Percentage"
-														  Value="@item.IntValue.GetValueOrDefault()"></ProgressLine>
+														  Source="@item"
+														  OnClickProgress="Vm.HandleOnClick"
+														  IsShowPercentage="Widget.IsShowPercentage"></ProgressLine>
 									</div>
 								}
 

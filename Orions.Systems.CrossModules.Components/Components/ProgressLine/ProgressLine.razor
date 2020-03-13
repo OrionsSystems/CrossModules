@@ -2,7 +2,7 @@
 
 <div class="progress-line">
 
-		<div class="progress-line-icon-container">
+	<div class="progress-line-icon-container">
 		@if (!string.IsNullOrWhiteSpace(IconUrl))
 		{
 			<span class="icon"><img src="@IconUrl"></span>
@@ -13,29 +13,37 @@
 			<span class="icon"><img src="@ImageBase64Url"></span>
 		}
 	</div>
+
 	@if (IsShowTitle)
 	{
 		<div class="stat-title">
-			@Title
+			@Source?.Title
 		</div>
 	}
+
 	<div class="stat-container">
-		<span class="stat-progress" style="width: @(Progress)%;"></span>
+		<a class="stat-container-link" @onclick="OnClikProgress">
+			<span class="stat-progress" style="width: @(Progress)%;"></span>
 
-		@if (IsShowPercentage)
-		{
+			@if (IsShowPercentage)
+			{
 
-			<span title="@Value" class="stat-value">@PercentageString</span>
-		}
-		else
-		{
-			<span class="stat-value">@Value</span>
-		}
+				<span class="stat-value">@PercentageString</span>
+			}
+			else
+			{
+				<span class="stat-value">@Value</span>
+			}
+		</a>
 	</div>
+
 
 </div>
 
 @code {
+
+	[Parameter]
+	public CardItem Source { get; set; }
 
 	[Parameter]
 	public byte[] IconSource { get; set; }
@@ -44,30 +52,51 @@
 	public string IconUrl { get; set; }
 
 	[Parameter]
-	public int Value { get; set; }
-
-	[Parameter]
 	public bool IsShowPercentage { get; set; }
 
 	[Parameter]
 	public bool IsShowTitle { get; set; }
 
 	[Parameter]
-	public string Title { get; set; }
-
-	[Parameter]
-	public double Percentage { get; set; }
-
-	[Parameter]
 	public int PercentagePrecision { get; set; } = 2;
 
-	private int Progress { get { return Convert.ToInt32(Percentage); } }
+	[Parameter]
+	public EventCallback<CardItem> OnClickProgress { get; set; }
+
+	private async Task OnClikProgress() 
+	{
+		await OnClickProgress.InvokeAsync(Source);
+	}
+
+	public int Value
+	{
+		get
+		{
+			if (Source == null)
+				return 0;
+
+			return Source.IntValue.GetValueOrDefault();
+		}
+	}
+
+	private int Progress
+	{
+		get
+		{
+			if (Source == null)
+				return 0;
+
+			return Convert.ToInt32(Source.Percentage);
+		}
+	}
 
 	private string PercentageString
 	{
 		get
 		{
-			var pr = Math.Round(Percentage, PercentagePrecision);
+			if (Source == null) return string.Empty;
+
+			var pr = Math.Round(Source.Percentage, PercentagePrecision);
 			return $"{pr} %";
 		}
 	}

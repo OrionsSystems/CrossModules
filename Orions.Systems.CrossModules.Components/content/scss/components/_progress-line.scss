@@ -1,0 +1,61 @@
+﻿.progress-line {
+	display: flex;
+	flex-wrap: wrap;
+	margin: 10px 0px;
+
+	.progress-line-icon-container {
+
+		.icon {
+			display: inline-flex;
+			width: 12px;
+			vertical-align: middle;
+
+			img {
+				width: 12px;
+			}
+		}
+	}
+
+	.stat-title {
+		vertical-align: middle;
+		font-weight: bold;
+		display: inline-block;
+		font-size: 14px;
+		letter-spacing: 2px;
+		color: #807e7e;
+		flex: 0 0 25%;
+		max-width: 25%;
+		text-transform: uppercase;
+		color: #365c7e;
+	}
+
+	.stat-container {
+		display: inline-block;
+		flex: 0 0 75%;
+		max-width: 75%;
+		padding-left: 10px;
+
+		a {
+			cursor: pointer;
+
+			.stat-progress {
+				background-color: #bcbec4;
+				background-color: #bcc0cc;
+				display: inline-flex;
+				height: 12px;
+				border-radius: 10px;
+				vertical-align: middle;
+				line-height: 20px;
+			}
+
+			.stat-value {
+				vertical-align: middle;
+				font-weight: bold;
+				color: #807e7e;
+				margin-left: 10px;
+				opacity: .5;
+				font-size: 18px;
+			}
+		}
+	}
+}
