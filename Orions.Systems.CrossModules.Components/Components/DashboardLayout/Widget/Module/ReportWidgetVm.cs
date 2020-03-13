@@ -84,7 +84,8 @@ namespace Orions.Systems.CrossModules.Components
 
 				var includeCategoryFilter = widget.DataSource.IncludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
 				var excludeCategoryFilter = widget.DataSource.ExcludeCategories?.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(it => it.Trim()).ToArray();
-				ReportChartData = LoadReportChartData(Report, includeCategoryFilter, excludeCategoryFilter);
+				
+				ReportChartData = LoadReportChartData(Report, includeCategoryFilter, excludeCategoryFilter, widget.DataSource.Uppercase);
 
 				if (ReportChartData != null)
 				{
@@ -136,7 +137,10 @@ namespace Orions.Systems.CrossModules.Components
 			return Convert.ToString(data) + appendinx;
 		}
 
-		ReportChartData LoadReportChartData(Report report, string[] includeCategoryFilters, string[] excludeCategoryFilters)
+		ReportChartData LoadReportChartData(Report report, 
+			string[] includeCategoryFilters, 
+			string[] excludeCategoryFilters,
+			bool toUpper = false)
 		{
 			var result = new ReportChartData();
 
@@ -163,6 +167,10 @@ namespace Orions.Systems.CrossModules.Components
 
 					if (excludeCategoryFilters?.Any() == true && excludeCategoryFilters.Contains(columnTitle))
 						continue;
+
+					if (toUpper) {
+						columnTitle = columnTitle.ToUpper();
+					}
 
 					var chartSeries = new ReportSeriesChartData();
 					var existingSeries = result.Series.FirstOrDefault(it => it.Name == columnTitle);

@@ -16,11 +16,18 @@
 		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\css\styles.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<EmbeddedResource Include="content\codemirror\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\codemirror\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="compilerconfig.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -60,16 +67,24 @@
 		<None Remove="content\scripts\common.js" />
 		<None Remove="content\scripts\kendoComponents.js" />
 		<None Remove="content\css\styles.css" />
-		<None Remove="content\css\propertyGrid.css" />
+		<None Remove="content\scripts\svgMapEditor.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
+		<None Remove="content\codemirror\codemirror.css" />
+		<None Remove="content\codemirror\codemirror.js" />
+		<None Remove="content\codemirror\codemirror\theme\material.css" />
+		<None Remove="content\codemirror\codemirror\mode\css.js" />
+		<None Remove="content\codemirror\codemirror\addon\css-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\javascript-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\show-hint.js" />
+		<None Remove="content\codemirror\codemirror\addon\show-hint.css" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="BlazorStrap" Version="1.2.0" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
-		<PackageReference Include="MatBlazor" Version="2.0.0" />
 		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
+		<PackageReference Include="MatBlazor" Version="2.0.0" />
 		<PackageReference Include="SkiaSharp" Version="1.68.1.1" />
+		<PackageReference Include="System.Drawing.Common" Version="4.7.0" />
 		<PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="2.2.0" />
 		<PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.514" />
@@ -84,5 +99,17 @@
 		<PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
 		<PackageReference Include="Orions.SDK" Version="2.42.0-preview.*" />
 	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="content\Orions.Crossmodules.ComponentsBundle\dist\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="compilerconfig.json" />
+	</ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="cd $(ProjectDir)/content/Orions.Crossmodules.ComponentsBundle&#xD;&#xA;npx webpack" />
+	</Target>
 
 </Project>
