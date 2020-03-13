@@ -1,0 +1,51 @@
+﻿
+
+.widget-content-report-transportation {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	.widget-content-report-transportation-container {
+		width: 24%;
+		padding-bottom: 0%;
+		margin-bottom: 2%;
+
+		a {
+			cursor:pointer;
+		}
+
+		.widget-content-report-transportation-container-item {
+			text-align: center;
+			display: flex;
+			flex-direction: row;
+
+			.widget-content-report-transportation-container-data {
+				flex: 0 0 66.666667%;
+				max-width: 66.666667%;
+				margin: auto;
+
+				svg {
+					height: 70px;
+					width: 70px;
+					fill: #365c7e;
+				}
+
+				.widget-content-report-transportation-container-title {
+					text-transform: uppercase;
+					color: #365c7e;
+					font-size: 14px;
+					letter-spacing: 2px;
+				}
+			}
+
+			.widget-content-report-transportation-container-value {
+				margin: auto;
+				font-weight: bold;
+				flex: 0 0 33.333333%;
+				max-width: 33.333333%;
+				opacity: .5;
+				font-size: 23px;
+			}
+		}
+	}
+}

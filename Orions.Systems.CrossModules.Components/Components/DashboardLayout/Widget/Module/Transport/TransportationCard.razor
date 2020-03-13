@@ -18,19 +18,21 @@
 					@foreach (var item in Vm.Data)
 					{
 						<div class="widget-content-report-transportation-container">
-							<div class="widget-content-report-transportation-container-item" title="@item.Title">
-								<div class="widget-content-report-transportation-container-data">
-									@if (string.IsNullOrWhiteSpace(item.SvgIcon))
-									{
-										<div class="widget-content-report-transportation-container-title">@item.Title</div>
-									}
-									else
-									{
-										<div class="widget-content-report-transportation-container-icon">@((MarkupString)item.SvgIcon)</div>
-									}
+							<a @onclick="@(async ev => { await Vm.HandleOnClick(item); })">
+								<div class="widget-content-report-transportation-container-item" title="@item.Title">
+									<div class="widget-content-report-transportation-container-data">
+										@if (string.IsNullOrWhiteSpace(item.SvgIcon))
+										{
+											<div class="widget-content-report-transportation-container-title">@item.Title</div>
+										}
+										else
+										{
+											<div class="widget-content-report-transportation-container-icon">@((MarkupString)item.SvgIcon)</div>
+										}
+									</div>
+									<div class="widget-content-report-transportation-container-value">@item.Value</div>
 								</div>
-								<div class="widget-content-report-transportation-container-value">@item.Value</div>
-							</div>
+							</a>
 						</div>
 					}
 				</div>
