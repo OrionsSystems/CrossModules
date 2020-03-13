@@ -58,7 +58,7 @@
 							<td class="center">
 								@if (!string.IsNullOrWhiteSpace(item.Tag))
 								{
-									<a href="@(MyNavigationManager.Uri + "/" + item.Tag)" class="badge badge-secondary">
+									<a href="" class="badge badge-secondary"  @onclick="@(e => { OpenTagLink(item); })">
 										@item.Tag
 									</a>
 								}
@@ -265,6 +265,11 @@
 				Vm.IsShowModalImportProject = false;
 			}
 		}
+	}
+
+	private void OpenTagLink(DashboardData item) {
+		var url = MyNavigationManager.Uri + "/" + item.Tag;
+		MyNavigationManager.NavigateTo(url, true);
 	}
 
 }
