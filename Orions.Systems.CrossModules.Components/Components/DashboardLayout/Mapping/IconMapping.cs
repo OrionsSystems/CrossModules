@@ -19,11 +19,14 @@ namespace Orions.Systems.CrossModules.Components
 
 		public HyperDocumentId? TryMap(string value) 
 		{
+			if (string.IsNullOrWhiteSpace(value))
+				return null;
+
 			if (this.Mappings == null || this.Mappings.Length == 0)
 				return null;
 
 			if (this.StringCompareMode == StringComparisonMode.Equals)
-				return this.Mappings.FirstOrDefault(it => it.Name == value)?.Icon;
+				return this.Mappings.FirstOrDefault(it => it.Name.ToLower() == value.ToLower())?.Icon;
 
 			return this.Mappings.FirstOrDefault(it => it.Name.Contains(value))?.Icon;
 		}
