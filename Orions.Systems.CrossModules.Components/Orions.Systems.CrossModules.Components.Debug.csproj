@@ -24,7 +24,7 @@
 		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\css\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\css\styles.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
@@ -95,6 +95,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="BuildWebCompiler" Version="1.12.394" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
 		<PackageReference Include="Emgu.CV.runtime.windows" Version="4.2.0.3662" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />
