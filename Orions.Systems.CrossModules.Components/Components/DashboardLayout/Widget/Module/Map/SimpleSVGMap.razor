@@ -37,6 +37,8 @@
 
 	private async Task OnSelectZone(string zone)
 	{
+		if (!Widget.EnableNavigation) return;
+
 		if (string.IsNullOrWhiteSpace(zone)) return;
 
 		await map.UpdateZone(Widget.Zone, zone);
@@ -58,27 +60,12 @@
 }
 
 <style>
-
-	.st20, .st21, .st22 {
-		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColor) ? "#cc0000" : Widget.ZoneColor );
-	}
-
+	
 	.hide-zone {
-		fill: #159c7000;
+		fill: #159c7000 !important;
 	}
 
 	.zone-over{
 		fill: @(string.IsNullOrWhiteSpace(Widget.ZoneColorOver) ? "#13513A" : Widget.ZoneColorOver ) !important;
-	}
-
-	.st0 {
-    fill: #d9d9d9 !important;
-}
-
-	.st12 {
-		fill: #808285  !important;
-		stroke: #cacaca;
-		stroke-width: 1.1px !important;
-		stroke-miterlimit: 10;
 	}
 </style>
