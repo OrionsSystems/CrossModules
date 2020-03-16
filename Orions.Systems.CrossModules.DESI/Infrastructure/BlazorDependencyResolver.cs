@@ -26,5 +26,10 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 			return null;
 			throw new NotImplementedException();
 		}
+
+		public override IDispatcher GetDispatcher()
+		{
+			return new BlazorDispatcher();
+		}
 	}
 }

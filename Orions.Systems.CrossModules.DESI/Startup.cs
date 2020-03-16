@@ -9,6 +9,12 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Orions.Desi.Forms.Core.Services;
+using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
+using Orions.Systems.Desi.Common.Authentication;
+using Orions.Systems.Desi.Common.MissionsExploitation;
+using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi
 {
@@ -27,6 +33,13 @@ namespace Orions.Systems.CrossModules.Desi
 		{
 			services.AddRazorPages();
 			services.AddServerSideBlazor();
+
+			AddPageViewModels(services);
+		}
+
+		private void AddPageViewModels(IServiceCollection services)
+		{
+			services.AddScoped<BlazorDependencyResolver>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

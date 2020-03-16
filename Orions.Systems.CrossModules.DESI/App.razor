@@ -1,5 +1,7 @@
 @namespace Orions.Systems.CrossModules.Desi
 
+@inherits AppComponentBase
+
 <Router AppAssembly="@typeof(Program).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
