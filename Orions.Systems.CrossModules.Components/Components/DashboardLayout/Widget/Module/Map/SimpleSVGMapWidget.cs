@@ -16,6 +16,8 @@ namespace Orions.Systems.CrossModules.Components
       [HelpText("Highlight zone color")]
       public string ZoneColorOver { get; set; } = "#13513A";
 
+      public bool EnableNavigation { get; set; }
+
       public SimpleSVGMapWidget()
       {
          this.Label = "Simple Map";
