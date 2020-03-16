@@ -1,5 +1,8 @@
 ﻿using Orions.Common;
 
+using System.Threading.Tasks;
+
+
 namespace Orions.Systems.CrossModules.Components
 {
 	[Config(typeof(DropNavWidget))]
@@ -9,17 +12,21 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		public void OnSelectStory(string view)
+		public async Task OnSelectStory(string view)
 		{
 			var filter = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
 			if (filter == null)
 				return;
 
-			if (string.IsNullOrEmpty(view) == false && filter.View != view)
-			{
+			if (!string.IsNullOrEmpty(view) && filter.View == view) return;
+
+			if (!string.IsNullOrEmpty(view) && filter.View != view)
 				filter.View = view;
-				var t = this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
-			}
+
+			if (string.IsNullOrWhiteSpace(view))
+				filter.View = string.Empty;
+
+			await DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 	}
 }
