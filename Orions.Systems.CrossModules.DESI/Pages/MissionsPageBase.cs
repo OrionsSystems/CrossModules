@@ -48,24 +48,28 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 			authInfo.Username = "andrei";
 			authInfo.Password.Value = "a9090xxx";
 
-			authSystem.Controller.Dispatch(LoginAction.Create());
-			await Task.Delay(10000);
+			authSystem.Store.Data.PropertyChanged += (s, e) => 
+			{
+				if(this.Vm == null && e.PropertyName == nameof(authSystem.Store.Data.AuthenticationStatus) && authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedIn)
+				{
+					var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
+					this.Vm = new MissionsViewModel(
+							null,
+							DependencyResolver.GetApiHelper(),
+							DependencyResolver.GetDialogService(),
+							DependencyResolver.GetAuthenticationSystem(),
+							missionSystem
+						);
 
-			var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
-			this.Vm = new MissionsViewModel(
-					null,
-					DependencyResolver.GetApiHelper(),
-					DependencyResolver.GetDialogService(),
-					DependencyResolver.GetAuthenticationSystem(),
-					missionSystem
-				);
+					this.Vm.MissionsData.PropertyChanged += (s, e) => {
+						this.InvokeAsync(() => this.StateHasChanged());
+						this.Vm.MissionsData.Workflows.ForEach(wf => wf.PropertyChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged()));
+					};
 
-			this.Vm.MissionsData.PropertyChanged += (s,e) => { 
-				this.InvokeAsync(() => this.StateHasChanged());
-				this.Vm.MissionsData.Workflows.ForEach(wf => wf.PropertyChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged()));
+					this.Vm.FetchMissionsCommand?.Execute(null);
+				}
 			};
-
-			this.Vm.FetchMissionsCommand?.Execute(null);
+			authSystem.Controller.Dispatch(LoginAction.Create());
 		}
 	}
 }
