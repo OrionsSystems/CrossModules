@@ -14,6 +14,8 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 	{
 		private readonly ILocalStorageService _localStorageService;
 		private AppSettingsDto _appSettingsDto;
+		private HyperNodeAuthenticationInfo _hyperNodeAuthenticationData;
+		private HyperDomainAuthenticationInfo _hyperDomainAuthenticationInfo;
 
 		public BrowserLocalSettingsStorage(ILocalStorageService localStorageService)
 		{
@@ -24,8 +26,10 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 		public bool IsStaySigned { get => _appSettingsDto.IsStaySigned; set => _appSettingsDto.IsStaySigned = value; }
 		public bool IsDevModeEnabled { get => _appSettingsDto.IsDevModeEnabled; set => _appSettingsDto.IsDevModeEnabled = value; }
 		public bool TaggingDisplayCrosshair { get => _appSettingsDto.TaggingDisplayCrosshair; set => _appSettingsDto.TaggingDisplayCrosshair = value; }
-		public HyperNodeAuthenticationInfo HyperNodeAuthenticationData { get => _appSettingsDto.HyperNodeAuthenticationData.CreateModel(); set => HyperNodeAuthenticationDataDto.CreateFromModel(value); }
-		public HyperDomainAuthenticationInfo HyperDomainAuthenticationData { get => _appSettingsDto.HyperDomainAuthenticationData.CreateModel(); set => HyperDomainAuthenticationDataDto.CreateFromModel(value); }
+
+		public HyperNodeAuthenticationInfo HyperNodeAuthenticationData { get => _hyperNodeAuthenticationData; set => _hyperNodeAuthenticationData = value; }
+
+		public HyperDomainAuthenticationInfo HyperDomainAuthenticationData { get => _hyperDomainAuthenticationInfo; set => _hyperDomainAuthenticationInfo = value; }
 
 		public void AddCustomNode(HyperNodeAuthenticationInfo authenticationData)
 		{
@@ -62,6 +66,8 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 			if(settings != null)
 			{
 				_appSettingsDto = settings;
+				_hyperDomainAuthenticationInfo = settings.HyperDomainAuthenticationData.CreateModel();
+				_hyperNodeAuthenticationData = settings.HyperNodeAuthenticationData.CreateModel();
 			}
 			else
 			{
@@ -81,6 +87,9 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 					HyperDomainAuthenticationData = domainAuthData
 				};
 				dto.CustomNodes.Add(nodeAuthData);
+
+				_hyperDomainAuthenticationInfo = dto.HyperDomainAuthenticationData.CreateModel();
+				_hyperNodeAuthenticationData = dto.HyperNodeAuthenticationData.CreateModel();
 
 				_appSettingsDto = dto;
 			}

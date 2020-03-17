@@ -1,0 +1,52 @@
+﻿@page "/Login"
+@inherits LoginPageBase
+
+<div class="desi-login container">
+	<form class="form">
+		<h1 align="center">Sign into DESI</h1>
+
+		<div class="form-group">
+			<input type="text" class="form-control" id="desiLoginInput" placeholder="Username" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Username">
+		</div>
+		<div class="form-group">
+			<input type="password" class="form-control" id="desiPasswordInput" placeholder="Password" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Password.Value">
+		</div>
+		<div class="form-check">
+			<input type="checkbox" class="form-check-input" id="desiAlwaysSignedInCheck" @bind-value="this.Vm.IsStaySigned">
+			<label class="form-check-label" for="desiAlwaysSignedInCheck">Always stay signed into DESI</label>
+		</div>
+		<div class="form-check">
+			<input type="checkbox" class="form-check-input" id="desiDeveloperModeCheck" @bind-value="this.Vm.IsDevModeEnabled">
+			<label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
+		</div>
+		<button type="submit" class="btn btn-primary submit-button" @onclick="(() => Vm.LoginCommand.Execute(null))">Login</button>
+	</form>
+</div>
+
+@code{
+	protected override async Task OnInitializedAsync()
+	{
+		await this.Initialize();
+	}
+}
+
+<style>
+	.desi-login.container {
+		width: 100%;
+		height: 100%;
+		background-color: rgb(250,250,250);
+	}
+
+	.desi-login form {
+		border-radius: 6px;
+		background-color: rgb(255,255,255);
+		padding: 20px;
+		width: 50%;
+		margin: auto;
+	}
+
+	.desi-login .submit-button {
+		width: 100%;
+		background-color: rgb(118, 179, 86);
+	}
+</style>
