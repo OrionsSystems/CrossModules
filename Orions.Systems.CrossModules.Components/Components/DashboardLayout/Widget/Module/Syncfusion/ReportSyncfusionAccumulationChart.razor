@@ -124,6 +124,8 @@
 	{
 		if (Vm.ReportChartData == null) return;
 
+		Data.Clear();
+
 		double total = 0;
 		foreach (var series in Vm.ReportChartData.Series)
 		{
