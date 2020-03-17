@@ -26,7 +26,7 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 
 		public Task GoToMissionsPage()
 		{
-			_navManager.NavigateTo("/missions");
+			_navManager.NavigateTo("missions");
 			return Task.CompletedTask;
 		}
 

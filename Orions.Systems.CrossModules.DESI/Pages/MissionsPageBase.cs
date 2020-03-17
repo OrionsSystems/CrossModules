@@ -1,18 +1,11 @@
-﻿using Blazored.LocalStorage;
+﻿using System;
+using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
-using Orions.Common;
-using Orions.Desi.Forms.Core.Services;
-using Orions.Infrastructure.Common;
-using Orions.Infrastructure.HyperMedia;
+
 using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
-using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Core.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 {
@@ -53,37 +46,28 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 		public async Task Initialize()
 		{
 			var authSystem = DependencyResolver.GetAuthenticationSystem();
-			var authInfo = authSystem.Store.Data.AuthenticationInfo as HyperDomainAuthenticationInfo;
-			authInfo.Username = "andrei";
-			authInfo.Password.Value = "a9090xxx";
+
+			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
+				return;
 
 			var settingsStorage = DependencyResolver.GetSettingsStorage();
 
-			authSystem.Store.Data.PropertyChanged += (s, e) => 
+			var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
+			this.Vm = new MissionsViewModel(
+					null,
+					DependencyResolver.GetApiHelper(),
+					DependencyResolver.GetDialogService(),
+					DependencyResolver.GetAuthenticationSystem(),
+					missionSystem
+				);
+
+			this.Vm.MissionsData.PropertyChanged += (s, e) =>
 			{
-				if(this.Vm == null && e.PropertyName == nameof(authSystem.Store.Data.AuthenticationStatus) && authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedIn)
-				{
-					var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
-					this.Vm = new MissionsViewModel(
-							null,
-							DependencyResolver.GetApiHelper(),
-							DependencyResolver.GetDialogService(),
-							DependencyResolver.GetAuthenticationSystem(),
-							missionSystem
-						);
-
-					this.Vm.MissionsData.PropertyChanged += (s, e) => {
-						this.InvokeAsync(() => this.StateHasChanged());
-						this.Vm.MissionsData.Workflows.ForEach(wf => wf.PropertyChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged()));
-					};
-
-					this.Vm.FetchMissionsCommand?.Execute(null);
-
-					settingsStorage.Save();
-				}
+				this.InvokeAsync(() => this.StateHasChanged());
+				this.Vm.MissionsData.Workflows.ForEach(wf => wf.PropertyChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged()));
 			};
 
-			authSystem.Controller.Dispatch(LoginAction.Create());
+			this.Vm.FetchMissionsCommand?.Execute(null);
 		}
 	}
 }

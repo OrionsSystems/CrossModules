@@ -32,7 +32,7 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 			Vm = new AuthenticationViewModel(authenticationSystem, new NavigationService(NavigationManager))
 			{
 				IsDevModeEnabled = false,
-				IsStaySigned = true
+				IsStaySigned = false
 			};
 
 			return Task.CompletedTask;
