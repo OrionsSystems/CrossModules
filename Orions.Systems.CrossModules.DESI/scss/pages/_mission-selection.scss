@@ -1,10 +1,17 @@
-﻿.missions-page-container{
+﻿.missions-page-container {
+	display: flex;
+	height: 100%;
 }
 
 .missions-widget-container {
 	$container-padding: 8px;
 	$ordinaryColor: #E9E9E9;
 	$borderRadius: 5px;
+
+	display: flex;
+	flex-direction: column;
+	width: 75%;
+	margin-right: 20px;
 
 	.mission-search-container {
 		$search-icon-size: 35px;
@@ -39,8 +46,10 @@
 	.mission-list-container {
 		border-radius: $borderRadius;
 		background-color: $ordinaryColor;
-		min-height: 500px;
-
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		/*min-height: 500px;*/
 		.misssion-list-header {
 			font-weight: bold;
 			padding: $container-padding;
@@ -128,7 +137,7 @@
 }
 
 .available-nodes-widget-container {
-	width: 100%;
+	width: 25%;
 	height: 100%;
 	background-color: #f1efd6;
 	border-radius: 6px;
@@ -146,7 +155,7 @@
 	}
 
 	.nodes-list {
-		min-height: 400px;
+		/*min-height: 400px;*/
 
 		.node-list-item-container {
 			.node-name {

@@ -1,5 +1,11 @@
 ﻿$logo-height: 50px;
 $logo-margin:15px;
+
+.main {
+	display: flex;
+	flex-direction: column;
+}
+
 .top-row {
 	width: 100%;
 	height: 80px;
@@ -22,6 +28,10 @@ $logo-margin:15px;
 		position: relative;
 		z-index: 3;
 		background-color: #4a4d54;
+	}
+
+	.body-container{
+		height:700px;
 	}
 
 	.page-content {

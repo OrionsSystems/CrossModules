@@ -64,6 +64,7 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 			this.Vm.MissionsData.PropertyChanged += (s, e) =>
 			{
 				this.InvokeAsync(() => this.StateHasChanged());
+				this.Vm.MissionsData.Workflows.CollectionChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged());
 				this.Vm.MissionsData.Workflows.ForEach(wf => wf.PropertyChanged += (s, e) => this.InvokeAsync(() => this.StateHasChanged()));
 			};
 
