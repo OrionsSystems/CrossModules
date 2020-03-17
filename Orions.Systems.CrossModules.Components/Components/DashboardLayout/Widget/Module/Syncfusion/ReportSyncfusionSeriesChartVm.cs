@@ -1,10 +1,10 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.Reporting;
+
 using Syncfusion.EJ2.Blazor.Charts;
-using System;
+
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -32,7 +32,16 @@ namespace Orions.Systems.CrossModules.Components
 			bool didModify = false;
 			if (this.Widget.AllowFiltrationSource_TextCategory)
 			{
-				data.FilterLabels = new string[] { category };
+				var filters = new string[] { category.ToUpper() };
+				if (data.FilterLabels == null)
+				{
+					data.FilterLabels = filters;
+				}
+				else
+				{
+					data.FilterLabels = data.FilterLabels.Concat(filters).Distinct().ToArray();
+				}
+
 				data.FilterTarget = ReportFilterInstruction.Targets.Column;
 
 				didModify = true;
@@ -67,7 +76,7 @@ namespace Orions.Systems.CrossModules.Components
 				//}
 			}
 
-			if (didModify)
+			if (didModify && Widget.AllowDynamicFiltration)
 				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 

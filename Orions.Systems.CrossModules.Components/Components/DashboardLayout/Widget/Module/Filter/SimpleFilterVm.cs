@@ -3,6 +3,7 @@ using Orions.Common;
 using Orions.Infrastructure.Reporting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -42,7 +43,6 @@ namespace Orions.Systems.CrossModules.Components
 				return this.Widget?.MaxDate ?? new DateTime(2019, 12, 31);
 			}
 		}
-
 
 		public DateTime? StartDate
 		{
@@ -122,9 +122,16 @@ namespace Orions.Systems.CrossModules.Components
 		protected override void OnWidgetSet(IDashboardWidget widget)
 		{
 			var filterGroup = this.DashboardVm?.ObtainFilterGroup(this.Widget.FilterGroup);
+
 			if (filterGroup != null && this.Widget.PredefinedFilters?.Length > 0)
 			{
-				filterGroup.FilterLabels = this.Widget.PredefinedFilters;
+				if (filterGroup.FilterLabels == null)
+				{
+					filterGroup.FilterLabels = this.Widget.PredefinedFilters;
+				}
+				else {
+					filterGroup.FilterLabels = filterGroup.FilterLabels.Concat(this.Widget.PredefinedFilters).ToArray();
+				}
 			}
 
 			base.OnWidgetSet(widget);
@@ -183,7 +190,12 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task ClearFilters()
 		{
-			this.DashboardVm.ObtainFilterGroup(this.Widget)?.Clear();
+			var filterGroup = this.DashboardVm.ObtainFilterGroup(this.Widget);
+
+			if (filterGroup == null) return;
+
+			filterGroup.Clear();
+
 			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 
@@ -193,11 +205,11 @@ namespace Orions.Systems.CrossModules.Components
 			if (filterGroup == null)
 				return;
 
-			if (this.Widget.Period != null)
-				filterGroup.Period = this.Widget.Period;
+			//if (this.Widget.Period != null)
+			//	filterGroup.Period = this.Widget.Period;
 
 			//filterGroup.FilterLabels = this.Widget.Filters;
-			filterGroup.FilterTarget = this.Widget.FilterTarget;
+			//filterGroup.FilterTarget = this.Widget.FilterTarget;
 			
 			//filterGroup.StartTime = this.Widget.StartDate;
 			//filterGroup.EndTime = this.Widget.EndDate;
