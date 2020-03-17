@@ -6,7 +6,7 @@
 		<h1 align="center">Sign into DESI</h1>
 
 		<div class="form-group">
-			<input type="text" class="form-control" id="desiLoginInput" placeholder="Connection string" disabled="@(!this.Vm.IsDevModeEnabled)" @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString">
+			<input type="text" class="form-control" id="desiLoginConnection" placeholder="Connection string" disabled="@(!this.Vm.IsDevModeEnabled)" @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString">
 		</div>
 
 		<div class="form-group">
