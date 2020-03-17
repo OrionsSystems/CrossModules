@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Orions.Desi.Forms.Core.Services;
+using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +10,17 @@ namespace Orions.Systems.CrossModules.Desi
 {
 	public class AppComponentBase : ComponentBase
 	{
-		protected override Task OnInitializedAsync()
+		[Inject]
+		public BlazorDependencyResolver DependencyResolver { get; set; }
+		public bool IsSettingsInitialized { get; private set; }
+
+		protected override async Task OnInitializedAsync()
 		{
-			return base.OnInitializedAsync();
+			var settingsStorage = DependencyResolver.GetSettingsStorage() as BrowserLocalSettingsStorage;
+
+			await settingsStorage.Load();
+
+			IsSettingsInitialized = true;
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Orions.Common;
 using Orions.Desi.Forms.Core.Services;
 using Orions.Infrastructure.Common;
@@ -41,12 +43,22 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 		{
 		}
 
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			if (firstRender)
+			{
+				await Initialize();
+			}
+		}
+
 		public async Task Initialize()
 		{
 			var authSystem = DependencyResolver.GetAuthenticationSystem();
 			var authInfo = authSystem.Store.Data.AuthenticationInfo as HyperDomainAuthenticationInfo;
 			authInfo.Username = "andrei";
 			authInfo.Password.Value = "a9090xxx";
+
+			var settingsStorage = DependencyResolver.GetSettingsStorage();
 
 			authSystem.Store.Data.PropertyChanged += (s, e) => 
 			{
@@ -67,8 +79,11 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 					};
 
 					this.Vm.FetchMissionsCommand?.Execute(null);
+
+					settingsStorage.Save();
 				}
 			};
+
 			authSystem.Controller.Dispatch(LoginAction.Create());
 		}
 	}
