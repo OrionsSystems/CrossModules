@@ -1176,3 +1176,23 @@ h5.modal-title {
 
 .numbercard-container {
   padding: 0px 15px; }
+
+.simple-filter-container .simple-filter-items-container {
+  display: flex; }
+  .simple-filter-container .simple-filter-items-container .simple-filter-item {
+    flex-grow: 1;
+    min-height: 50px;
+    padding: 10px;
+    margin: 10px; }
+
+.simple-filter-container .simple-filter-btn-container {
+  display: block;
+  padding: 7px 14px 7px 7px;
+  float: right; }
+  .simple-filter-container .simple-filter-btn-container .simple-filter-btn-item {
+    display: inline-flex; }
+
+.simple-filter-container .button-group-control .row {
+  width: 100%;
+  text-align: right;
+  display: inline-block; }
