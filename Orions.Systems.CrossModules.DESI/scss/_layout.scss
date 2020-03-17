@@ -1,9 +1,19 @@
 ﻿$logo-height: 50px;
 $logo-margin:15px;
 
+html{
+	height:100%;
+	width:100%;
+}
+
+body{
+	height:100%;
+}
+
 .main {
 	display: flex;
 	flex-direction: column;
+	height:100%;
 }
 
 .top-row {
@@ -22,6 +32,7 @@ $logo-margin:15px;
 .content {
 	display: flex;
 	align-items: stretch;
+	flex:1;
 
 	.side-bar {
 		width: 66px;
@@ -30,14 +41,16 @@ $logo-margin:15px;
 		background-color: #4a4d54;
 	}
 
-	.body-container{
-		height:700px;
+	.body-container {
+		flex:1;
 	}
 
 	.page-content {
 		width: calc(100% - 66px);
 		padding-top: 13px;
 		background-color: white;
+		display: flex;
+		flex-direction: column;
 
 		.footer {
 			margin-top: 15px;
@@ -60,7 +73,7 @@ $logo-margin:15px;
 
 					a {
 						color: #7e7e7e;
-						padding-bottom:3px;
+						padding-bottom: 3px;
 					}
 				}
 			}

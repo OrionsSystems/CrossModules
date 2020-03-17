@@ -1,6 +1,14 @@
-﻿.main {
+﻿html {
+  height: 100%;
+  width: 100%; }
+
+body {
+  height: 100%; }
+
+.main {
   display: flex;
-  flex-direction: column; }
+  flex-direction: column;
+  height: 100%; }
 
 .top-row {
   width: 100%;
@@ -14,18 +22,21 @@
 
 .content {
   display: flex;
-  align-items: stretch; }
+  align-items: stretch;
+  flex: 1; }
   .content .side-bar {
     width: 66px;
     position: relative;
     z-index: 3;
     background-color: #4a4d54; }
   .content .body-container {
-    height: 700px; }
+    flex: 1; }
   .content .page-content {
     width: calc(100% - 66px);
     padding-top: 13px;
-    background-color: white; }
+    background-color: white;
+    display: flex;
+    flex-direction: column; }
     .content .page-content .footer {
       margin-top: 15px;
       display: flex;
