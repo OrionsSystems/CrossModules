@@ -19,7 +19,6 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 	public class MissionsPageBase : ComponentBase
 	{
 		private MissionsViewModel _vm;
-
 		public MissionsViewModel Vm
 		{
 			get

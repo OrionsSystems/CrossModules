@@ -1,0 +1,150 @@
+﻿.top-row {
+  width: 100%;
+  height: 80px;
+  box-shadow: 0 4px 6px #cccccc;
+  z-index: 2;
+  position: relative; }
+  .top-row .logo {
+    height: 50px;
+    margin: 15px; }
+
+.content {
+  display: flex;
+  align-items: stretch; }
+  .content .side-bar {
+    width: 66px;
+    position: relative;
+    z-index: 3;
+    background-color: #4a4d54; }
+  .content .page-content {
+    width: calc(100% - 66px);
+    padding-top: 13px;
+    background-color: white; }
+    .content .page-content .footer {
+      margin-top: 15px;
+      display: flex;
+      align-items: stretch;
+      background-color: #1e1e1e; }
+      .content .page-content .footer .footer-logo .logo {
+        height: 50px;
+        margin: 15px; }
+      .content .page-content .footer .site-map {
+        display: flex; }
+        .content .page-content .footer .site-map .map-items-column {
+          padding: 10px; }
+          .content .page-content .footer .site-map .map-items-column a {
+            color: #7e7e7e;
+            padding-bottom: 3px; }
+      .content .page-content .footer .logout {
+        align-self: flex-end; }
+
+.missions-widget-container .mission-search-container {
+  padding: 8px;
+  background-color: #E9E9E9;
+  margin-bottom: 15px;
+  border-radius: 5px; }
+  .missions-widget-container .mission-search-container input {
+    padding: 5px;
+    width: calc(100% - 45px);
+    float: left;
+    border: 2px solid #6c757d; }
+  .missions-widget-container .mission-search-container svg {
+    width: 35px;
+    height: 35px;
+    float: right;
+    color: #ced4da;
+    padding: 5px; }
+  .missions-widget-container .mission-search-container:after {
+    content: "";
+    clear: both;
+    display: table; }
+
+.missions-widget-container .mission-list-container {
+  border-radius: 5px;
+  background-color: #E9E9E9;
+  min-height: 500px; }
+  .missions-widget-container .mission-list-container .misssion-list-header {
+    font-weight: bold;
+    padding: 8px; }
+  .missions-widget-container .mission-list-container .mission-list-items-container .mission-item {
+    padding: 8px;
+    border-top: 1px solid #ced4da;
+    position: relative; }
+    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container {
+      width: 100px;
+      height: 100px;
+      border: 5px solid white;
+      border-radius: 3px;
+      background: black;
+      float: left; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container img {
+        object-fit: contain;
+        width: 100%;
+        height: 100%; }
+    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container {
+      float: left;
+      margin-left: 15px;
+      padding-top: 5px; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .mission-title {
+        font-weight: bold; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .started-label {
+        color: #6c757d; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .status-label {
+        color: #6c757d; }
+    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .enter-mission-btn {
+      position: absolute;
+      border-radius: 4px;
+      background-color: #4d5f87;
+      padding: 8px;
+      color: #f8f9fa;
+      bottom: 20px;
+      right: 30px;
+      width: 200px;
+      height: 40px;
+      border: 0;
+      text-align: left;
+      display: none; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .enter-mission-btn svg {
+        height: 40px;
+        float: right;
+        color: white;
+        border-left: 1px solid #414f6a;
+        margin-top: -8px;
+        padding-left: 10px;
+        padding-top: 8px;
+        padding-bottom: 8px;
+        color: #f8f9fa; }
+    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:hover .enter-mission-btn {
+      display: block; }
+    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:after {
+      content: "";
+      clear: both;
+      display: table; }
+
+.available-nodes-widget-container {
+  width: 100%;
+  height: 100%;
+  background-color: #f1efd6;
+  border-radius: 6px; }
+  .available-nodes-widget-container > div {
+    padding: 5px;
+    width: 100%; }
+  .available-nodes-widget-container .widget-header {
+    border-bottom: 1px solid #dbdac8;
+    font-size: 1.2em;
+    color: black;
+    text-align: center; }
+  .available-nodes-widget-container .nodes-list {
+    min-height: 400px; }
+    .available-nodes-widget-container .nodes-list .node-list-item-container .node-name {
+      font-weight: bold;
+      font-size: 1.2em; }
+    .available-nodes-widget-container .nodes-list .node-list-item-container .node-url {
+      padding-left: 10px; }
+    .available-nodes-widget-container .nodes-list .node-list-item-container .node-status-icon-container {
+      float: right;
+      padding-left: 5px;
+      padding-top: 10px;
+      margin-right: 10px; }
+      .available-nodes-widget-container .nodes-list .node-list-item-container .node-status-icon-container img {
+        height: 30px; }

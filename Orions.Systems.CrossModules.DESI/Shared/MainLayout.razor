@@ -1,16 +1,48 @@
 ﻿@namespace Orions.Systems.CrossModules.Desi.Shared
 @inherits LayoutComponentBase
 
-<div class="sidebar">
-    <NavMenu />
-</div>
-
 <div class="main">
-    <div class="top-row px-4">
-        <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-    </div>
+	<div class="top-row">
+		<img class="logo" src="images/desi_logo.png" />
+	</div>
 
-    <div class="content px-4">
-        @Body
-    </div>
+	<div class="content">
+		<div class="side-bar"></div>
+		<div class="page-content">
+			@Body
+			<div class="footer">
+				<div class="footer-logo">
+					<img class="logo" src="images/desi_logo.png" />
+				</div>
+				<div class="site-map">
+					<div class="map-items-column">
+						<div>
+							<a href="#">Support</a>
+						</div>
+						<div>
+							<a href="#">FAQ</a>
+						</div><div>
+							<a href="#">Privacy</a>
+						</div><div>
+							<a href="#">Site Map</a>
+						</div>
+					</div>
+					<div class="map-items-column">
+						<div>
+							<a href="#">About</a>
+						</div>
+						<div>
+							<a href="#">How it works</a>
+						</div><div>
+							<a href="#">Contacts</a>
+						</div>
+					</div>
+				</div>
+				@*<div class="logout">
+					<a href="#">Logout</a>
+				</div>*@
+			</div>
+		</div>
+
+	</div>
 </div>

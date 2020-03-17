@@ -1,0 +1,63 @@
+﻿$logo-height: 50px;
+$logo-margin:15px;
+.top-row {
+	width: 100%;
+	height: 80px;
+	box-shadow: 0 4px 6px #cccccc;
+	z-index: 2;
+	position: relative;
+
+	.logo {
+		height: $logo-height;
+		margin: $logo-margin;
+	}
+}
+
+.content {
+	display: flex;
+	align-items: stretch;
+
+	.side-bar {
+		width: 66px;
+		position: relative;
+		z-index: 3;
+		background-color: #4a4d54;
+	}
+
+	.page-content {
+		width: calc(100% - 66px);
+		padding-top: 13px;
+		background-color: white;
+
+		.footer {
+			margin-top: 15px;
+			display: flex;
+			align-items: stretch;
+			background-color: #1e1e1e;
+
+			.footer-logo {
+				.logo {
+					height: $logo-height;
+					margin: $logo-margin;
+				}
+			}
+
+			.site-map {
+				display: flex;
+
+				.map-items-column {
+					padding: 10px;
+
+					a {
+						color: #7e7e7e;
+						padding-bottom:3px;
+					}
+				}
+			}
+
+			.logout {
+				align-self: flex-end;
+			}
+		}
+	}
+}
