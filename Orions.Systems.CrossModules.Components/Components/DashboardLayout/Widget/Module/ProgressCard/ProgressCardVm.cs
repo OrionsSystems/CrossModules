@@ -1,5 +1,6 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.Reporting;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -19,10 +20,22 @@ namespace Orions.Systems.CrossModules.Components
 
 			var data = this.DashboardVm.ObtainFilterGroup(this.Widget);
 
-			data.FilterLabels = new string[] { card.Title };
+			var filters = new string[] { card.Title.ToUpper() };
+			if (data.FilterLabels == null)
+			{
+				data.FilterLabels = filters;
+			}
+			else
+			{
+				data.FilterLabels = data.FilterLabels.Concat(filters).Distinct().ToArray();
+			}
+
 			data.FilterTarget = ReportFilterInstruction.Targets.Column;
 
-			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
+			if (Widget.AllowDynamicFiltration)
+			{
+				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
+			}
 
 		}
 	}
