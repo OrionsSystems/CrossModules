@@ -6,10 +6,14 @@
 		<h1 align="center">Sign into DESI</h1>
 
 		<div class="form-group">
-			<input type="text" class="form-control" id="desiLoginInput" placeholder="Username" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Username">
+			<input type="text" class="form-control" id="desiLoginInput" placeholder="Connection string" disabled="@(!this.Vm.IsDevModeEnabled)" @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString">
+		</div>
+
+		<div class="form-group">
+			<input type="text" class="form-control" id="desiLoginInput" placeholder="Username" disabled="@this.Vm.IsDevModeEnabled" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Username">
 		</div>
 		<div class="form-group">
-			<input type="password" class="form-control" id="desiPasswordInput" placeholder="Password" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Password.Value">
+			<input type="password" class="form-control" id="desiPasswordInput" placeholder="Password" disabled="@this.Vm.IsDevModeEnabled" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Password.Value">
 		</div>
 		<div class="form-check">
 			<input type="checkbox" class="form-check-input" id="desiAlwaysSignedInCheck" @bind-value="this.Vm.IsStaySigned">
@@ -19,7 +23,7 @@
 			<input type="checkbox" class="form-check-input" id="desiDeveloperModeCheck" @bind-value="this.Vm.IsDevModeEnabled">
 			<label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
 		</div>
-		<button type="submit" class="btn btn-primary submit-button" @onclick="(() => Vm.LoginCommand.Execute(null))">Login</button>
+		<button type="submit" class="btn btn-primary submit-button" @onclick="this.Login">Login</button>
 	</form>
 </div>
 
@@ -27,6 +31,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await this.Initialize();
+	}
+
+	private void Login()
+	{
+		this.SettingsStorage.Save();
+		Vm.LoginCommand.Execute(null);
 	}
 }
 
