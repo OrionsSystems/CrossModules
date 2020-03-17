@@ -1,9 +1,9 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.Reporting;
+
 using Syncfusion.EJ2.Blazor.Charts;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -19,17 +19,29 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task HandlePointOnclick(IPointEventArgs args)
 		{
+			if (!this.Widget.AllowFiltrationSource_TextCategory) return;
+
 			var series = this.ReportChartData.Series[(int)args.PointIndex];
 			var category = series.Name;
-			//var currentData = series.Data[(int)args.PointIndex];
 
 			var data = this.DashboardVm.ObtainFilterGroup(this.Widget);
 
-			data.FilterLabels = new string[] { category };
+			var filters = new string[] { category.ToUpper() };
+			if (data.FilterLabels == null)
+			{
+				data.FilterLabels = filters;
+			}
+			else
+			{
+				data.FilterLabels = data.FilterLabels.Concat(filters).Distinct().ToArray();
+			}
+
 			data.FilterTarget = ReportFilterInstruction.Targets.Column;
 
-			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
-
+			if (Widget.AllowDynamicFiltration)
+			{
+				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
+			}
 		}
 	}
 }

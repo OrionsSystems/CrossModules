@@ -46,7 +46,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		PeriodDefinition _period;
+		PeriodDefinition _period = null;
 
 		/// <summary>
 		/// If assigned, the step-period we want to apply to our reports.
@@ -116,7 +116,7 @@ namespace Orions.Systems.CrossModules.Components
 			this.FilterTarget = null;
 			this.FilterLabels = null;
 
-			this.View = null;
+			//this.View = null;
 		}
 	}
 }
