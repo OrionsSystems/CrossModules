@@ -1,19 +1,20 @@
 ﻿.simple-filter-container {
+	display: flex;
+
 	.simple-filter-items-container {
 		display: flex;
 
 		.simple-filter-item {
 			flex-grow: 1;
-			min-height: 50px;
-			padding: 10px;
-			margin: 10px;
+			margin: 4px 10px;
 		}
 	}
 
 	.simple-filter-btn-container {
 		display: block;
 		padding: 7px 14px 7px 7px;
-		float: right;
+		min-width: 160px;
+		text-align: center;
 
 		.simple-filter-btn-item {
 			display: inline-flex;

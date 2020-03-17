@@ -2,11 +2,6 @@
 
 @inherits DashboardComponent<SimpleFilterVm, SimpleFilterWidget>
 
-@using Orions.Infrastructure.HyperMedia
-@using Orions.Node.Common
-
-@using Syncfusion.EJ2.Blazor
-@using Syncfusion.EJ2.Blazor.Charts
 @using Syncfusion.EJ2.Blazor.DropDowns
 @using Syncfusion.EJ2.Blazor.SplitButtons
 
@@ -77,14 +72,14 @@
 				<EjsProgressButton @ref="ProgressButton"
 										 Duration="9999999"
 										 OnClick="@OnApply"
-										 Content="Apply"
-										 CssClass="simple-filter-btn-item">
+										 Content="Filter"
+										 CssClass="btn btn-sm btn-primary simple-filter-btn-item">
 					<ProgressButtonEvents></ProgressButtonEvents>
 				</EjsProgressButton>
 				<EjsProgressButton @ref="ClearButton"
 										 Duration="9999999"
 										 OnClick="@OnClear"
-										 Content="Clear"
+										 Content="Reset"
 										 CssClass="simple-filter-btn-item">
 					<ProgressButtonEvents></ProgressButtonEvents>
 				</EjsProgressButton>
