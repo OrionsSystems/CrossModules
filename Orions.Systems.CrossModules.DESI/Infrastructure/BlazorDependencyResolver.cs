@@ -51,5 +51,26 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 
 			return _settingsStorage;
 		}
+
+		public override IRecognitionService GetRecognitionService()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override ISegmentationConfigStorage GetSegmentationConfigStorage()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override IDeviceClipboardService GetDeviceClipboardService()
+		{
+			throw new NotImplementedException();
+		}
+
+		public override ILoggerService GetLoggerService()
+		{
+			return null;
+			throw new NotImplementedException();
+		}
 	}
 }
