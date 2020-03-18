@@ -50,6 +50,15 @@ namespace Orions.Systems.CrossModules.Components
 
 			[HelpText("Options to customize tooltip borders.")]
 			public AccumulationChartTooltipBorder Border { get; set; } = new AccumulationChartTooltipBorder();
+
+			[HelpText("Header for tooltip.")]
+			public string Header { get; set; }
+
+			[HelpText("The fill color of the tooltip")]
+			public string Fill { get; set; }
+
+			[HelpText("Enables / Disables the visibility of the marker.")]
+			public bool EnableMarker { get; set; } = true;
 		}
 
 		[HelpText("Show values in percentage")]

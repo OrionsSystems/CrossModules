@@ -16,8 +16,20 @@ namespace Orions.Systems.CrossModules.Components
 
 			public double Opacity { get; set; } = 0.75;
 
-			[HelpText("Options to customize the ToolTip text.")]
-			public ChartTooltipTextStyle TextStyle { get; set; } = new ChartTooltipTextStyle();
+			[HelpText(" Options to customize the ToolTip text.")]
+			public ChartTooltipTextStyle TextStyle { get; set; }
+
+			[HelpText("Header for tooltip.")]
+			public string Header { get; set; }
+
+			[HelpText("The fill color of the tooltip")]
+			public string Fill { get; set; }
+
+			[HelpText("Enables / Disables the visibility of the marker.")]
+			public bool EnableMarker { get; set; } = true;
+
+			[HelpText("Options to customize tooltip borders.")]
+			public ChartTooltipBorder Border { get; set; }
 		}
 
 		public class ChartMargin 
