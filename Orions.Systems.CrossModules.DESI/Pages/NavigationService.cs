@@ -23,7 +23,7 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 		public Task GoBackFromTaggingPage() => throw new NotImplementedException();
 		public Task GoToLoginPage()
 		{
-			_navManager.NavigateTo("/");
+			_navManager.NavigateTo("/", true);
 			return Task.CompletedTask;
 		}
 		public Task GoToManageCustomNodes() => throw new NotImplementedException();
