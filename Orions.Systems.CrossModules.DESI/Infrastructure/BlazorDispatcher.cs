@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class BlazorDispatcher : IDispatcher
 	{

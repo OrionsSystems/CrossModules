@@ -6,22 +6,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
+using Orions.Systems.CrossModules.Desi.Infrastructure;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class BlazorDependencyResolver : DependencyResolver, IDependencyResolver
 	{
 		private readonly ILocalStorageService _localStorageService;
+		private readonly NavigationManager _navigationManager;
 
-		public BlazorDependencyResolver(ILocalStorageService localStorageService)
+		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager)
 		{
 			_localStorageService = localStorageService;
+			_navigationManager = navigationManager;
 		}
 
 		public override IApiHelper GetApiHelper()
 		{
-			return null;
-			throw new NotImplementedException();
+			return new WebApiHelper();
 		}
 
 		public override IDialogService GetDialogService()
@@ -71,6 +74,11 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 		{
 			return null;
 			throw new NotImplementedException();
+		}
+
+		public INavigationService GetNavigationService()
+		{
+			return new NavigationService(_navigationManager);
 		}
 	}
 }

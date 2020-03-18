@@ -1,12 +1,10 @@
 ﻿using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Components;
-
-using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
+using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Pages
+namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class LoginPageBase : ComponentBase
 	{
@@ -28,8 +26,9 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 		{
 			SettingsStorage = DependencyResolver.GetSettingsStorage();
 			var authenticationSystem = DependencyResolver.GetAuthenticationSystem();
+			var navigationService = DependencyResolver.GetNavigationService();
 
-			Vm = new AuthenticationViewModel(authenticationSystem, new NavigationService(NavigationManager))
+			Vm = new AuthenticationViewModel(authenticationSystem, navigationService)
 			{
 				IsDevModeEnabled = false,
 				IsStaySigned = false

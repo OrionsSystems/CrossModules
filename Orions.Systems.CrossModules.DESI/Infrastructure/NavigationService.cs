@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.Services;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Pages
+namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class NavigationService : INavigationService
 	{
@@ -34,7 +34,13 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 			return Task.CompletedTask;
 		}
 
-		public Task GoToStageSelection() => throw new NotImplementedException();
+		public Task GoToStageSelection()
+		{
+			_navManager.NavigateTo("stage-selection");
+
+			return Task.CompletedTask;
+		}
+
 		public Task GoToTaggingPage() => throw new NotImplementedException();
 		public Task<bool> GoToTagsActionConfirmation(IEnumerable<TagModel> tagModel) => throw new NotImplementedException();
 		public Task<bool> ShowSessionIsOverPopup(TimeSpan timeout) => throw new NotImplementedException();

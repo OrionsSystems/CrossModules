@@ -9,7 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class DesiBaseComponent<T> : ComponentBase where T : ViewModelBase
 	{

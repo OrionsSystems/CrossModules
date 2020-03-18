@@ -1,8 +1,8 @@
 ﻿@namespace Orions.Systems.CrossModules.Desi.Shared
-@using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
+@using Orions.Systems.CrossModules.Desi.Infrastructure;
 @using Orions.Systems.Desi.Common.Authentication;
 @using System.Reactive.Linq;
-@using Orions.Systems.CrossModules.Desi.Debug.Pages;
+@using Orions.Systems.CrossModules.Desi.Pages;
 @inherits LayoutComponentBase
 
 <div class="main">
@@ -67,7 +67,7 @@
 	protected override void OnInitialized()
 	{
 		var authSystem = DependencyResolver.GetAuthenticationSystem();
-		var navigationService = new NavigationService(NavigationManager);
+		var navigationService = DependencyResolver.GetNavigationService();
 		authSystem.Store.AuthenticationStatusChanged.Where(i => i == AuthenticationStatus.LoggedOut).Subscribe(_ => navigationService.GoToLoginPage());
 	}
 

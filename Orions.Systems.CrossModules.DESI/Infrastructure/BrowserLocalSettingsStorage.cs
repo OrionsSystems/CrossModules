@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static Orions.Desi.Forms.Core.Services.SettingsStorage;
 
-namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class BrowserLocalSettingsStorage : ISettingsStorage
 	{

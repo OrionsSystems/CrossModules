@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.JSInterop;
 using Orions.Desi.Forms.Core.Services;
-using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
+using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Common.Services;
