@@ -21,7 +21,11 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 		public Task GoBack(bool? useModalNavigation = null, bool animated = true) => throw new NotImplementedException();
 		public Task GoBackFrom(object context, bool animated = true) => throw new NotImplementedException();
 		public Task GoBackFromTaggingPage() => throw new NotImplementedException();
-		public Task GoToLoginPage() => throw new NotImplementedException();
+		public Task GoToLoginPage()
+		{
+			_navManager.NavigateTo("/");
+			return Task.CompletedTask;
+		}
 		public Task GoToManageCustomNodes() => throw new NotImplementedException();
 
 		public Task GoToMissionsPage()
