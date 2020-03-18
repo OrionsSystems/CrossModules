@@ -1,9 +1,10 @@
 ﻿@page "/"
 @inherits LoginPageBase
 
-<div class="desi-login container">
-	<div class="form">
-		<h5 align="center">Sign into DESI</h5>
+<div class="desi-login form">
+
+	<div class="form-content">
+		<h6 align="center">Sign into DESI</h6>
 
 		<div class="form-group">
 			<input type="text" class="form-control" id="desiLoginConnection" placeholder="Connection string" disabled="@(!this.Vm.IsDevModeEnabled)" @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString">
@@ -23,8 +24,9 @@
 			<input type="checkbox" class="form-check-input desi-check-input" id="desiDeveloperModeCheck" @bind-value="this.Vm.IsDevModeEnabled">
 			<label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
 		</div>
-		<button class="btn btn-primary submit-button" @onclick="this.Login">Login</button>
 	</div>
+
+	<button class="btn btn-primary submit-button" @onclick="this.Login">Login</button>
 </div>
 
 @code{
@@ -41,23 +43,33 @@
 }
 
 <style>
-	.desi-login.container {
-		width: 100%;
-		height: 100%;
-		background-color: rgb(250,250,250);
+	.body-container {
+		background-color: rgb(250,250,250) !important;
 	}
 
-	.desi-login .form {
+	.page-content {
+		background-color: rgb(250,250,250) !important;
+	}
+
+	.desi-login .form-content {
+		padding: 20px;
+	}
+
+	.desi-login.form {
+		margin-top: 3% !important;
 		border-radius: 6px;
 		background-color: rgb(255,255,255);
-		padding: 20px;
-		width: 50%;
+		padding: 0px;
+		width: 30%;
 		margin: auto;
+		box-shadow: 0 0 5px rgba(0,0,0,0.5);
 	}
 
 	.desi-login .submit-button {
 		width: 100%;
+		border-color: rgb(118, 179, 86);
 		background-color: rgb(118, 179, 86);
+		border-radius: 0 0 6px 6px;
 	}
 
 	.desi-check-input {
@@ -92,5 +104,14 @@
 	.form-control {
 		border-radius: 0 !important;
 		color: black !important;
+	}
+
+	.form-check-label {
+		margin: 10px !important;
+	}
+
+	.form-check-input {
+		vertical-align: middle;
+		margin-top: 0px !important;
 	}
 </style>
