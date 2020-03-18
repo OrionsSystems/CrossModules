@@ -32,7 +32,7 @@ body{
 .content {
 	display: flex;
 	align-items: stretch;
-	flex:1;
+	flex: 1;
 
 	.side-bar {
 		width: 66px;
@@ -42,7 +42,7 @@ body{
 	}
 
 	.body-container {
-		flex:1;
+		flex: 1;
 	}
 
 	.page-content {
@@ -55,8 +55,13 @@ body{
 		.footer {
 			margin-top: 15px;
 			display: flex;
-			align-items: stretch;
 			background-color: #1e1e1e;
+
+			a {
+				color: #7e7e7e;
+				padding-bottom: 3px;
+				cursor:pointer;
+			}
 
 			.footer-logo {
 				.logo {
@@ -67,19 +72,15 @@ body{
 
 			.site-map {
 				display: flex;
+				flex: 1;
 
 				.map-items-column {
 					padding: 10px;
-
-					a {
-						color: #7e7e7e;
-						padding-bottom: 3px;
-					}
 				}
 			}
 
 			.logout {
-				align-self: flex-end;
+				margin:15px;
 			}
 		}
 	}

@@ -40,20 +40,21 @@ body {
     .content .page-content .footer {
       margin-top: 15px;
       display: flex;
-      align-items: stretch;
       background-color: #1e1e1e; }
+      .content .page-content .footer a {
+        color: #7e7e7e;
+        padding-bottom: 3px;
+        cursor: pointer; }
       .content .page-content .footer .footer-logo .logo {
         height: 50px;
         margin: 15px; }
       .content .page-content .footer .site-map {
-        display: flex; }
+        display: flex;
+        flex: 1; }
         .content .page-content .footer .site-map .map-items-column {
           padding: 10px; }
-          .content .page-content .footer .site-map .map-items-column a {
-            color: #7e7e7e;
-            padding-bottom: 3px; }
       .content .page-content .footer .logout {
-        align-self: flex-end; }
+        margin: 15px; }
 
 .missions-page-container {
   display: flex;

@@ -1,4 +1,8 @@
 ﻿@namespace Orions.Systems.CrossModules.Desi.Shared
+@using Orions.Systems.CrossModules.Desi.Debug.Infrastructure;
+@using Orions.Systems.Desi.Common.Authentication;
+@using System.Reactive.Linq;
+@using Orions.Systems.CrossModules.Desi.Debug.Pages;
 @inherits LayoutComponentBase
 
 <div class="main">
@@ -40,11 +44,36 @@
 						</div>
 					</div>
 				</div>
-				@*<div class="logout">
-					<a href="#">Logout</a>
-				</div>*@
+				<div class="logout">
+					<a @onclick="this.Logout">Logout</a>
+				</div>
 			</div>
 		</div>
 
 	</div>
 </div>
+
+@code{
+	[Inject]
+	public BlazorDependencyResolver DependencyResolver { get; set; }
+
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
+
+	public MainLayout()
+	{
+	}
+
+	protected override void OnInitialized()
+	{
+		var authSystem = DependencyResolver.GetAuthenticationSystem();
+		var navigationService = new NavigationService(NavigationManager);
+		authSystem.Store.AuthenticationStatusChanged.Where(i => i == AuthenticationStatus.LoggedOut).Subscribe(_ => navigationService.GoToLoginPage());
+	}
+
+	public void Logout()
+	{
+		var authSystem = DependencyResolver.GetAuthenticationSystem();
+		authSystem.Controller.Dispatch(LogoutAction.Create());
+	}
+}
