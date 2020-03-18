@@ -3,6 +3,7 @@
 
 	.simple-filter-items-container {
 		display: flex;
+		flex-grow: 1;
 
 		.simple-filter-item {
 			flex-grow: 1;

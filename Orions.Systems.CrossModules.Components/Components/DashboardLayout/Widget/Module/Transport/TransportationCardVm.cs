@@ -37,7 +37,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			data.FilterTarget = ReportFilterInstruction.Targets.Column;
 
-			if (Widget.AllowDynamicFiltration)
+			if (data.AllowDynamicFiltration)
 			{
 				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 			}

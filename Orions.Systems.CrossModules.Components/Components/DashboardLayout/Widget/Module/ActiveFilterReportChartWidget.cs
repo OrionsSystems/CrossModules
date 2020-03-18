@@ -13,8 +13,6 @@ namespace Orions.Systems.CrossModules.Components
 		[HelpText("This widget can serve as a target for active filtering and period display rules")]
 		public bool AllowFiltrationTarget { get; set; } = true;
 
-		public bool AllowDynamicFiltration { get; set; }
-
 		public ActiveFilterReportChartWidget()
 		{
 		}

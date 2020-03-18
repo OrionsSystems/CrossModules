@@ -46,6 +46,8 @@ namespace Orions.Systems.CrossModules.Components
 
       public ReportFilterInstruction.Targets FilterTarget { get; set; }
 
+      public bool AllowDynamicFiltration { get; set; }
+
       public SimpleFilterWidget()
       {
          this.Label = "Simple Filter"; // Title of this widget.

@@ -115,9 +115,32 @@ namespace Orions.Systems.CrossModules.Components
 			  new Option(){ ID= "Arms", Group = "Body parts", Text= "Arms" },
 		 };
 
+		public bool AllowDynamicFiltration
+		{
+			get
+			{
+				var filterGroup = this.DashboardVm?.ObtainFilterGroup(this.Widget.FilterGroup);
+				if (filterGroup == null) return false;
+				return filterGroup.AllowDynamicFiltration;
+			}
+			set
+			{
+				var filterGroup = this.DashboardVm?.ObtainFilterGroup(this.Widget.FilterGroup);
+				if (filterGroup != null)
+				{
+					filterGroup.AllowDynamicFiltration = value;
+				}
+			}
+		}
+
 		public SimpleFilterVm()
 		{
 		}
+
+		//public void OnChangeFilters(string[] filters) 
+		//{
+		//	this.RaiseNotify(nameof(Filters));
+		//}
 
 		protected override void OnWidgetSet(IDashboardWidget widget)
 		{
@@ -129,9 +152,14 @@ namespace Orions.Systems.CrossModules.Components
 				{
 					filterGroup.FilterLabels = this.Widget.PredefinedFilters;
 				}
-				else {
-					filterGroup.FilterLabels = filterGroup.FilterLabels.Concat(this.Widget.PredefinedFilters).ToArray();
+				else
+				{
+					filterGroup.FilterLabels = filterGroup.FilterLabels.Concat(this.Widget.PredefinedFilters).Distinct().ToArray();
 				}
+			}
+
+			if (filterGroup != null) {
+				filterGroup.AllowDynamicFiltration = this.Widget.AllowDynamicFiltration;
 			}
 
 			base.OnWidgetSet(widget);
@@ -148,7 +176,7 @@ namespace Orions.Systems.CrossModules.Components
 			if (e.PropertyName == nameof(DashboardFilterGroupData.EndTime))
 				this.RaiseNotify(nameof(EndDate));
 		}
-		
+
 		public void OnChangeView()
 		{
 			var filterGroup = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
@@ -190,11 +218,13 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task ClearFilters()
 		{
-			var filterGroup = this.DashboardVm.ObtainFilterGroup(this.Widget);
+			var filterGroup = this.DashboardVm.ObtainFilterGroup(this.Widget.FilterGroup);
 
 			if (filterGroup == null) return;
 
 			filterGroup.Clear();
+
+			this.Widget.PredefinedFilters = null;
 
 			await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
@@ -209,15 +239,15 @@ namespace Orions.Systems.CrossModules.Components
 			//	filterGroup.Period = this.Widget.Period;
 
 			//filterGroup.FilterLabels = this.Widget.Filters;
-			//filterGroup.FilterTarget = this.Widget.FilterTarget;
-			
+			filterGroup.FilterTarget = this.Widget.FilterTarget;
+
 			//filterGroup.StartTime = this.Widget.StartDate;
 			//filterGroup.EndTime = this.Widget.EndDate;
 
 			if (updateDashboard)
 			{
 				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
-				await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
+				//await this.DashboardVm.SaveChangesAsync(); // Save the settings into the persistent storage.
 			}
 		}
 	}

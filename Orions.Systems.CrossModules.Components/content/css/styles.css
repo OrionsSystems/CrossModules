@@ -1180,7 +1180,8 @@ h5.modal-title {
 .simple-filter-container {
   display: flex; }
   .simple-filter-container .simple-filter-items-container {
-    display: flex; }
+    display: flex;
+    flex-grow: 1; }
     .simple-filter-container .simple-filter-items-container .simple-filter-item {
       flex-grow: 1;
       margin: 4px 10px; }

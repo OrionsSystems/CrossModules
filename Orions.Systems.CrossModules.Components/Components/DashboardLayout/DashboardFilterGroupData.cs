@@ -94,6 +94,13 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		private bool _allowDynamicFiltration;
+		public bool AllowDynamicFiltration
+		{
+			get => _allowDynamicFiltration;
+			set => SetValue(ref _allowDynamicFiltration, value);
+		}
+
 
 		string _view = "";
 

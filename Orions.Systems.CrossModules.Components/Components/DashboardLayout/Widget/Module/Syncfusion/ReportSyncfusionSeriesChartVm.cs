@@ -76,7 +76,7 @@ namespace Orions.Systems.CrossModules.Components
 				//}
 			}
 
-			if (didModify && Widget.AllowDynamicFiltration)
+			if (didModify && data.AllowDynamicFiltration)
 				await this.DashboardVm.UpdateDynamicWidgetsFilteringAsync();
 		}
 
