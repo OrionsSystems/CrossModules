@@ -42,7 +42,20 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 		// INotifyCollectionChanged interface
 		private void AddVmDataPropertyChangedHandlers(object vm)
 		{
-			PropertyChangedEventHandler propChangedHandler = (s, e) => this.InvokeAsync(() => this.StateHasChanged());
+			PropertyChangedEventHandler propChangedHandler = (s, e) => {
+				
+				if(e?.PropertyName != null)
+				{
+					var newPropValue = s.GetType().GetProperty(e.PropertyName)?.GetValue(s);
+
+					if(newPropValue != null)
+					{
+						AddVmDataPropertyChangedHandlers(newPropValue);
+					}
+				}
+
+				this.InvokeAsync(() => this.StateHasChanged());
+			};
 			NotifyCollectionChangedEventHandler collectionChangedHandler = (s, e) =>
 			{
 				if (e.NewItems != null && (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Replace))
