@@ -33,6 +33,9 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Infrastructure
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
 
+		[Inject]
+		public NavigationManager NavigationManager { get; set; }
+
 		public DesiBaseComponent()
 		{
 		}

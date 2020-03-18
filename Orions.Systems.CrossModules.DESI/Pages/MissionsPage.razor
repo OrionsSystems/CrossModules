@@ -1,5 +1,6 @@
 ﻿@page "/missions"
 @using Systems.Desi.Common.Models;
+@using Systems.Desi.Common.Enums;
 @inherits MissionsPageBase
 
 	<div class="container-fluid missions-page-container">
@@ -17,7 +18,21 @@
 					</div>
 					<div class="mission-list-container">
 						<div class="misssion-list-header">
-							All projects
+							<div class="header-label">
+								All projects
+							</div>
+							<div class="sorting-orders">
+								@{ 
+									var titleSortModeActive = this.Vm.MissionsData.WorkflowSortingMode == SortingMode.ByTitle ? "active" : "";
+									var latestSortModeActive = this.Vm.MissionsData.WorkflowSortingMode == SortingMode.ByDate ? "active" : "";
+								}
+								<a class="@latestSortModeActive" @onclick="() => this.Vm.SetMissionsSortingModeCommand.Execute(SortingMode.ByDate)">
+									Latest
+								</a>
+								<a class="@titleSortModeActive" @onclick="() => this.Vm.SetMissionsSortingModeCommand.Execute(SortingMode.ByTitle)">
+									Aa
+								</a>
+							</div>
 						</div>
 						<div class="mission-list-items-container">
 							@foreach (var mission in this.Vm.MissionsData.Workflows)

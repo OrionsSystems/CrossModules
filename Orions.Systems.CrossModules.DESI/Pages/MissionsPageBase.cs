@@ -18,7 +18,10 @@ namespace Orions.Systems.CrossModules.Desi.Debug.Pages
 			var authSystem = DependencyResolver.GetAuthenticationSystem();
 
 			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
+			{
+				await new NavigationService(NavigationManager).GoToLoginPage();
 				return;
+			}
 
 			var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
 			this.Vm = new MissionsViewModel(
