@@ -8,13 +8,14 @@ using System.Collections.Specialized;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
-	public class DesiBaseComponent<T> : ComponentBase where T : ViewModelBase
+	public class DesiBaseComponent<VmType> : ComponentBase where VmType : ViewModelBase
 	{
-		private T _vm;
-		public T Vm
+		private VmType _vm;
+		public VmType Vm
 		{
 			get
 			{

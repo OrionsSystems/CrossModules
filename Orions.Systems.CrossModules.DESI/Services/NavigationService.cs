@@ -3,24 +3,31 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
-
+using Microsoft.JSInterop;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.Services;
 
-namespace Orions.Systems.CrossModules.Desi.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class NavigationService : INavigationService
 	{
 		private NavigationManager _navManager;
+		private readonly IJSRuntime _jSRuntime;
 
-		public NavigationService(NavigationManager navManager)
+		public NavigationService(NavigationManager navManager, IJSRuntime jSRuntime)
 		{
 			_navManager = navManager;
+			_jSRuntime = jSRuntime;
 		}
 
 		public Task GoBack(bool? useModalNavigation = null, bool animated = true) => throw new NotImplementedException();
 		public Task GoBackFrom(object context, bool animated = true) => throw new NotImplementedException();
-		public Task GoBackFromTaggingPage() => throw new NotImplementedException();
+		public Task GoBackFromTaggingPage()
+		{
+			_jSRuntime.InvokeVoidAsync("history.back");
+
+			return Task.CompletedTask;
+		}
 		public Task GoToLoginPage()
 		{
 			_navManager.NavigateTo("/", true);

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Services;
 
-namespace Orions.Systems.CrossModules.Desi.Infrastructure
+namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class WebApiHelper : IApiHelper
 	{

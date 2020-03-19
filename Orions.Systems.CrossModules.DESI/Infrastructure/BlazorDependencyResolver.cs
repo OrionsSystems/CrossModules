@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
+using Orions.Systems.CrossModules.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -15,11 +16,13 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 	{
 		private readonly ILocalStorageService _localStorageService;
 		private readonly NavigationManager _navigationManager;
+		private readonly IJSRuntime _jSRuntime;
 
-		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager)
+		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime)
 		{
 			_localStorageService = localStorageService;
 			_navigationManager = navigationManager;
+			_jSRuntime = jSRuntime;
 		}
 
 		public override IApiHelper GetApiHelper()
@@ -35,7 +38,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IImageService GetImageService()
 		{
-			return null;
+			return new BlazorImageService();
 			throw new NotImplementedException();
 		}
 
@@ -57,16 +60,19 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IRecognitionService GetRecognitionService()
 		{
+			return null;
 			throw new NotImplementedException();
 		}
 
 		public override ISegmentationConfigStorage GetSegmentationConfigStorage()
 		{
+			return null;
 			throw new NotImplementedException();
 		}
 
 		public override IDeviceClipboardService GetDeviceClipboardService()
 		{
+			return null;
 			throw new NotImplementedException();
 		}
 
@@ -78,7 +84,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public INavigationService GetNavigationService()
 		{
-			return new NavigationService(_navigationManager);
+			return new NavigationService(_navigationManager, _jSRuntime);
 		}
 	}
 }

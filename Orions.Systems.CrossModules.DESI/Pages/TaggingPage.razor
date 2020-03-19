@@ -1,8 +1,24 @@
 ﻿@layout EmptyLayout
 @page "/tagging"
+@inherits TaggingPageBase
 
-<h3>TaggingPage</h3>
+@if(this.Vm != null)
+{
+	<div class="tagging-page-container">
+		<div class="mission-title">
+			@(this.Vm.CurrentTask != null ? this.Vm.CurrentTask.ExecutionTimeLeft.ToString() : " ")
+		</div>
+		<div class="bottom-row">
+			<div class="left-column">
+				<div class="top-area">
 
-@code {
-
+				</div>
+				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
+			</div>
+			<div class="right-column">
+				
+			</div>
+		</div>
+	</div>
 }
+
