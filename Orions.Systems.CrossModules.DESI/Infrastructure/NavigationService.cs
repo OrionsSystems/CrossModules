@@ -41,7 +41,12 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			return Task.CompletedTask;
 		}
 
-		public Task GoToTaggingPage() => throw new NotImplementedException();
+		public Task GoToTaggingPage()
+		{
+			_navManager.NavigateTo("tagging");
+
+			return Task.CompletedTask;
+		}
 		public Task<bool> GoToTagsActionConfirmation(IEnumerable<TagModel> tagModel) => throw new NotImplementedException();
 		public Task<bool> ShowSessionIsOverPopup(TimeSpan timeout) => throw new NotImplementedException();
 	}
