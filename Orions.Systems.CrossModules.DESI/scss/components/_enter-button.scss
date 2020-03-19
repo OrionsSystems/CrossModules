@@ -1,0 +1,31 @@
+﻿.enter-btn {
+	border-radius: 4px;
+	background-color: #4d5f87;
+	padding: 8px;
+	color: $gray-100;
+	width: 200px;
+	height: 40px;
+	border: 0;
+	text-align: left;
+
+	svg {
+		height: 40px;
+		float: right;
+		color: white;
+		border-left: 1px solid #414f6a;
+		margin-top: -8px;
+		padding-left: 10px;
+		padding-top: 8px;
+		padding-bottom: 8px;
+		color: $gray-100;
+	}
+
+	&[disabled] {
+		background-color: #7a87a5;
+		color: #a0a7b6;
+
+		svg {
+			border-color: #a0a7b6;
+		}
+	}
+}

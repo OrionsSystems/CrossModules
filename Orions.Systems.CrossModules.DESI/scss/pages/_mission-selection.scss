@@ -55,15 +55,15 @@
 			padding: $container-padding;
 			display: flex;
 
-			.header-label{
-				flex:1;
+			.header-label {
+				flex: 1;
 			}
 
 			.sorting-orders a {
 				font-weight: normal;
 				color: #b1b7c4;
-				cursor:pointer;
-				margin-left:4px;
+				cursor: pointer;
+				margin-left: 4px;
 			}
 
 			.sorting-orders a.active {
@@ -117,33 +117,13 @@
 				}
 
 				.enter-mission-btn {
+					display: none;
 					position: absolute;
-					border-radius: 4px;
-					background-color: #4d5f87;
-					padding: 8px;
-					color: $gray-100;
 					bottom: 20px;
 					right: 30px;
-					width: 200px;
-					height: 40px;
-					border: 0;
-					text-align: left;
-					display: none;
-
-					svg {
-						height: 40px;
-						float: right;
-						color: white;
-						border-left: 1px solid #414f6a;
-						margin-top: -8px;
-						padding-left: 10px;
-						padding-top: 8px;
-						padding-bottom: 8px;
-						color: $gray-100;
-					}
 				}
 
-				&:hover .enter-mission-btn {
+				&:hover .enter-btn {
 					display: block;
 				}
 
@@ -176,16 +156,20 @@
 	}
 
 	.nodes-list {
-		/*min-height: 400px;*/
-
 		.node-list-item-container {
-			.node-name {
-				font-weight: bold;
-				font-size: 1.2em;
-			}
+			.node-details{
+				width:calc(100% - 50px);
+				overflow:hidden;
+				float:left;
 
-			.node-url {
-				padding-left: 10px;
+				.node-name {
+					font-weight: bold;
+					font-size: 1.2em;
+				}
+
+				.node-url {
+					padding-left: 10px;
+				}
 			}
 
 			.node-status-icon-container {

@@ -1,5 +1,10 @@
 ﻿@import "variables";
 @import "layout";
 @import "common";
+
+@import "components/windows-switch";
+@import "components/enter-button";
+
 @import "pages/mission-selection";
+@import "pages/stage-selection";
 

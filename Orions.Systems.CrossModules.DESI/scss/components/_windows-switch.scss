@@ -1,0 +1,99 @@
+﻿.toggleContainer input[type=checkbox] {
+	display: none;
+}
+
+.toggleContainer .q {
+	font-size: 15px;
+	margin-bottom: 6px;
+}
+
+.toggleContainer label {
+	display: block;
+	width: 50px;
+	height: 20px;
+	border: 2px solid #333333;
+	margin-bottom: 20px;
+	cursor: pointer;
+	position: relative;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+
+.toggleContainer label:after {
+	display: block;
+	content: "";
+	width: 10px;
+	height: 10px;
+	background: #333;
+	-webkit-border-radius: 50%;
+	border-radius: 50%;
+	position: absolute;
+	left: 3px;
+	top: 3px;
+	-webkit-transition: all 0.3s ease;
+	-moz-transition: all 0.3s ease;
+	-ms-transition: all 0.3s ease;
+	-o-transition: all 0.3s ease;
+	transition: all 0.3s ease;
+}
+
+.toggleContainer label:hover {
+	border: 2px solid #000;
+}
+
+.toggleContainer label:hover:after {
+	background: #000;
+}
+
+.toggleContainer label:active {
+	border: 2px solid #666666;
+	background: #666;
+}
+
+.toggleContainer label:active:after {
+	background: #fff;
+}
+
+.toggleContainer label:before {
+	display: inline-block;
+	height: 22px;
+	line-height: 22px;
+	white-space: nowrap;
+	position: absolute;
+	left: 60px;
+	top: -2px;
+	font-size: 15px;
+}
+
+.toggleContainer input[type=checkbox] + label:before {
+	content: attr(data-off);
+}
+
+.toggleContainer input[type=checkbox]:checked + label:before {
+	content: attr(data-on);
+}
+
+.toggleContainer input[type=checkbox]:checked + label {
+	border: 2px solid #b6b6b6;
+	background: #b6b6b6;
+}
+
+.toggleContainer input[type=checkbox]:checked + label:hover {
+	border: 2px solid #b6b6b6;
+	background: #b6b6b6;
+}
+
+.toggleContainer input[type=checkbox]:checked + label:after {
+	left: 33px;
+	background: #FFF;
+}
+
+
+.toggleContainer input[type=checkbox]:checked + label:active {
+	border: 2px solid #666666;
+	background: #666;
+}
+
+.toggleContainer input[type=checkbox]:checked + label:active:after {
+	background: #fff;
+}

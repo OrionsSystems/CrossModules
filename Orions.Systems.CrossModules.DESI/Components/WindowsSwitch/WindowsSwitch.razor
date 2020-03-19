@@ -1,0 +1,16 @@
+﻿
+
+<div class="toggleContainer">
+	<input type="checkbox" checked="@Checked" name="@_id" id="@_id" @onchange="@(() => OnSwitch.InvokeAsync(null))">
+	<label for="@_id" data-on="On" data-off="Off"></label>
+</div>
+
+@code{
+	[Parameter]
+	public bool Checked { get; set; }
+
+	[Parameter]
+	public EventCallback OnSwitch { get; set; }
+
+	protected string _id = Guid.NewGuid().ToString();
+}

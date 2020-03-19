@@ -1,13 +1,66 @@
 ﻿@layout EmptyLayout;
 @page "/stage-selection";
 @inherits StageSelectionPageBase
+@using Orions.Systems.CrossModules.Desi.Components.WindowsSwitch;
+@using Orions.Systems.CrossModules.Desi.Components;
 
-<div class="main">
-	<div class="mission-title">
+@if(Vm != null)
+{
+	<div class="stage-selection-page-container">
+		<div class="mission-title">
+			@this.Vm.MissionsData.CurrentWorkflow.Title
+		</div>
+		<div class="bottom-row">
+			<div class="left-column">
+				<div class="top-area">
+					<div class="mission-description">
+						<div class="mission-title">
+							@this.Vm.MissionsData.CurrentWorkflow.TitleShorten
+						</div>
+						<div class="mission-run">
+							Started at: @this.Vm.MissionsData.CurrentWorkflow.MissionRunStartUTC.ToString()
+						</div>
+						<div class="mission-status">
+							Status: @this.Vm.MissionsData.CurrentWorkflow.TitleDetails
+						</div>
+						<div class="mission-tasks-count">
+							Tasks: @this.Vm.MissionsData.CurrentWorkflow.TasksCount
+						</div>
+					</div>
+				</div>
+				<button class="exit-button" @onclick="() => this.Vm.GoBackCommand.Execute(null)">Exit</button>
+			</div>
+			<div class="right-column">
+				<div class="stage-selection-list">
+					<div class="header">
+						Stage selection
+					</div>
+					<div class="stage-list-items">
+						@foreach (var stage in this.Vm.MissionsData.CurrentWorkflow.Stages)
+						{
+							<div class="list-item">
+								<div class="stage-enable-control">
+									<WindowsSwitch Checked="@stage.IsSelected" OnSwitch="@(() => Switch_Toggled(stage))" />
+								</div>
+								<div class="stage-description-container">
+									<div class="header">
+										Stage
+									</div>
+									<div class="title">
+										@stage.Name
+									</div>
+								</div>
+							</div>
+						}
+					</div>
 
+				</div>
+				<div class="enter-stage-button-container">
+					<EnterButton OnClick="@(() => this.Vm.EnterStageCommand.Execute(null))" Disabled="@(!this.Vm.StageSelected)">
+						Enter stage
+					</EnterButton>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
-
-@code {
-
 }
