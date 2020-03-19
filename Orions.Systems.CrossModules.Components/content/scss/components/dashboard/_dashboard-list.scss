@@ -1,0 +1,66 @@
+﻿
+.dashoboard-list-container {
+	.dashboard-list-header {
+		.dashboard-list-header-filter {
+			.dashoboard-list-search {
+				button {
+					display: inherit;
+				}
+
+				span {
+					/*display: none;*/
+					padding: 0px 10px 0px 9px;
+					letter-spacing:2px;
+				}
+			}
+		}
+
+		.dashboard-list-header-actions {
+			text-align: right;
+
+
+
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.dashboard-list-header-cmd-label {
+			}
+		}
+	}
+
+	.dashoboard-list-table {
+
+		.dashboard-list-name {
+			cursor: pointer;
+		}
+
+		.dashboard-list-cmd-label {
+			font-size: 11px;
+		}
+
+		.dashboard-list-cmd-container {
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+		}
+
+		.dashboard-list-cmd-delete {
+			color: red !important;
+		}
+	}
+}
