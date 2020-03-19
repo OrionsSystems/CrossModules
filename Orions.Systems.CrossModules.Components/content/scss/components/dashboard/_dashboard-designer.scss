@@ -1,4 +1,7 @@
 ﻿
+
+
+
 h5 {
 	&.modal-title {
 		text-transform: uppercase;
@@ -529,28 +532,6 @@ h5 {
 
 .dashboard-modal {
 	z-index: 999999 !important;
-}
-
-.dashboard-list-name {
-	cursor: pointer;
-}
-
-.dashboard-list-header {
-	text-align: right;
-
-	a {
-		cursor: pointer;
-		opacity: 0.5;
-		transition: 0.5s;
-
-		&:hover {
-			opacity: 1;
-			transition: 0.5s;
-		}
-	}
-}
-
-.dashboard-list-header-cmd-label {
 }
 
 .modal-dashboard-widget-container {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
-
+using Microsoft.AspNetCore.Components.Web;
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
@@ -42,6 +42,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public IHyperArgsSink HyperStore { get; set; }
 
+		public string SearchInput { get; set; }
+
 		public DashboardListVm()
 		{
 		}
@@ -57,17 +59,44 @@ namespace Orions.Systems.CrossModules.Components
 			return Task.FromResult<object>(SelectedDashboard);
 		}
 
-		public async Task LoadDashboarList()
+		public async Task LoadDashboarList(string filter = null)
 		{
-			// We are only going to pull the basic info on the Dashboards, as they are becoming large objects.
-			var datas = await HyperStore.FindAllAsync<DashboardData>(null, 0, 500, true);
+			DataList.Clear();
+			IsLoadedDataResult = false;
 
-			DataList = datas.ToList();
+			if (string.IsNullOrWhiteSpace(filter))
+			{
+				// We are only going to pull the basic info on the Dashboards, as they are becoming large objects.
+				var datas = await HyperStore.FindAllAsync<DashboardData>(null, 0, 500, true);
+
+				DataList = datas.ToList();
+			}
+			else {
+
+				var findDocArgs = new FindHyperDocumentsArgs(typeof(DashboardData), true);
+
+				var regexText = $"/.*{filter}.*/i";
+
+				var conditions = new MultiScopeCondition(AndOr.Or);
+				conditions.AddCondition(nameof(DashboardData.Name), regexText, Comparers.Regex);
+				conditions.AddCondition(nameof(DashboardData.Group), regexText, Comparers.Regex);
+				conditions.AddCondition(nameof(DashboardData.Tag), regexText, Comparers.Regex);
+
+				findDocArgs.DescriptorConditions = conditions;
+
+				var documents = await HyperStore.ExecuteAsync(findDocArgs);
+
+				DataList = documents.Select(x => x.GetPayload<DashboardData>()).ToList();
+
+				if (!findDocArgs.ExecutionResult.IsNotSuccess || documents != null)
+				{
+					DataList = documents.Select(x => x.GetPayload<DashboardData>()).ToList();
+				}
+			}
 
 			IsLoadedDataResult = true;
 
 			this.RaiseNotify(nameof(DataList));
-			//StateHasChanged();
 		}
 
 		public async Task SelectDashboardAsync(DashboardData data, bool showView = false, bool isNew = false)
@@ -168,6 +197,13 @@ namespace Orions.Systems.CrossModules.Components
 			IsShowProperty = false;
 
 			await SaveChanges();
+		}
+
+		public async Task OnSearchBtnClick(MouseEventArgs e)
+		{
+			if (this.HyperStore == null) return;
+
+			await LoadDashboarList(SearchInput);
 		}
 	}
 }
