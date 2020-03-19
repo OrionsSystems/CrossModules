@@ -17,11 +17,11 @@
 			<input type="password" class="form-control" id="desiPasswordInput" placeholder="Password" disabled="@this.Vm.IsDevModeEnabled" @bind-value="this.SettingsStorage.HyperDomainAuthenticationData.Password.Value">
 		</div>
 		<div class="form-check">
-			<input type="checkbox" class="form-check-input desi-check-input" id="desiAlwaysSignedInCheck" @bind-value="this.Vm.IsStaySigned">
+			<input type="checkbox" class="form-check-input desi-check-input" id="desiAlwaysSignedInCheck" @bind=this.Vm.IsStaySigned>
 			<label class="form-check-label" for="desiAlwaysSignedInCheck">Always stay signed into DESI</label>
 		</div>
 		<div class="form-check">
-			<input type="checkbox" class="form-check-input desi-check-input" id="desiDeveloperModeCheck" @bind-value="this.Vm.IsDevModeEnabled">
+			<input type="checkbox" class="form-check-input desi-check-input" id="desiDeveloperModeCheck" @bind="this.Vm.IsDevModeEnabled">
 			<label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
 		</div>
 	</div>
