@@ -59,6 +59,14 @@ namespace Orions.Systems.CrossModules.Components
 			return Task.FromResult<object>(SelectedDashboard);
 		}
 
+		public Dictionary<string, List<DashboardData>> GetDataGroups()
+		{
+			var result = new Dictionary<string, List<DashboardData>>();
+			if (DataList == null || !DataList.Any()) return result;
+
+			return DataList.GroupBy(x => x.Group).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+		}
+
 		public async Task LoadDashboarList(string filter = null)
 		{
 			DataList.Clear();
