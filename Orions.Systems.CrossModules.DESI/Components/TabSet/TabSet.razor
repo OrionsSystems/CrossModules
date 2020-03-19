@@ -1,0 +1,44 @@
+﻿@inherits ComponentBase
+
+<CascadingValue Value=this>
+	<div class="tabs-buttons">
+		@ChildContent
+	</div>
+</CascadingValue>
+
+<!-- Display body for only the active tab -->
+<div class="active-tab-content">
+	@ActiveTab?.ChildContent
+</div>
+
+@code {
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	public Tab ActiveTab { get; private set; }
+
+	public void AddTab(Tab tab)
+	{
+		if (ActiveTab == null)
+		{
+			SetActivateTab(tab);
+		}
+	}
+
+	public void RemoveTab(Tab tab)
+	{
+		if (ActiveTab == tab)
+		{
+			SetActivateTab(null);
+		}
+	}
+
+	public void SetActivateTab(Tab tab)
+	{
+		if (ActiveTab != tab)
+		{
+			ActiveTab = tab;
+			StateHasChanged();
+		}
+	}
+}
