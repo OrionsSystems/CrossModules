@@ -1,6 +1,7 @@
 ﻿@layout EmptyLayout
 @page "/tagging"
 @inherits TaggingPageBase
+@using Orions.Systems.CrossModules.Desi.Components.TabSet;
 
 @if(this.Vm != null)
 {
@@ -11,7 +12,24 @@
 		<div class="bottom-row">
 			<div class="left-column">
 				<div class="top-area">
-
+					<div class="mission-description">
+						<div class="mission-title">
+							@this.Vm.Mission.TitleShorten
+						</div>
+						<div class="mission-status">
+							@this.Vm.Mission.TitleDetails
+						</div>
+						<div class="mission-run">
+							Started at: @this.Vm.Mission.MissionRunStartUTC.ToString()
+						</div>
+					</div>
+					<div class="tabs-control">
+						<TabSet>
+							<Tab Active="true" Title="Tags">Tags content</Tab>
+							<Tab Title="Tracking">Tracking content</Tab>
+							<Tab Title="Segmentation">Segmentation content</Tab>
+						</TabSet>
+					</div>
 				</div>
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>

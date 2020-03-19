@@ -1,0 +1,41 @@
+﻿@inherits ComponentBase
+
+<div @onclick="@Activate" class="tab @ActiveCssClass">
+	@Title
+</div>
+
+@code {
+	[CascadingParameter]
+	public TabSet ContainerTabSet { get; set; }
+
+	[Parameter]
+	public string Title { get; set; }
+
+	[Parameter]
+	public RenderFragment ChildContent { get; set; }
+
+	[Parameter]
+	public bool Active { get; set; } = false;
+
+	protected string ActiveCssClass => ContainerTabSet.ActiveTab == this ? "active" : null;
+
+	protected override void OnInitialized()
+	{
+		ContainerTabSet.AddTab(this);
+
+		if (Active)
+		{
+			Activate();
+		}
+	}
+
+	public void Dispose()
+	{
+		ContainerTabSet.RemoveTab(this);
+	}
+
+	void Activate()
+	{
+		ContainerTabSet.SetActivateTab(this);
+	}
+}
