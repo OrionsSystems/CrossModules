@@ -36,30 +36,37 @@
 							</div>
 						</div>
 						<div class="mission-list-items-container">
-							@foreach (var mission in this.Vm.MissionsData.Workflows)
+							@if (Vm.MissionsData.IsBusy)
 							{
-								<div class="mission-item">
-									<div class="mission-thumbnail-container">
-										@{
-											var thumbnail64 = mission.Screenshot != null ? $"data:image/jpg;base64, {Convert.ToBase64String(mission.Screenshot)}" : "";
-										}
-										<img src="@thumbnail64" />
+								<DotsLoader/>
+							}
+							else
+							{
+								@foreach (var mission in this.Vm.MissionsData.Workflows)
+								{
+									<div class="mission-item">
+										<div class="mission-thumbnail-container">
+											@{
+												var thumbnail64 = mission.Screenshot != null ? $"data:image/jpg;base64, {Convert.ToBase64String(mission.Screenshot)}" : "";
+											}
+											<img src="@thumbnail64" class="img-no-error" />
+										</div>
+										<div class="mission-description-container">
+											<div class="mission-title">
+												@mission.Title
+											</div>
+											<div class="started-label">
+												Started: @mission.MissionRunStartUTC.ToString("MMM dd") at @mission.MissionRunStartUTC.ToString("hh:mmtt")
+											</div>
+											<div class="status-label">
+												Status: @mission.TitleDetails
+											</div>
+										</div>
+										<EnterButton OnClick="() => this.Vm.EnterMissionCommand.Execute(mission)" CssClass="@("enter-mission-btn")">
+											Enter mission
+										</EnterButton>
 									</div>
-									<div class="mission-description-container">
-										<div class="mission-title">
-											@mission.Title
-										</div>
-										<div class="started-label">
-											Started: @mission.MissionRunStartUTC.ToString("MMM dd") at @mission.MissionRunStartUTC.ToString("hh:mmtt")
-										</div>
-										<div class="status-label">
-											Status: @mission.TitleDetails
-										</div>
-									</div>
-									<EnterButton OnClick="() => this.Vm.EnterMissionCommand.Execute(mission)" CssClass="@("enter-mission-btn")">
-										Enter mission
-									</EnterButton>
-								</div>
+								}
 							}
 						</div>
 					</div>

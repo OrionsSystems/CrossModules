@@ -85,7 +85,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 				if (!enumerableType.IsAssignableFrom(vmType))
 				{
-					var vmProps = vmType.GetProperties();
+					var vmProps = vmType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance);
 					foreach (var prop in vmProps)
 					{
 						var propValue = prop.GetValue(vm);

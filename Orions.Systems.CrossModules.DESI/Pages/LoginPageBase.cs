@@ -6,17 +6,9 @@ using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
-	public class LoginPageBase : ComponentBase
+	public class LoginPageBase : DesiBaseComponent<AuthenticationViewModel>
 	{
-		[Inject]
-		public BlazorDependencyResolver DependencyResolver { get; set; }
-
-		[Inject]
-		public NavigationManager NavigationManager { get; set; }
-
 		protected ISettingsStorage SettingsStorage { get; set; }
-
-		public AuthenticationViewModel Vm { get; set; }
 
 		public LoginPageBase()
 		{
@@ -30,8 +22,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			Vm = new AuthenticationViewModel(authenticationSystem, navigationService)
 			{
-				IsDevModeEnabled = false,
-				IsStaySigned = false
 			};
 
 			return Task.CompletedTask;
