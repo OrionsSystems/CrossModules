@@ -1,0 +1,86 @@
+﻿@namespace Orions.Systems.CrossModules.Desi.Pages
+@using Orions.Systems.CrossModules.Desi.Infrastructure
+@using Orions.Systems.Desi.Core.ViewModels;
+@using Orions.Systems.Desi.Common.Extensions;
+@using Orions.Infrastructure.HyperMedia;
+@using Orions.Common;
+
+@inherits DesiBaseComponent<TaggingViewModel>
+
+@if (this.Vm != null && this.Vm.TagData != null)
+{
+	<div class="tag-preview-control-container">
+		@{ 
+			var tagIsSelectedClass = "";
+		}
+		@foreach (var tag in this.Vm.TagData.CurrentTaskTags)
+		{
+			{
+				tagIsSelectedClass = tag.IsSelected ? "active" : "";
+			}
+		<div class="tag-container @tagIsSelectedClass">
+			<div class="tagonomy-info">
+				<div class="left-column">
+					@if (tag.TagKind != Systems.Desi.Common.Models.TagKind.NA)
+					{
+						<div class="header">
+							Current tagonomy
+						</div>
+						<div class="tagonomy-execution-result">
+							@{
+								var tagonomyExecutionResult = tag.TagonomyExecutionResult?.ExtractLabel() ?? "N/A";
+							}
+							@tagonomyExecutionResult
+						</div>
+
+					}
+					@if (tag.PreviousTagonomyExecutionResult != null || tag.GetLabel() != null)
+					{
+						<div class="header">
+							Previous tagonomy/label
+						</div>
+						<div class="tagonomy-execution-result">
+							@{
+								string tagonomyLabel = null;
+								if (tag.PreviousTagonomyExecutionResult != null)
+								{
+									tagonomyLabel = tag.PreviousTagonomyExecutionResult.ExtractLabel();
+								}
+								else if (tag.GetLabel() is HyperTagLabel label)
+								{
+									tagonomyLabel = label.Label;
+								}
+
+								tagonomyLabel = tagonomyLabel ?? "N/A";
+							}
+							@tagonomyLabel
+						</div>
+					}
+				</div>
+				<div class="right-column">
+					<div class="info-button">
+						<img src="images/outline_info_white_24dp.png" />
+					</div>
+				</div>
+			</div>
+			<div class="position-info">
+				@{ 
+					string tagPosition = $"{tag.TagHyperId.FragmentIdSimple}:{tag.TagHyperId.SliceIdSimple}";
+
+				}
+				Position: @tagPosition
+			</div>
+			<div class="thumbnail">
+				@{
+					var thumbnailSrc = tag.Thumbnail != null ? UniImage.ConvertByteArrayToBase64Url(tag.Thumbnail) : "";
+				}
+				<img src="@thumbnailSrc" class="img-no-error" />
+			</div>
+			<div class="edit-button">
+				<button @onclick="() => this.Vm.EditTagCommand.Execute(tag)">Edit</button>
+			</div>
+		</div>
+		}
+
+	</div>
+}

@@ -15,6 +15,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 	public class DesiBaseComponent<VmType> : ComponentBase where VmType : ViewModelBase
 	{
 		private VmType _vm;
+
+		[Parameter]
 		public VmType Vm
 		{
 			get
