@@ -957,6 +957,68 @@ h5.modal-title {
 .CodeMirror {
   height: auto !important; }
 
+.dashoboard-list-simple .dashoboard-list-table table {
+  margin-bottom: 0px !important; }
+
+.dashoboard-list-simple .dashoboard-list-table .dashboard-list-name {
+  cursor: pointer; }
+
+.dashoboard-list-simple .dashoboard-list-table .dashboard-list-tag a {
+  color: #fff !important;
+  cursor: pointer; }
+
+.dashoboard-list-simple .dashoboard-list-table .dashboard-list-cmd-label {
+  font-size: 11px; }
+
+.dashoboard-list-simple .dashoboard-list-table .dashboard-list-cmd-container a {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.5s; }
+  .dashoboard-list-simple .dashoboard-list-table .dashboard-list-cmd-container a:hover {
+    opacity: 1;
+    transition: 0.5s; }
+
+.dashoboard-list-simple .dashoboard-list-table .dashboard-list-cmd-delete {
+  color: red !important; }
+
+.dashoboard-list-accordion .dashoboard-list-accordion-item {
+  padding: 5px;
+  margin: 2px 0px; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .e-acrdn-content {
+    padding: 0px !important; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table table {
+    margin-bottom: 0px !important; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-name {
+    cursor: pointer; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-tag a {
+    color: #fff !important;
+    cursor: pointer; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-cmd-label {
+    font-size: 11px; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-cmd-container a {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.5s; }
+    .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-cmd-container a:hover {
+      opacity: 1;
+      transition: 0.5s; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashoboard-list-table .dashboard-list-cmd-delete {
+    color: red !important; }
+  .dashoboard-list-accordion .dashoboard-list-accordion-item .dashboard-list-tag a {
+    padding: 4px;
+    font-weight: 400; }
+
+.dashoboard-list-accordion .dashoboard-list-group-header {
+  display: flex; }
+  .dashoboard-list-accordion .dashoboard-list-group-header i {
+    margin-top: 9px;
+    height: 26px; }
+  .dashoboard-list-accordion .dashoboard-list-group-header span {
+    padding: 5px; }
+
+.dashoboard-list-accordion .e-toggle-icon {
+  top: 6px !important; }
+
 .dashoboard-list-container .dashboard-list-header .dashboard-list-header-filter .dashoboard-list-search button {
   display: inherit; }
 
@@ -964,6 +1026,17 @@ h5.modal-title {
   /*display: none;*/
   padding: 0px 10px 0px 9px;
   letter-spacing: 2px; }
+
+.dashoboard-list-container .dashboard-list-header .dashboard-list-header-filter .dashboard-list-header-accordion-cmd a {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.5s; }
+
+.dashoboard-list-container .dashboard-list-header .dashboard-list-header-filter .dashboard-list-header-accordion-cmd a:hover {
+  opacity: 1;
+  transition: 0.5s; }
 
 .dashoboard-list-container .dashboard-list-header .dashboard-list-header-actions {
   text-align: right; }
@@ -974,27 +1047,6 @@ h5.modal-title {
     .dashoboard-list-container .dashboard-list-header .dashboard-list-header-actions a:hover {
       opacity: 1;
       transition: 0.5s; }
-
-.dashoboard-list-container .dashoboard-list-table .dashboard-list-name {
-  cursor: pointer; }
-
-.dashoboard-list-container .dashoboard-list-table .dashboard-list-tag a {
-  color: #fff !important;
-  cursor: pointer; }
-
-.dashoboard-list-container .dashoboard-list-table .dashboard-list-cmd-label {
-  font-size: 11px; }
-
-.dashoboard-list-container .dashoboard-list-table .dashboard-list-cmd-container a {
-  cursor: pointer;
-  opacity: 0.5;
-  transition: 0.5s; }
-  .dashoboard-list-container .dashoboard-list-table .dashboard-list-cmd-container a:hover {
-    opacity: 1;
-    transition: 0.5s; }
-
-.dashoboard-list-container .dashoboard-list-table .dashboard-list-cmd-delete {
-  color: red !important; }
 
 .theme-container-list-title {
   padding: 20px 0px; }
