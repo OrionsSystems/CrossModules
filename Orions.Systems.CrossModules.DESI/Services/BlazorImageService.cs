@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using SkiaSharp;
 using System.Threading.Tasks;
+using Orions.Systems.Desi.Common.Extensions;
 
 namespace Orions.Systems.CrossModules.Desi.Services
 {
@@ -22,14 +24,25 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		public Task<byte[]> CropProportionally(byte[] imageData, RectangleF proportionalCropRect)
 		{
-			return Task.FromResult(new byte[10]);
-			throw new NotImplementedException();
+			using (var skBitmap = SKBitmap.Decode(imageData))
+			{
+				var absRect = proportionalCropRect.GetAbsoluteRectangle(new Size(skBitmap.Width, skBitmap.Height));
+
+				var image = SKImage.FromBitmap(skBitmap);
+				var subset = image.Subset(SKRectI.Create((int)absRect.X, (int)absRect.Y, (int)absRect.Width, (int)absRect.Height));
+				// encode the image
+				var encodedData = subset.Encode(SKEncodedImageFormat.Jpeg, 100);
+		
+				return Task.FromResult(encodedData.ToArray());
+			}
 		}
 
 		public Task<(int Width, int Height)> GetImageSize(byte[] imageBytes)
 		{
-			return Task.FromResult((100, 100));
-			throw new NotImplementedException();
+			using (var skBitmap = SKBitmap.Decode(imageBytes))
+			{
+				return Task.FromResult((skBitmap.Width, skBitmap.Height));
+			}
 		}
 
 		public Task<Color> GetMostCommonColor(byte[] imageBytes)
