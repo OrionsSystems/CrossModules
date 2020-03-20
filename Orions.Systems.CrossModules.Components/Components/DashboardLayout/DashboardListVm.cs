@@ -36,9 +36,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public PropertyGridVm PropertyGridVm { get; set; }
 
-		public EventCallback<DashboardData> OnSelectDesign { get; set; }
+		public EventCallback<string> OnSelectDesign { get; set; }
 
-		public EventCallback<DashboardData> OnSelectView { get; set; }
+		public EventCallback<string> OnSelectView { get; set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
 
@@ -64,7 +64,7 @@ namespace Orions.Systems.CrossModules.Components
 			var result = new Dictionary<string, List<DashboardData>>();
 			if (DataList == null || !DataList.Any()) return result;
 
-			return DataList.GroupBy(x => x.Group).ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
+			return DataList.GroupBy(x => x.Group).ToDictionary(gdc => gdc.Key ?? "Default", gdc => gdc?.ToList() ?? new List<DashboardData>());
 		}
 
 		public async Task LoadDashboarList(string filter = null)
@@ -109,16 +109,13 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task SelectDashboardAsync(DashboardData data, bool showView = false, bool isNew = false)
 		{
-			if (isNew == false)
-				data = await HyperStore.RetrieveAsync<DashboardData>(data.Id); // Pull the full data.
-
 			if (showView)
 			{
-				await OnSelectView.InvokeAsync(data);
+				await OnSelectView.InvokeAsync(data.Id);
 			}
 			else
 			{
-				await OnSelectDesign.InvokeAsync(data);
+				await OnSelectDesign.InvokeAsync(data.Id);
 			}
 		}
 

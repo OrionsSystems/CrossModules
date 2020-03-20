@@ -10,7 +10,7 @@
 				span {
 					/*display: none;*/
 					padding: 0px 10px 0px 9px;
-					letter-spacing:2px;
+					letter-spacing: 2px;
 				}
 			}
 		}
@@ -39,6 +39,11 @@
 	.dashoboard-list-table {
 
 		.dashboard-list-name {
+			cursor: pointer;
+		}
+
+		.dashboard-list-tag a {
+			color: #fff !important;
 			cursor: pointer;
 		}
 

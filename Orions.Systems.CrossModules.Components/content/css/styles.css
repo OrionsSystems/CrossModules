@@ -978,6 +978,10 @@ h5.modal-title {
 .dashoboard-list-container .dashoboard-list-table .dashboard-list-name {
   cursor: pointer; }
 
+.dashoboard-list-container .dashoboard-list-table .dashboard-list-tag a {
+  color: #fff !important;
+  cursor: pointer; }
+
 .dashoboard-list-container .dashoboard-list-table .dashboard-list-cmd-label {
   font-size: 11px; }
 
