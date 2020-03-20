@@ -92,9 +92,22 @@
 	[Parameter]
 	public string DashboadId { get; set; }
 
+	private string Mode { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		var uri = navManager.ToAbsoluteUri(navManager.Uri);
+
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("mode", out var param))
+		{
+			Mode = param.First();
+
+			if (!string.IsNullOrWhiteSpace(Mode) && Mode == "view") {
+				isShowViewDashboard = true;
+			}
+		}
 
 		if (IsTagMode && HyperStore != null)
 		{
@@ -122,7 +135,7 @@
 		navManager.NavigateTo(url, true);
 	}
 
-	private void OnSelectTag(string tag) 
+	private void OnSelectTag(string tag)
 	{
 		var url = $"{navManager.BaseUri}dashboard/{tag}";
 		navManager.NavigateTo(url, true);
