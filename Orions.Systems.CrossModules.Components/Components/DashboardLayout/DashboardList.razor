@@ -1,9 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 @using Orions.Node.Common
-@using Orions.Infrastructure.HyperMedia
 @using System.IO
-@using Syncfusion.EJ2.Blazor
 @using Syncfusion.EJ2.Blazor.Navigations
 
 @inherits BaseBlazorComponent<DashboardListVm>
@@ -22,6 +20,24 @@
 						<span>Search</span>
 					</button>
 				</div>
+			</div>
+
+			<div class="dashboard-list-header-accordion-cmd">
+				<a class="btn btn-sm" @onclick="@(e =>{ IsAccordionMode = !IsAccordionMode; })">
+					@if (IsAccordionMode)
+					{
+						<MatIcon Icon="@MatIconNames.Notes"></MatIcon>
+					}
+					else
+					{
+						<MatIcon Icon="@MatIconNames.View_compact"></MatIcon>
+					}
+				</a>
+				@if (IsAccordionMode)
+				{
+					<a class="btn btn-sm" @onclick="CollapseAll">COLLAPSE ALL</a>
+					<a class="btn btn-sm" @onclick="ExpandAll">EXPAND ALL</a>
+				}
 			</div>
 		</div>
 		<div class="dashboard-list-header-actions col-lg-5">
@@ -42,135 +58,154 @@
 		var rowIndex = 0;
 		var groups = Vm.GetDataGroups();
 
-		@*<div class="dashoboard-list-table dashoboard-list-accordion">
-			<div class="dashoboard-list-accordion-header">
-
-			</div>
-			<div class="dashoboard-list-accordion-data">
-				<MatAccordion  ExpandMode="ExpandMode.Multiple">
+		@if (IsAccordionMode)
+		{
+			<div class=" dashoboard-list-accordion">
+				<EjsAccordion @ref="Accordion" ExpandMode="ExpandMode.Multiple">
 					<AccordionItems>
 						@foreach (var dict in groups)
 						{
 							var rowGroupIndex = 0;
 
-							<AccordionItem>
+							<AccordionItem CssClass="dashoboard-list-accordion-item">
 								<HeaderTemplate>
 									<div class="dashoboard-list-group-header">
-										<MatIcon Icon="@MatIconNames.View_module"></MatIcon>
-										<span>@(dict.Key ?? "Empty")</span>
+										<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
+										<span>@dict.Key</span>
 									</div>
 								</HeaderTemplate>
 								<ContentTemplate>
-									@foreach (var dbData in dict.Value ?? new List<DashboardData>())
-									{
-										rowGroupIndex++;
+									<div class="table-responsive dashoboard-list-table">
+										<table class="table table-striped table-bordered table-hover">
+											<thead>
+												<tr>
+													<th width="1%" class="nowrap center"></th>
+													@*<th width="5%" class="nowrap center">Group</th>*@
+													<th>Name</th>
+													<th width="5%" class="nowrap center">Published</th>
+													<th width="5%" class="nowrap center">Tag</th>
+													<th width="30%" class="nowrap center"></th>
+												</tr>
+											</thead>
+											<tbody>
+												@foreach (var item in dict.Value ?? new List<DashboardData>())
+												{
+													rowGroupIndex++;
 
-									<div class="row dashoboard-list-group-data">
-										<div class="col-md-1 center nowrap">@rowGroupIndex</div>
-										<div class="col-md-4 dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(dbData))">@dbData.Name</div>
-										<div class="col-md-1 center">
-											<div class="form-check">
-												<input type="checkbox" class="form-check-input" checked="@dbData.Published" disabled>
-											</div>
-										</div>
-										<div class="col-md-2 center">
-											@if (!string.IsNullOrWhiteSpace(dbData.Tag))
-											{
-												<a href="@(MyNavigationManager.Uri + "/" + dbData.Tag)" class="badge badge-secondary" @onclick="@(e => { OpenTagLink(dbData); })">
-													@dbData.Tag
-												</a>
-											}
-										</div>
-										<div class="col-md-4 center dashboard-list-cmd-container">
-											<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(dbData, false); })">
-												<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
-												<div class="dashboard-list-cmd-label">Design</div>
-											</a>
-											<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(dbData, true); })">
-												<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
-												<div class="dashboard-list-cmd-label">View</div>
-											</a>
-											<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(dbData); })">
-												<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
-												<div class="dashboard-list-cmd-label">Edit</div>
-											</a>
-											<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(dbData); })">
-												<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
-												<div class="dashboard-list-cmd-label">Delete</div>
-											</a>
-										</div>
+
+													<tr @key="item.Id">
+														<td class="center nowrap">@rowGroupIndex</td>
+														@*<td class="center">@item.Group</td>*@
+														<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>
+														<td class="center">
+															<div class="form-check">
+																<input type="checkbox" class="form-check-input" checked="@item.Published" disabled>
+															</div>
+														</td>
+														<td class="dashboard-list-tag center">
+															@if (!string.IsNullOrWhiteSpace(item.Tag))
+															{
+																<a class="badge badge-secondary" @onclick="@(async e => { await OpenTagLink(item); })">
+																	@item.Tag
+																</a>
+															}
+														</td>
+														<td class="center dashboard-list-cmd-container">
+															<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })">
+																<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
+																<div class="dashboard-list-cmd-label">Design</div>
+															</a>
+															<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })">
+																<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
+																<div class="dashboard-list-cmd-label">View</div>
+															</a>
+															<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
+																<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
+																<div class="dashboard-list-cmd-label">Edit</div>
+															</a>
+															<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
+																<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
+																<div class="dashboard-list-cmd-label">Delete</div>
+															</a>
+														</td>
+													</tr>
+												}
+											</tbody>
+										</table>
 									</div>
-									}
 								</ContentTemplate>
 							</AccordionItem>
 
 						}
-
 					</AccordionItems>
-				</MatAccordion>
-
+				</EjsAccordion>
 			</div>
-		</div>*@
+
+		}
 
 
-		<div class="table-responsive dashoboard-list-table">
-			<table class="table table-striped table-bordered table-hover">
-				<thead>
-					<tr>
-						<th width="1%" class="nowrap center"></th>
-						<th width="5%" class="nowrap center">Group</th>
-						<th>Name</th>
-						<th width="5%" class="nowrap center">Published</th>
-						<th width="5%" class="nowrap center">Tag</th>
-						<th width="30%" class="nowrap center"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var item in Vm.DataList)
-					{
-						rowIndex++;
+		@if (!IsAccordionMode)
+		{
+			<div class=" dashoboard-list-simple">
+				<div class="table-responsive dashoboard-list-table">
+					<table class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th width="1%" class="nowrap center"></th>
+								<th width="5%" class="nowrap center">Group</th>
+								<th>Name</th>
+								<th width="5%" class="nowrap center">Published</th>
+								<th width="5%" class="nowrap center">Tag</th>
+								<th width="30%" class="nowrap center"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in Vm.DataList)
+							{
+								rowIndex++;
 
-						<tr @key="item.Id">
-							<td class="center nowrap">@rowIndex</td>
-							<td class="center">@item.Group</td>
-							<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>
-							<td class="center">
-								<div class="form-check">
-									<input type="checkbox" class="form-check-input" checked="@item.Published" disabled>
-								</div>
-							</td>
-							<td class="dashboard-list-tag center">
-								@if (!string.IsNullOrWhiteSpace(item.Tag))
-								{
-									<a class="badge badge-secondary" @onclick="@(async e => { await OpenTagLink(item); })">
-										@item.Tag
-									</a>
-								}
-							</td>
-							<td class="center dashboard-list-cmd-container">
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })">
-									<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
-									<div class="dashboard-list-cmd-label">Design</div>
-								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })">
-									<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
-									<div class="dashboard-list-cmd-label">View</div>
-								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
-									<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
-									<div class="dashboard-list-cmd-label">Edit</div>
-								</a>
-								<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
-									<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
-									<div class="dashboard-list-cmd-label">Delete</div>
-								</a>
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
-
+								<tr @key="item.Id">
+									<td class="center nowrap">@rowIndex</td>
+									<td class="center">@item.Group</td>
+									<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>
+									<td class="center">
+										<div class="form-check">
+											<input type="checkbox" class="form-check-input" checked="@item.Published" disabled>
+										</div>
+									</td>
+									<td class="dashboard-list-tag center">
+										@if (!string.IsNullOrWhiteSpace(item.Tag))
+										{
+											<a class="badge badge-secondary" @onclick="@(async e => { await OpenTagLink(item); })">
+												@item.Tag
+											</a>
+										}
+									</td>
+									<td class="center dashboard-list-cmd-container">
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, false); })">
+											<MatIcon Icon="@MatIconNames.Layers"></MatIcon>
+											<div class="dashboard-list-cmd-label">Design</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.SelectDashboardAsync(item, true); })">
+											<MatIcon Icon="@MatIconNames.Open_in_new"></MatIcon>
+											<div class="dashboard-list-cmd-label">View</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
+											<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
+											<div class="dashboard-list-cmd-label">Edit</div>
+										</a>
+										<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
+											<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
+											<div class="dashboard-list-cmd-label">Delete</div>
+										</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		}
 
 	}
 
@@ -299,6 +334,8 @@
 
 	private bool ImportDashboardAsNew = true;
 
+	private bool IsAccordionMode = true;
+
 	private LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
 	PropertyGrid _propGrid;
@@ -368,6 +405,22 @@
 	private async Task OpenTagLink(DashboardData item)
 	{
 		await OnSelectTag.InvokeAsync(item.Tag);
+	}
+
+	private async Task CollapseAll()
+	{
+		for (var i = 0; i < Accordion.Items.Count; i++)
+		{
+			await Accordion.ExpandItem(false, i);
+		}
+	}
+
+	private async Task ExpandAll()
+	{
+		for (var i = 0; i < Accordion.Items.Count; i++)
+		{
+			await Accordion.ExpandItem(true, i);
+		}
 	}
 
 }

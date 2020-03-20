@@ -1,42 +1,10 @@
 ﻿
-.dashoboard-list-container {
-	.dashboard-list-header {
-		.dashboard-list-header-filter {
-			.dashoboard-list-search {
-				button {
-					display: inherit;
-				}
-
-				span {
-					/*display: none;*/
-					padding: 0px 10px 0px 9px;
-					letter-spacing: 2px;
-				}
-			}
-		}
-
-		.dashboard-list-header-actions {
-			text-align: right;
-
-
-
-			a {
-				cursor: pointer;
-				opacity: 0.5;
-				transition: 0.5s;
-
-				&:hover {
-					opacity: 1;
-					transition: 0.5s;
-				}
-			}
-
-			.dashboard-list-header-cmd-label {
-			}
-		}
-	}
-
+@mixin db-list-table {
 	.dashoboard-list-table {
+
+		table {
+			margin-bottom: 0px !important;
+		}
 
 		.dashboard-list-name {
 			cursor: pointer;
@@ -66,6 +34,96 @@
 
 		.dashboard-list-cmd-delete {
 			color: red !important;
+		}
+	}
+}
+
+.dashoboard-list-simple {
+	@include db-list-table
+}
+
+.dashoboard-list-accordion {
+	.dashoboard-list-accordion-item {
+		padding: 5px;
+		margin: 2px 0px;
+
+		.e-acrdn-content {
+			padding: 0px !important;
+		}
+
+		@include db-list-table;
+
+		.dashboard-list-tag a {
+			padding: 4px;
+			font-weight: 400;
+		}
+	}
+
+	.dashoboard-list-group-header {
+		display: flex;
+
+		i {
+			margin-top: 9px;
+			height: 26px;
+		}
+
+		span {
+			padding: 5px;
+		}
+	}
+
+	.e-toggle-icon {
+		top: 6px !important;
+	}
+}
+
+.dashoboard-list-container {
+	.dashboard-list-header {
+		.dashboard-list-header-filter {
+			.dashoboard-list-search {
+				button {
+					display: inherit;
+				}
+
+				span {
+					/*display: none;*/
+					padding: 0px 10px 0px 9px;
+					letter-spacing: 2px;
+				}
+			}
+
+			.dashboard-list-header-accordion-cmd {
+				a {
+					font-size: 10px;
+					letter-spacing: 1.5px;
+					cursor: pointer;
+					opacity: 0.5;
+					transition: 0.5s;
+				}
+
+				a:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+		}
+
+		.dashboard-list-header-actions {
+			text-align: right;
+
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.dashboard-list-header-cmd-label {
+			}
 		}
 	}
 }

@@ -64,7 +64,13 @@ namespace Orions.Systems.CrossModules.Components
 			var result = new Dictionary<string, List<DashboardData>>();
 			if (DataList == null || !DataList.Any()) return result;
 
-			return DataList.GroupBy(x => x.Group).ToDictionary(gdc => gdc.Key ?? "Default", gdc => gdc?.ToList() ?? new List<DashboardData>());
+			//DataList.Where(w => string.IsNullOrWhiteSpace(w.Group)).ToList().ForEach(s => s.Group = "Default");
+
+			result =  DataList.GroupBy(x => x.DefaultGroup).ToDictionary(gdc => gdc.Key, gdc => gdc?.ToList() ?? new List<DashboardData>());
+
+			IsLoadedDataResult = true;
+
+			return result;
 		}
 
 		public async Task LoadDashboarList(string filter = null)
