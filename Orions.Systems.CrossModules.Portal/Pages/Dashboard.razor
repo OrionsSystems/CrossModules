@@ -1,18 +1,28 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
-@page "/dashboard"
+@page "/dashboards"
 @page "/dashboard/{tag}"
+@page "/dashboard/{DashboadId}/Id"
 
 @using Orions.Infrastructure.HyperMedia
+@using Microsoft.AspNetCore.WebUtilities
 @using Orions.Node.Common
 @using Orions.Common
 
 @inherits PortalBaseComponent
 
-@inject IMatToaster Toaster
+@inject NavigationManager navManager
+
+@if (IsDashboardListMode)
+{
+	<DashboardList HyperStore="@HyperStore"
+						OnSelectTag="OnSelectTag"
+						OnSelectDesign="OnSelectDesignDashboard"
+						OnSelectView="OnSelectViewDashboard">
+	</DashboardList>
+}
 
 @if (IsTagMode)
 {
-
 	@if (TaggedDashboardList.Any())
 	{
 		<div class="row">
@@ -40,70 +50,126 @@
 	}
 
 }
-else
+
+@if (IsDashboadMode)
 {
-	@if (isDashboardSelected)
+	@if (Data != null)
 	{
 		<DashboardLayout HyperStore="@HyperStore"
 							  Data="@Data"
 							  EnableBetweenBox="true"
 							  IsPreviewMode="@isShowViewDashboard"
 							  DisableModeOption="false"
-							  OnBackToList="ShowDashboardList">
+							  OnChangeMode="OnChangeMode"
+							  OnBackToList="OnBackToList">
 		</DashboardLayout>
 	}
 	else
 	{
-		<DashboardList HyperStore="@HyperStore" OnSelectDesign="OnSelectDesignDashboard" OnSelectView="OnSelectViewDashboard"></DashboardList>
+		<Loader></Loader>
 	}
 }
 
 
 @code{
 
-	private bool isDashboardSelected;
 	private bool isShowViewDashboard;
 	private bool isLoadedTaggedDashboard;
+
 	private DashboardData Data { get; set; }
 
-	DashboardLayout _tagedDashboard;
+	private bool IsTagMode { get { return string.IsNullOrWhiteSpace(Tag) == false; } }
 
-	private bool IsTagMode { get { return !string.IsNullOrWhiteSpace(Tag); } }
+	private bool IsDashboadMode { get { return string.IsNullOrWhiteSpace(DashboadId) == false; } }
+
+	private bool IsDashboardListMode { get { return (string.IsNullOrWhiteSpace(Tag) && string.IsNullOrWhiteSpace(DashboadId)); } }
 
 	private List<DashboardData> TaggedDashboardList { get; set; } = new List<DashboardData>();
 
 	[Parameter]
 	public string Tag { get; set; }
 
+	[Parameter]
+	public string DashboadId { get; set; }
+
+	private string Mode { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		var uri = navManager.ToAbsoluteUri(navManager.Uri);
+
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("mode", out var param))
+		{
+			Mode = param.First();
+
+			if (!string.IsNullOrWhiteSpace(Mode) && Mode == "view") {
+				isShowViewDashboard = true;
+			}
+		}
 
 		if (IsTagMode && HyperStore != null)
 		{
 			await LoadTaggedDashboards(Tag);
 		}
+
+		if (IsDashboadMode && HyperStore != null)
+		{
+			await LoadDashboard(DashboadId);
+		}
 	}
 
-	private void ShowDashboardList()
+	private void OnChangeMode(bool isPreviewMode)
 	{
-		Data = null;
-		isDashboardSelected = false;
+		isShowViewDashboard = isPreviewMode;
+
+		var query = new Dictionary<string, string> { { "mode", isPreviewMode ? "view": "design" } };
+		var url = $"{navManager.BaseUri}dashboard/{DashboadId}/Id";
+		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
 	}
 
-	private void OnSelectDesignDashboard(DashboardData data)
+	private void OnBackToList()
 	{
-		Data = data;
+		var url = $"{navManager.BaseUri}dashboards";
+		navManager.NavigateTo(url, true);
+	}
+
+	private void OnSelectTag(string tag)
+	{
+		var url = $"{navManager.BaseUri}dashboard/{tag}";
+		navManager.NavigateTo(url, true);
+	}
+
+	private void OnSelectDesignDashboard(string dashboardId)
+	{
+		var query = new Dictionary<string, string> { { "mode", "design" } };
+		var url = $"{navManager.BaseUri}dashboard/{dashboardId}/Id";
+		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
+
 		isShowViewDashboard = false;
-		isDashboardSelected = true;
 	}
 
-	private void OnSelectViewDashboard(DashboardData data)
+	private void OnSelectViewDashboard(string dashboardId)
 	{
-		Data = data;
-		isShowViewDashboard = true;
-		isDashboardSelected = true;
+		var query = new Dictionary<string, string> { { "mode", "view" } };
+		var url = $"{navManager.BaseUri}dashboard/{dashboardId}/Id";
+		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
 
+		isShowViewDashboard = true;
+	}
+
+	private async Task LoadDashboard(string dashboardId)
+	{
+		var documentId = HyperDocumentId.Create<DashboardData>(dashboardId);
+		var args = new RetrieveHyperDocumentArgs(documentId);
+		var doc = await HyperStore.ExecuteAsync(args);
+
+		if (args.ExecutionResult.IsNotSuccess)
+			return;
+
+		var dashboard = doc?.GetPayload<DashboardData>();
+		Data = dashboard;
 	}
 
 	private async Task LoadTaggedDashboards(string tag)
@@ -130,16 +196,6 @@ else
 		}
 
 		isLoadedTaggedDashboard = true;
-	}
-
-	private void ShowToaster(MatToastType type, string title, string message)
-	{
-		Toaster.Add(message, type, title, "", config =>
-		{
-			config.ShowCloseButton = false;
-			config.ShowProgressBar = false;
-			config.MaximumOpacity = 100;
-		});
 	}
 }
 

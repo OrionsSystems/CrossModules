@@ -47,7 +47,7 @@
 
 			</div>
 			<div class="dashoboard-list-accordion-data">
-				<EjsAccordion @ref="@Accordion" ExpandMode="ExpandMode.Multiple">
+				<MatAccordion  ExpandMode="ExpandMode.Multiple">
 					<AccordionItems>
 						@foreach (var dict in groups)
 						{
@@ -107,7 +107,7 @@
 						}
 
 					</AccordionItems>
-				</EjsAccordion>
+				</MatAccordion>
 
 			</div>
 		</div>*@
@@ -139,10 +139,10 @@
 									<input type="checkbox" class="form-check-input" checked="@item.Published" disabled>
 								</div>
 							</td>
-							<td class="center">
+							<td class="dashboard-list-tag center">
 								@if (!string.IsNullOrWhiteSpace(item.Tag))
 								{
-									<a href="@(MyNavigationManager.Uri + "/" + item.Tag)" class="badge badge-secondary" @onclick="@(e => { OpenTagLink(item); })">
+									<a class="badge badge-secondary" @onclick="@(async e => { await OpenTagLink(item); })">
 										@item.Tag
 									</a>
 								}
@@ -170,6 +170,8 @@
 				</tbody>
 			</table>
 		</div>
+
+
 	}
 
 	@if (!Vm.IsLoadedDataResult)
@@ -318,18 +320,28 @@
 	}
 
 	[Parameter]
-	public EventCallback<DashboardData> OnSelectDesign
+	public string Filter
+	{
+		get => Vm.SearchInput;
+		set => Vm.SearchInput = value;
+	}
+
+	[Parameter]
+	public EventCallback<string> OnSelectDesign
 	{
 		get => Vm.OnSelectDesign;
 		set => Vm.OnSelectDesign = value;
 	}
 
 	[Parameter]
-	public EventCallback<DashboardData> OnSelectView
+	public EventCallback<string> OnSelectView
 	{
 		get => Vm.OnSelectView;
 		set => Vm.OnSelectView = value;
 	}
+
+	[Parameter]
+	public EventCallback<string> OnSelectTag { get; set; }
 
 	protected override async Task OnParametersSetAsync()
 	{
@@ -353,10 +365,9 @@
 		}
 	}
 
-	private void OpenTagLink(DashboardData item)
+	private async Task OpenTagLink(DashboardData item)
 	{
-		var url = MyNavigationManager.Uri + "/" + item.Tag;
-		MyNavigationManager.NavigateTo(url, true);
+		await OnSelectTag.InvokeAsync(item.Tag);
 	}
 
 }

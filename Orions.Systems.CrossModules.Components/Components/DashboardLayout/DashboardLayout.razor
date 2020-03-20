@@ -615,6 +615,9 @@
 	public EventCallback OnBackToList { get; set; }
 
 	[Parameter]
+	public EventCallback<bool> OnChangeMode { get; set; }
+
+	[Parameter]
 	public IHyperArgsSink HyperStore { get { return Vm.HyperStore; } set { Vm.HyperStore = value; } }
 
 	protected override async Task OnInitializedAsync()
@@ -647,9 +650,9 @@
 		});
 	}
 
-	private void ChangeMode(bool value)
+	private async Task ChangeMode(bool value)
 	{
-		IsPreviewMode = value;
+		await OnChangeMode.InvokeAsync(value);
 	}
 
 	private async Task SaveDashboardChanges()
