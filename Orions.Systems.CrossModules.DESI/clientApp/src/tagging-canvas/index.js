@@ -291,9 +291,11 @@ class TagVisual extends BaseVisual {
 }
 
 
-
-// Only executed our code once the DOM is ready.
-window.setupTagginhSurface = function () {
+window.setupTaggingSurface = function (componentRef, componentId) {
+	let frameImg = document.querySelector(`#${componentId} .frame-img`);
+	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
+	canvas.width = frameImg.width;
+	canvas.height = frameImg.height;
 
 	// Create a simple drawing tool:
 	var tool = new paper.Tool();
@@ -350,11 +352,7 @@ window.setupTagginhSurface = function () {
 			items[i].clearElements();
 		}
 
-
 		mouseDownAt = event.point;
-
-		// Add the mouse down position:
-		//path.add(event.point);
 
 		rect = new paper.Rectangle(mouseDownAt, mouseDownAt);
 		path = new paper.Path.Rectangle(rect);
@@ -379,6 +377,19 @@ window.setupTagginhSurface = function () {
 		var visual = new TagVisual();
 		visual.create(mouseDownAt, event.point);
 		items.push(visual);
+
+		let getProportionalRectangle = function (visual, canvas) {
+			let width = (visual.get_bottomRight().x - visual.get_topLeft().x) / canvas.width;
+			let height = (visual.get_bottomRight().y - visual.get_topLeft().y) / canvas.height;
+
+			var x = visual.get_topLeft().x / canvas.width;
+			var y = visual.get_topLeft().y / canvas.height;
+
+			return { x, y, width, height };
+		};
+
+		let rect = getProportionalRectangle(visual, canvas);
+		componentRef.invokeMethodAsync("TagAdded", rect);
 
 		mouseDownAt = undefined;
 		path.remove();
@@ -410,9 +421,5 @@ window.setupTagginhSurface = function () {
 		}
 	}
 
-	paper.setup('myCanvas');
-
-	var raster = new paper.Raster('cap1.jpg');
-	raster.position = paper.view.center;
-	raster.scale(1.5, 1.5);
+	paper.setup(canvas);
 }

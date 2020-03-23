@@ -1,1 +1,3 @@
-﻿export * from './src/tagging-canvas'
+﻿window.test = {}
+
+export * from './src/tagging-canvas'

@@ -2,6 +2,7 @@
 @page "/tagging"
 @inherits TaggingPageBase
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
+@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 
 @if(this.Vm != null)
 {
@@ -36,7 +37,7 @@
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
 			<div class="right-column">
-				
+				<TaggingSurface Vm="this.Vm" ImageData="this.DebugImageData" OnTagAdded="this.TagAdded"/>
 			</div>
 		</div>
 	</div>

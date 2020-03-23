@@ -432,7 +432,9 @@ body {
     .tagging-page-container > .bottom-row > .right-column {
       flex: 1;
       background-color: #181818;
-      padding: 20px; }
+      padding: 20px;
+      display: flex;
+      flex-direction: column; }
   .tagging-page-container .tag-preview-control-container {
     display: flex;
     flex-direction: column; }
@@ -473,3 +475,12 @@ body {
         background-color: transparent; }
       .tagging-page-container .tag-preview-control-container .tag-container .edit-button button:hover {
         background-color: #174062; }
+  .tagging-page-container .tagging-surface-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    position: relative; }
+    .tagging-page-container .tagging-surface-container .frame-img {
+      width: 100%; }
+    .tagging-page-container .tagging-surface-container .tagging-canvas {
+      position: absolute; }

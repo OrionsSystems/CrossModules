@@ -1,0 +1,11 @@
+﻿@inherits TaggingSurfaceBase
+@using Orions.Common;
+
+<div class="tagging-surface-container" id="@this.ComponentId">
+	@if(this.ImageData != null)
+	{
+		<img src="@UniImage.ConvertByteArrayToBase64Url(this.ImageData)" class="frame-img"/>
+	}
+	<canvas class="tagging-canvas"> 
+	</canvas>
+</div>

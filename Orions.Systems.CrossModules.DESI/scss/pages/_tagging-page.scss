@@ -87,6 +87,8 @@
 			flex: 1;
 			background-color: #181818;
 			padding: 20px;
+			display:flex;
+			flex-direction:column;
 		}
 	}
 
@@ -158,6 +160,21 @@
 					background-color: #174062;
 				}
 			}
+		}
+	}
+
+	.tagging-surface-container{
+		display:flex;
+		flex:1;
+		flex-direction:column;
+		position:relative;
+		
+		.frame-img{
+			width:100%;
+		}
+
+		.tagging-canvas{
+			position:absolute;
 		}
 	}
 }
