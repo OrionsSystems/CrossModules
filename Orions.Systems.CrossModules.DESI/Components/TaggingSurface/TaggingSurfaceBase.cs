@@ -67,7 +67,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private void InitializeClientJs()
 		{
-			JSRuntime.InvokeVoidAsync("setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
 		}
 	}
 }

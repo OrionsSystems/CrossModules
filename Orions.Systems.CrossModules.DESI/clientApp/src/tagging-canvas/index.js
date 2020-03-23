@@ -1,5 +1,7 @@
 import * as paper from 'paper';
 
+window.Orions.TaggingSurface = {}
+
 const getMethods = (obj) => {
 	let properties = new Set()
 	let currentObj = obj
@@ -291,7 +293,7 @@ class TagVisual extends BaseVisual {
 }
 
 
-window.setupTaggingSurface = function (componentRef, componentId) {
+window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
 	let frameImg = document.querySelector(`#${componentId} .frame-img`);
 	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 	canvas.width = frameImg.width;
