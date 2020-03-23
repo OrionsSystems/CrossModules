@@ -21,4 +21,8 @@
     <PackageReference Include="SkiaSharp" Version="1.68.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="clientApp\src\tagging-canvas\" />
+  </ItemGroup>
+
 </Project>
