@@ -1,258 +1,259 @@
 ﻿@import "../_variables.scss";
 
-.main-container{
+.vizlist-main-container {
     display: flex;
-}
 
-.viz-container {
-    background-color: $colorLightGray;
-    border-radius: $unit1x;
-    overflow: hidden;
-    display: table;
-    box-shadow: 0px 0px $unit1x $unit05x rgba(0,0,0,0.5);
-}
+    .viz-container {
+        background-color: $colorLightGray;
+        border-radius: $unit1x;
+        overflow: hidden;
+        display: table;
+        box-shadow: 0px 0px $unit1x $unit05x rgba(0,0,0,0.5);
+    }
 
-.properties{
-    margin-left: $unit2x;
-}
+    .properties {
+        margin-left: $unit2x;
+    }
 
-.title {
-    height: $unit5x;
-    background-color: $colorLight;
-    font-weight: bold;
-    font-size: $fontSizeLarge;
-    color: $colorDarkBlue;
-    padding: $unit1x;
-    margin-bottom: $unitMin;
-}
+    .title {
+        height: $unit5x;
+        background-color: $colorLight;
+        font-weight: bold;
+        font-size: $fontSizeLarge;
+        color: $colorDarkBlue;
+        padding: $unit1x;
+        margin-bottom: $unitMin;
+    }
 
-.paths {
-    display: grid;
-    grid-template-rows: repeat(auto-fill,auto);
-    grid-gap: $unitMin;
+    .paths {
+        display: grid;
+        grid-template-rows: repeat(auto-fill,auto);
+        grid-gap: $unitMin;
 
-    .path-container {
-        height: $unit3x;
+        .path-container {
+            height: $unit3x;
+            display: flex;
+        }
+
+        .finished {
+            background-color: $colorDarkGray;
+        }
+
+        .current {
+            background-color: $colorGray;
+        }
+    }
+
+    .nodes-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill,auto);
+        grid-gap: $unitMin;
+    }
+
+    .nodes {
+        height: $unit5x;
+        background-color: $colorLight;
+        font-size: $fontSizeMedium;
+        color: $colorDark;
+        padding: $unit1x;
         display: flex;
+
+        img {
+            height: $unit2x;
+            width: $unit2x;
+            margin-right: $unit1x;
+        }
+
+        svg {
+            fill: $colorDark;
+            height: $unit2x;
+            margin-left: auto;
+        }
+
+        .key {
+            height: $unit3x;
+            background-color: $colorAccent;
+            color: $colorLight;
+            font-size: $fontSizeSmall;
+            border-radius: $unit05x;
+            text-align: center;
+            margin-right: $unit1x;
+
+            svg {
+                fill: $colorLight;
+            }
+        }
+
+        .node {
+            width: $unit3x;
+            padding-top: $unit025x;
+        }
+
+        .property {
+            padding: $unit025x;
+        }
     }
 
-    .finished {
-        background-color: $colorDarkGray;
+    .viz-btn {
+        border-style: hidden;
+        text-align: start;
+        align-items: center;
+
+        &:hover {
+            border-style: hidden;
+            outline: none;
+        }
+
+        &:active {
+            border-style: hidden;
+            outline: none;
+        }
+
+        &:focus {
+            border-style: hidden;
+            outline: none;
+        }
     }
 
-    .current {
-        background-color: $colorGray;
-    }
-}
-
-.nodes-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,auto);
-    grid-gap: $unitMin;
-}
-
-.nodes {
-    height: $unit5x;
-    background-color: $colorLight;
-    font-size: $fontSizeMedium;
-    color: $colorDark;
-    padding: $unit1x;
-    display: flex;
-
-    img {
-        height: $unit2x;
-        width: $unit2x;
-        margin-right: $unit1x;
-    }
-
-    svg {
-        fill: $colorDark;
-        height: $unit2x;
-        margin-left: auto;
-    }
-
-    .key {
-        height: $unit3x;
-        background-color: $colorAccent;
+    .action {
+        height: $unit6x;
+        font-size: $fontSizeLarge;
+        font-weight: bold;
         color: $colorLight;
-        font-size: $fontSizeSmall;
-        border-radius: $unit05x;
-        text-align: center;
-        margin-right: $unit1x;
+        padding-left: $unit2x;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+
+        div {
+            height: $unit6x;
+            width: $unit6x;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-left: solid $unitMin $colorGray;
+            margin-left: auto;
+        }
+
+        svg {
+            fill: $colorLight;
+
+            &:hover {
+                color: $colorDark;
+            }
+        }
+
+        &:hover {
+            color: $colorDark;
+        }
+
+        &:disabled {
+            color: $colorGray;
+        }
+    }
+
+    .finish {
+        background-color: $colorGreen;
+    }
+
+    .continue {
+        background-color: $colorDarkBlue;
+    }
+
+    .step {
+        background-color: transparent;
+        font-size: $fontSizeMicro;
+        color: $colorLight;
+        height: $unit3x;
+        padding: 0px $unit05x;
+
+        &:hover {
+            color: $colorAccent;
+            background-color: $colorDarkGray;
+        }
+    }
+
+    .back {
+        background-color: $colorDarkBlue;
+        padding: 0;
 
         svg {
             fill: $colorLight;
         }
     }
 
-    .node {
-        width: $unit3x;
-        padding-top: $unit025x;
-    }
+    .user-input {
 
-    .property {
-        padding: $unit025x;
-    }
-}
+        .container {
+            padding: $unit1x;
+            display: table;
+            background-color: $colorLight;
+            width: 100%;
 
-.viz-btn {
-    border-style: hidden;
-    text-align: start;
-    align-items: center;
+            .border {
+                overflow: hidden;
+                border-radius: $unit1x;
+                border-color: $colorDark;
 
-    &:hover {
-        border-style: hidden;
-        outline: none;
-    }
-
-    &:active {
-        border-style: hidden;
-        outline: none;
-    }
-
-    &:focus {
-        border-style: hidden;
-        outline: none;
-    }
-}
-
-.action {
-    height: $unit6x;
-    font-size: $fontSizeLarge;
-    font-weight: bold;
-    color: $colorLight;
-    padding-left: $unit2x;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-
-    div {
-        height: $unit6x;
-        width: $unit6x;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-left: solid $unitMin $colorGray;
-        margin-left: auto;
-    }
-
-    svg {
-        fill: $colorLight;
-
-        &:hover {
-            color: $colorDark;
-        }
-    }
-
-    &:hover {
-        color: $colorDark;
-    }
-
-    &:disabled {
-        color: $colorGray;
-    }
-}
-
-.finish {
-    background-color: $colorGreen;
-}
-
-.continue {
-    background-color: $colorDarkBlue;
-}
-
-.step {
-    background-color: transparent;
-    font-size: $fontSizeMicro;
-    color: $colorLight;
-    height: $unit3x;
-    padding: 0px $unit05x;
-
-    &:hover {
-        color: $colorAccent;
-        background-color: $colorDarkGray;
-    }
-}
-.back {
-    background-color: $colorDarkBlue;
-    padding: 0;
-
-    svg {
-        fill: $colorLight;
-    }
-}
-
-.user-input {
-
-    .container {
-        padding: $unit1x;
-        display: table;
-        background-color: $colorLight;
-        width: 100%;
-
-        .border {
-            overflow: hidden;
-            border-radius: $unit1x;
-            border-color: $colorDark;
-
-            .action-text {
-                height: $unit6x;
-                width: 100%;
-                color: $colorDark;
-                font-size: $fontSizeMedium;
-                font-weight: bold;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .confirmation {
-                height: $unit6x;
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                grid-gap: $unitMin;
-
-                button {
-                    text-align: center;
+                .action-text {
+                    height: $unit6x;
+                    width: 100%;
+                    color: $colorDark;
+                    font-size: $fontSizeMedium;
+                    font-weight: bold;
                     display: flex;
                     justify-content: center;
                     align-items: center;
-                    padding: 0px;
+                }
 
-                    &:hover {
-                        color: $colorDark;
+                .confirmation {
+                    height: $unit6x;
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-gap: $unitMin;
+
+                    button {
+                        text-align: center;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        padding: 0px;
+
+                        &:hover {
+                            color: $colorDark;
+                        }
+                    }
+
+                    .selected {
+                        background-color: $colorGreen;
+                        color: $colorLight;
+                    }
+
+                    .deselected {
+                        background-color: $colorDarkBlue;
+                        color: $colorDarkGray;
                     }
                 }
 
-                .selected {
-                    background-color: $colorGreen;
-                    color: $colorLight;
-                }
+                input {
+                    background-color: $colorLightGray;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: $unit1x;
+                    color: $colorDarkBlue;
+                    font-size: $fontSizeXLarge;
+                    border-width: $unit025x;
+                    border-style: solid;
+                    border-color: transparent;
+                    border-radius: $unit1x;
+                    text-align: center;
+                    border-radius: $unit1x;
 
-                .deselected {
-                    background-color: $colorDarkBlue;
-                    color: $colorDarkGray;
-                }
-            }
-
-            input {
-                background-color: $colorLightGray;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                padding: $unit1x;
-                color: $colorDarkBlue;
-                font-size: $fontSizeXLarge;
-                border-width: $unit025x;
-                border-style: solid;
-                border-color: transparent;
-                border-radius: $unit1x;
-                text-align: center;
-                border-radius: $unit1x;
-
-                &:focus {
-                    outline: none;
-                    border-color: cornflowerblue;
+                    &:focus {
+                        outline: none;
+                        border-color: cornflowerblue;
+                    }
                 }
             }
         }

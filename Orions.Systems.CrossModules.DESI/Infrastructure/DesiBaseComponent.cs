@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using Orions.Systems.Desi.Core.ViewModels;
+using Orions.Systems.Desi.Common.General;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -43,13 +44,30 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		{
 		}
 
+		protected override void OnAfterRender(bool firstRender)
+		{
+			base.OnAfterRender(firstRender);
+		}
+
 
 		// This method adds StateHasChanged method call to every event fired on any Vm property that implements either INotifyPropertyChanged or
 		// INotifyCollectionChanged interface
 		private void AddVmDataPropertyChangedHandlers(object vm)
 		{
 			PropertyChangedEventHandler propChangedHandler = (s, e) => {
-				
+				if(e != null && e.PropertyName != null)
+				{
+					var prop = s.GetType().GetProperty(e.PropertyName);
+					if (prop != null)
+					{
+						var suppressUiUpdateAttr = prop.GetCustomAttributes(typeof(SuppressUiUpdate), true);
+						if (suppressUiUpdateAttr.Any(a => (a as SuppressUiUpdate).AppType == "BlazorDesi"))
+						{
+							return;
+						}
+					};
+				}
+
 				if(e?.PropertyName != null)
 				{
 					var newPropValue = s.GetType().GetProperty(e.PropertyName)?.GetValue(s);

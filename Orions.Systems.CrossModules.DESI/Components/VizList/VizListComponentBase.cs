@@ -14,6 +14,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		private IDisposable _userActionStartedSub;
 
 		[Parameter]
+		public string CssClass { get; set; }
+
+		[Parameter]
 		public TagonomyExecutionData Data
 		{
 			get => _data;
@@ -32,18 +35,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		}
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
-		[Parameter]
-		public ITagonomyExecutionController Controller { get; set; }
 
-		protected void SelectTagonomyNode(TagonomyNodeModel tagonomyNodeModel) => Controller.Dispatch(SelectTagonomyNodeAction.Create(tagonomyNodeModel));
-		protected void FinishTagonomyExecution() => Controller.Dispatch(FinishTagonomyExecutionAction.Create());
-		protected void StepBack() => Controller.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.StepBack));
-		protected void GoToStep(TagonomyExecutionStep tagonomyExecutionStep) => Controller.Dispatch(GoToStepTagonomyAction.Create(tagonomyExecutionStep));
-		protected void FinishCurrentPath() => Controller.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.FinishCurrentPath));
-		protected void SkipCurrentPath() => Controller.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.SkipCurrentPath));
-		protected void SelectTagonomyProperty(TagonomyPropertyModel tagonomyPropertyModel) => Controller.Dispatch(SelectTagonomyPropertyAction.Create(tagonomyPropertyModel));
-		protected void FinishInputAction(string value) => Controller.Dispatch(FinishTagonomyInputAction.Create(value));
-		protected void FinishInputAction(bool value) => Controller.Dispatch(FinishTagonomyConfirmationAction.Create(value));
+		protected void SelectTagonomyNode(TagonomyNodeModel tagonomyNodeModel) => ActionDispatcher.Dispatch(SelectTagonomyNodeAction.Create(tagonomyNodeModel));
+		protected void FinishTagonomyExecution() => ActionDispatcher.Dispatch(FinishTagonomyExecutionAction.Create());
+		protected void StepBack() => ActionDispatcher.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.StepBack));
+		protected void GoToStep(TagonomyExecutionStep tagonomyExecutionStep) => ActionDispatcher.Dispatch(GoToStepTagonomyAction.Create(tagonomyExecutionStep));
+		protected void FinishCurrentPath() => ActionDispatcher.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.FinishCurrentPath));
+		protected void SkipCurrentPath() => ActionDispatcher.Dispatch(TagonomyPathAction.Create(TagonomyPathAction.Actions.SkipCurrentPath));
+		protected void SelectTagonomyProperty(TagonomyPropertyModel tagonomyPropertyModel) => ActionDispatcher.Dispatch(SelectTagonomyPropertyAction.Create(tagonomyPropertyModel));
+		protected void FinishInputAction(string value) => ActionDispatcher.Dispatch(FinishTagonomyInputAction.Create(value));
+		protected void FinishInputAction(bool value) => ActionDispatcher.Dispatch(FinishTagonomyConfirmationAction.Create(value));
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls

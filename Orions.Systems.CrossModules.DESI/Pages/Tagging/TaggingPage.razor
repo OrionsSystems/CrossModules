@@ -3,12 +3,14 @@
 @inherits TaggingPageBase
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
+@using Orions.Systems.CrossModules.Desi.Components.VizList;
+@using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 
 @if(this.Vm != null)
 {
 	<div class="tagging-page-container">
 		<div class="mission-title">
-			@(this.Vm.CurrentTask != null ? this.Vm.CurrentTask.ExecutionTimeLeft.ToString() : " ")
+			@*@(this.Vm.CurrentTask != null ? this.Vm.CurrentTask.ExecutionTimeLeft.ToString() : " ")*@
 		</div>
 		<div class="bottom-row">
 			<div class="left-column">
@@ -37,9 +39,25 @@
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
 			<div class="right-column">
-				<TaggingSurface Vm="this.Vm" ImageData="this.DebugImageData" OnTagAdded="this.TagAdded"/>
+				<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
+				
+				</TaskNavigationWidget>
+
+				<TaggingSurface Vm="this.Vm" ImageData="this.SurfaceImageData" OnTagAdded="this.TagAdded" />
+				@if (this.Vm.TagonomyExecutionData != null)
+				{
+					<VizListComponent Data="this.Vm.TagonomyExecutionData"
+									  ActionDispatcher="this._taggingSystem.ActionDispatcher"
+									  CssClass="vizlist-positioned">
+					</VizListComponent>
+				}
 			</div>
 		</div>
 	</div>
 }
 
+<style>
+	.vizlist-positioned{
+		position:absolute;
+	}
+</style>

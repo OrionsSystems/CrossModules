@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
 	{
-		private TaggingSystem _taggingSystem;
+		protected TaggingSystem _taggingSystem;
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -51,25 +51,32 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		}
 
 		// debug
-		public byte[] DebugImageData { get; set; }
+		public byte[] SurfaceImageData { get; set; }
 
 		public async Task GetDebugImage()
 		{
-			var hyperId = HyperId.Parse("/45612d57-b029-472a-ebbc-b30564c9d708;unified.ods/1-Video+H264/948/0/");
-			var netstoreProvider = DependencyResolver.GetNetStoreProvider();
-			var netStore = netstoreProvider.CurrentNetStore;
-
-			var args = new RetrieveFragmentFramesArgs
+			this.Vm.PropertyChanged += (s1, e1) =>
 			{
-				AssetId = hyperId.AssetId.Value,
-				TrackId = hyperId.TrackId.Value,
-				FragmentId = hyperId.FragmentId.Value,
-				SliceIds = new[] { hyperId.SliceId.Value },
-				//ImageQuality = imageQuality.GetValueOrDefault()
-			};
-			var sliceResult = await netStore.ExecuteAsyncThrows(args);
+				if (Vm.CurrentTask != null && SurfaceImageData == null)
+				{
+					var netstoreProvider = DependencyResolver.GetNetStoreProvider();
+					var netStore = netstoreProvider.CurrentNetStore;
+					var hyperId = this.Vm.CurrentTask.HyperId;
 
-			DebugImageData = sliceResult[0].Image.Data;
+					var args = new RetrieveFragmentFramesArgs
+					{
+						AssetId = hyperId.AssetId.Value,
+						TrackId = hyperId.TrackId.Value,
+						FragmentId = hyperId.FragmentId.Value,
+						SliceIds = new[] { hyperId.SliceId.Value }
+					};
+					netStore.ExecuteAsyncThrows(args).ContinueWith(t =>
+					{
+						SurfaceImageData = t.Result[0].Image.Data;
+					});
+
+				}
+			};
 		}
 
 		public void TagAdded(Components.TaggingSurface.Model.Rectangle rectangle)
@@ -79,7 +86,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
 
 			var tagsGeometry = new TagGeometry(rectF, ShapeType.Rectangle);
-			var currentPosition = HyperId.Parse("/45612d57-b029-472a-ebbc-b30564c9d708;unified.ods/1-Video+H264/948/0/");
+			var currentPosition = Vm.CurrentTask.HyperId;
 			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition));
 		}
 	}
