@@ -31,11 +31,7 @@
 
 		if (_payload != null)
 		{
-			await JSRuntime.InvokeAsync<object>(
-		"Orions.Player.setSrc",
-		_payload
-	);
+			await JSRuntime.InvokeAsync<object>("Orions.Player.setSrc", _payload);
 		}
-
 	}
 }

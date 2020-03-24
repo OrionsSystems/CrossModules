@@ -1,6 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
+using NReco.VideoConverter;
 
 using Orions.Infrastructure.HyperMedia;
 using Orions.Infrastructure.Media.Codecs.H264;
@@ -28,7 +31,25 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			var fragmentArgs = new RetrieveFragmentArgs(asset.Id, asset.DefaultVideoTrack.Id, asset.DefaultVideoTrack.CurrentFragmentsArray[0].Id, true);
 			var fragment1 = await _store.ExecuteAsync(fragmentArgs);
 			var codecInfo = asset.DefaultVideoTrack.MetaData.Default.GetString(HyperTrackId.VideoCodecPrivateDataFieldName);
-			_payload = fragment1.SlicesArray.SelectMany((x, i) => i == 0 ? H264Utilities.H264AddCodecDataToPayload(x.Data, codecInfo) : x.Data).ToArray();
+
+			var h264Payload = fragment1.SlicesArray.SelectMany((x, i) => i == 0 ? H264Utilities.H264AddCodecDataToPayload(x.Data, codecInfo) : x.Data).ToArray();
+
+			var inputStream = new MemoryStream(h264Payload);
+
+			var ffmpegConverter = new FFMpegConverter();
+			var outputStream = new MemoryStream();
+			var settings = new ConvertSettings
+			{
+				//CustomOutputArgs = "-c copy -f ismv"
+				CustomOutputArgs = "-c copy -movflags frag_keyframe+empty_moov -f mp4",
+				CustomInputArgs = "-framerate 30"
+			};
+			var task = ffmpegConverter.ConvertLiveMedia(inputStream, null, outputStream, null, settings);
+			task.Start();
+			await Task.Run(() => task.Wait());
+			_payload = outputStream.ToArray();
+
+			//File.WriteAllBytes("C://test.mp4", _payload);
 		}
 	}
 }
