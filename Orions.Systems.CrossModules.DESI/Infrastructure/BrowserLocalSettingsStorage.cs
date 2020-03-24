@@ -1,12 +1,10 @@
 ﻿using Blazored.LocalStorage;
-using Microsoft.JSInterop;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using static Orions.Desi.Forms.Core.Services.SettingsStorage;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -115,6 +113,66 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			}
 
 			await _localStorageService.SetItemAsync("desiSettings", settingsDto);
+		}
+
+		public class AppSettingsDto
+		{
+			public int Id { get; set; }
+			public string Token { get; set; }
+			public bool IsStaySigned { get; set; }
+			public bool IsDevModeEnabled { get; set; }
+			public bool TaggingDisplayCrosshair { get; set; }
+			public IList<HyperNodeAuthenticationDataDto> CustomNodes { get; } = new List<HyperNodeAuthenticationDataDto>();
+			public HyperNodeAuthenticationDataDto HyperNodeAuthenticationData { get; set; }
+			public HyperDomainAuthenticationDataDto HyperDomainAuthenticationData { get; set; }
+		}
+
+		public class HyperNodeAuthenticationDataDto
+		{
+			public string Id { get; set; }
+			public string Alias { get; set; }
+			public string ConnectionString { get; set; }
+
+			public HyperNodeAuthenticationInfo CreateModel()
+			{
+				return new HyperNodeAuthenticationInfo(ConnectionString, Alias, Id);
+			}
+
+			public void UpdateFromModel(HyperNodeAuthenticationInfo model)
+			{
+				Alias = model.Alias;
+				ConnectionString = model.ConnectionString;
+			}
+
+			public static HyperNodeAuthenticationDataDto CreateFromModel(HyperNodeAuthenticationInfo model)
+			{
+				return new HyperNodeAuthenticationDataDto
+				{
+					ConnectionString = model.Alias,
+					Alias = model.Alias,
+					Id = model.Id
+				};
+			}
+		}
+
+		public class HyperDomainAuthenticationDataDto
+		{
+			public string Username { get; set; }
+			public string Password { get; set; }
+
+			public HyperDomainAuthenticationInfo CreateModel()
+			{
+				return new HyperDomainAuthenticationInfo(Username, new Password(Password));
+			}
+
+			public static HyperDomainAuthenticationDataDto CreateFromModel(HyperDomainAuthenticationInfo model)
+			{
+				return new HyperDomainAuthenticationDataDto
+				{
+					Username = model.Username,
+					Password = model.Password.Value
+				};
+			}
 		}
 	}
 }

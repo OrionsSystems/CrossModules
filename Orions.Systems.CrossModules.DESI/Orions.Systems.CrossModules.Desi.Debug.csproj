@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orions.Systems.Node\Deployment\PlatformSDKs\Orions.Node.NetStandard\Project\Orions.Node.NetStandard.csproj" />
-    <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Desi.Forms.Core\Orions.Desi.Forms.Core.Debug.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Common\Orions.Systems.Desi.Common.Debug.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Core\Orions.Systems.Desi.Core.Debug.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Common\Orions.Common\Orions.Common.NetStandard.csproj" />
