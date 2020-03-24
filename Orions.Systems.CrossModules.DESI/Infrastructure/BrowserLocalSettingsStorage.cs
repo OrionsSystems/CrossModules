@@ -148,7 +148,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			{
 				return new HyperNodeAuthenticationDataDto
 				{
-					ConnectionString = model.Alias,
+					ConnectionString = model.ConnectionString,
 					Alias = model.Alias,
 					Id = model.Id
 				};

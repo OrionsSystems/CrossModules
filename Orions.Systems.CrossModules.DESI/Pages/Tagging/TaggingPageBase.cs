@@ -36,7 +36,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				navigationService,
 				DependencyResolver.GetDialogService(),
 				DependencyResolver.GetImageService(),
-				DependencyResolver.GetTagFactory(),
 				DependencyResolver.GetFrameCacheService(),
 				DependencyResolver.GetClipboardService(),
 				DependencyResolver.GetNetStoreProvider(),
@@ -81,7 +80,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			var tagsGeometry = new TagGeometry(rectF, ShapeType.Rectangle);
 			var currentPosition = HyperId.Parse("/45612d57-b029-472a-ebbc-b30564c9d708;unified.ods/1-Video+H264/948/0/");
-			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition, null));
+			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition));
 		}
 	}
 }
