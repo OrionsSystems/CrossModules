@@ -25,13 +25,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 		}
 
 		[Parameter]
-		public ITaskExploitationController Controller { get; set; }
-		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
-		protected void GoToNextTask() => Controller.Dispatch(GoToNextTaskAction.Create());
-		protected void GoToPrevTask() => Controller.Dispatch(GoToPreviousTaskAction.Create());
-		protected void SetCurrentTask(TaskModel task) => Controller.Dispatch(SetCurrentTaskAction.Create(task));
+		protected void GoToNextTask() => ActionDispatcher.Dispatch(GoToNextTaskAction.Create());
+		protected void GoToPrevTask() => ActionDispatcher.Dispatch(GoToPreviousTaskAction.Create());
+		protected void SetCurrentTask(TaskModel task) => ActionDispatcher.Dispatch(SetCurrentTaskAction.Create(task));
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls

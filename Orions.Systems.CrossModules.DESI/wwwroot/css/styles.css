@@ -1612,192 +1612,179 @@ video::-webkit-media-text-track-display {
   outline: none;
   background: none; }
 
-.main-container {
+.vizlist-main-container {
   display: flex; }
-
-.viz-container {
-  background-color: #DEDEDE;
-  border-radius: 8px;
-  overflow: hidden;
-  display: table;
-  box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.5); }
-
-.properties {
-  margin-left: 16px; }
-
-.title {
-  height: 40px;
-  background-color: #F5F5F5;
-  font-weight: bold;
-  font-size: 18px;
-  color: #4D5F87;
-  padding: 8px;
-  margin-bottom: 1px; }
-
-.paths {
-  display: grid;
-  grid-template-rows: repeat(auto-fill, auto);
-  grid-gap: 1px; }
-  .paths .path-container {
-    height: 24px;
-    display: flex; }
-  .paths .finished {
-    background-color: #525252; }
-  .paths .current {
-    background-color: #787878; }
-
-.nodes-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, auto);
-  grid-gap: 1px; }
-
-.nodes {
-  height: 40px;
-  background-color: #F5F5F5;
-  font-size: 16px;
-  color: #181818;
-  padding: 8px;
-  display: flex; }
-  .nodes img {
-    height: 16px;
-    width: 16px;
-    margin-right: 8px; }
-  .nodes svg {
-    fill: #181818;
-    height: 16px;
-    margin-left: auto; }
-  .nodes .key {
-    height: 24px;
-    background-color: #FE8D63;
-    color: #F5F5F5;
-    font-size: 14px;
-    border-radius: 4px;
-    text-align: center;
-    margin-right: 8px; }
-    .nodes .key svg {
-      fill: #F5F5F5; }
-  .nodes .node {
-    width: 24px;
-    padding-top: 2px; }
-  .nodes .property {
-    padding: 2px; }
-
-.viz-btn {
-  border-style: hidden;
-  text-align: start;
-  align-items: center; }
-  .viz-btn:hover {
-    border-style: hidden;
-    outline: none; }
-  .viz-btn:active {
-    border-style: hidden;
-    outline: none; }
-  .viz-btn:focus {
-    border-style: hidden;
-    outline: none; }
-
-.action {
-  height: 48px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #F5F5F5;
-  padding-left: 16px;
-  width: 100%;
-  display: flex;
-  flex-direction: row; }
-  .action div {
-    height: 48px;
-    width: 48px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-left: solid 1px #787878;
-    margin-left: auto; }
-  .action svg {
-    fill: #F5F5F5; }
-    .action svg:hover {
-      color: #181818; }
-  .action:hover {
-    color: #181818; }
-  .action:disabled {
-    color: #787878; }
-
-.finish {
-  background-color: #76B356; }
-
-.continue {
-  background-color: #4D5F87; }
-
-.step {
-  background-color: transparent;
-  font-size: 12px;
-  color: #F5F5F5;
-  height: 24px;
-  padding: 0px 4px; }
-  .step:hover {
-    color: #FE8D63;
-    background-color: #525252; }
-
-.back {
-  background-color: #4D5F87;
-  padding: 0; }
-  .back svg {
-    fill: #F5F5F5; }
-
-.user-input .container {
-  padding: 8px;
-  display: table;
-  background-color: #F5F5F5;
-  width: 100%; }
-  .user-input .container .border {
-    overflow: hidden;
+  .vizlist-main-container .viz-container {
+    background-color: #DEDEDE;
     border-radius: 8px;
-    border-color: #181818; }
-    .user-input .container .border .action-text {
+    overflow: hidden;
+    display: table;
+    box-shadow: 0px 0px 8px 4px rgba(0, 0, 0, 0.5); }
+  .vizlist-main-container .properties {
+    margin-left: 16px; }
+  .vizlist-main-container .title {
+    height: 40px;
+    background-color: #F5F5F5;
+    font-weight: bold;
+    font-size: 18px;
+    color: #4D5F87;
+    padding: 8px;
+    margin-bottom: 1px; }
+  .vizlist-main-container .paths {
+    display: grid;
+    grid-template-rows: repeat(auto-fill, auto);
+    grid-gap: 1px; }
+    .vizlist-main-container .paths .path-container {
+      height: 24px;
+      display: flex; }
+    .vizlist-main-container .paths .finished {
+      background-color: #525252; }
+    .vizlist-main-container .paths .current {
+      background-color: #787878; }
+  .vizlist-main-container .nodes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, auto);
+    grid-gap: 1px; }
+  .vizlist-main-container .nodes {
+    height: 40px;
+    background-color: #F5F5F5;
+    font-size: 16px;
+    color: #181818;
+    padding: 8px;
+    display: flex; }
+    .vizlist-main-container .nodes img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px; }
+    .vizlist-main-container .nodes svg {
+      fill: #181818;
+      height: 16px;
+      margin-left: auto; }
+    .vizlist-main-container .nodes .key {
+      height: 24px;
+      background-color: #FE8D63;
+      color: #F5F5F5;
+      font-size: 14px;
+      border-radius: 4px;
+      text-align: center;
+      margin-right: 8px; }
+      .vizlist-main-container .nodes .key svg {
+        fill: #F5F5F5; }
+    .vizlist-main-container .nodes .node {
+      width: 24px;
+      padding-top: 2px; }
+    .vizlist-main-container .nodes .property {
+      padding: 2px; }
+  .vizlist-main-container .viz-btn {
+    border-style: hidden;
+    text-align: start;
+    align-items: center; }
+    .vizlist-main-container .viz-btn:hover {
+      border-style: hidden;
+      outline: none; }
+    .vizlist-main-container .viz-btn:active {
+      border-style: hidden;
+      outline: none; }
+    .vizlist-main-container .viz-btn:focus {
+      border-style: hidden;
+      outline: none; }
+  .vizlist-main-container .action {
+    height: 48px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #F5F5F5;
+    padding-left: 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: row; }
+    .vizlist-main-container .action div {
       height: 48px;
-      width: 100%;
-      color: #181818;
-      font-size: 16px;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center; }
-    .user-input .container .border .confirmation {
-      height: 48px;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-gap: 1px; }
-      .user-input .container .border .confirmation button {
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0px; }
-        .user-input .container .border .confirmation button:hover {
-          color: #181818; }
-      .user-input .container .border .confirmation .selected {
-        background-color: #76B356;
-        color: #F5F5F5; }
-      .user-input .container .border .confirmation .deselected {
-        background-color: #4D5F87;
-        color: #525252; }
-    .user-input .container .border input {
-      background-color: #DEDEDE;
+      width: 48px;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 8px;
-      color: #4D5F87;
-      font-size: 20px;
-      border-width: 2px;
-      border-style: solid;
-      border-color: transparent;
+      border-left: solid 1px #787878;
+      margin-left: auto; }
+    .vizlist-main-container .action svg {
+      fill: #F5F5F5; }
+      .vizlist-main-container .action svg:hover {
+        color: #181818; }
+    .vizlist-main-container .action:hover {
+      color: #181818; }
+    .vizlist-main-container .action:disabled {
+      color: #787878; }
+  .vizlist-main-container .finish {
+    background-color: #76B356; }
+  .vizlist-main-container .continue {
+    background-color: #4D5F87; }
+  .vizlist-main-container .step {
+    background-color: transparent;
+    font-size: 12px;
+    color: #F5F5F5;
+    height: 24px;
+    padding: 0px 4px; }
+    .vizlist-main-container .step:hover {
+      color: #FE8D63;
+      background-color: #525252; }
+  .vizlist-main-container .back {
+    background-color: #4D5F87;
+    padding: 0; }
+    .vizlist-main-container .back svg {
+      fill: #F5F5F5; }
+  .vizlist-main-container .user-input .container {
+    padding: 8px;
+    display: table;
+    background-color: #F5F5F5;
+    width: 100%; }
+    .vizlist-main-container .user-input .container .border {
+      overflow: hidden;
       border-radius: 8px;
-      text-align: center;
-      border-radius: 8px; }
-      .user-input .container .border input:focus {
-        outline: none;
-        border-color: cornflowerblue; }
+      border-color: #181818; }
+      .vizlist-main-container .user-input .container .border .action-text {
+        height: 48px;
+        width: 100%;
+        color: #181818;
+        font-size: 16px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center; }
+      .vizlist-main-container .user-input .container .border .confirmation {
+        height: 48px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1px; }
+        .vizlist-main-container .user-input .container .border .confirmation button {
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          padding: 0px; }
+          .vizlist-main-container .user-input .container .border .confirmation button:hover {
+            color: #181818; }
+        .vizlist-main-container .user-input .container .border .confirmation .selected {
+          background-color: #76B356;
+          color: #F5F5F5; }
+        .vizlist-main-container .user-input .container .border .confirmation .deselected {
+          background-color: #4D5F87;
+          color: #525252; }
+      .vizlist-main-container .user-input .container .border input {
+        background-color: #DEDEDE;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 8px;
+        color: #4D5F87;
+        font-size: 20px;
+        border-width: 2px;
+        border-style: solid;
+        border-color: transparent;
+        border-radius: 8px;
+        text-align: center;
+        border-radius: 8px; }
+        .vizlist-main-container .user-input .container .border input:focus {
+          outline: none;
+          border-color: cornflowerblue; }
 
 .task-navigation-container {
   width: 100%;
@@ -2046,7 +2033,7 @@ video::-webkit-media-text-track-display {
                 padding-bottom: 10px; }
               .stage-selection-page-container .bottom-row .right-column .stage-selection-list .stage-list-items .list-item .stage-description-container > .header {
                 color: #fe8d63; }
-              .stage-selection-page-container .bottom-row .right-column .stage-selection-list .stage-list-items .list-item .stage-description-container .title {
+              .stage-selection-page-container .bottom-row .right-column .stage-selection-list .stage-list-items .list-item .stage-description-container > .title {
                 color: #fe8d63; }
       .stage-selection-page-container .bottom-row .right-column .enter-stage-button-container {
         margin-top: 15px;

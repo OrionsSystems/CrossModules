@@ -50,9 +50,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
-		public async Task TagAdded(Model.Rectangle rectangle)
+		public async Task<string> TagAdded(Model.Rectangle rectangle)
 		{
+			rectangle.Id = Guid.NewGuid().ToString();
+
 			await this.OnTagAdded.InvokeAsync(rectangle);
+
+			return rectangle.Id;
 		}
 
 		protected override void OnAfterRender(bool firstRender)

@@ -21,7 +21,9 @@
 </head>
 <body>
 	<script>
-		window.Orions = {};
+		if (typeof window.Orions === 'undefined') {
+			window.Orions = {};
+		}
 	</script>
 
 	<app>

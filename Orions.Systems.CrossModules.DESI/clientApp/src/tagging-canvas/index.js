@@ -391,7 +391,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		};
 
 		let rect = getProportionalRectangle(visual, canvas);
-		componentRef.invokeMethodAsync("TagAdded", rect);
+		let visualId = componentRef.invokeMethodAsync("TagAdded", rect);
+
+		visual.id = visualId;
 
 		mouseDownAt = undefined;
 		path.remove();
