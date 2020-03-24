@@ -1,0 +1,84 @@
+﻿@import "../_variables.scss";
+
+.task-navigation-container {
+    width: 100%;
+    height: 60px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    grid-gap: $unitMin;
+    background-color: $colorGray;
+}
+
+.inner-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: $colorDark;
+    padding: $unit2x;
+
+    div {
+        font-size: $fontSizeLarge;
+        color: $colorLight;
+    }
+}
+
+.tasks {
+    height: $unit2x;
+    flex-grow: 1;
+    margin: 0px $unit2x;
+    display: flex;
+    flex-wrap: nowrap;
+    background-color: transparent;
+
+    &:last-child {
+        margin-right: 0px;
+    }
+
+    div {
+        flex-grow: 1;
+        border: $unitMin solid transparent;
+        background-color: $colorGray;
+        margin-right: $unitMin;
+    }
+
+    .selected {
+        border-color: $colorLight;
+    }
+
+    .seen {
+        background-color: $colorAccent;
+    }
+}
+
+.task-nav-btn {
+    background-color: $colorDark;
+    color: $colorLight;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: $fontSizeLarge;
+    border: hidden;
+    padding: 0px $unit1x;
+
+    &:hover {
+        color: $colorAccent;
+    }
+
+    &:active {
+        border-style: hidden;
+        outline: none;
+        background-color: $colorDarkGray;
+        transform: scale(0.98);
+    }
+
+    &:focus {
+        border-style: hidden;
+        outline: none;
+    }
+
+    svg {
+        width: $unit4x;
+        height: $unit4x;
+    }
+}

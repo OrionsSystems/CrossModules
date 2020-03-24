@@ -1,0 +1,125 @@
+﻿@using Orions.Systems.Desi.Common.Extensions
+@using Orions.Systems.CrossModules.Desi
+@using Orions.Infrastructure.HyperSemantic
+@using Orions.Systems.CrossModules.Desi.Util
+
+@inherits VizListComponentBase
+
+@if (Data != null)
+{
+    <div class="main-container">
+        <div class="viz-container">
+            <div class="paths">
+                @if (Data.FinishedPaths.IsNotNullOrEmpty())
+                {
+                    @foreach (var path in Data.FinishedPaths)
+                    {
+                        <div class="path-container finished">
+                            @foreach (var step in path.Steps)
+                            {
+                                <button class="viz-btn step" @onclick="_ => GoToStep(step)">@step.GetTitle(Data.CurrentPathProcessedSteps)</button>
+                            }
+                        </div>
+                    }
+                }
+                @if (Data.CurrentPathProcessedSteps.IsNotNullOrEmpty())
+                {
+                    <div class="path-container current">
+                        <button class="viz-btn back" @onclick="_ => StepBack()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /></svg>
+                        </button>
+                        @foreach (var step in Data.CurrentPathProcessedSteps)
+                        {
+                            <button class="viz-btn step" @onclick="_ => GoToStep(step)">@step.GetTitle(Data.CurrentPathProcessedSteps)</button>
+                        }
+                    </div>
+                }
+            </div>
+
+            @if (!Data.CurrentPath?.IsComplete == true)
+            {
+                <div class="title">@Data.CurrentPathTargetNodeName</div>
+            }
+
+            @if (Data.TagonomyNodes != null)
+            {
+                <div class="nodes-container">
+                    @foreach (var tagonomyNode in Data.TagonomyNodes)
+                    {
+                    <button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode(tagonomyNode) ">
+                        <div class="key node">@KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode)</div>
+                        @if (tagonomyNode.IconData.IsNotNullOrEmpty())
+                        {
+                            <img src="@tagonomyNode.IconData.GetImgSource()"/>
+                        }
+                        @tagonomyNode.Title
+                        @if (tagonomyNode.IsChecked == true)
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" /></svg>
+                        }
+                        else if (tagonomyNode.IsChecked == null && tagonomyNode.IsPathPending)
+                        {
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M9.29 15.88L13.17 12 9.29 8.12c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3c-.39.39-1.02.39-1.41 0-.38-.39-.39-1.03 0-1.42z" /></svg>
+                        }
+                    </button>
+                    }
+                </div>
+            }
+
+            @if (Data.PendingUserAction != null)
+            {
+                <UserInputView Type="@Data.PendingUserAction.Type"
+                               Title="@Data.PendingUserAction.Text" 
+                               OnBoolResult="@FinishInputAction"
+                               OnStringResult="@FinishInputAction"/>
+
+            }
+
+            @if (Data.ReadyToFinish)
+            {
+                <ActionButton CssClass="finish" OnClick="_ => FinishTagonomyExecution()">
+                    Complete tag
+                </ActionButton>
+            }
+            else if (Data.CanFinishCurrentPath)
+            {
+                <ActionButton CssClass="continue" OnClick="_ => FinishCurrentPath()">
+                    Finish @Data.CurrentTagonomyName
+                </ActionButton>
+            }
+
+            @if (Data.CanSkipCurrentPath)
+            {
+                <ActionButton CssClass="continue" OnClick="_ => SkipCurrentPath()">
+                    Finish @Data.CurrentTagonomyName
+                </ActionButton>
+            }
+        </div>
+
+        @if (Data.HasProperties)
+        {
+            <div class="viz-container properties">
+                @foreach (var propertyGroup in Data.Properties)
+                {
+                    <div class="title">@propertyGroup.GroupName</div>
+                    foreach (var property in propertyGroup.GroupItems)
+                    {
+                        <button class="viz-btn nodes" @onclick="_ => SelectTagonomyProperty(property)">
+                            <div class="key property">
+                                <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
+                                <path d="M475.824,274.575L269.145,6.406c-6.832-8.541-20.497-8.541-27.329,0L35.137,277.991 c-5.124,5.125-5.124,11.957-1.708,17.081c3.416,5.124,8.541,10.249,15.373,10.249h63.2v189.597
+                                          c0,10.249,6.832,17.081,17.081,17.081h254.506c10.249,0,17.081-6.832,17.081-17.081V305.321h63.2
+                                          c10.248,0,17.081-6.832,17.081-17.081C480.948,283.116,479.24,277.991,475.824,274.575z M383.587,269.452v1.708
+                                          c-10.249,0-17.081,6.832-17.081,17.081v189.598H144.455V288.24c0-10.249-6.832-17.081-17.081-17.081h-44.41L255.48,43.984 l172.518,225.468H383.587z" />
+
+                                </svg>
+                                + @KeyCodeHelper.GetStringKey(property.KeyCodeDelta)
+                            </div>
+                            @property.Title
+                        </button>
+                    }
+                }
+            </div>
+        }
+    </div>
+}

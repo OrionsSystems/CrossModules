@@ -1,0 +1,40 @@
+﻿@inherits TaskNavigationWidgetBase
+
+@if(Data?.Tasks != null && Data.CurrentTask != null)
+{
+    <div class="task-navigation-container">
+        <button @onclick="_ => GoToPrevTask()" class="task-nav-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z" />
+                <path d="M0 0h24v24H0z" fill="none" />
+            </svg>
+            Prev
+        </button>
+        <div class="inner-container">
+            <div>Task @Data.CurrentTask.Index</div>
+            <div class="tasks">
+                @foreach (var task in Data.Tasks)
+                {
+                    var style = string.Join(' ',
+                        task == Data.CurrentTask ? "selected" : string.Empty, 
+                        task.Seen ? "seen" : string.Empty);
+                    <div @onclick="_ => SetCurrentTask(task)" class="@style" />
+                }
+            </div>
+            <div>@Data.CurrentTask.PlaybackInfo.TotalDuration.ToString(@"mm\:ss")</div>
+        </div>
+        <button @onclick="_ => GoToNextTask()" class="task-nav-btn">
+            Next
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" width="24px" height="24px">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" />
+                <path d="M0 0h24v24H0z" fill="none" />
+            </svg>            
+        </button>
+    </div>
+}
+
+
+
+@code {
+
+}
