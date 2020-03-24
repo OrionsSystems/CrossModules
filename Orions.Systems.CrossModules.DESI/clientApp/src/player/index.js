@@ -3,7 +3,7 @@ import {mp4} from './mux.js';
 
 window.Orions.Player = {};
 
-window.Orions.Player.setSrc = (payload) => {
+window.Orions.Player.setSrc = (payload, vmInstance) => {
 	//var muxer = new mp4.Transmuxer();
 	//			muxer.init();
 
@@ -43,7 +43,11 @@ window.Orions.Player.setSrc = (payload) => {
 		src: url
 	});
 
-	//video.on('ended', function () {
-	//	videojs.log('Awww...over so soon?!');
-	//});
+	video.on('pause', function () {
+		vmInstance.invokeMethodAsync("OnPauseAsync", video.currentTime());
+	});
+
+	video.on('play', function () {
+		vmInstance.invokeMethodAsync("OnPlay");
+	});
 }
