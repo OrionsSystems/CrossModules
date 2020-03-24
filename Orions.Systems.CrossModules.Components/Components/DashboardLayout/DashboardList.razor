@@ -334,7 +334,7 @@
 
 	private bool ImportDashboardAsNew = true;
 
-	private bool IsAccordionMode = true;
+	private bool IsAccordionMode = false;
 
 	private LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
@@ -378,11 +378,26 @@
 	}
 
 	[Parameter]
+	public EventCallback<string> OnSearch
+	{
+		get => Vm.OnSearch;
+		set => Vm.OnSearch = value;
+	}
+
+	[Parameter]
 	public EventCallback<string> OnSelectTag { get; set; }
 
 	protected override async Task OnParametersSetAsync()
 	{
 		await Vm.InitAsync();
+	}
+
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		StateHasChanged();
 	}
 
 	private async Task HandleInputFileSelection(IFileListEntry[] files)

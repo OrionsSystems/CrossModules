@@ -40,6 +40,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public EventCallback<string> OnSelectView { get; set; }
 
+		public EventCallback<string> OnSearch { get; set; }
+
 		public IHyperArgsSink HyperStore { get; set; }
 
 		public string SearchInput { get; set; }
@@ -73,12 +75,12 @@ namespace Orions.Systems.CrossModules.Components
 			return result;
 		}
 
-		public async Task LoadDashboarList(string filter = null)
+		public async Task LoadDashboarList()
 		{
 			DataList.Clear();
 			IsLoadedDataResult = false;
 
-			if (string.IsNullOrWhiteSpace(filter))
+			if (string.IsNullOrWhiteSpace(SearchInput))
 			{
 				// We are only going to pull the basic info on the Dashboards, as they are becoming large objects.
 				var datas = await HyperStore.FindAllAsync<DashboardData>(null, 0, 500, true);
@@ -89,7 +91,7 @@ namespace Orions.Systems.CrossModules.Components
 
 				var findDocArgs = new FindHyperDocumentsArgs(typeof(DashboardData), true);
 
-				var regexText = $"/.*{filter}.*/i";
+				var regexText = $"/.*{SearchInput}.*/i";
 
 				var conditions = new MultiScopeCondition(AndOr.Or);
 				conditions.AddCondition(nameof(DashboardData.Name), regexText, Comparers.Regex);
@@ -212,9 +214,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task OnSearchBtnClick(MouseEventArgs e)
 		{
-			if (this.HyperStore == null) return;
+			//if (this.HyperStore == null) return;
 
-			await LoadDashboarList(SearchInput);
+			//await LoadDashboarList(SearchInput);
+
+			await OnSearch.InvokeAsync(SearchInput);
 		}
 	}
 }
