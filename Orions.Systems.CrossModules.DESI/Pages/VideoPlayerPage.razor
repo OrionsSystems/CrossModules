@@ -22,7 +22,7 @@
 @code{
 	protected override async Task OnInitializedAsync()
 	{
-		await this.Initialize();
+		await this.InitializeAsync();
 	}
 
 	protected async override Task OnAfterRenderAsync(bool firstRender)
@@ -31,7 +31,7 @@
 
 		if (_payload != null)
 		{
-			await JSRuntime.InvokeAsync<object>("Orions.Player.setSrc", _payload);
+			await JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", _payload, DotNetObjectReference.Create(this));
 		}
 	}
 }
