@@ -1,11 +1,11 @@
-﻿@namespace Orions.Systems.CrossModules.Desi.Pages
+﻿@namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 @using Orions.Systems.CrossModules.Desi.Infrastructure
 @using Orions.Systems.Desi.Core.ViewModels;
 @using Orions.Systems.Desi.Common.Extensions;
 @using Orions.Infrastructure.HyperMedia;
 @using Orions.Common;
 
-@inherits DesiBaseComponent<TaggingViewModel>
+@inherits TagPreviewControlBase
 
 @if (this.Vm != null && this.Vm.TagData != null)
 {
@@ -18,7 +18,7 @@
 			{
 				tagIsSelectedClass = tag.IsSelected ? "active" : "";
 			}
-		<div class="tag-container @tagIsSelectedClass">
+		<div class="tag-container @tagIsSelectedClass" @onclick="() => this.SelectItem(tag)">
 			<div class="tagonomy-info">
 				<div class="left-column">
 					@if (tag.TagKind != Systems.Desi.Common.Models.TagKind.NA)
@@ -78,12 +78,12 @@
 			</div>
 			<div class="buttons">
 				<div class="button">
-					<button @onclick="() => this.Vm.EditTagCommand.Execute(tag)">Edit</button>
+					<button @onclick="(MouseEventArgs e) => { this.Vm.EditTagCommand.Execute(tag); }" @onclick:stopPropagation="true">Edit</button>
 				</div>
 				@if(tag.TaggingSpecification.TagRemovalAllowed && tag.TagKind == Systems.Desi.Common.Models.TagKind.Regular)
 				{
 					<div class="button">
-						<button @onclick="() => this.Vm.RemoveTagCommand.Execute(tag)">Remove</button>
+						<button @onclick="() => this.Vm.RemoveTagCommand.Execute(tag)" @onclick:stopPropagation="true">Remove</button>
 					</div>
 				}
 			</div>

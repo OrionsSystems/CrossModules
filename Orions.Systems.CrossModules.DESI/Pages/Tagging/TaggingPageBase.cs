@@ -88,5 +88,13 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			var currentPosition = Vm.CurrentTask.HyperId;
 			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition));
 		}
+
+		public void TagSelected(string id)
+		{
+			var actionDispatcher = _taggingSystem.ActionDispatcher;
+
+			var tagModel = this.Vm.TagData.CurrentTaskTags.Single(t => t.Id.ToString() == id);
+			actionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
+		}
 	}
 }

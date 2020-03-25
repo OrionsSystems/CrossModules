@@ -48,6 +48,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Parameter]
 		public EventCallback<Model.Rectangle> OnTagAdded { get; set; }
 
+		[Parameter]
+		public EventCallback<string> OnTagSelected { get; set; }
+
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
 
@@ -68,6 +71,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await this.OnTagAdded.InvokeAsync(rectangle);
 
 			return rectangle.Id;
+		}
+
+		[JSInvokable]
+		public async Task TagSelected(string id)
+		{
+			await this.OnTagSelected.InvokeAsync(id);
 		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -92,7 +101,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private void UpdateTagsOnClient(List<Model.Rectangle> oldRectangleCollection, List<Model.Rectangle> newRectangleCollection)
 		{
-			if(_imageData != null)
+			if(_imageData != null && _initializationDone)
 			{
 				// add newly added tags
 				foreach(var newTag in newRectangleCollection)
@@ -104,6 +113,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					else
 					{
 						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
+					}
+				}
+
+				// update tags
+				foreach(var newTag in newRectangleCollection)
+				{
+					if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+					{
+						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
 					}
 				}
 

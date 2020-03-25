@@ -7,6 +7,7 @@
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
+@using Orions.Systems.CrossModules.Desi.Components.TagPreview;
 
 @if (this.Vm != null)
 {
@@ -31,7 +32,7 @@
 					<div class="tabs-control">
 						<TabSet>
 							<Tab Active="true" Title="Tags">
-								<TagsPreviewControl Vm="@this.Vm" />
+								<TagsPreviewControl Vm="@this.Vm" ActionDispatcher="_taggingSystem.ActionDispatcher"/>
 							</Tab>
 							<Tab Title="Tracking">Tracking content</Tab>
 							<Tab Title="Segmentation">Segmentation content</Tab>
@@ -52,10 +53,15 @@
 						Y = t.Geometry.ProportionalBounds.Y,
 						Height = t.Geometry.ProportionalBounds.Height,
 						Width = t.Geometry.ProportionalBounds.Width,
-						Id = t.Id.ToString()
+						Id = t.Id.ToString(),
+						IsSelected = t.IsSelected
 					}).ToList();
 				}
-				<TaggingSurface Rectangles="@surfaceRectangles" ImageData="this.Vm.CurrentFrameImageData" OnTagAdded="this.TagAdded" />
+				<TaggingSurface 
+								Rectangles="@surfaceRectangles" 
+								ImageData="this.Vm.CurrentFrameImageData" 
+								OnTagAdded="this.TagAdded" 
+								OnTagSelected="this.TagSelected"/>
 				@if (this.Vm.TagonomyExecutionData != null)
 				{
 					<VizListComponent Data="this.Vm.TagonomyExecutionData"

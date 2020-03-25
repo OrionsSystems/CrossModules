@@ -19,22 +19,19 @@ class BaseVisual {
 	constructor() {
 		this.min_size = 8;
 
-		//#initial_position;
-
 		this.strokeColor = 'black';
 		// RGBA
 		this.fillColor = '#7776';
-		this.mouseDown_fillColor = '#f776';
+		this.selectedColor = '#f776';
 		this.enter_fillColor = '#8886';
 
 		this.elements = [];
 
-		//main_group; // papers.Group object
-
-		//#width;
-		//#height;
-
 		this.moved_event_listeners = [];
+		this.eventListeners = {
+			'selected': [],
+			'deselected': []
+		}
 
 		this.was_moved = false;
 	}
@@ -116,13 +113,10 @@ class BaseVisual {
 	path_onMouseDown(event) {
 		this.owner.was_moved = false;
 		// 'this' here is the path
-		this.fillColor = this.owner.mouseDown_fillColor;
 
 		this.owner.initial_position = this.position;
 
 		this.owner.clearElements();
-
-		//event.processing_done = true;
 	}
 
 	raise_moved_event() {
@@ -132,13 +126,12 @@ class BaseVisual {
 	}
 
 	path_onMouseUp(event) {
-		//this.owner.main_group.removeChildren([this.owner.elements[0]]);
-
 		if (this.owner.was_moved) {
 			this.owner.raise_moved_event();
 			this.owner.was_moved = false;
 		}
 
+		this.owner.select(true);
 
 		this.owner.updateElements();
 	}
@@ -210,8 +203,8 @@ class BaseVisual {
 		path.owner = this;
 
 		// http://paperjs.org/reference/mouseevent/
-		this.main_group.onMouseEnter = this.path_onMouseEnter;
-		this.main_group.onMouseLeave = this.path_onMouseLeave;
+		//this.main_group.onMouseEnter = this.path_onMouseEnter;
+		//this.main_group.onMouseLeave = this.path_onMouseLeave;
 
 		this.main_group.onMouseDown = this.path_onMouseDown;
 		this.main_group.onMouseUp = this.path_onMouseUp;
@@ -227,6 +220,31 @@ class BaseVisual {
 
 	updateElements() {
 		this.clearElements();
+	}
+
+	select(selected, fireEvent = true) {
+		if (selected) {
+			this.main_group.fillColor = this.selectedColor;
+			this.is_selected = true;
+
+			if (fireEvent)
+				this.fire('selected');
+		}
+		else {
+			this.main_group.fillColor = this.fillColor;
+			this.is_selected = false;
+
+			if (fireEvent)
+				this.fire('deselected');
+		}
+	}
+
+	fire(eventName) {
+		this.eventListeners[eventName].forEach(listener => listener(this))
+	}
+
+	on(eventName, callback) {
+		this.eventListeners[eventName].push(callback)
 	}
 }
 
@@ -253,12 +271,21 @@ class TagVisual extends BaseVisual {
 
 	path_onMouseDown(event) {
 		super.path_onMouseDown(event);
-		this.owner.is_selected = true;
+		
 	}
 
 	path_onMouseLeave(event) {
 		super.path_onMouseLeave(event);
-		this.owner.is_selected = false;
+	}
+
+	update(tag) {
+		const { x, y, width, height, isSelected } = tag;
+
+		if (this.is_selected != isSelected) {
+			this.select(isSelected, false)
+		}
+
+		// TODO : implement missing updates if needed
 	}
 
 	updateElements() {
@@ -449,7 +476,30 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		var tagCoords = getRectangleRealFromProportional(tag);
 		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 		newTagVisual.id = tag.id;
+
+		if (tag.isSelected) {
+			newTagVisual.select(true);
+		}
+
 		items.push(newTagVisual)
+
+		newTagVisual.on('selected', function (selectedVisual) {
+			// deselect other tags
+			for (var i in items) {
+				let visual = items[i]
+				if (visual != selectedVisual) {
+					visual.select(false);
+				}
+			}
+
+			componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
+		})
+	}
+
+	window.Orions.TaggingSurface.updateTag = function (tag) {
+		var tagToUpdate = items.find(i => i.id == tag.id);
+
+		tagToUpdate.update(tag);
 	}
 
 	window.Orions.TaggingSurface.removeTag = function (tag) {
