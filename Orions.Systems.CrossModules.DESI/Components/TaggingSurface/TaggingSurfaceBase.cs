@@ -119,7 +119,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				// update tags
 				foreach(var newTag in newRectangleCollection)
 				{
-					if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+					Model.Rectangle oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
+					if (oldTag  != null && !oldTag.Equals(newTag))
 					{
 						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
 					}

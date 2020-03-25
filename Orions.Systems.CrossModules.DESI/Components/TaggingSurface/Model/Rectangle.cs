@@ -28,7 +28,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model
 				|| otherRect.Y != this.Y
 				|| otherRect.Height != this.Height
 				|| otherRect.Width != this.Width
-				|| otherRect.IsSelected)
+				|| otherRect.IsSelected != this.IsSelected)
 				return false;
 
 			return true;
