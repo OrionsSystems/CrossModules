@@ -12,12 +12,14 @@
 
 @inject NavigationManager navManager
 
-@if (IsDashboardListMode)
+@if (IsDashboardListMode && isInit)
 {
 	<DashboardList HyperStore="@HyperStore"
+						Filter="@Search"
 						OnSelectTag="OnSelectTag"
 						OnSelectDesign="OnSelectDesignDashboard"
-						OnSelectView="OnSelectViewDashboard">
+						OnSelectView="OnSelectViewDashboard"
+						OnSearch="OnSearch">
 	</DashboardList>
 }
 
@@ -75,6 +77,7 @@
 
 	private bool isShowViewDashboard;
 	private bool isLoadedTaggedDashboard;
+	private bool isInit;
 
 	private DashboardData Data { get; set; }
 
@@ -94,19 +97,27 @@
 
 	private string Mode { get; set; }
 
+	private string Search { get; set; }
+
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
 		var uri = navManager.ToAbsoluteUri(navManager.Uri);
 
-		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("mode", out var param))
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("mode", out var _mode))
 		{
-			Mode = param.First();
+			Mode = _mode.First();
 
-			if (!string.IsNullOrWhiteSpace(Mode) && Mode == "view") {
+			if (!string.IsNullOrWhiteSpace(Mode) && Mode == "view")
+			{
 				isShowViewDashboard = true;
 			}
+		}
+
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("search", out var _search))
+		{
+			Search = _search.First();
 		}
 
 		if (IsTagMode && HyperStore != null)
@@ -118,6 +129,8 @@
 		{
 			await LoadDashboard(DashboadId);
 		}
+
+		isInit = true;
 	}
 
 	private void OnChangeMode(bool isPreviewMode)
@@ -157,6 +170,20 @@
 		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
 
 		isShowViewDashboard = true;
+	}
+
+	private void OnSearch(string search)
+	{
+		Search = search;
+
+		if (string.IsNullOrWhiteSpace(search)) return;
+
+		var query = new Dictionary<string, string> {
+			{ "search", search } ,
+
+		};
+		var url = $"{navManager.BaseUri}dashboards";
+		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
 	}
 
 	private async Task LoadDashboard(string dashboardId)

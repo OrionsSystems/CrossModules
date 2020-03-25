@@ -1,0 +1,78 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseBlazorComponent
+
+<div class="tab-container">
+
+	@if (Items.Any())
+	{
+		<div class="tab-container-header">
+			<ul class="tab-container-items">
+				@foreach (var item in Items)
+				{
+					@if (!item.Enable) { continue; }
+
+					@if (!item.Action)
+					{
+						<li class="tab-container-bar-models @(item.Active ? "active" : "")">
+							<a class="btn" @onclick="@(ev => { OnClickItem(item); })">
+								<span class="text">@item.Name</span>
+							</a>
+						</li>
+					}
+					else
+					{
+						<li class="tab-container-bar-models tab-container-result">
+							<a class="btn result-btn" @onclick="@(ev => { OnClickItem(item); })">
+								<span class="text">@item.Name</span>
+							</a>
+						</li>
+					}
+
+				}
+			</ul>
+		</div>
+	}
+
+	<div class="tab-container-body">
+
+		@* Pass 'this' instance as a cascading parameter to descendants in tree *@
+		<CascadingValue Value="@this">
+			@ChildContent
+		</CascadingValue>
+	</div>
+
+</div>
+
+@code {
+
+	//[Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object> ExtraAttributes { get; set; } = new Dictionary<string, object>();
+
+	[Parameter] public RenderFragment ChildContent { get; set; }
+
+	public List<TabContainerData> Items { get; set; } = new List<TabContainerData>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+
+
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		await base.OnAfterRenderAsync(firstRender);
+
+		StateHasChanged();
+	}
+
+	private void OnClickItem(TabContainerData item)
+	{
+		Items.ForEach(it => it.Active = false);
+
+		item.Active = true;
+
+		StateHasChanged();
+	}
+}

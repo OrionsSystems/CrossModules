@@ -1,0 +1,10 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits BaseTabItem
+
+@if (Active)
+{
+	<div @key="@Id" class="tab-container-body">
+		@ChildContent
+	</div>
+}
