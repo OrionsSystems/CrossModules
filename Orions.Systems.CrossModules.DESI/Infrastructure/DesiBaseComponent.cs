@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using Orions.Systems.Desi.Core.ViewModels;
 using Orions.Systems.Desi.Common.General;
+using System.Threading;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -26,11 +27,11 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			}
 			set
 			{
-				_vm = value;
-				if (value != null)
+				if (value != null && value != _vm)
 				{
 					AddVmDataPropertyChangedHandlers(value);
 				}
+				_vm = value;
 			}
 		}
 
@@ -49,6 +50,11 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			base.OnAfterRender(firstRender);
 		}
 
+
+		public void UpdateState()
+		{
+			this.InvokeAsync(() => this.StateHasChanged());
+		}
 
 		// This method adds StateHasChanged method call to every event fired on any Vm property that implements either INotifyPropertyChanged or
 		// INotifyCollectionChanged interface
@@ -78,7 +84,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 					}
 				}
 
-				this.InvokeAsync(() => this.StateHasChanged());
+				UpdateState();
 			};
 			NotifyCollectionChangedEventHandler collectionChangedHandler = (s, e) =>
 			{
