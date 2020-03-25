@@ -17,7 +17,7 @@ function isDefined(item) {
 
 class BaseVisual {
 	constructor() {
-		this.min_size = 20;
+		this.min_size = 8;
 
 		//#initial_position;
 
@@ -247,7 +247,7 @@ class TagVisual extends BaseVisual {
 
 	constructor() {
 		super()
-		this.adornerSize = 18;
+		this.adornerSize = 8;
 		this.is_selected = false;
 	}
 
@@ -268,12 +268,12 @@ class TagVisual extends BaseVisual {
 		var p1 = this.get_topLeft();
 		var p2 = this.get_bottomRight();
 
-		var element = new AdornerElement()
-		element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
+		//var element = new AdornerElement()
+		//element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
-		element.add_moved_event_listener(this);
+		//element.add_moved_event_listener(this);
 
-		this.elements.push(element);
+		//this.elements.push(element);
 	}
 
 	// Element was moved.

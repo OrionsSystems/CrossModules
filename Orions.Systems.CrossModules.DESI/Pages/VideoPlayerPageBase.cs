@@ -23,9 +23,9 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		private TaskPlaybackInfo _taskPlaybackInfo;
 		private UniImage _pausedFrame;
 
-		protected bool _paused = false;
+		protected bool Paused { get; set; } = false;
 		protected byte[] _payload;
-		protected string _pausedFrameBase64 => _paused && _pausedFrame != null ? _pausedFrame.DataAsBase64() : null;
+		protected string PausedFrameBase64 { get; set; }
 
 		public VideoPlayerPageBase()
 		{
@@ -100,13 +100,15 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			var img = res[0].Image;
 			_pausedFrame = img;
 
-			_paused = true;
+			PausedFrameBase64 = img.DataBase64Link;
+			Paused = true;
 		}
 
 		[JSInvokable]
 		public void OnPlay()
 		{
-			_paused = false;
+			PausedFrameBase64 = null;
+			Paused = false;
 		}
 	}
 }

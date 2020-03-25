@@ -1,0 +1,48 @@
+﻿@namespace Orions.Systems.CrossModules.Pages
+@page "/tab-container"
+
+
+@inherits BaseOrionsComponent
+
+<h1>Tab Container Demo</h1>
+
+<hr style="margin:20px 0px;" />
+
+<div class="test-container">
+	<TabContainer>
+		<TabItem Name="Test1">
+			<h1>Test 1 Content</h1>
+
+		</TabItem>
+		<TabItem Name="Test2">
+			<h1>Test 2 Content</h1>
+
+		</TabItem>
+		<TabItem Name="Test3">
+			<h1>Test 3 Content</h1>
+
+		</TabItem>
+		<TabItem Name="Test4" Enable="false">
+			<h1>Test 4 Content</h1>
+
+		</TabItem>
+		<TabItem Name="Test5">
+			<h1>Test 5 Content</h1>
+
+		</TabItem>
+		<TabItem Name="Result" Action="true">
+			<h1>Last One Action - Test 6 Content</h1>
+
+		</TabItem>
+	</TabContainer>
+</div>
+
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+}
+

@@ -32,14 +32,12 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IDialogService GetDialogService()
 		{
-			return null;
-			throw new NotImplementedException();
+			return new BlazorDialogService();
 		}
 
 		public override IImageService GetImageService()
 		{
 			return new BlazorImageService();
-			throw new NotImplementedException();
 		}
 
 		public override IDispatcher GetDispatcher()
@@ -78,8 +76,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override ILoggerService GetLoggerService()
 		{
-			return null;
-			throw new NotImplementedException();
+			return new BlazorLoggerService();
 		}
 
 		public INavigationService GetNavigationService()

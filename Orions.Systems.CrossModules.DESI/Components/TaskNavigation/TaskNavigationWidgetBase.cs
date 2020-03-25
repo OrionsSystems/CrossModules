@@ -20,7 +20,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 			{
 				_data = value;
 				_dataTracker?.Dispose();
-				_dataTracker = new PropertyTracker(Data, () => InvokeAsync(StateHasChanged));
+				_dataTracker = value?.GetPropertyTracker(() => InvokeAsync(StateHasChanged));
 			}
 		}
 
