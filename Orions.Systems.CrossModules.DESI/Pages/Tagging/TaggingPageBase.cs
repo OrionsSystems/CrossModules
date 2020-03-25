@@ -44,40 +44,39 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			// debug 
-			await GetDebugImage();
+			this.Vm.PropertyChanged += (s, e) =>
+			{
+				this.Vm.CurrentPosition = this.Vm.CurrentTask.HyperId;
+			};
 
 			await base.OnInitializedAsync();
 		}
 
-		// debug
-		public byte[] SurfaceImageData { get; set; }
+		//public async Task GetDebugImage()
+		//{
+		//	this.Vm.PropertyChanged += (s1, e1) =>
+		//	{
+		//		if (Vm.CurrentTask != null && SurfaceImageData == null)
+		//		{
+		//			var netstoreProvider = DependencyResolver.GetNetStoreProvider();
+		//			var netStore = netstoreProvider.CurrentNetStore;
+		//			var hyperId = this.Vm.CurrentTask.HyperId;
 
-		public async Task GetDebugImage()
-		{
-			this.Vm.PropertyChanged += (s1, e1) =>
-			{
-				if (Vm.CurrentTask != null && SurfaceImageData == null)
-				{
-					var netstoreProvider = DependencyResolver.GetNetStoreProvider();
-					var netStore = netstoreProvider.CurrentNetStore;
-					var hyperId = this.Vm.CurrentTask.HyperId;
+		//			var args = new RetrieveFragmentFramesArgs
+		//			{
+		//				AssetId = hyperId.AssetId.Value,
+		//				TrackId = hyperId.TrackId.Value,
+		//				FragmentId = hyperId.FragmentId.Value,
+		//				SliceIds = new[] { hyperId.SliceId.Value }
+		//			};
+		//			netStore.ExecuteAsyncThrows(args).ContinueWith(t =>
+		//			{
+		//				SurfaceImageData = t.Result[0].Image.Data;
+		//			});
 
-					var args = new RetrieveFragmentFramesArgs
-					{
-						AssetId = hyperId.AssetId.Value,
-						TrackId = hyperId.TrackId.Value,
-						FragmentId = hyperId.FragmentId.Value,
-						SliceIds = new[] { hyperId.SliceId.Value }
-					};
-					netStore.ExecuteAsyncThrows(args).ContinueWith(t =>
-					{
-						SurfaceImageData = t.Result[0].Image.Data;
-					});
-
-				}
-			};
-		}
+		//		}
+		//	};
+		//}
 
 		public void TagAdded(Components.TaggingSurface.Model.Rectangle rectangle)
 		{

@@ -12,8 +12,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 	public class TaggingSurfaceBase : DesiBaseComponent<TaggingViewModel>
 	{
 		private byte[] _imageData;
-		private bool _initializationRequired;
 		private List<Model.Rectangle> _rectangles = new List<Model.Rectangle>();
+		private bool _initializationDone;
+
 		private string _componentId { get; set; }
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
@@ -26,11 +27,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 			set
 			{
-				if(value != null && (_imageData == null || !value.SequenceEqual(_imageData)))
-				{
-					_initializationRequired = true;
-				}
-
 				_imageData = value;
 			}
 		}
@@ -76,9 +72,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
-			if (_initializationRequired)
+			if (!_initializationDone && _imageData != null)
 			{
-				_initializationRequired = false;
+				_initializationDone = true;
 				await InitializeClientJs();
 			}
 

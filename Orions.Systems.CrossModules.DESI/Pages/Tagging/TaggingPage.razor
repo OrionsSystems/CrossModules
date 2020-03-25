@@ -55,7 +55,7 @@
 						Id = t.Id.ToString()
 					}).ToList();
 				}
-				<TaggingSurface Rectangles="@surfaceRectangles" ImageData="this.SurfaceImageData" OnTagAdded="this.TagAdded" />
+				<TaggingSurface Rectangles="@surfaceRectangles" ImageData="this.Vm.CurrentFrameImageData" OnTagAdded="this.TagAdded" />
 				@if (this.Vm.TagonomyExecutionData != null)
 				{
 					<VizListComponent Data="this.Vm.TagonomyExecutionData"

@@ -295,6 +295,7 @@ class TagVisual extends BaseVisual {
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
 	let frameImg = document.querySelector(`#${componentId} .frame-img`);
 	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
+
 	canvas.width = frameImg.width;
 	canvas.height = frameImg.height;
 
@@ -454,5 +455,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.removeTag = function (tag) {
 		var tagToRemove = items.find(i => i.id == tag.id);
 		tagToRemove.remove();
+
+		items.splice(items.indexOf(tagToRemove), 1);
 	}
 }
