@@ -4,9 +4,20 @@ import {mp4} from './mux.js';
 window.Orions.Player = {
 
     setSrc: (payload, vmInstance) => {
-        videojs.registerPlugin('framebyframe', GenerateFrameByFramePlugin());
+        videojs.registerPlugin('framebyframe', GenerateFrameByFramePlugin(vmInstance));
 
         var video = videojs("my-video");
+        video.framebyframe({
+            fps: 30,
+            steps: [{
+                text: '<',
+                step: -1
+            },
+                {
+                text: '>',
+                step: 1
+            }]
+        });
 
         var blob = new Blob([Base64ToByteArray(payload)], { type: "video/mp4" });
 
@@ -60,7 +71,7 @@ function MuxIntoMp4(payload) {
         //console.log("flushed");
 }
 
-function GenerateFrameByFramePlugin() {
+function GenerateFrameByFramePlugin(vmInstance) {
     var VjsButton = videojs.getComponent('Button');
     var FBFButton = videojs.extend(VjsButton, {
         constructor: function (player, options) {
@@ -77,8 +88,9 @@ function GenerateFrameByFramePlugin() {
             // Calculate movement distance
             var dist = this.step_size;
             this.player.currentFrame = this.player.currentFrame + dist;
-            console.log('current pause:', (this.player.currentFrame * this.frameTime).toFixed(2));
+            //console.log('current pause:', (this.player.currentFrame * this.frameTime).toFixed(2));
             this.player.currentTime((this.player.currentFrame * this.frameTime).toFixed(2));
+            vmInstance.invokeMethodAsync("OnPauseAsync", this.player.currentTime());
         }
     });
 
@@ -93,14 +105,14 @@ function GenerateFrameByFramePlugin() {
 
         player.on('timeupdate', function () {
             player.currentFrame = Math.round(player.currentTime() / frameTime);
-            console.log('current pause:', player.currentFrame)
+            //console.log('current pause:', player.currentFrame)
         });
 
         player.ready(function (a) {
             options.steps.forEach(function (opt) {
                 player.controlBar.addChild(
                     new FBFButton(player, {
-                        el: videojs.createEl(
+                        el: videojs.dom.createEl(
                             'button',
                             {
                                 className: 'vjs-res-button vjs-control',
