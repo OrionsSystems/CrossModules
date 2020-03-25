@@ -64,7 +64,7 @@
 				</div>
 			</div>
 			<div class="position-info">
-				@{ 
+				@{
 					string tagPosition = $"{tag.TagHyperId.FragmentIdSimple}:{tag.TagHyperId.SliceIdSimple}";
 
 				}
@@ -76,8 +76,16 @@
 				}
 				<img src="@thumbnailSrc" class="img-no-error" />
 			</div>
-			<div class="edit-button">
-				<button @onclick="() => this.Vm.EditTagCommand.Execute(tag)">Edit</button>
+			<div class="buttons">
+				<div class="button">
+					<button @onclick="() => this.Vm.EditTagCommand.Execute(tag)">Edit</button>
+				</div>
+				@if(tag.TaggingSpecification.TagRemovalAllowed && tag.TagKind == Systems.Desi.Common.Models.TagKind.Regular)
+				{
+					<div class="button">
+						<button @onclick="() => this.Vm.RemoveTagCommand.Execute(tag)">Remove</button>
+					</div>
+				}
 			</div>
 		</div>
 		}

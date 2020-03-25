@@ -215,7 +215,7 @@ class BaseVisual {
 
 		this.main_group.onMouseDown = this.path_onMouseDown;
 		this.main_group.onMouseUp = this.path_onMouseUp;
-		this.main_group.onMouseDrag = this.path_onMouseDrag;
+		//this.main_group.onMouseDrag = this.path_onMouseDrag;
 
 		this.main_group.owner = this;
 		this.main_group.addChild(path);
@@ -292,7 +292,6 @@ class TagVisual extends BaseVisual {
 	}
 }
 
-
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
 	let frameImg = document.querySelector(`#${componentId} .frame-img`);
 	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
@@ -317,6 +316,33 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	var items = [];
 
 	paper.project = new paper.Project();
+
+	let getProportionalRectangle = function (coords, canvas) {
+		let width = (coords.bottomRight.x - coords.topLeft.x) / canvas.width;
+		let height = (coords.bottomRight.y - coords.topLeft.y) / canvas.height;
+
+		var x = coords.topLeft.x / canvas.width;
+		var y = coords.topLeft.y / canvas.height;
+
+		return { x, y, width, height };
+	};
+
+	let getRectangleRealFromProportional = function (proportional) {
+		let width = proportional.width * canvas.width;
+		let height = proportional.height * canvas.height;
+
+		let topLeft = {
+			x: proportional.x * canvas.width,
+			y: proportional.y * canvas.height
+		}
+
+		let bottomRight = {
+			x: topLeft.x + width,
+			y: topLeft.y + height
+		}
+
+		return { topLeft, bottomRight };
+	};
 
 	tool.onKeyDown = function (event) {
 		if (event.key == 'delete') {
@@ -376,24 +402,14 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			return;
 		}
 
-		var visual = new TagVisual();
-		visual.create(mouseDownAt, event.point);
-		items.push(visual);
-
-		let getProportionalRectangle = function (visual, canvas) {
-			let width = (visual.get_bottomRight().x - visual.get_topLeft().x) / canvas.width;
-			let height = (visual.get_bottomRight().y - visual.get_topLeft().y) / canvas.height;
-
-			var x = visual.get_topLeft().x / canvas.width;
-			var y = visual.get_topLeft().y / canvas.height;
-
-			return { x, y, width, height };
-		};
-
-		let rect = getProportionalRectangle(visual, canvas);
-		let visualId = componentRef.invokeMethodAsync("TagAdded", rect);
-
-		visual.id = visualId;
+		// we don't render the element immediately. instead, we call blazor side to create a tag and then let it ask for creating its visual representation
+		// it allows us to create tags in one place (using addTag method)
+		let rectCoords = {
+			topLeft: { x: Math.min(mouseDownAt.x, event.point.x), y: Math.min(mouseDownAt.y, event.point.y) },
+			bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
+		}
+		let rect = getProportionalRectangle(rectCoords, canvas);
+		componentRef.invokeMethodAsync("TagAdded", rect);
 
 		mouseDownAt = undefined;
 		path.remove();
@@ -426,4 +442,17 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	paper.setup(canvas);
+
+	window.Orions.TaggingSurface.addTag = function (tag) {
+		var newTagVisual = new TagVisual();
+		var tagCoords = getRectangleRealFromProportional(tag);
+		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
+		newTagVisual.id = tag.id;
+		items.push(newTagVisual)
+	}
+
+	window.Orions.TaggingSurface.removeTag = function (tag) {
+		var tagToRemove = items.find(i => i.id == tag.id);
+		tagToRemove.remove();
+	}
 }

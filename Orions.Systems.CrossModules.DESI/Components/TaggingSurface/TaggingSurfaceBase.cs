@@ -13,6 +13,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 	{
 		private byte[] _imageData;
 		private bool _initializationRequired;
+		private List<Model.Rectangle> _rectangles = new List<Model.Rectangle>();
+		private string _componentId { get; set; }
+		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
 		[Parameter]
 		public byte[] ImageData
@@ -23,12 +26,26 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 			set
 			{
-				if(value != null && value != _imageData)
+				if(value != null && (_imageData == null || !value.SequenceEqual(_imageData)))
 				{
 					_initializationRequired = true;
 				}
 
 				_imageData = value;
+			}
+		}
+
+		[Parameter]
+		public List<Model.Rectangle> Rectangles
+		{
+			get
+			{
+				return _rectangles;
+			}
+			set
+			{
+				UpdateTagsOnClient(_rectangles, value);
+				_rectangles = value;
 			}
 		}
 
@@ -40,8 +57,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected string ComponentId { get { return $"tagging-surface-{this._componentId}"; } }
 
-		private string _componentId { get; set; }
-		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get;set; }
 
 		public TaggingSurfaceBase()
 		{
@@ -59,19 +74,56 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			return rectangle.Id;
 		}
 
-		protected override void OnAfterRender(bool firstRender)
+		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
 			if (_initializationRequired)
 			{
-				InitializeClientJs();
 				_initializationRequired = false;
+				await InitializeClientJs();
 			}
-			base.OnAfterRender(firstRender);
+
+			await base.OnAfterRenderAsync(firstRender);
 		}
 
-		private void InitializeClientJs()
+		private async Task InitializeClientJs()
 		{
-			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
+			foreach(var tag in _rectangles)
+			{
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { tag });
+			}
+		}
+
+		private void UpdateTagsOnClient(List<Model.Rectangle> oldRectangleCollection, List<Model.Rectangle> newRectangleCollection)
+		{
+			if(_imageData != null)
+			{
+				// add newly added tags
+				foreach(var newTag in newRectangleCollection)
+				{
+					if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+					{
+						continue;
+					}
+					else
+					{
+						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
+					}
+				}
+
+				// remove removed tags
+				foreach (var oldTag in oldRectangleCollection)
+				{
+					if(newRectangleCollection.Any(t => t.Id == oldTag.Id))
+					{
+						continue;
+					}
+					else
+					{
+						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+					}
+				}
+			}
 		}
 	}
 }

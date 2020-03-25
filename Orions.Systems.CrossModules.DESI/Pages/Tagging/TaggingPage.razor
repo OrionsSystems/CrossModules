@@ -1,12 +1,14 @@
 ﻿@layout EmptyLayout
 @page "/tagging"
 @inherits TaggingPageBase
+@namespace Orions.Systems.CrossModules.Desi.Pages
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
+@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 
-@if(this.Vm != null)
+@if (this.Vm != null)
 {
 	<div class="tagging-page-container">
 		<div class="mission-title">
@@ -29,7 +31,7 @@
 					<div class="tabs-control">
 						<TabSet>
 							<Tab Active="true" Title="Tags">
-								<TagsPreviewControl Vm="@this.Vm"/>
+								<TagsPreviewControl Vm="@this.Vm" />
 							</Tab>
 							<Tab Title="Tracking">Tracking content</Tab>
 							<Tab Title="Segmentation">Segmentation content</Tab>
@@ -40,10 +42,20 @@
 			</div>
 			<div class="right-column">
 				<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
-				
+
 				</TaskNavigationWidget>
 
-				<TaggingSurface Vm="this.Vm" ImageData="this.SurfaceImageData" OnTagAdded="this.TagAdded" />
+				@{
+					var surfaceRectangles = this.Vm.TagData.CurrentTaskTags.Select(t => new Rectangle
+					{
+						X = t.Geometry.ProportionalBounds.X,
+						Y = t.Geometry.ProportionalBounds.Y,
+						Height = t.Geometry.ProportionalBounds.Height,
+						Width = t.Geometry.ProportionalBounds.Width,
+						Id = t.Id.ToString()
+					}).ToList();
+				}
+				<TaggingSurface Rectangles="@surfaceRectangles" ImageData="this.SurfaceImageData" OnTagAdded="this.TagAdded" />
 				@if (this.Vm.TagonomyExecutionData != null)
 				{
 					<VizListComponent Data="this.Vm.TagonomyExecutionData"
@@ -57,7 +69,7 @@
 }
 
 <style>
-	.vizlist-positioned{
-		position:absolute;
+	.vizlist-positioned {
+		position: absolute;
 	}
 </style>

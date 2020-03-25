@@ -148,16 +148,22 @@
 				}
 			}
 
-			.edit-button {
-				button {
-					width: 100%;
-					height: 100%;
-					border: none;
-					background-color: transparent;
-				}
+			& > .buttons{
+				display: flex;
+				flex-direction:row;
+				& > .button {
+					flex:1;
 
-				button:hover {
-					background-color: #174062;
+					button {
+						width: 100%;
+						height: 100%;
+						border: none;
+						background-color: transparent;
+					}
+
+					button:hover {
+						background-color: #174062;
+					}
 				}
 			}
 		}

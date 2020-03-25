@@ -2135,13 +2135,18 @@ video::-webkit-media-text-track-display {
           width: 100%;
           height: 100%;
           object-fit: contain; }
-      .tagging-page-container .tag-preview-control-container .tag-container .edit-button button {
-        width: 100%;
-        height: 100%;
-        border: none;
-        background-color: transparent; }
-      .tagging-page-container .tag-preview-control-container .tag-container .edit-button button:hover {
-        background-color: #174062; }
+      .tagging-page-container .tag-preview-control-container .tag-container > .buttons {
+        display: flex;
+        flex-direction: row; }
+        .tagging-page-container .tag-preview-control-container .tag-container > .buttons > .button {
+          flex: 1; }
+          .tagging-page-container .tag-preview-control-container .tag-container > .buttons > .button button {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: transparent; }
+          .tagging-page-container .tag-preview-control-container .tag-container > .buttons > .button button:hover {
+            background-color: #174062; }
   .tagging-page-container .tagging-surface-container {
     display: flex;
     flex: 1;
