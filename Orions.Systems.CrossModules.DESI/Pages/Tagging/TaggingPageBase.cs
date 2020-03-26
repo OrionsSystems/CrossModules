@@ -48,7 +48,10 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			this.Vm.PropertyChanged += (s, e) =>
 			{
-				this.Vm.CurrentPosition = this.Vm.CurrentTask.HyperId;
+				if(Vm?.CurrentTask != null)
+				{
+					this.Vm.CurrentPosition = this.Vm.CurrentTask.HyperId;
+				}
 			};
 
 			await base.OnInitializedAsync();

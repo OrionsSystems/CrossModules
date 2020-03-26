@@ -519,31 +519,36 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
 		let tag = items.find(i => i.id == id);
-		let tagAbsolutePosition = {
-			x: tag.get_topLeft().x,
-			y: tag.get_topLeft().y
+		if (tag) {
+			let tagAbsolutePosition = {
+				x: tag.get_topLeft().x,
+				y: tag.get_topLeft().y
+			}
+
+			let elementPosition = {
+				x: tagAbsolutePosition.x + tag.getWidth() + 20,
+				y: tagAbsolutePosition.y
+			}
+
+			let elementToAttach = document.querySelector(elementSelector);
+			if (elementToAttach) {
+
+				let elemWidth = elementToAttach.offsetWidth
+				let elemHeight = elementToAttach.offsetHeight
+
+				if (elementPosition.x + elemWidth > canvas.width) {
+					elementPosition.x = tagAbsolutePosition.x - elemWidth - 20
+				}
+
+				elementToAttach.style.left = elementPosition.x + 'px'
+				elementToAttach.style.top = elementPosition.y + 'px'
+
+				if (elementPosition.y + elemHeight > canvas.height) {
+					elementToAttach.style.bottom = '20px'
+					elementToAttach.style.top = ''
+				}
+			}
 		}
 
-		let elementPosition = {
-			x: tagAbsolutePosition.x + tag.getWidth() + 20,
-			y: tagAbsolutePosition.y
-		}
-
-		let elementToAttach = document.querySelector(elementSelector);
-
-		let elemWidth = elementToAttach.offsetWidth
-		let elemHeight = elementToAttach.offsetHeight
-
-		if (elementPosition.x + elemWidth > canvas.width) {
-			elementPosition.x = tagAbsolutePosition.x - elemWidth - 20
-		}
-
-		elementToAttach.style.left = elementPosition.x + 'px'
-		elementToAttach.style.top = elementPosition.y + 'px'
-
-		if (elementPosition.y + elemHeight > canvas.height) {
-			elementToAttach.style.bottom = '20px'
-			elementToAttach.style.top = ''
-		}
 	}
 }
