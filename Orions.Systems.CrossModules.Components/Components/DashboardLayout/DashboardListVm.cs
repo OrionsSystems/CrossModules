@@ -218,11 +218,12 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task OnSearchBtnClick(MouseEventArgs e)
 		{
-			//if (this.HyperStore == null) return;
-
-			//await LoadDashboarList(SearchInput);
-
 			await OnSearch.InvokeAsync(SearchInput);
+		}
+
+		public async Task OnClickGroup(MouseEventArgs e, string group)
+		{
+			await OnSearch.InvokeAsync(group);
 		}
 	}
 }

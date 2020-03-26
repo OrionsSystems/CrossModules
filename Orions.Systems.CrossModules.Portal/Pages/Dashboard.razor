@@ -176,13 +176,18 @@
 	{
 		Search = search;
 
-		if (string.IsNullOrWhiteSpace(search)) return;
+		var url = $"{navManager.BaseUri}dashboards";
+
+		if (string.IsNullOrWhiteSpace(search)) {
+			navManager.NavigateTo(url, false);
+			return;
+		}
 
 		var query = new Dictionary<string, string> {
 			{ "search", search } ,
 
 		};
-		var url = $"{navManager.BaseUri}dashboards";
+
 		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
 	}
 

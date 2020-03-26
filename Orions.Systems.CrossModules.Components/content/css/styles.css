@@ -981,6 +981,17 @@ h5.modal-title {
 .dashoboard-list-simple .dashoboard-list-table .dashboard-list-cmd-delete {
   color: red !important; }
 
+.dashoboard-list-simple .dashboard-group-btn {
+  cursor: pointer;
+  opacity: 0.7;
+  transition: 0.5s; }
+
+.dashoboard-list-simple .dashboard-group-btn:hover {
+  cursor: pointer;
+  opacity: 1;
+  transition: 0.5s;
+  color: darkred; }
+
 .dashoboard-list-accordion .dashoboard-list-accordion-item {
   padding: 5px;
   margin: 2px 0px; }
@@ -1304,6 +1315,23 @@ h5.modal-title {
       font-weight: 700; }
     .tab-container .tab-container-header ul.tab-container-items .tab-container-result:hover {
       background-color: #aa142d; }
+
+.tab-container-page {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #4c4c4c;
+  background: -moz-linear-gradient(-45deg, #4c4c4c 0%, rgba(43, 43, 43, 0.74) 36%, rgba(28, 28, 28, 0.5) 71%, rgba(19, 19, 19, 0.29) 100%);
+  background: -webkit-gradient(left top, right bottom, color-stop(0%, #4c4c4c), color-stop(36%, rgba(43, 43, 43, 0.74)), color-stop(71%, rgba(28, 28, 28, 0.5)), color-stop(100%, rgba(19, 19, 19, 0.29)));
+  background: -webkit-linear-gradient(-45deg, #4c4c4c 0%, rgba(43, 43, 43, 0.74) 36%, rgba(28, 28, 28, 0.5) 71%, rgba(19, 19, 19, 0.29) 100%);
+  background: -o-linear-gradient(-45deg, #4c4c4c 0%, rgba(43, 43, 43, 0.74) 36%, rgba(28, 28, 28, 0.5) 71%, rgba(19, 19, 19, 0.29) 100%);
+  background: -ms-linear-gradient(-45deg, #4c4c4c 0%, rgba(43, 43, 43, 0.74) 36%, rgba(28, 28, 28, 0.5) 71%, rgba(19, 19, 19, 0.29) 100%);
+  background: linear-gradient(135deg, #4c4c4c 0%, rgba(43, 43, 43, 0.74) 36%, rgba(28, 28, 28, 0.5) 71%, rgba(19, 19, 19, 0.29) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313', GradientType=1 );
+  color: #fff; }
 
 [data-effeckt-page] {
   position: relative;

@@ -45,6 +45,7 @@
 				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
 				<div class="dashboard-list-header-cmd-label">Create</div>
 			</a>
+
 			<a class="btn" @onclick="(e => { Vm.IsShowModalImportProject = true; })">
 				<MatIcon Icon="@MatIconNames.Settings_backup_restore"></MatIcon>
 				<div class="dashboard-list-header-cmd-label">Import</div>
@@ -166,7 +167,7 @@
 
 								<tr @key="item.Id">
 									<td class="center nowrap">@rowIndex</td>
-									<td class="center">@item.Group</td>
+									<td class="center dashboard-group-btn" @onclick="@(async ev => await Vm.OnClickGroup(ev, item.Group))">@item.Group</td>
 									<td class="dashboard-list-name" @onclick="@(async ev => await Vm.EditNameAsync(item))">@item.Name</td>
 									<td class="center">
 										<div class="form-check">
@@ -399,6 +400,8 @@
 
 		StateHasChanged();
 	}
+
+
 
 	private async Task HandleInputFileSelection(IFileListEntry[] files)
 	{
