@@ -10,18 +10,18 @@ namespace Orions.Systems.CrossModules.Components
 
 		[Parameter] public bool Enable { get; set; } = true;
 
-		[Parameter] public bool Active { get { return data.Active; } set { data.Active = value; } }
+		[Parameter] public bool Active { get { return _data.Active; } set { _data.Active = value; } }
 
 		[Parameter] public bool Action { get; set; }
 
 		// Each time the params change, update a 'TabContainerData' instance
-		private readonly TabContainerData data = new TabContainerData();
+		private readonly TabContainerData _data = new TabContainerData();
 
 		protected override void OnParametersSet()
 		{
-			data.Name = Name;
-			data.Enable = Enable;
-			data.Action = Action;
+			_data.Name = Name;
+			_data.Enable = Enable;
+			_data.Action = Action;
 		}
 
 		// When we're first added to the UI, attach our data to parent
@@ -33,15 +33,15 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected override void OnInitialized() 
 		{
-			Container.Items.Add(data);
+			Container.Items.Add(_data);
 
 			if(Container.Items.Count == 1)
-				data.Active = true;
+				_data.Active = true;
 
 			StateHasChanged();
 		}
 
 		void IDisposable.Dispose()
-			 => Container.Items.Remove(data);
+			 => Container.Items.Remove(_data);
 	}
 }

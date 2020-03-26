@@ -117,6 +117,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task SelectDashboardAsync(DashboardData data, bool showView = false, bool isNew = false)
 		{
+			SelectedDashboard = data;
+
+			await SaveChanges();
+
 			if (showView)
 			{
 				await OnSelectView.InvokeAsync(data.Id);
