@@ -46,6 +46,9 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		}
 
 		private ISettingsStorage _settingsStorage;
+
+		public PopupService PopupService { get; private set; }
+
 		public override ISettingsStorage GetSettingsStorage()
 		{
 			if (_settingsStorage == null)
@@ -81,7 +84,12 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public INavigationService GetNavigationService()
 		{
-			return new NavigationService(_navigationManager, _jSRuntime);
+			return new NavigationService(_navigationManager, _jSRuntime, PopupService);
+		}
+
+		public void SetPopupService(PopupService service)
+		{
+			this.PopupService = service;
 		}
 	}
 }
