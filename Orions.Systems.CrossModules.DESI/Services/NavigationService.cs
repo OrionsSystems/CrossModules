@@ -11,11 +11,13 @@ namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class NavigationService : INavigationService
 	{
+		private PopupService _popupService;
 		private NavigationManager _navManager;
 		private readonly IJSRuntime _jSRuntime;
 
-		public NavigationService(NavigationManager navManager, IJSRuntime jSRuntime)
+		public NavigationService(NavigationManager navManager, IJSRuntime jSRuntime, PopupService popupService)
 		{
+			_popupService = popupService;
 			_navManager = navManager;
 			_jSRuntime = jSRuntime;
 		}
@@ -54,7 +56,12 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 			return Task.CompletedTask;
 		}
-		public Task<bool> GoToTagsActionConfirmation(IEnumerable<TagModel> tagModel) => throw new NotImplementedException();
+		public async Task<bool> GoToTagsActionConfirmation(IEnumerable<TagModel> tagModel)
+		{
+			var result = await this._popupService.ShowConfirmation("Tag removal", "Do you really want to remove this tag?");
+
+			return result;
+		}
 		public Task<bool> ShowSessionIsOverPopup(TimeSpan timeout) => throw new NotImplementedException();
 	}
 }

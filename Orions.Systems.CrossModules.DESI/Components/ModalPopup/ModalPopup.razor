@@ -1,0 +1,15 @@
+﻿@namespace Orions.Systems.CrossModules.Desi.Components.ModalPopup
+@inherits ModalPopupBase
+
+<div class="modal-popup-overlay @(IsDisplayed? "is-displayed": "")">
+	<div class="popup-window">
+		<div class="content">
+			<div class="header">@Title</div>
+			<div class="question">@Question</div>
+		</div>
+		<div class="buttons">
+			<button class="left-button" @onclick="OnYes">Yes</button>
+			<button class="right-button" @onclick="OnNo">No</button>
+		</div>
+	</div>
+</div>
