@@ -11,11 +11,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Tagging;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
+using System.Reactive.Linq;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
 	{
+		protected readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+
 		protected TaggingSystem _taggingSystem;
 		protected TaggingSurface TaggingSurface;
 
@@ -46,13 +49,15 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			this.Vm.PropertyChanged += (s, e) =>
+			if(Vm.CurrentTask != null)
 			{
-				if(Vm?.CurrentTask != null)
-				{
-					this.Vm.CurrentPosition = this.Vm.CurrentTask.HyperId;
-				}
-			};
+				Vm.CurrentPosition = Vm.CurrentTask.HyperId;
+			}
+			_subscriptions.Add(Vm.TasksData.CurrentTaskChanged.Where(i => i.NewTask != null).Subscribe(i =>
+			{
+				Vm.IsTaggingMode = true;
+				Vm.CurrentPosition = i.NewTask.HyperId;
+			}));
 
 			await base.OnInitializedAsync();
 		}
@@ -82,6 +87,18 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			{
 				await TaggingSurface.AttachElementPositionToRectangle(Vm.TagData.CurrentTaskTags.Single(t => t.IsSelected).Id.ToString(), ".vizlist-positioned");
 			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_subscriptions.ForEach(i => i.Dispose());
+				_subscriptions.Clear();
+				Vm.Dispose();
+				Vm = null;
+			}
+			base.Dispose(disposing);
 		}
 	}
 }
