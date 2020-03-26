@@ -56,6 +56,14 @@ class BaseVisual {
 		return new paper.Point(this.main_group.position.x + this.width / 2, this.main_group.position.y + this.height / 2);
 	}
 
+	getWidth() {
+		return this.width;
+	}
+
+	getHeight() {
+		return this.height;
+	}
+
 	hitTest(point) {
 
 		for (var i = 0; i < this.elements.length; i++) {
@@ -497,15 +505,45 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.updateTag = function (tag) {
-		var tagToUpdate = items.find(i => i.id == tag.id);
+		let tagToUpdate = items.find(i => i.id == tag.id);
 
 		tagToUpdate.update(tag);
 	}
 
 	window.Orions.TaggingSurface.removeTag = function (tag) {
-		var tagToRemove = items.find(i => i.id == tag.id);
+		let tagToRemove = items.find(i => i.id == tag.id);
 		tagToRemove.remove();
 
 		items.splice(items.indexOf(tagToRemove), 1);
+	}
+
+	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
+		let tag = items.find(i => i.id == id);
+		let tagAbsolutePosition = {
+			x: tag.get_topLeft().x,
+			y: tag.get_topLeft().y
+		}
+
+		let elementPosition = {
+			x: tagAbsolutePosition.x + tag.getWidth() + 20,
+			y: tagAbsolutePosition.y
+		}
+
+		let elementToAttach = document.querySelector(elementSelector);
+
+		let elemWidth = elementToAttach.offsetWidth
+		let elemHeight = elementToAttach.offsetHeight
+
+		if (elementPosition.x + elemWidth > canvas.width) {
+			elementPosition.x = tagAbsolutePosition.x - elemWidth - 20
+		}
+
+		elementToAttach.style.left = elementPosition.x + 'px'
+		elementToAttach.style.top = elementPosition.y + 'px'
+
+		if (elementPosition.y + elemHeight > canvas.height) {
+			elementToAttach.style.bottom = '20px'
+			elementToAttach.style.top = ''
+		}
 	}
 }

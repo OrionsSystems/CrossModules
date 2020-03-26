@@ -2151,7 +2151,8 @@ video::-webkit-media-text-track-display {
     display: flex;
     flex: 1;
     flex-direction: column;
-    position: relative; }
+    position: relative;
+    overflow: hidden; }
     .tagging-page-container .tagging-surface-container .frame-img {
       width: 100%; }
     .tagging-page-container .tagging-surface-container .tagging-canvas {

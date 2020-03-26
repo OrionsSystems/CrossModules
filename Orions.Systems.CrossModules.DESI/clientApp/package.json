@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "watch": "webpack --watch",
-    "build": "webpack"
+    "build": "webpack",
+    "watch-dev": "webpack --watch --config webpack.dev.config.js",
+    "build-dev": "webpack --config webpack.dev.config.js"
   },
   "author": "",
   "license": "ISC",

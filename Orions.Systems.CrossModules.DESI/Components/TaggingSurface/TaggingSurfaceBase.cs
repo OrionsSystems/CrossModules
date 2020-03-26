@@ -5,6 +5,7 @@ using Orions.Systems.Desi.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
@@ -14,7 +15,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private byte[] _imageData;
 		private List<Model.Rectangle> _rectangles = new List<Model.Rectangle>();
 		private bool _initializationDone;
-
 		private string _componentId { get; set; }
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
@@ -51,11 +51,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Parameter]
 		public EventCallback<string> OnTagSelected { get; set; }
 
+		[Parameter]
+		public RenderFragment ChildContent { get; set; }
+
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
 
 		protected string ComponentId { get { return $"tagging-surface-{this._componentId}"; } }
-
 
 		public TaggingSurfaceBase()
 		{
@@ -79,13 +81,28 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await this.OnTagSelected.InvokeAsync(id);
 		}
 
+		public async Task AttachElementPositionToRectangle(string rectangleId, string elementSelector)
+		{
+			if (_initializationDone)
+			{
+				if(this.Rectangles.Any(r => r.Id == rectangleId))
+				{
+					await JSRuntime.InvokeAsync<Model.ClientPosition>("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
+				}
+
+			}
+		}
+
+		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
+			await _initializationSemaphore.WaitAsync();
 			if (!_initializationDone && _imageData != null)
 			{
-				_initializationDone = true;
 				await InitializeClientJs();
+				_initializationDone = true;
 			}
+			_initializationSemaphore.Release();
 
 			await base.OnAfterRenderAsync(firstRender);
 		}

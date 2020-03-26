@@ -57,11 +57,11 @@
 						IsSelected = t.IsSelected
 					}).ToList();
 				}
-				<TaggingSurface 
-								Rectangles="@surfaceRectangles" 
-								ImageData="this.Vm.CurrentFrameImageData" 
-								OnTagAdded="this.TagAdded" 
-								OnTagSelected="this.TagSelected"/>
+			<TaggingSurface @ref="TaggingSurface"
+							Rectangles="@surfaceRectangles"
+							ImageData="this.Vm.CurrentFrameImageData"
+							OnTagAdded="this.TagAdded"
+							OnTagSelected="this.TagSelected">
 				@if (this.Vm.TagonomyExecutionData != null)
 				{
 					<VizListComponent Data="this.Vm.TagonomyExecutionData"
@@ -69,6 +69,8 @@
 									  CssClass="vizlist-positioned">
 					</VizListComponent>
 				}
+			</TaggingSurface>
+				
 			</div>
 		</div>
 	</div>
@@ -77,5 +79,6 @@
 <style>
 	.vizlist-positioned {
 		position: absolute;
+		z-index:100;
 	}
 </style>

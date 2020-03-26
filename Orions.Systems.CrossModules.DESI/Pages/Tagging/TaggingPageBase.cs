@@ -10,12 +10,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Tagging;
+using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
 	{
 		protected TaggingSystem _taggingSystem;
+		protected TaggingSurface TaggingSurface;
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -52,32 +54,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			await base.OnInitializedAsync();
 		}
 
-		//public async Task GetDebugImage()
-		//{
-		//	this.Vm.PropertyChanged += (s1, e1) =>
-		//	{
-		//		if (Vm.CurrentTask != null && SurfaceImageData == null)
-		//		{
-		//			var netstoreProvider = DependencyResolver.GetNetStoreProvider();
-		//			var netStore = netstoreProvider.CurrentNetStore;
-		//			var hyperId = this.Vm.CurrentTask.HyperId;
-
-		//			var args = new RetrieveFragmentFramesArgs
-		//			{
-		//				AssetId = hyperId.AssetId.Value,
-		//				TrackId = hyperId.TrackId.Value,
-		//				FragmentId = hyperId.FragmentId.Value,
-		//				SliceIds = new[] { hyperId.SliceId.Value }
-		//			};
-		//			netStore.ExecuteAsyncThrows(args).ContinueWith(t =>
-		//			{
-		//				SurfaceImageData = t.Result[0].Image.Data;
-		//			});
-
-		//		}
-		//	};
-		//}
-
 		public void TagAdded(Components.TaggingSurface.Model.Rectangle rectangle)
 		{
 			var actionDispatcher = _taggingSystem.ActionDispatcher;
@@ -95,6 +71,14 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			var tagModel = this.Vm.TagData.CurrentTaskTags.Single(t => t.Id.ToString() == id);
 			actionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
+		}
+
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			if (this.Vm?.TagonomyExecutionData != null)
+			{
+				await TaggingSurface.AttachElementPositionToRectangle(Vm.TagData.CurrentTaskTags.Single(t => t.IsSelected).Id.ToString(), ".vizlist-positioned");
+			}
 		}
 	}
 }
