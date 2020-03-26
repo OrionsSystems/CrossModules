@@ -1,0 +1,11 @@
+﻿// Overall
+$effeckt-transition-duration: 500ms !default;
+$effeckt-perspective: 600px !default;
+
+
+// Page Transition
+$effeckt-transition-duration: 500ms !default;
+$effeckt-page-transition-duration: $effeckt-transition-duration * 2 !default;
+
+// Tabs
+$effeckt-tabs-transition-duration: $effeckt-transition-duration !default;
