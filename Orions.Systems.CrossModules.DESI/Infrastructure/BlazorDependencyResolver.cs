@@ -91,5 +91,10 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		{
 			this.PopupService = service;
 		}
+
+		public PopupService GetPopupService()
+		{
+			return this.PopupService;
+		}
 	}
 }

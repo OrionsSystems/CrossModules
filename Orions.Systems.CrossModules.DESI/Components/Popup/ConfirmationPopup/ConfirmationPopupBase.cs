@@ -7,9 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.Desi.Components.ModalPopup
+namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 {
-	public class ModalPopupBase : ComponentBase
+	public class ConfirmationPopupBase : ComponentBase
 	{
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Tagging;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 using System.Reactive.Linq;
+using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
@@ -22,8 +23,19 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		protected TaggingSystem _taggingSystem;
 		protected TaggingSurface TaggingSurface;
 
-		// debu 
-		private Guid id = Guid.NewGuid();
+		private SessionIsOverPopup _sessionIsOverPopup;
+
+		public SessionIsOverPopup SessionIsOverPopup
+		{
+			get { return _sessionIsOverPopup; }
+			set 
+			{ 
+				_sessionIsOverPopup = value;
+				var popupService = DependencyResolver.GetPopupService();
+				popupService.SessionIsOverPopup = _sessionIsOverPopup;
+			}
+		}
+
 
 		protected override async Task OnInitializedAsync()
 		{

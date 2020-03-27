@@ -87,7 +87,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				if(this.Rectangles.Any(r => r.Id == rectangleId))
 				{
-					await JSRuntime.InvokeAsync<Model.ClientPosition>("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
+					await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
 				}
 
 			}
