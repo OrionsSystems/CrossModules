@@ -115,12 +115,19 @@ namespace Orions.Systems.CrossModules.Components
 			this.RaiseNotify(nameof(DataList));
 		}
 
+		public async Task CreateNewDashboard() 
+		{
+			var newDashboard = new DashboardData();
+
+			SelectedDashboard = newDashboard;
+
+			await SaveChanges();
+
+			await SelectDashboardAsync(newDashboard, false, true);
+		}
+
 		public async Task SelectDashboardAsync(DashboardData data, bool showView = false, bool isNew = false)
 		{
-			SelectedDashboard = data;
-
-			//await SaveChanges();
-
 			if (showView)
 			{
 				await OnSelectView.InvokeAsync(data.Id);

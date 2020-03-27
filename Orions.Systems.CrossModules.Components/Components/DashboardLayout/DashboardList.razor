@@ -41,7 +41,7 @@
 			</div>
 		</div>
 		<div class="dashboard-list-header-actions col-lg-5">
-			<a class="btn" @onclick="@(async ev => { await Vm.SelectDashboardAsync(new DashboardData(), false, true); })">
+			<a class="btn" @onclick="@(async ev => { await Vm.CreateNewDashboard(); })">
 				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
 				<div class="dashboard-list-header-cmd-label">Create</div>
 			</a>
