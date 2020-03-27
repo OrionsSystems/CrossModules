@@ -119,7 +119,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			SelectedDashboard = data;
 
-			await SaveChanges();
+			//await SaveChanges();
 
 			if (showView)
 			{
