@@ -2,11 +2,13 @@
 @using Orions.Common;
 
 <div class="tagging-surface-container" id="@this.ComponentId">
-	@ChildContent
-	@if(this.ImageData != null)
-	{
-		<img src="@UniImage.ConvertByteArrayToBase64Url(this.ImageData)" class="frame-img"/>
-	}
-	<canvas class="tagging-canvas"> 
-	</canvas>
+	<div class="centered-container">
+		@ChildContent
+		@if(this.ImageData != null)
+		{
+			<img src="@UniImage.ConvertByteArrayToBase64Url(this.ImageData)" class="frame-img"/>
+		}
+		<canvas class="tagging-canvas"> 
+		</canvas>
+	</div>
 </div>

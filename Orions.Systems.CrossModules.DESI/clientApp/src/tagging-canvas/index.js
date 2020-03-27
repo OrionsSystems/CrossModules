@@ -328,6 +328,8 @@ class TagVisual extends BaseVisual {
 }
 
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
+	this.componentRef = componentRef;
+	let self = this;
 	let frameImg = document.querySelector(`#${componentId} .frame-img`);
 	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
@@ -445,7 +447,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
 		}
 		let rect = getProportionalRectangle(rectCoords, canvas);
-		componentRef.invokeMethodAsync("TagAdded", rect);
+		self.componentRef.invokeMethodAsync("TagAdded", rect);
 
 		mouseDownAt = undefined;
 		path.remove();
@@ -500,7 +502,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				}
 			}
 
-			componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
+			self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
 		})
 	}
 
@@ -512,9 +514,12 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	window.Orions.TaggingSurface.removeTag = function (tag) {
 		let tagToRemove = items.find(i => i.id == tag.id);
-		tagToRemove.remove();
 
-		items.splice(items.indexOf(tagToRemove), 1);
+		if (tagToRemove) {
+			tagToRemove.remove();
+
+			items.splice(items.indexOf(tagToRemove), 1);
+		}
 	}
 
 	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
@@ -524,6 +529,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				x: tag.get_topLeft().x,
 				y: tag.get_topLeft().y
 			}
+
+			let canvasPositionLeft = canvas.offsetLeft;
 
 			let elementPosition = {
 				x: tagAbsolutePosition.x + tag.getWidth() + 20,

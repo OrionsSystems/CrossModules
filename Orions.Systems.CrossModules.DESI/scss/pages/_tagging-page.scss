@@ -14,6 +14,7 @@
 		flex: 1;
 		display: flex;
 		flex-direction: row;
+		overflow: hidden;
 
 		& > .left-column {
 			display: flex;
@@ -87,8 +88,8 @@
 			flex: 1;
 			background-color: #181818;
 			padding: 20px;
-			display:flex;
-			flex-direction:column;
+			display: flex;
+			flex-direction: column;
 		}
 	}
 
@@ -130,7 +131,7 @@
 				}
 			}
 
-			.position-info{
+			.position-info {
 				margin-bottom: 15px;
 			}
 
@@ -148,11 +149,12 @@
 				}
 			}
 
-			& > .buttons{
+			& > .buttons {
 				display: flex;
-				flex-direction:row;
+				flex-direction: row;
+
 				& > .button {
-					flex:1;
+					flex: 1;
 
 					button {
 						width: 100%;
@@ -169,19 +171,29 @@
 		}
 	}
 
-	.tagging-surface-container{
-		display:flex;
-		flex:1;
-		flex-direction:column;
-		position:relative;
-		overflow:hidden;
-		
-		.frame-img{
-			width:100%;
-		}
+	.tagging-surface-container {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		position: relative;
+		overflow: hidden;
+		align-items: center;
+		justify-content:center;
 
-		.tagging-canvas{
-			position:absolute;
+		.centered-container{
+			display:flex;
+			max-width:100%;
+			max-height:100%;
+			position:relative;
+
+			& > * {
+				max-height: 100%;
+				max-width:100%;
+			}
+
+			.tagging-canvas {
+				position: absolute;
+			}
 		}
 	}
 }
