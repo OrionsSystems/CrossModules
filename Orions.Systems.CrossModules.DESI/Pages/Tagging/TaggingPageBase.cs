@@ -22,6 +22,9 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		protected TaggingSystem _taggingSystem;
 		protected TaggingSurface TaggingSurface;
 
+		// debu 
+		private Guid id = Guid.NewGuid();
+
 		protected override async Task OnInitializedAsync()
 		{
 			var navigationService = DependencyResolver.GetNavigationService();
@@ -95,7 +98,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			{
 				_subscriptions.ForEach(i => i.Dispose());
 				_subscriptions.Clear();
-				Vm.Dispose();
+				Vm?.Dispose();
 				Vm = null;
 			}
 			base.Dispose(disposing);

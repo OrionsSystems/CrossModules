@@ -2094,7 +2094,8 @@ video::-webkit-media-text-track-display {
   .tagging-page-container > .bottom-row {
     flex: 1;
     display: flex;
-    flex-direction: row; }
+    flex-direction: row;
+    overflow: hidden; }
     .tagging-page-container > .bottom-row > .left-column {
       display: flex;
       flex-direction: column;
@@ -2195,8 +2196,16 @@ video::-webkit-media-text-track-display {
     flex: 1;
     flex-direction: column;
     position: relative;
-    overflow: hidden; }
-    .tagging-page-container .tagging-surface-container .frame-img {
-      width: 100%; }
-    .tagging-page-container .tagging-surface-container .tagging-canvas {
-      position: absolute; }
+    overflow: hidden;
+    align-items: center;
+    justify-content: center; }
+    .tagging-page-container .tagging-surface-container .centered-container {
+      display: flex;
+      max-width: 100%;
+      max-height: 100%;
+      position: relative; }
+      .tagging-page-container .tagging-surface-container .centered-container > * {
+        max-height: 100%;
+        max-width: 100%; }
+      .tagging-page-container .tagging-surface-container .centered-container .tagging-canvas {
+        position: absolute; }
