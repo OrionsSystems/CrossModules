@@ -39,7 +39,20 @@
 }
 
 .dashoboard-list-simple {
-	@include db-list-table
+	@include db-list-table;
+
+	.dashboard-group-btn {
+		cursor: pointer;
+		opacity: 0.7;
+		transition: 0.5s;
+	}
+
+	.dashboard-group-btn:hover {
+		cursor: pointer;
+		opacity: 1;
+		transition: 0.5s;
+		color:darkred;
+	}
 }
 
 .dashoboard-list-accordion {
