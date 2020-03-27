@@ -1,0 +1,20 @@
+﻿@using Orions.SDK;
+@using Orions.Infrastructure.HyperMedia;
+@using Orions.Common;
+
+@inherits MediaComponentBase;
+
+@if (Media != null)
+{
+    switch (Media.MediaSource)
+    {
+        case MemoryImagePlaylistEntry memoryImage:
+            <img src="@UniImage.ConvertByteArrayToBase64Url(memoryImage.Handle)" class="frame-img"/>
+            break;
+
+        case HyperAssetPlaylistEntry hyperAsset:
+            <div> *** video mode is not yet supported *** </div>
+            break;
+    }
+}
+

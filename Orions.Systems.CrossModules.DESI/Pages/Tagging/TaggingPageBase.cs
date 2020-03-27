@@ -1,8 +1,4 @@
-﻿using Orions.Systems.Desi.Common.TagsExploitation;
-using Orions.Systems.Desi.Common.Models;
-using Orions.Infrastructure.HyperMedia;
-using Orions.Node.Common;
-using Orions.Systems.CrossModules.Desi.Infrastructure;
+﻿using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Core.ViewModels;
 using System;
@@ -52,36 +48,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			if(Vm.CurrentTask != null)
-			{
-				Vm.CurrentPosition = Vm.CurrentTask.HyperId;
-			}
-			_subscriptions.Add(Vm.TasksData.CurrentTaskChanged.Where(i => i.NewTask != null).Subscribe(i =>
-			{
-				Vm.IsTaggingMode = true;
-				Vm.CurrentPosition = i.NewTask.HyperId;
-			}));
-
 			await base.OnInitializedAsync();
-		}
-
-		public void TagAdded(Components.TaggingSurface.Model.Rectangle rectangle)
-		{
-			var actionDispatcher = _taggingSystem.ActionDispatcher;
-
-			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
-			var tagsGeometry = new TagGeometry(rectF, ShapeType.Rectangle);
-			var currentPosition = Vm.CurrentTask.HyperId;
-			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition));
-		}
-
-		public void TagSelected(string id)
-		{
-			var actionDispatcher = _taggingSystem.ActionDispatcher;
-
-			var tagModel = this.Vm.TagData.CurrentTaskTags.Single(t => t.Id.ToString() == id);
-			actionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
 		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -96,8 +63,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		{
 			if (disposing)
 			{
-				_subscriptions.ForEach(i => i.Dispose());
-				_subscriptions.Clear();
 				Vm?.Dispose();
 				Vm = null;
 			}
