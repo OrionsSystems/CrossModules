@@ -96,6 +96,17 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			actionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
 		}
 
+		public void TagPositionOrSizeChanged(Components.TaggingSurface.Model.Rectangle rectangle)
+		{
+			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			var tagModel = this.Vm.TagData.CurrentTaskTags.SingleOrDefault(t => t.Id.ToString() == rectangle.Id);
+
+			if(tagModel != null)
+			{
+				tagModel.Geometry = tagModel.Geometry.WithNewBounds(rectF);
+			}
+		}
+
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
 			if (this.Vm?.TagonomyExecutionData != null)

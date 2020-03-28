@@ -62,7 +62,8 @@
 							Rectangles="@surfaceRectangles"
 							ImageData="this.Vm.CurrentFrameImageData"
 							OnTagAdded="this.TagAdded"
-							OnTagSelected="this.TagSelected">
+							OnTagSelected="this.TagSelected"
+							OnTagPositionOrSizeChanged="this.TagPositionOrSizeChanged">
 				@if (this.Vm.TagonomyExecutionData != null)
 				{
 					<VizListComponent Data="this.Vm.TagonomyExecutionData"

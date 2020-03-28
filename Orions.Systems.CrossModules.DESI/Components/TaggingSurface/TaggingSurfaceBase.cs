@@ -52,6 +52,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public EventCallback<string> OnTagSelected { get; set; }
 
 		[Parameter]
+		public EventCallback<Model.Rectangle> OnTagPositionOrSizeChanged { get; set; }
+
+		[Parameter]
 		public RenderFragment ChildContent { get; set; }
 
 		[Inject]
@@ -91,6 +94,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				}
 
 			}
+		}
+
+		[JSInvokable]
+		public async Task TagPositionOrSizeChanged(Model.Rectangle rectangle)
+		{
+			await this.OnTagPositionOrSizeChanged.InvokeAsync(rectangle);
 		}
 
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
