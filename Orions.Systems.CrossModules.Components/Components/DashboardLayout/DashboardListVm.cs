@@ -1,11 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+
 using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,7 +71,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			//DataList.Where(w => string.IsNullOrWhiteSpace(w.Group)).ToList().ForEach(s => s.Group = "Default");
 
-			result =  DataList.GroupBy(x => x.DefaultGroup).ToDictionary(gdc => gdc.Key, gdc => gdc?.ToList() ?? new List<DashboardData>());
+			result = DataList.GroupBy(x => x.DefaultGroup).ToDictionary(gdc => gdc.Key, gdc => gdc?.ToList() ?? new List<DashboardData>());
 
 			IsLoadedDataResult = true;
 
@@ -87,7 +90,8 @@ namespace Orions.Systems.CrossModules.Components
 
 				DataList = datas.ToList();
 			}
-			else {
+			else
+			{
 
 				var findDocArgs = new FindHyperDocumentsArgs(typeof(DashboardData), true);
 
@@ -115,12 +119,19 @@ namespace Orions.Systems.CrossModules.Components
 			this.RaiseNotify(nameof(DataList));
 		}
 
+		public async Task CreateNewDashboard()
+		{
+			var newDashboard = new DashboardData();
+
+			SelectedDashboard = newDashboard;
+
+			await SaveChanges();
+
+			await SelectDashboardAsync(newDashboard, false, true);
+		}
+
 		public async Task SelectDashboardAsync(DashboardData data, bool showView = false, bool isNew = false)
 		{
-			SelectedDashboard = data;
-
-			//await SaveChanges();
-
 			if (showView)
 			{
 				await OnSelectView.InvokeAsync(data.Id);
@@ -143,12 +154,14 @@ namespace Orions.Systems.CrossModules.Components
 			await LoadDashboarList();
 		}
 
-		public void ShowDeleteConfirmationDialog(DashboardData data) {
+		public void ShowDeleteConfirmationDialog(DashboardData data)
+		{
 			ShowConfirmDeleteDashboard = true;
 			SelectedDashboard = data;
 		}
 
-		public async Task OnDeleteDashboard() {
+		public async Task OnDeleteDashboard()
+		{
 			if (SelectedDashboard == null) return;
 			await DeleteDashboard(SelectedDashboard);
 
@@ -224,6 +237,56 @@ namespace Orions.Systems.CrossModules.Components
 		public async Task OnClickGroup(MouseEventArgs e, string group)
 		{
 			await OnSearch.InvokeAsync(group);
+		}
+
+		public async Task<byte[]> ExtractAllDashboards()
+		{
+			var dashboards = new List<DashboardData>();
+
+			var findDocArgs = new FindHyperDocumentsArgs(typeof(DashboardData), true);
+			var documents = await HyperStore.ExecuteAsync(findDocArgs);
+
+			if (!findDocArgs.ExecutionResult.IsNotSuccess || documents != null)
+			{
+				foreach (var doc in documents)
+				{
+					var dashboard = doc?.GetPayload<DashboardData>();
+
+					if (dashboard != null) dashboards.Add(dashboard);
+				}
+			}
+
+			var compressedFileStream = new MemoryStream();
+
+			using (compressedFileStream)
+			{
+				//compressedFileStream.Seek(0, SeekOrigin.Begin);
+				using (var zipArchive = new ZipArchive(compressedFileStream, ZipArchiveMode.Create, false))
+				{
+					foreach (var data in dashboards)
+					{
+
+						var projectJson = JsonHelper.Serialize(data);
+						var fileName = $"{data?.Name}.json";
+
+						//Create a zip entry for each attachment
+						var zipEntry = zipArchive.CreateEntry(fileName);
+
+						//Get the stream of the attachment
+						using (var originalFileStream = new MemoryStream(Encoding.UTF8.GetBytes(projectJson)))
+						{
+							using (var zipEntryStream = zipEntry.Open())
+							{
+								//Copy the attachment stream to the zip entry stream
+								originalFileStream.CopyTo(zipEntryStream);
+							}
+						}
+					}
+				}
+			}
+			var result = compressedFileStream.ToArray();
+
+			return result;
 		}
 	}
 }
