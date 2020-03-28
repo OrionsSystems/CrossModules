@@ -31,7 +31,8 @@ class BaseVisual {
 		this.eventListeners = {
 			'selected': [],
 			'deselected': [],
-			'moved': []
+			'moved': [],
+			'resized': []
 		}
 
 		this.was_moved = false;
@@ -301,18 +302,21 @@ class TagVisual extends BaseVisual {
 	}
 
 	updateElements() {
-
+		let self = this;
 		super.updateElements();
 
 		var p1 = this.get_topLeft();
 		var p2 = this.get_bottomRight();
 
-		//var element = new AdornerElement()
-		//element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
+		var element = new AdornerElement()
+		element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
-		//element.add_moved_event_listener(this);
+		element.add_moved_event_listener(this);
+		element.on('moved', function () {
+			self.fire('resized');
+		})
 
-		//this.elements.push(element);
+		this.elements.push(element);
 	}
 
 	// Element was moved.
@@ -505,20 +509,20 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
 		})
 
-		newTagVisual.on('moved', function (movedVisual) {
-			console.log(`moved ${movedVisual.id}`)
-
+		let resizedOrMovedHandler = function (visual) {
 			let rectCoords = {
-				topLeft: movedVisual.get_topLeft(),
-				bottomRight: movedVisual.get_bottomRight()
+				topLeft: visual.get_topLeft(),
+				bottomRight: visual.get_bottomRight()
 			};
 
 			let rect = getProportionalRectangle(rectCoords);
-			rect.id = movedVisual.id;
-			rect.isSelected = movedVisual.is_selected
+			rect.id = visual.id;
+			rect.isSelected = visual.is_selected
 
 			self.componentRef.invokeMethodAsync("TagPositionOrSizeChanged", rect);
-		})
+		}
+		newTagVisual.on('moved', resizedOrMovedHandler)
+		newTagVisual.on('resized', resizedOrMovedHandler)
 	}
 
 	window.Orions.TaggingSurface.updateTag = function (tag) {
