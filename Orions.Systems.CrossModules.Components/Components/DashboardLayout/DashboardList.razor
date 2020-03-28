@@ -1,12 +1,16 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
+@using Orions.Common
 @using Orions.Node.Common
 @using System.IO
+@using System.Globalization
 @using Syncfusion.EJ2.Blazor.Navigations
+@using Microsoft.JSInterop
 
 @inherits BaseBlazorComponent<DashboardListVm>
 
 @inject NavigationManager MyNavigationManager
+@inject IJSRuntime JSRuntime
 
 <div class="dashoboard-list-container container-fluid ">
 
@@ -124,6 +128,10 @@
 																<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
 																<div class="dashboard-list-cmd-label">Edit</div>
 															</a>
+															<a class="btn btn-sm" @onclick="@(async e => await ExportDashboard(item) )">
+																<MatIcon Icon="@MatIconNames.Backup"></MatIcon>
+																<div class="dashboard-list-cmd-label">Export</div>
+															</a>
 															<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
 																<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
 																<div class="dashboard-list-cmd-label">Delete</div>
@@ -194,6 +202,10 @@
 										<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenPropertyGridAsync(item); })">
 											<MatIcon Icon="@MatIconNames.Edit"></MatIcon>
 											<div class="dashboard-list-cmd-label">Edit</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => await ExportDashboard(item) )">
+											<MatIcon Icon="@MatIconNames.Backup"></MatIcon>
+											<div class="dashboard-list-cmd-label">Export</div>
 										</a>
 										<a class="btn btn-sm dashboard-list-cmd-delete ml-3" @onclick="@(e => { Vm.ShowDeleteConfirmationDialog(item); })">
 											<MatIcon Icon="@MatIconNames.Delete"></MatIcon>
@@ -439,6 +451,19 @@
 		{
 			await Accordion.ExpandItem(true, i);
 		}
+	}
+
+	private async Task ExportDashboard(DashboardData data)
+	{
+		if (data == null) return;
+
+		var projectJson = JsonHelper.Serialize(data);
+
+		var currentTime = DateTime.UtcNow.ToString("yy-MM-dd-H-mm", CultureInfo.InvariantCulture);
+
+		var fileName = $"exported-{data?.Name}-{ currentTime }.json";
+
+		await JSRuntime.InvokeAsync<object>("Orions.FileSaveAs.init", new object[] { fileName, projectJson });
 	}
 
 }
