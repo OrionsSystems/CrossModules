@@ -11,12 +11,31 @@ const getMethods = (obj) => {
 	return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }
 
+function stickToCanvasBounds(coords, canvas) {
+	if (coords.topLeft.y < 0) {
+		coords.topLeft.y = 0;
+	}
+
+	if (coords.topLeft.x < 0) {
+		coords.topLeft.x = 0;
+	}
+
+	if (coords.bottomRight.x > canvas.width) {
+		coords.bottomRight.x = canvas.width;
+	}
+
+	if (coords.bottomRight.y > canvas.height) {
+		coords.bottomRight.y = canvas.height;
+	}
+}
+
 function isDefined(item) {
 	return (item !== null && typeof item !== 'undefined');
 }
 
 class BaseVisual {
-	constructor() {
+	constructor(canvas) {
+		this.canvas = canvas;
 		this.min_size = 8;
 
 		this.strokeColor = 'black';
@@ -261,22 +280,33 @@ class BaseVisual {
 }
 
 class AdornerElement extends BaseVisual {
-	constructor() {
-		super();
+	constructor(canvas) {
+		super(canvas);
 		this.enter_fillColor = '#bbf';
 		this.fillColor = 'blue';
 	}
 
 
 	path_onMouseDrag(event) {
+		// if adorner was dragged outside the canvas - dont process such event
+		let canvas = this.owner.canvas;
+		let center = this.owner.get_center();
+		if (center.x + event.delta.x > canvas.width
+			|| center.x + event.delta.x < 0
+			|| center.y + event.delta.y > canvas.height
+			|| center.y + event.delta.y < 0) {
+			event.stopPropagation();
+			return;
+		}
+
 		super.path_onMouseDrag(event);
 	}
 }
 
 class TagVisual extends BaseVisual {
 
-	constructor() {
-		super()
+	constructor(canvas) {
+		super(canvas)
 		this.adornerSize = 8;
 		this.is_selected = false;
 	}
@@ -308,7 +338,7 @@ class TagVisual extends BaseVisual {
 		var p1 = this.get_topLeft();
 		var p2 = this.get_bottomRight();
 
-		var element = new AdornerElement()
+		var element = new AdornerElement(self.canvas)
 		element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
 		element.add_moved_event_listener(this);
@@ -317,6 +347,25 @@ class TagVisual extends BaseVisual {
 		})
 
 		this.elements.push(element);
+	}
+
+	path_onMouseDrag(event) {
+		let canvas = this.owner.canvas;
+		let topLeft = this.owner.get_topLeft();
+		let bottomRight = this.owner.get_bottomRight();
+		let newTopLeftX = event.delta.x + topLeft.x;
+		let newTopLeftY = event.delta.y + topLeft.y;
+		let newBottomRightX = event.delta.x + bottomRight.x;
+		let newBottomRightY = event.delta.y + bottomRight.y;
+		if (newTopLeftX < 0
+			|| newTopLeftY < 0
+			|| newBottomRightX > canvas.width
+			|| newBottomRightY > canvas.height) {
+			event.stopPropagation()
+			return;
+		}
+
+		super.path_onMouseDrag(event);
 	}
 
 	// Element was moved.
@@ -400,10 +449,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	// Define a mousedown and mousedrag handler
 	tool.onMouseDown = function (event) {
-
-		//if (isDefined(event.processing_done) && event.processing_done == true)
-		//	return true;
-
 		for (var i = 0; i < items.length; i++) {
 			var hitResult = items[i].hitTest(event.point);
 			if (isDefined(hitResult)) {
@@ -450,6 +495,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			topLeft: { x: Math.min(mouseDownAt.x, event.point.x), y: Math.min(mouseDownAt.y, event.point.y) },
 			bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
 		}
+
+		stickToCanvasBounds(rectCoords, self.canvas);
+
 		let rect = getProportionalRectangle(rectCoords);
 		self.componentRef.invokeMethodAsync("TagAdded", rect);
 
@@ -486,7 +534,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	paper.setup(self.canvas);
 
 	window.Orions.TaggingSurface.addTag = function (tag) {
-		var newTagVisual = new TagVisual();
+		var newTagVisual = new TagVisual(self.canvas);
 		var tagCoords = getRectangleRealFromProportional(tag);
 		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 		newTagVisual.id = tag.id;
@@ -514,6 +562,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				topLeft: visual.get_topLeft(),
 				bottomRight: visual.get_bottomRight()
 			};
+
+			stickToCanvasBounds(rectCoords, self.canvas);
 
 			let rect = getProportionalRectangle(rectCoords);
 			rect.id = visual.id;
@@ -548,8 +598,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				x: tag.get_topLeft().x,
 				y: tag.get_topLeft().y
 			}
-
-			let canvasPositionLeft = self.canvas.offsetLeft;
 
 			let elementPosition = {
 				x: tagAbsolutePosition.x + tag.getWidth() + 20,
