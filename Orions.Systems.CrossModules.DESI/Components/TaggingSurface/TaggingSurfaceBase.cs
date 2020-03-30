@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Collections;
@@ -8,6 +9,7 @@ using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
+using Orions.Systems.Desi.Common.TaskExploitation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,6 +58,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 				});
 		}
+
+		[Parameter]
+		public ITaskDataStore TaskDataStore { get; set; }
 
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
@@ -133,8 +138,26 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			_tagsCollectionChagedSub?.Dispose();
 			_tagsCollectionChagedSub = tags?
 				.GetCollectionChangedObservable()
-				.Select(i => i.Source.Where(t => t.TagHyperId.Equals(GetCurrentPosition())))
+				.Select(i => CurrentPositionTagsSelector(i.Source))
 				.Subscribe(i => Rectangles = i.Select(ConvertToRectangle).ToList());
+		}
+
+		protected IEnumerable<TagModel> CurrentPositionTagsSelector(IEnumerable<TagModel> tags)
+		{
+			if(TaskDataStore.Data.CurrentTask != null)
+			{
+				if(TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Video)
+				{
+					var position = GetCurrentPosition();
+					return tags.Where(t => t.TagHyperId.Equals(position));
+				}
+				else if(TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Image || TaskDataStore.Data.CurrentTask.IsComparative())
+				{
+					return tags;
+				}
+			}
+
+			return Enumerable.Empty<TagModel>();
 		}
 
 		private Rectangle ConvertToRectangle(TagModel tagModel) => new Rectangle
@@ -181,7 +204,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				return MediaDataStore.Data.MediaInstances[0].CurrentPosition;
 			}
 
-			return MediaDataStore.Data.CurrentTaskHyperId;
+			return TaskDataStore.Data.CurrentTask?.HyperId ?? new HyperId();
 		}
 
 		private void UpdateTagsOnClient(List<Rectangle> oldRectangleCollection, List<Rectangle> newRectangleCollection)

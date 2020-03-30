@@ -3,17 +3,15 @@
 @inherits TaggingPageBase
 @namespace Orions.Systems.CrossModules.Desi.Pages
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
-@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 @using Orions.Systems.CrossModules.Desi.Components.TagPreview;
+@using Orions.Systems.CrossModules.Desi.Components;
 
 @if (this.Vm != null)
 {
 	<div class="tagging-page-container">
-		<div class="mission-title">
-			@(this.Vm.CurrentTask != null ? this.Vm.CurrentTask.ExecutionTimeLeft.ToString() : " ")
-		</div>
+		<ExploitationTimerWidget TaskDataStore="@_taggingSystem.TaskDataStore"/>
 		<div class="bottom-row">
 			<div class="left-column">
 				<div class="top-area">
@@ -45,18 +43,17 @@
 									  Store="@_taggingSystem.TaskDataStore">
 				</TaskNavigationWidget>
 				
-				<TaggingSurface @ref="TaggingSurface" 
-							TagsStore="@_taggingSystem.TagsStore" 
-							MediaDataStore="@_taggingSystem.MediaDataStore"
-							ActionDispatcher="@_taggingSystem.ActionDispatcher">
-				@if (this.Vm.TagonomyExecutionData != null)
-				{
-					<VizListComponent Data="this.Vm.TagonomyExecutionData"
+				<TaggingSurface @ref="TaggingSurface"
+								TaskDataStore="@_taggingSystem.TaskDataStore"
+								TagsStore="@_taggingSystem.TagsStore"
+								MediaDataStore="@_taggingSystem.MediaDataStore"
+								ActionDispatcher="@_taggingSystem.ActionDispatcher">
+		
+					<VizListComponent Store="@_taggingSystem.TagonomyExecutionDataStore"
 									  ActionDispatcher="this._taggingSystem.ActionDispatcher"
 									  CssClass="vizlist-positioned">
 					</VizListComponent>
-				}
-			</TaggingSurface>
+				</TaggingSurface>
 				
 			</div>
 		</div>
