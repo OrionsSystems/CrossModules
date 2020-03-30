@@ -8,7 +8,6 @@ using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
-using Orions.Systems.Desi.Core.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +18,7 @@ using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Mod
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
-	public class TaggingSurfaceBase : DesiBaseComponent<TaggingViewModel>
+	public class TaggingSurfaceBase : BaseComponent
 	{
 		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 

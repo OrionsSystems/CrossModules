@@ -76,7 +76,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			}
 			set
 			{
-				if (value != null && value != _vm)
+				if (value != null && value != _vm && AutoWirePropertyChangedListener)
 				{
 					AddVmDataPropertyChangedHandlers(value);
 				}
@@ -89,6 +89,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		[Inject]
 		public NavigationManager NavigationManager { get; set; }
+
+		protected virtual bool AutoWirePropertyChangedListener { get; } = true;
 
 		public DesiBaseComponent()
 		{

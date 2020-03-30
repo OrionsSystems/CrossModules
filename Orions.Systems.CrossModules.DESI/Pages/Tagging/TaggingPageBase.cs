@@ -18,9 +18,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		protected TaggingSystem _taggingSystem;
 		protected TaggingSurface TaggingSurface;
 
-		// debu 
-		private Guid id = Guid.NewGuid();
-
 		protected override async Task OnInitializedAsync()
 		{
 			var navigationService = DependencyResolver.GetNavigationService();
@@ -50,6 +47,8 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			await base.OnInitializedAsync();
 		}
+
+		protected override bool AutoWirePropertyChangedListener => false;
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{

@@ -4,7 +4,6 @@
 @namespace Orions.Systems.CrossModules.Desi.Pages
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
-@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 @using Orions.Systems.CrossModules.Desi.Components.TagPreview;
@@ -42,11 +41,11 @@
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
 			<div class="right-column">
-				<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
-
+				<TaskNavigationWidget ActionDispatcher="_taggingSystem.ActionDispatcher" 
+									  Store="@_taggingSystem.TaskDataStore">
 				</TaskNavigationWidget>
-
-			<TaggingSurface @ref="TaggingSurface" 
+				
+				<TaggingSurface @ref="TaggingSurface" 
 							TagsStore="@_taggingSystem.TagsStore" 
 							MediaDataStore="@_taggingSystem.MediaDataStore"
 							ActionDispatcher="@_taggingSystem.ActionDispatcher">
