@@ -10,6 +10,7 @@
 			   preload="auto"
 			   width="1280"
 			   height="720"
+			   autoplay
 			   data-setup="{}">
 			<p class="vjs-no-js">
 				To view this video please enable JavaScript, and consider upgrading to a
@@ -37,9 +38,9 @@
 	{
 		await base.OnAfterRenderAsync(firstRender);
 
-		if (_payload != null)
+		if (PayLoad != null)
 		{
-			await JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", _payload, DotNetObjectReference.Create(this));
+			await JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", PayLoad, DotNetObjectReference.Create(this));
 		}
 	}
 }

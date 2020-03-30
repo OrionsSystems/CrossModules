@@ -32,6 +32,10 @@ window.Orions.Player = {
             vmInstance.invokeMethodAsync("OnPauseAsync", video.currentTime());
         });
 
+        video.on('timeupdate', function () {
+            vmInstance.invokeMethodAsync("OnPositionUpdate", video.currentTime());
+        });
+
         video.on('play', function () {
             vmInstance.invokeMethodAsync("OnPlay");
         });
