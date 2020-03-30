@@ -8,6 +8,7 @@
 @using Orions.Systems.CrossModules.Desi.Components.TagPreview;
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 @using Orions.Systems.CrossModules.Desi.Components;
+@using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 
 @if (this.Vm != null)
 {
@@ -42,7 +43,7 @@
 			<div class="right-column">
 				<TaskNavigationWidget ActionDispatcher="_taggingSystem.ActionDispatcher" 
 									  Store="@_taggingSystem.TaskDataStore">
-				</TaskNavigationWidget>
+				</TaskNavigationWidget>		
 				
 				<TaggingSurface @ref="TaggingSurface"
 								TaskDataStore="@_taggingSystem.TaskDataStore"
@@ -60,6 +61,7 @@
 		</div>
 	</div>
 }
+<SessionIsOverPopup @ref="SessionIsOverPopup"/>
 
 <style>
 	.vizlist-positioned {

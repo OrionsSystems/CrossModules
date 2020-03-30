@@ -11,12 +11,31 @@ const getMethods = (obj) => {
 	return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }
 
+function stickToCanvasBounds(coords, canvas) {
+	if (coords.topLeft.y < 0) {
+		coords.topLeft.y = 0;
+	}
+
+	if (coords.topLeft.x < 0) {
+		coords.topLeft.x = 0;
+	}
+
+	if (coords.bottomRight.x > canvas.width) {
+		coords.bottomRight.x = canvas.width;
+	}
+
+	if (coords.bottomRight.y > canvas.height) {
+		coords.bottomRight.y = canvas.height;
+	}
+}
+
 function isDefined(item) {
 	return (item !== null && typeof item !== 'undefined');
 }
 
 class BaseVisual {
-	constructor() {
+	constructor(canvas) {
+		this.canvas = canvas;
 		this.min_size = 8;
 
 		this.strokeColor = 'black';
@@ -30,7 +49,9 @@ class BaseVisual {
 		this.moved_event_listeners = [];
 		this.eventListeners = {
 			'selected': [],
-			'deselected': []
+			'deselected': [],
+			'moved': [],
+			'resized': []
 		}
 
 		this.was_moved = false;
@@ -137,10 +158,12 @@ class BaseVisual {
 		if (this.owner.was_moved) {
 			this.owner.raise_moved_event();
 			this.owner.was_moved = false;
+			this.owner.fire('moved');
 		}
 
 		this.owner.select(true);
 
+		
 		this.owner.updateElements();
 	}
 
@@ -216,7 +239,7 @@ class BaseVisual {
 
 		this.main_group.onMouseDown = this.path_onMouseDown;
 		this.main_group.onMouseUp = this.path_onMouseUp;
-		//this.main_group.onMouseDrag = this.path_onMouseDrag;
+		this.main_group.onMouseDrag = this.path_onMouseDrag;
 
 		this.main_group.owner = this;
 		this.main_group.addChild(path);
@@ -257,22 +280,33 @@ class BaseVisual {
 }
 
 class AdornerElement extends BaseVisual {
-	constructor() {
-		super();
+	constructor(canvas) {
+		super(canvas);
 		this.enter_fillColor = '#bbf';
 		this.fillColor = 'blue';
 	}
 
 
 	path_onMouseDrag(event) {
+		// if adorner was dragged outside the canvas - dont process such event
+		let canvas = this.owner.canvas;
+		let center = this.owner.get_center();
+		if (center.x + event.delta.x > canvas.width
+			|| center.x + event.delta.x < 0
+			|| center.y + event.delta.y > canvas.height
+			|| center.y + event.delta.y < 0) {
+			event.stopPropagation();
+			return;
+		}
+
 		super.path_onMouseDrag(event);
 	}
 }
 
 class TagVisual extends BaseVisual {
 
-	constructor() {
-		super()
+	constructor(canvas) {
+		super(canvas)
 		this.adornerSize = 8;
 		this.is_selected = false;
 	}
@@ -294,21 +328,44 @@ class TagVisual extends BaseVisual {
 		}
 
 		// TODO : implement missing updates if needed
+		console.log(`tag ${this.id} update method has been invoked`)
 	}
 
 	updateElements() {
-
+		let self = this;
 		super.updateElements();
 
 		var p1 = this.get_topLeft();
 		var p2 = this.get_bottomRight();
 
-		//var element = new AdornerElement()
-		//element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
+		var element = new AdornerElement(self.canvas)
+		element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
-		//element.add_moved_event_listener(this);
+		element.add_moved_event_listener(this);
+		element.on('moved', function () {
+			self.fire('resized');
+		})
 
-		//this.elements.push(element);
+		this.elements.push(element);
+	}
+
+	path_onMouseDrag(event) {
+		let canvas = this.owner.canvas;
+		let topLeft = this.owner.get_topLeft();
+		let bottomRight = this.owner.get_bottomRight();
+		let newTopLeftX = event.delta.x + topLeft.x;
+		let newTopLeftY = event.delta.y + topLeft.y;
+		let newBottomRightX = event.delta.x + bottomRight.x;
+		let newBottomRightY = event.delta.y + bottomRight.y;
+		if (newTopLeftX < 0
+			|| newTopLeftY < 0
+			|| newBottomRightX > canvas.width
+			|| newBottomRightY > canvas.height) {
+			event.stopPropagation()
+			return;
+		}
+
+		super.path_onMouseDrag(event);
 	}
 
 	// Element was moved.
@@ -330,11 +387,7 @@ class TagVisual extends BaseVisual {
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
 	this.componentRef = componentRef;
 	let self = this;
-	let frameImg = document.querySelector(`#${componentId} .frame-img`);
-	let canvas = document.querySelector(`#${componentId} .tagging-canvas`);
-
-	canvas.width = frameImg.width;
-	canvas.height = frameImg.height;
+	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
 	// Create a simple drawing tool:
 	var tool = new paper.Tool();
@@ -355,23 +408,23 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	paper.project = new paper.Project();
 
-	let getProportionalRectangle = function (coords, canvas) {
-		let width = (coords.bottomRight.x - coords.topLeft.x) / canvas.width;
-		let height = (coords.bottomRight.y - coords.topLeft.y) / canvas.height;
+	let getProportionalRectangle = function (coords) {
+		let width = (coords.bottomRight.x - coords.topLeft.x) / self.canvas.width;
+		let height = (coords.bottomRight.y - coords.topLeft.y) / self.canvas.height;
 
-		var x = coords.topLeft.x / canvas.width;
-		var y = coords.topLeft.y / canvas.height;
+		var x = coords.topLeft.x / self.canvas.width;
+		var y = coords.topLeft.y / self.canvas.height;
 
 		return { x, y, width, height };
 	};
 
 	let getRectangleRealFromProportional = function (proportional) {
-		let width = proportional.width * canvas.width;
-		let height = proportional.height * canvas.height;
+		let width = proportional.width * self.canvas.width;
+		let height = proportional.height * self.canvas.height;
 
 		let topLeft = {
-			x: proportional.x * canvas.width,
-			y: proportional.y * canvas.height
+			x: proportional.x * self.canvas.width,
+			y: proportional.y * self.canvas.height
 		}
 
 		let bottomRight = {
@@ -396,10 +449,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	// Define a mousedown and mousedrag handler
 	tool.onMouseDown = function (event) {
-
-		//if (isDefined(event.processing_done) && event.processing_done == true)
-		//	return true;
-
 		for (var i = 0; i < items.length; i++) {
 			var hitResult = items[i].hitTest(event.point);
 			if (isDefined(hitResult)) {
@@ -446,7 +495,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			topLeft: { x: Math.min(mouseDownAt.x, event.point.x), y: Math.min(mouseDownAt.y, event.point.y) },
 			bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
 		}
-		let rect = getProportionalRectangle(rectCoords, canvas);
+
+		stickToCanvasBounds(rectCoords, self.canvas);
+
+		let rect = getProportionalRectangle(rectCoords);
 		self.componentRef.invokeMethodAsync("TagAdded", rect);
 
 		mouseDownAt = undefined;
@@ -479,10 +531,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		}
 	}
 
-	paper.setup(canvas);
+	paper.setup(self.canvas);
 
 	window.Orions.TaggingSurface.addTag = function (tag) {
-		var newTagVisual = new TagVisual();
+		var newTagVisual = new TagVisual(self.canvas);
 		var tagCoords = getRectangleRealFromProportional(tag);
 		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 		newTagVisual.id = tag.id;
@@ -504,6 +556,23 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 			self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
 		})
+
+		let resizedOrMovedHandler = function (visual) {
+			let rectCoords = {
+				topLeft: visual.get_topLeft(),
+				bottomRight: visual.get_bottomRight()
+			};
+
+			stickToCanvasBounds(rectCoords, self.canvas);
+
+			let rect = getProportionalRectangle(rectCoords);
+			rect.id = visual.id;
+			rect.isSelected = visual.is_selected
+
+			self.componentRef.invokeMethodAsync("TagPositionOrSizeChanged", rect);
+		}
+		newTagVisual.on('moved', resizedOrMovedHandler)
+		newTagVisual.on('resized', resizedOrMovedHandler)
 	}
 
 	window.Orions.TaggingSurface.updateTag = function (tag) {
@@ -530,8 +599,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				y: tag.get_topLeft().y
 			}
 
-			let canvasPositionLeft = canvas.offsetLeft;
-
 			let elementPosition = {
 				x: tagAbsolutePosition.x + tag.getWidth() + 20,
 				y: tagAbsolutePosition.y
@@ -543,14 +610,14 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				let elemWidth = elementToAttach.offsetWidth
 				let elemHeight = elementToAttach.offsetHeight
 
-				if (elementPosition.x + elemWidth > canvas.width) {
+				if (elementPosition.x + elemWidth > self.canvas.width) {
 					elementPosition.x = tagAbsolutePosition.x - elemWidth - 20
 				}
 
 				elementToAttach.style.left = elementPosition.x + 'px'
 				elementToAttach.style.top = elementPosition.y + 'px'
 
-				if (elementPosition.y + elemHeight > canvas.height) {
+				if (elementPosition.y + elemHeight > self.canvas.height) {
 					elementToAttach.style.bottom = '20px'
 					elementToAttach.style.top = ''
 				}

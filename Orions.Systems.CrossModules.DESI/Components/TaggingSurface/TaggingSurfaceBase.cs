@@ -113,10 +113,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				if(this.Rectangles.Any(r => r.Id == rectangleId))
 				{
-					await JSRuntime.InvokeAsync<Model.ClientPosition>("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
+					await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
 				}
 			}
 		}
+
+		[JSInvokable]
+		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
@@ -129,6 +132,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			_initializationSemaphore.Release();
 
 			await base.OnAfterRenderAsync(firstRender);
+		}
+
+		public void OnTagPositionOrSizeChanged(Rectangle rectangle)
+		{
+			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
+			var tagModel = TagsStore.Data.CurrentTaskTags.SingleOrDefault(t => t.Id.ToString() == rectangle.Id);
+
+			if (tagModel != null)
+			{
+				tagModel.Geometry = tagModel.Geometry.WithNewBounds(rectF);
+			}
 		}
 
 		private void OnCurrentTaskTagsChanged(ReadOnlyObservableCollectionEx<TagModel> tags)

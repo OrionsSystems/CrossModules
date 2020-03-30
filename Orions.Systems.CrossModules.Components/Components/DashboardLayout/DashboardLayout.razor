@@ -4,6 +4,7 @@
 @using Syncfusion.EJ2.Blazor.Popups
 @using Microsoft.JSInterop
 @using System.IO
+@using System.Globalization
 
 @inherits DashboardLayoutComponent
 
@@ -48,7 +49,7 @@
 						</a>
 						<a class="btn dashboard-cmd-btn" @onclick="ExportProject">
 							<EjsTooltip Content="@("Export dashboard")">
-								<MatIcon Icon="@MatIconNames.File_copy"></MatIcon>
+								<MatIcon Icon="@MatIconNames.Backup"></MatIcon>
 							</EjsTooltip>
 						</a>
 					}
@@ -671,7 +672,9 @@
 	{
 		var projectJson = Vm.LoadDashboardAsJson();
 
-		var fileName = "exported-" + Data?.Name + ".json";
+		var currentTime = DateTime.UtcNow.ToString("yy-MM-dd-H-mm", CultureInfo.InvariantCulture);
+
+		var fileName = $"exported-{Data?.Name}-{ currentTime }.json";
 
 		await JSRuntime.InvokeAsync<object>("Orions.FileSaveAs.init", new object[] { fileName, projectJson });
 	}

@@ -1,0 +1,15 @@
+﻿@namespace Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup
+@inherits SessionIsOverPopupBase
+
+	<div class="modal-popup-overlay @(IsDisplayed? "is-displayed": "")">
+		<div class="popup-window">
+			<div class="content">
+				<div class="header">Your session is about to time out</div>
+				<div class="question">You will automatically be timed out of your task in @SecondsToTimeOutLeft</div>
+			</div>
+			<div class="buttons">
+				<button class="left-button" @onclick="OnContinue">Continue task</button>
+				<button class="right-button" @onclick="OnSaveAndExit">Save and exit</button>
+			</div>
+		</div>
+	</div>

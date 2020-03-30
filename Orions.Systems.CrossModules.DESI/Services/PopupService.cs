@@ -1,4 +1,5 @@
-﻿using Orions.Systems.CrossModules.Desi.Components.ModalPopup;
+﻿using Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup;
+using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,11 @@ namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class PopupService
 	{
-		private ModalPopupBase _popupComponent;
+		private ConfirmationPopupBase _popupComponent;
 
-		public PopupService(ModalPopupBase popupComponent)
+		public SessionIsOverPopup SessionIsOverPopup { get; set; }
+
+		public PopupService(ConfirmationPopupBase popupComponent)
 		{
 			this._popupComponent = popupComponent;
 		}
@@ -22,6 +25,20 @@ namespace Orions.Systems.CrossModules.Desi.Services
 			var result = await _popupComponent.ShowYesNoModal();
 
 			return result;
+		}
+
+		public async Task<bool> ShowSessionIsOver(int secondsToTimeout)
+		{
+			if(SessionIsOverPopup != null)
+			{
+				var result = await SessionIsOverPopup.Show(secondsToTimeout);
+
+				return result;
+			}
+			else
+			{
+				throw new Exception($"{nameof(SessionIsOverPopup)} property must be set on {nameof(PopupService)} before using {nameof(ShowSessionIsOver)} method");
+			}
 		}
 	}
 }
