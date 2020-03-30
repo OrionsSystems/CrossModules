@@ -15,7 +15,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
 	{
 		protected TaggingSystem _taggingSystem;
-		protected TaggingSurfaceBase TaggingSurface;
 		private IDisposable _tagonomyExecutionStartedSub;
 		protected TaggingSurface TaggingSurface;
 
