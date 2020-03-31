@@ -55,6 +55,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 					.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
 
+					// why (ask Anton)???
+					value.Data.CurrentTaskTags.CollectionChanged += (s, e) =>
+					{
+						OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+					};
+
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 				});
 		}

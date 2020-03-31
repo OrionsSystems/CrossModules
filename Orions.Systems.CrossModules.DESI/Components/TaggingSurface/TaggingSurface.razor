@@ -3,19 +3,20 @@
 @inherits TaggingSurfaceBase
 
 <div class="tagging-surface-container" id="@this.ComponentId">
-	<div class="centered-container">
-		@ChildContent
+	@ChildContent
 
-		@if (MediaDataStore.Data.MediaInstances?.Count == 1)
-		{
+	@if (MediaDataStore.Data.MediaInstances?.Count == 1)
+	{
+		<div class="centered-container">
 			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
 							ActionDispatcher="@ActionDispatcher" />
-			<canvas class="tagging-canvas">
-			</canvas>
-		}
-		else if (MediaDataStore.Data.MediaInstances?.Count == 2)
-		{
-			<div> *** comparative tagging is not yet implemented *** </div>
-		}
-	</div>
+		</div>
+		<canvas class="tagging-canvas">
+		</canvas>
+	}
+	else if (MediaDataStore.Data.MediaInstances?.Count == 2)
+	{
+		<div> *** comparative tagging is not yet implemented *** </div>
+	}
+
 </div>

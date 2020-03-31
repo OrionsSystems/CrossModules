@@ -2205,7 +2205,8 @@ video::-webkit-media-text-track-display {
     position: relative;
     overflow: hidden;
     align-items: center;
-    justify-content: center; }
+    justify-content: center;
+    position: relative; }
     .tagging-page-container .tagging-surface-container .centered-container {
       display: flex;
       max-width: 100%;
@@ -2214,7 +2215,9 @@ video::-webkit-media-text-track-display {
       .tagging-page-container .tagging-surface-container .centered-container > * {
         max-height: 100%;
         max-width: 100%; }
-      .tagging-page-container .tagging-surface-container .centered-container .tagging-canvas {
-        position: absolute;
-        width: 100%;
-        height: 100%; }
+      .tagging-page-container .tagging-surface-container .centered-container .frame-img {
+        visibility: hidden; }
+    .tagging-page-container .tagging-surface-container .tagging-canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%; }

@@ -11,21 +11,21 @@ const getMethods = (obj) => {
 	return [...properties.keys()].filter(item => typeof obj[item] === 'function')
 }
 
-function stickToCanvasBounds(coords, canvas) {
-	if (coords.topLeft.y < 0) {
-		coords.topLeft.y = 0;
+function stickToCanvasBounds(coords, containerRectangle) {
+	if (coords.topLeft.y < 0 + containerRectangle.y) {
+		coords.topLeft.y = containerRectangle.y;
 	}
 
-	if (coords.topLeft.x < 0) {
-		coords.topLeft.x = 0;
+	if (coords.topLeft.x < 0 + containerRectangle.x) {
+		coords.topLeft.x = containerRectangle.x;
 	}
 
-	if (coords.bottomRight.x > canvas.width) {
-		coords.bottomRight.x = canvas.width;
+	if (coords.bottomRight.x > containerRectangle.x + containerRectangle.width) {
+		coords.bottomRight.x = containerRectangle.x + containerRectangle.width;
 	}
 
-	if (coords.bottomRight.y > canvas.height) {
-		coords.bottomRight.y = canvas.height;
+	if (coords.bottomRight.y > containerRectangle.y + containerRectangle.height) {
+		coords.bottomRight.y = containerRectangle.height;
 	}
 }
 
@@ -34,8 +34,8 @@ function isDefined(item) {
 }
 
 class BaseVisual {
-	constructor(canvas) {
-		this.canvas = canvas;
+	constructor(containerRectangle) {
+		this.containerRectangle = containerRectangle;
 		this.min_size = 8;
 
 		this.strokeColor = 'black';
@@ -280,8 +280,8 @@ class BaseVisual {
 }
 
 class AdornerElement extends BaseVisual {
-	constructor(canvas) {
-		super(canvas);
+	constructor(containerRectangle) {
+		super(containerRectangle);
 		this.enter_fillColor = '#bbf';
 		this.fillColor = 'blue';
 	}
@@ -289,12 +289,12 @@ class AdornerElement extends BaseVisual {
 
 	path_onMouseDrag(event) {
 		// if adorner was dragged outside the canvas - dont process such event
-		let canvas = this.owner.canvas;
+		let containerRectangle = this.owner.containerRectangle;
 		let center = this.owner.get_center();
-		if (center.x + event.delta.x > canvas.width
-			|| center.x + event.delta.x < 0
-			|| center.y + event.delta.y > canvas.height
-			|| center.y + event.delta.y < 0) {
+		if (center.x + event.delta.x > containerRectangle.x + containerRectangle.width
+			|| center.x + event.delta.x < containerRectangle.x
+			|| center.y + event.delta.y > containerRectangle.y + containerRectangle.height
+			|| center.y + event.delta.y < containerRectangle.y) {
 			event.stopPropagation();
 			return;
 		}
@@ -305,8 +305,8 @@ class AdornerElement extends BaseVisual {
 
 class TagVisual extends BaseVisual {
 
-	constructor(canvas) {
-		super(canvas)
+	constructor(containerRectangle) {
+		super(containerRectangle)
 		this.adornerSize = 8;
 		this.is_selected = false;
 	}
@@ -338,7 +338,7 @@ class TagVisual extends BaseVisual {
 		var p1 = this.get_topLeft();
 		var p2 = this.get_bottomRight();
 
-		var element = new AdornerElement(self.canvas)
+		var element = new AdornerElement(self.containerRectangle)
 		element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
 		element.add_moved_event_listener(this);
@@ -350,17 +350,18 @@ class TagVisual extends BaseVisual {
 	}
 
 	path_onMouseDrag(event) {
-		let canvas = this.owner.canvas;
+		let containerRectangle = this.owner.containerRectangle;
 		let topLeft = this.owner.get_topLeft();
 		let bottomRight = this.owner.get_bottomRight();
 		let newTopLeftX = event.delta.x + topLeft.x;
 		let newTopLeftY = event.delta.y + topLeft.y;
 		let newBottomRightX = event.delta.x + bottomRight.x;
 		let newBottomRightY = event.delta.y + bottomRight.y;
-		if (newTopLeftX < 0
-			|| newTopLeftY < 0
-			|| newBottomRightX > canvas.width
-			|| newBottomRightY > canvas.height) {
+		if (newTopLeftX < 0 + containerRectangle.x
+			|| newTopLeftY < 0 + containerRectangle.y
+			|| newBottomRightX > containerRectangle.x + containerRectangle.width
+			|| newBottomRightY > containerRectangle.y + containerRectangle.height
+			) {
 			event.stopPropagation()
 			return;
 		}
@@ -389,16 +390,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	let self = this;
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
-	// Create a simple drawing tool:
 	var tool = new paper.Tool();
-
-	var hitOptions = {
-		segments: true,
-		stroke: true,
-		fill: true,
-		group: true,
-		tolerance: 5
-	};
 
 	var mouseDownAt;
 	var path;
@@ -406,25 +398,81 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	var items = [];
 
-	paper.project = new paper.Project();
+	paper.setup(self.canvas);
 
-	let getProportionalRectangle = function (coords) {
-		let width = (coords.bottomRight.x - coords.topLeft.x) / self.canvas.width;
-		let height = (coords.bottomRight.y - coords.topLeft.y) / self.canvas.height;
+	self.canvas.addEventListener('wheel', function (e) {
+		let step = 0.2;
+		let maxZoom = 3;
+		let minZoom = 1;
+		if (e.deltaY > 0) {
+			if (paper.view.zoom - step >= minZoom) {
+				paper.view.zoom -= step;
+			}
+			else {
+				paper.view.zoom = minZoom;
+				paper.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
+			}
+		}
+		else {
+			if (paper.view.zoom + step < 3) {
+				paper.view.zoom += step;
+			}
+			else {
+				paper.view.zoom = maxZoom;
+			}
+		}
+	})
 
-		var x = coords.topLeft.x / self.canvas.width;
-		var y = coords.topLeft.y / self.canvas.height;
+	let raster;
+	let frameImage = document.getElementsByClassName('frame-img')[0]
+	let updateFrameImageOnCanvas = function () {
+		frameImage = document.getElementsByClassName('frame-img')[0];
+
+		if (!raster) {
+			raster = new paper.Raster(frameImage);
+		}
+		raster.image = frameImage
+
+		raster.onLoad = function() {
+			raster.position = paper.view.center
+			raster.size = new paper.Size(frameImage.width, frameImage.height);
+		}
+	}
+	updateFrameImageOnCanvas();
+
+	let frameImageObserver = new MutationObserver((mutations) => {
+		for (var i in mutations) {
+			let mutation = mutations[i]
+			if (mutation.type == 'attributes' && mutation.attributeName == 'src') {
+				updateFrameImageOnCanvas()
+			}
+		}
+	});
+	frameImageObserver.observe(frameImage, {
+		attributes: true		
+	})
+
+	frameImage.addEventListener('resize', function (e) {
+		updateFrameImageOnCanvas()
+	})
+
+	let getProportionalRectangle = function (coords, containerRectangle) {
+		let width = (coords.bottomRight.x - coords.topLeft.x) / containerRectangle.width;
+		let height = (coords.bottomRight.y - coords.topLeft.y) / containerRectangle.height;
+
+		var x = (coords.topLeft.x - containerRectangle.x) / containerRectangle.width;
+		var y = (coords.topLeft.y - containerRectangle.y) / containerRectangle.height;
 
 		return { x, y, width, height };
 	};
 
-	let getRectangleRealFromProportional = function (proportional) {
-		let width = proportional.width * self.canvas.width;
-		let height = proportional.height * self.canvas.height;
+	let getRectangleRealFromProportional = function (proportional, containerRectangle) {
+		let width = proportional.width * containerRectangle.width;
+		let height = proportional.height * containerRectangle.height;
 
 		let topLeft = {
-			x: proportional.x * self.canvas.width,
-			y: proportional.y * self.canvas.height
+			x: proportional.x * containerRectangle.width + containerRectangle.x,
+			y: proportional.y * containerRectangle.height + containerRectangle.y
 		}
 
 		let bottomRight = {
@@ -449,6 +497,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	// Define a mousedown and mousedrag handler
 	tool.onMouseDown = function (event) {
+		if (event.event.ctrlKey) {
+			return;
+		}
+
 		for (var i = 0; i < items.length; i++) {
 			var hitResult = items[i].hitTest(event.point);
 			if (isDefined(hitResult)) {
@@ -463,11 +515,11 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				return;
 		}
 
+		mouseDownAt = event.point;
+
 		for (var i = 0; i < items.length; i++) {
 			items[i].clearElements();
 		}
-
-		mouseDownAt = event.point;
 
 		rect = new paper.Rectangle(mouseDownAt, mouseDownAt);
 		path = new paper.Path.Rectangle(rect);
@@ -496,9 +548,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
 		}
 
-		stickToCanvasBounds(rectCoords, self.canvas);
+		stickToCanvasBounds(rectCoords, raster.strokeBounds);
 
-		let rect = getProportionalRectangle(rectCoords);
+		let rect = getProportionalRectangle(rectCoords, raster.strokeBounds);
 		self.componentRef.invokeMethodAsync("TagAdded", rect);
 
 		mouseDownAt = undefined;
@@ -518,8 +570,12 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	tool.onMouseDrag = function (event) {
-
-		if (isDefined(mouseDownAt)) {
+		if (event.event.ctrlKey) {
+			if (paper.view.zoom > 1) {
+				paper.view.center = paper.view.center.add(event.downPoint.subtract(event.point));
+			}
+		}
+		else if (isDefined(mouseDownAt)) {
 			rect.size = new paper.Size(event.point.x - mouseDownAt.x, event.point.y - mouseDownAt.y);
 
 			if (path) {
@@ -531,11 +587,11 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		}
 	}
 
-	paper.setup(self.canvas);
-
 	window.Orions.TaggingSurface.addTag = function (tag) {
-		var newTagVisual = new TagVisual(self.canvas);
-		var tagCoords = getRectangleRealFromProportional(tag);
+		let rasterg = raster;
+		var newTagVisual = new TagVisual(raster.strokeBounds);
+		var tagCoords = getRectangleRealFromProportional(tag, raster.strokeBounds);
+
 		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 		newTagVisual.id = tag.id;
 
@@ -563,9 +619,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				bottomRight: visual.get_bottomRight()
 			};
 
-			stickToCanvasBounds(rectCoords, self.canvas);
-
-			let rect = getProportionalRectangle(rectCoords);
+			let rect = getProportionalRectangle(rectCoords, raster.strokeBounds);
 			rect.id = visual.id;
 			rect.isSelected = visual.is_selected
 
