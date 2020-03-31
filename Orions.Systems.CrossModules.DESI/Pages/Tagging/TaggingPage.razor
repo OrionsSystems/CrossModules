@@ -33,7 +33,7 @@
 					<div class="tabs-control">
 						<TabSet>
 							<Tab Active="true" Title="Tags">
-								<TagsPreviewControl Vm="@this.Vm" ActionDispatcher="_taggingSystem.ActionDispatcher"/>
+								<TagsPreviewControl Vm="@this.Vm" ActionDispatcher="_taggingSystem.ActionDispatcher" />
 							</Tab>
 							<Tab Title="Tracking">Tracking content</Tab>
 							<Tab Title="Segmentation">Segmentation content</Tab>
@@ -43,45 +43,54 @@
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
 			<div class="right-column">
-				<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
-
-				</TaskNavigationWidget>
-
-				@{
-					var surfaceRectangles = this.Vm.TagData.CurrentTaskTags.Select(t => new Rectangle
-					{
-						X = t.Geometry.ProportionalBounds.X,
-						Y = t.Geometry.ProportionalBounds.Y,
-						Height = t.Geometry.ProportionalBounds.Height,
-						Width = t.Geometry.ProportionalBounds.Width,
-						Id = t.Id.ToString(),
-						IsSelected = t.IsSelected
-					}).ToList();
-				}
-			<TaggingSurface @ref="TaggingSurface"
-							Rectangles="@surfaceRectangles"
-							ImageData="this.Vm.CurrentFrameImageData"
-							OnTagAdded="this.TagAdded"
-							OnTagSelected="this.TagSelected"
-							OnTagPositionOrSizeChanged="this.TagPositionOrSizeChanged">
-				@if (this.Vm.TagonomyExecutionData != null)
+				@if (Vm.TasksData?.Tasks != null && Vm.TasksData.CurrentTask != null)
 				{
-					<VizListComponent Data="this.Vm.TagonomyExecutionData"
-									  ActionDispatcher="this._taggingSystem.ActionDispatcher"
-									  CssClass="vizlist-positioned">
-					</VizListComponent>
+					<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
+
+					</TaskNavigationWidget>
+
+					{
+						var surfaceRectangles = this.Vm.TagData.CurrentTaskTags.Select(t => new Rectangle
+						{
+							X = t.Geometry.ProportionalBounds.X,
+							Y = t.Geometry.ProportionalBounds.Y,
+							Height = t.Geometry.ProportionalBounds.Height,
+							Width = t.Geometry.ProportionalBounds.Width,
+							Id = t.Id.ToString(),
+							IsSelected = t.IsSelected
+						}).ToList();
+
+						<TaggingSurface @ref="TaggingSurface"
+										Rectangles="@surfaceRectangles"
+										ImageData="this.Vm.CurrentFrameImageData"
+										OnTagAdded="this.TagAdded"
+										OnTagSelected="this.TagSelected"
+										OnTagPositionOrSizeChanged="this.TagPositionOrSizeChanged">
+							@if (this.Vm.TagonomyExecutionData != null)
+							{
+								<VizListComponent Data="this.Vm.TagonomyExecutionData"
+												  ActionDispatcher="this._taggingSystem.ActionDispatcher"
+												  CssClass="vizlist-positioned">
+								</VizListComponent>
+							}
+						</TaggingSurface>
+					}
 				}
-			</TaggingSurface>
-				
+				else
+				{
+					<Orions.Systems.CrossModules.Desi.Components.DotsLoader CssClass="tagging-content-loader" />
+				}
+
+
 			</div>
 		</div>
 	</div>
 }
-<SessionIsOverPopup @ref="SessionIsOverPopup"/>
+<SessionIsOverPopup @ref="SessionIsOverPopup" />
 
 <style>
 	.vizlist-positioned {
 		position: absolute;
-		z-index:100;
+		z-index: 100;
 	}
 </style>

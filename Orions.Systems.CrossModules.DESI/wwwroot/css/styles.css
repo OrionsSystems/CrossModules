@@ -2149,6 +2149,10 @@ video::-webkit-media-text-track-display {
       padding: 20px;
       display: flex;
       flex-direction: column; }
+      .tagging-page-container > .bottom-row > .right-column .tagging-content-loader {
+        margin-top: 30px; }
+        .tagging-page-container > .bottom-row > .right-column .tagging-content-loader .sk-flow-dot {
+          background: #787878; }
   .tagging-page-container .tag-preview-control-container {
     display: flex;
     flex-direction: column; }

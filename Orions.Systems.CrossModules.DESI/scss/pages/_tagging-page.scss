@@ -93,6 +93,14 @@
 			padding: 20px;
 			display: flex;
 			flex-direction: column;
+
+			.tagging-content-loader {
+				margin-top: 30px;
+
+				.sk-flow-dot {
+					background: #787878;
+				}
+			}
 		}
 	}
 

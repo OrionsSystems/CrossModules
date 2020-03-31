@@ -21,10 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="clientApp\src\tagging-canvas\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="FFMpeg\avcodec-58.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
