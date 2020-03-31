@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -17,12 +18,14 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		private readonly ILocalStorageService _localStorageService;
 		private readonly NavigationManager _navigationManager;
 		private readonly IJSRuntime _jSRuntime;
+		private readonly IConfiguration _appConfig;
 
-		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime)
+		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime, IConfiguration appConfig)
 		{
 			_localStorageService = localStorageService;
 			_navigationManager = navigationManager;
 			_jSRuntime = jSRuntime;
+			_appConfig = appConfig;
 		}
 
 		public override IApiHelper GetApiHelper()
@@ -53,7 +56,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		{
 			if (_settingsStorage == null)
 			{
-				_settingsStorage = new BrowserLocalSettingsStorage(_localStorageService);
+				_settingsStorage = new BrowserLocalSettingsStorage(_localStorageService, _appConfig);
 			}
 
 			return _settingsStorage;

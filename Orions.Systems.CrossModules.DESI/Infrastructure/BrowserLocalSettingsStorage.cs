@@ -1,4 +1,5 @@
 ﻿using Blazored.LocalStorage;
+using Microsoft.Extensions.Configuration;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.Services;
 using System;
@@ -11,13 +12,15 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 	public class BrowserLocalSettingsStorage : ISettingsStorage
 	{
 		private readonly ILocalStorageService _localStorageService;
+		private readonly IConfiguration _appConfig;
 		private AppSettingsDto _appSettingsDto;
 		private HyperNodeAuthenticationInfo _hyperNodeAuthenticationData;
 		private HyperDomainAuthenticationInfo _hyperDomainAuthenticationInfo;
 
-		public BrowserLocalSettingsStorage(ILocalStorageService localStorageService)
+		public BrowserLocalSettingsStorage(ILocalStorageService localStorageService, IConfiguration appConfig)
 		{
 			_localStorageService = localStorageService;
+			_appConfig = appConfig;
 		}
 
 		public string Token { get => _appSettingsDto.Token;  set => _appSettingsDto.Token = value;  }
@@ -72,7 +75,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 				var nodeAuthData = new HyperNodeAuthenticationDataDto
 				{
 					Alias = HyperNodeAuthenticationInfo.DefaultAlias,
-					ConnectionString = HyperNodeAuthenticationInfo.DefaultConnectionString,
+					ConnectionString = _appConfig["DefaultDevModeConnectionString"] ?? HyperNodeAuthenticationInfo.DefaultConnectionString,
 					Id = Guid.NewGuid().ToString()
 				};
 				var domainAuthData = new HyperDomainAuthenticationDataDto();
