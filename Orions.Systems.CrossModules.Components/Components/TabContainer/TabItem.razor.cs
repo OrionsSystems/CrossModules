@@ -8,11 +8,19 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		[Parameter] public string Name { get; set; }
 
+		[Parameter] public string Classes { get; set; }
+
 		[Parameter] public bool Enable { get; set; } = true;
 
 		[Parameter] public bool Active { get { return _data.Active; } set { _data.Active = value; } }
 
 		[Parameter] public bool Action { get; set; }
+
+		[Parameter] public string OutTransitions { get; set; }
+
+		[Parameter] public string InTransitions { get; set; }
+
+		public string AnimationClass { get { return _data.AnimationClass; } }
 
 		// Each time the params change, update a 'TabContainerData' instance
 		private readonly TabContainerData _data = new TabContainerData();
@@ -20,8 +28,12 @@ namespace Orions.Systems.CrossModules.Components
 		protected override void OnParametersSet()
 		{
 			_data.Name = Name;
+			_data.Class = Classes;
 			_data.Enable = Enable;
 			_data.Action = Action;
+			_data.OutTransitions = OutTransitions;
+			_data.InTransitions = InTransitions;
+
 		}
 
 		// When we're first added to the UI, attach our data to parent

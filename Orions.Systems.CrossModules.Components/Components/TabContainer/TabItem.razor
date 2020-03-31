@@ -2,9 +2,6 @@
 
 @inherits BaseTabItem
 
-@if (Active)
-{
-	<div @key="@Id" class="tab-container-body">
+	<div @key="@Id" data-effeckt-page="@Name" class="pt-page @AnimationClass @Class @(Active ? "pt-page-current" : "")">
 		@ChildContent
 	</div>
-}

@@ -4,34 +4,78 @@
 
 @inherits BaseOrionsComponent
 
-<h1>Tab Container Demo</h1>
+<h1>Tab Component Demo</h1>
 
 <hr style="margin:20px 0px;" />
 
 <div class="test-container">
-	<TabContainer>
-		<TabItem Name="Test1">
-			<h1>Test 1 Content</h1>
+
+	<TabContainer Class="pt-perspective">
+
+		<TabItem Name="Page 1"
+					Class="pt-page-1"
+					OutTransitions="slide-to-left"
+					InTransitions="slide-from-right">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
-		<TabItem Name="Test2">
-			<h1>Test 2 Content</h1>
+		<TabItem Name="Page 2"
+					Class="pt-page-2"
+					OutTransitions="scale-down-from-front"
+					InTransitions="scale-up-to-front">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
-		<TabItem Name="Test3">
-			<h1>Test 3 Content</h1>
+		<TabItem Name="Page 3"
+					Class="pt-page-3"
+					OutTransitions="scale-down-slide-to-left"
+					InTransitions="scale-down-slide-from-right">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
-		<TabItem Name="Test4" Enable="false">
-			<h1>Test 4 Content</h1>
+		<TabItem Name="Page 4"
+					Enable="true"
+					Class="pt-page-4"
+					OutTransitions="scale-down-slide-to-bottom"
+					InTransitions="scale-down-slide-from-top">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
-		<TabItem Name="Test5">
-			<h1>Test 5 Content</h1>
+		<TabItem Name="Page 5"
+					Class="pt-page-5"
+					OutTransitions="scale-down-slide-from-bottom"
+					InTransitions="scale-down-slide-from-right">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
-		<TabItem Name="Result" Action="true">
-			<h1>Last One Action - Test 6 Content</h1>
+		<TabItem Name="Page 6"
+					Class="pt-page-6"
+					OutTransitions="rotate-to-behind"
+					InTransitions="rotate-to-front">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
+
+		</TabItem>
+		<TabItem Name="Page 7"
+					Class="pt-page-7"
+					OutTransitions="flip-to-left-back"
+					InTransitions="flip-to-right-front">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
+
+		</TabItem>
+		<TabItem Name="Result"
+					Action="true"
+					Class="pt-page-result"
+					OutTransitions="flip-to-bottom-back"
+					InTransitions="flip-to-bottom-front">
+
+			<h1><span>A collection of</span><strong>Page</strong> Transitions</h1>
 
 		</TabItem>
 	</TabContainer>
@@ -45,4 +89,98 @@
 		await base.OnInitializedAsync();
 	}
 }
+
+<style>
+
+	.pt-perspective {
+		width: 100%;
+		margin-right: auto;
+		margin-left: auto;
+	}
+
+	.pt-page {
+		height: 1000px;
+		visibility: hidden;
+		overflow: hidden;
+		-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+		backface-visibility: hidden;
+		-webkit-transform: translate3d(0, 0, 0);
+		-moz-transform: translate3d(0, 0, 0);
+		transform: translate3d(0, 0, 0);
+		-webkit-transform-style: preserve-3d;
+		-moz-transform-style: preserve-3d;
+		transform-style: preserve-3d;
+	}
+
+	.pt-page-current, .pt-page {
+		visibility: visible;
+		z-index: 1;
+	}
+
+		.pt-page h1 {
+			position: absolute;
+			font-weight: 300;
+			font-size: 4.4em;
+			line-height: 1;
+			letter-spacing: 6px;
+			margin: 0;
+			top: 12%;
+			width: 100%;
+			text-align: center;
+			text-transform: uppercase;
+			word-spacing: -0.3em;
+		}
+
+			.pt-page h1 span {
+				font-family: 'Satisfy', serif;
+				font-weight: 400;
+				font-size: 40%;
+				text-transform: none;
+				word-spacing: 0;
+				letter-spacing: 0;
+				display: block;
+				opacity: 0.4;
+			}
+
+			.pt-page h1 strong {
+				color: rgba(0,0,0,0.1);
+			}
+
+	.pt-page-1 {
+		background: #0ac2d2;
+	}
+
+	.pt-page-2 {
+		background: #7bb7fa;
+	}
+
+	.pt-page-3 {
+		background: #60d7a9;
+	}
+
+	.pt-page-4 {
+		background: #fdc162;
+	}
+
+	.pt-page-5 {
+		background: #fd6a62;
+	}
+
+	.pt-page-6 {
+		background: #f68dbb;
+	}
+
+	.pt-page-7 {
+		background: #b662ca;
+	}
+
+	.pt-page-result {
+		background: #3cbb37;
+	}
+
+	[data-effeckt-page].effeckt-page-animating {
+		 position: relative !important; 
+	}
+</style>
 

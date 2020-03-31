@@ -2,47 +2,63 @@
 
 @inherits BaseBlazorComponent
 
-<div class="tab-container">
+	<div class="tab-container">
 
-	@if (Items.Any())
-	{
-		<div class="tab-container-header">
-			<ul class="tab-container-items">
-				@foreach (var item in Items)
-				{
-					@if (!item.Enable) { continue; }
-
-					@if (!item.Action)
+		@if (Items.Any())
+		{
+			<div class="tab-container-header">
+				<ul class="tab-container-items">
+					@foreach (var item in Items)
 					{
-						<li class="tab-container-bar-models @(item.Active ? "active" : "")">
-							<a class="btn" @onclick="@(ev => { OnClickItem(item); })">
-								<span class="text">@item.Name</span>
-							</a>
-						</li>
-					}
-					else
-					{
-						<li class="tab-container-bar-models tab-container-result">
-							<a class="btn result-btn" @onclick="@(ev => { OnClickItem(item); })">
-								<span class="text">@item.Name</span>
-							</a>
-						</li>
-					}
+						@if (!item.Enable) { continue; }
 
-				}
-			</ul>
+						@if (!item.Action)
+						{
+							<li class="tab-container-bar-models @(item.Active ? "active" : "")">
+								<a class="btn" @onclick="@(async ev => { await OnClickItem(item); })">
+									<span class="text">@item.Name</span>
+								</a>
+							</li>
+						}
+						else
+						{
+							<li class="tab-container-bar-models tab-container-result">
+								<a class="btn result-btn" @onclick="@(async ev => { await OnClickItem(item); })">
+									<span class="text">@item.Name</span>
+								</a>
+							</li>
+						}
+
+					}
+				</ul>
+			</div>
+		}
+
+		@if (Filter.Any())
+		{
+			<div class="tab-filter-breadcrumb">
+				<div class="tab-filter-container">
+					<div class="tab-breadcrumbs-containers">
+						<ul>
+							@foreach (var fItem in Filter)
+							{
+								<li class="tab-filter-breadcrumb-item" @onclick="@(ev=> OnClickFilter(fItem))">@fItem</li>
+							}
+						</ul>
+					</div>
+				</div>
+			</div>
+		}
+
+		<div class="tab-container-body @Class">
+
+			@* Pass 'this' instance as a cascading parameter to descendants in tree *@
+			<CascadingValue Value="@this">
+				@ChildContent
+			</CascadingValue>
 		</div>
-	}
 
-	<div class="tab-container-body">
-
-		@* Pass 'this' instance as a cascading parameter to descendants in tree *@
-		<CascadingValue Value="@this">
-			@ChildContent
-		</CascadingValue>
 	</div>
-
-</div>
 
 @code {
 
@@ -50,29 +66,74 @@
 
 	[Parameter] public RenderFragment ChildContent { get; set; }
 
+	private List<string> Filter { get; set; } = new List<string>();
+
 	public List<TabContainerData> Items { get; set; } = new List<TabContainerData>();
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-
-
+		Filter.AddRange(new List<string> { "A3 Cabriolet", "A3 Limousine", "A4 Avant" });
 	}
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		await base.OnAfterRenderAsync(firstRender);
 
+		if (!firstRender) return;
+
+		if (Items.Any())
+		{
+			var activePage = Items.Where(it => it.Active).FirstOrDefault();
+			if(activePage != null)
+				activePage.AnimationClass = $"effeckt-page-active";
+		}
+
 		StateHasChanged();
 	}
 
-	private void OnClickItem(TabContainerData item)
+	private async Task OnClickItem(TabContainerData toPage)
 	{
-		Items.ForEach(it => it.Active = false);
+		var fromPage = Items.Where(it => it.Active).FirstOrDefault();
 
-		item.Active = true;
+		Items.ForEach(it =>
+		{
+			it.Active = false;
+			it.AnimationClass = "";
+		});
+
+		toPage.Active = true;
+
+		if (!string.IsNullOrWhiteSpace(toPage.OutTransitions))
+		{
+			fromPage.AnimationClass = $"effeckt-page-animating effeckt-page-active {toPage.OutTransitions}";
+			await Task.Delay(700); // Use js event here
+			fromPage.AnimationClass = String.Empty;
+		}
+
+		if (!string.IsNullOrWhiteSpace(toPage.InTransitions))
+		{
+			toPage.AnimationClass = $"effeckt-page-animating effeckt-page-active {toPage.InTransitions}";
+			await Task.Delay(1000);
+			toPage.AnimationClass = $"effeckt-page-active";
+		}
 
 		StateHasChanged();
+	}
+
+	private async Task LoadInTransition(TabContainerData page)
+	{
+		if (!string.IsNullOrWhiteSpace(page.InTransitions))
+		{
+			page.AnimationClass = $"effeckt-page-animating effeckt-page-active {page.InTransitions}";
+			await Task.Delay(1000); // Use js event here
+			page.AnimationClass = $"effeckt-page-active";
+		}
+
+	}
+
+	private void OnClickFilter(string item) {
+		Filter.RemoveAll(it => it == item);
 	}
 }

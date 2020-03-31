@@ -11,6 +11,9 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public class BrowserLocalSettingsStorage : ISettingsStorage
 	{
+		private const string AppSettingsKey = "desiSettings";
+		private const string DefaultDevModeConnectionStringKey = "DefaultDevModeConnectionString";
+
 		private readonly ILocalStorageService _localStorageService;
 		private readonly IConfiguration _appConfig;
 		private AppSettingsDto _appSettingsDto;
@@ -62,7 +65,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public async Task Load()
 		{
-			var settings = await _localStorageService.GetItemAsync<AppSettingsDto>("desiSettings");
+			var settings = await _localStorageService.GetItemAsync<AppSettingsDto>(AppSettingsKey);
 
 			if(settings != null)
 			{
@@ -75,7 +78,9 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 				var nodeAuthData = new HyperNodeAuthenticationDataDto
 				{
 					Alias = HyperNodeAuthenticationInfo.DefaultAlias,
-					ConnectionString = _appConfig["DefaultDevModeConnectionString"] ?? HyperNodeAuthenticationInfo.DefaultConnectionString,
+					ConnectionString = _appConfig[DefaultDevModeConnectionStringKey] ?? HyperNodeAuthenticationInfo.DefaultConnectionString,
+					Username = HyperNodeAuthenticationInfo.DefaultUsername,
+					Password = HyperNodeAuthenticationInfo.DefaultPassword,
 					Id = Guid.NewGuid().ToString()
 				};
 				var domainAuthData = new HyperDomainAuthenticationDataDto();
@@ -115,7 +120,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 				settingsDto.CustomNodes.Add(node);
 			}
 
-			await _localStorageService.SetItemAsync("desiSettings", settingsDto);
+			await _localStorageService.SetItemAsync(AppSettingsKey, settingsDto);
 		}
 
 		public class AppSettingsDto
@@ -135,16 +140,20 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			public string Id { get; set; }
 			public string Alias { get; set; }
 			public string ConnectionString { get; set; }
+			public string Username { get; set; }
+			public string Password { get; set; }
 
 			public HyperNodeAuthenticationInfo CreateModel()
 			{
-				return new HyperNodeAuthenticationInfo(ConnectionString, Alias, Id);
+				return new HyperNodeAuthenticationInfo(ConnectionString, Username, Password, Alias, Id);
 			}
 
 			public void UpdateFromModel(HyperNodeAuthenticationInfo model)
 			{
 				Alias = model.Alias;
 				ConnectionString = model.ConnectionString;
+				Username = model.Username;
+				Password = model.Password;
 			}
 
 			public static HyperNodeAuthenticationDataDto CreateFromModel(HyperNodeAuthenticationInfo model)
@@ -153,7 +162,9 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 				{
 					ConnectionString = model.ConnectionString,
 					Alias = model.Alias,
-					Id = model.Id
+					Id = model.Id,
+					Username = model.Username,
+					Password = model.Password
 				};
 			}
 		}

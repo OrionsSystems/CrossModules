@@ -11,12 +11,15 @@
 			justify-content: space-between;
 			padding: 0;
 
-			li.tab-container-bar-models {
+
+			li {
 				display: block;
-				/*float: left;*/
+				position: relative;
 				text-align: center;
 				margin: 0;
 				width: 100%;
+				z-index: 20;
+				background-color: #1a1a1a;
 
 				a {
 					font-size: 13px;
@@ -38,6 +41,27 @@
 				}
 			}
 
+			li:first-child:before {
+				visibility: hidden;
+			}
+
+			li.tab-container-result:before {
+				visibility: hidden;
+			}
+
+			li:before {
+				content: '|';
+				border-right: 1px solid #4c4c4c;
+				color: #1a1a1a;
+				line-height: 23.33333px;
+				height: 23.33333px;
+				position: absolute;
+				top: 50%;
+				width: 0;
+				margin-top: -11.66667px;
+				left: 0;
+			}
+
 			li.tab-container-bar-models.active {
 				background-color: #d9d9d9;
 				z-index: 3;
@@ -46,17 +70,22 @@
 					color: #1a1a1a;
 					z-index: 2;
 				}
+
+				&:before {
+					visibility: hidden;
+				}
 			}
 
 			.tab-container-result {
 				font-weight: 700;
-				background-color: #c03;
+				background-color: #c03 !important;
 			}
 
 			.tab-container-result a {
 				color: #fff !important;
 				font-weight: 700;
 			}
+
 
 			.tab-container-result:hover {
 				background-color: #aa142d;
@@ -66,4 +95,96 @@
 		.tab-container-body {
 		}
 	}
+
+
+	.tab-filter-breadcrumb {
+		/*padding-top: 19.00008px;
+		padding-top: 1.58334rem;*/
+		width: auto;
+		/*max-width: 1280px;*/
+		float: none;
+		display: block;
+		/*margin-right: auto;
+		margin-left: auto;
+		padding-left: 4%;
+		padding-right: 4%;*/
+		.tab-filter-container {
+			height: 32px;
+			overflow: hidden;
+			-webkit-transition: height 100ms ease-in-out;
+			-o-transition: height 100ms ease-in-out;
+			transition: height 100ms ease-in-out;
+			margin-bottom:10px;
+
+			.tab-breadcrumbs-containers {
+				padding-right: 240px;
+				font-family: "AudiTypeExtNormal", Verdana, sans-serif;
+
+				ul {
+					list-style: none;
+					margin: 0;
+					padding: 0;
+					border: 0;
+					font: inherit;
+					font-size: 1rem;
+					vertical-align: baseline;
+
+					li.tab-filter-breadcrumb-item {
+						float: left;
+						display: block;
+						position: relative;
+						cursor: pointer;
+						-webkit-user-select: none;
+						-moz-user-select: none;
+						-ms-user-select: none;
+						user-select: none;
+						padding: 5px 25px 5px 10px;
+						font-size: 11px;
+						border: 1px solid #d9d9d9;
+						border-radius: 15px;
+						margin-right: 10px;
+						margin-bottom: 10px;
+					}
+
+					li.tab-filter-breadcrumb-item:hover {
+						color: red;
+					}
+
+					li.tab-filter-breadcrumb-item:after {
+						content: 'x';
+						display: inline-block;
+						padding-left: 4px;
+						position: absolute;
+						top: 4px;
+						right: 12px;
+						background-position: 0px 0px;
+						background-repeat: no-repeat;
+						width: 7px;
+						height: 7px;
+						font-family: Verdana, sans-serif;
+					}
+				}
+			}
+		}
+	}
+}
+
+
+
+.tab-container-page {
+	overflow: hidden;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100vw;
+	height: 100vh;
+	background: rgba(76,76,76,1);
+	background: -moz-linear-gradient(-45deg, rgba(76,76,76,1) 0%, rgba(43,43,43,0.74) 36%, rgba(28,28,28,0.5) 71%, rgba(19,19,19,0.29) 100%);
+	background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(76,76,76,1)), color-stop(36%, rgba(43,43,43,0.74)), color-stop(71%, rgba(28,28,28,0.5)), color-stop(100%, rgba(19,19,19,0.29)));
+	background: -webkit-linear-gradient(-45deg, rgba(76,76,76,1) 0%, rgba(43,43,43,0.74) 36%, rgba(28,28,28,0.5) 71%, rgba(19,19,19,0.29) 100%);
+	background: -o-linear-gradient(-45deg, rgba(76,76,76,1) 0%, rgba(43,43,43,0.74) 36%, rgba(28,28,28,0.5) 71%, rgba(19,19,19,0.29) 100%);
+	background: -ms-linear-gradient(-45deg, rgba(76,76,76,1) 0%, rgba(43,43,43,0.74) 36%, rgba(28,28,28,0.5) 71%, rgba(19,19,19,0.29) 100%);
+	background: linear-gradient(135deg, rgba(76,76,76,1) 0%, rgba(43,43,43,0.74) 36%, rgba(28,28,28,0.5) 71%, rgba(19,19,19,0.29) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313', GradientType=1 );
+	color: #fff;
 }
