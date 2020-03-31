@@ -3,19 +3,17 @@
 @inherits TaggingPageBase
 @namespace Orions.Systems.CrossModules.Desi.Pages
 @using Orions.Systems.CrossModules.Desi.Components.TabSet;
-@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
-@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 @using Orions.Systems.CrossModules.Desi.Components.TagPreview;
+@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
+@using Orions.Systems.CrossModules.Desi.Components;
 @using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 
 @if (this.Vm != null)
 {
 	<div class="tagging-page-container">
-		<div class="mission-title">
-			@(this.Vm.CurrentTask != null ? this.Vm.CurrentTask.ExecutionTimeLeft.ToString() : " ")
-		</div>
+		<ExploitationTimerWidget TaskDataStore="@_taggingSystem.TaskDataStore"/>
 		<div class="bottom-row">
 			<div class="left-column">
 				<div class="top-area">
@@ -43,35 +41,21 @@
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
 			<div class="right-column">
-				<TaskNavigationWidget ActionDispatcher="this._taggingSystem.ActionDispatcher" Data="this.Vm.TasksData">
-
-				</TaskNavigationWidget>
-
-				@{
-					var surfaceRectangles = this.Vm.TagData.CurrentTaskTags.Select(t => new Rectangle
-					{
-						X = t.Geometry.ProportionalBounds.X,
-						Y = t.Geometry.ProportionalBounds.Y,
-						Height = t.Geometry.ProportionalBounds.Height,
-						Width = t.Geometry.ProportionalBounds.Width,
-						Id = t.Id.ToString(),
-						IsSelected = t.IsSelected
-					}).ToList();
-				}
-			<TaggingSurface @ref="TaggingSurface"
-							Rectangles="@surfaceRectangles"
-							ImageData="this.Vm.CurrentFrameImageData"
-							OnTagAdded="this.TagAdded"
-							OnTagSelected="this.TagSelected"
-							OnTagPositionOrSizeChanged="this.TagPositionOrSizeChanged">
-				@if (this.Vm.TagonomyExecutionData != null)
-				{
-					<VizListComponent Data="this.Vm.TagonomyExecutionData"
+				<TaskNavigationWidget ActionDispatcher="_taggingSystem.ActionDispatcher" 
+									  Store="@_taggingSystem.TaskDataStore">
+				</TaskNavigationWidget>		
+				
+				<TaggingSurface @ref="TaggingSurface"
+								TaskDataStore="@_taggingSystem.TaskDataStore"
+								TagsStore="@_taggingSystem.TagsStore"
+								MediaDataStore="@_taggingSystem.MediaDataStore"
+								ActionDispatcher="@_taggingSystem.ActionDispatcher">
+		
+					<VizListComponent Store="@_taggingSystem.TagonomyExecutionDataStore"
 									  ActionDispatcher="this._taggingSystem.ActionDispatcher"
 									  CssClass="vizlist-positioned">
 					</VizListComponent>
-				}
-			</TaggingSurface>
+				</TaggingSurface>
 				
 			</div>
 		</div>

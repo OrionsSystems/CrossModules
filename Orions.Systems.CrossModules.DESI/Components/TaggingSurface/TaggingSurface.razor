@@ -1,14 +1,21 @@
-﻿@inherits TaggingSurfaceBase
-@using Orions.Common;
+﻿@using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Media;
+
+@inherits TaggingSurfaceBase
 
 <div class="tagging-surface-container" id="@this.ComponentId">
 	<div class="centered-container">
 		@ChildContent
-		@if(this.ImageData != null)
+
+		@if (MediaDataStore.Data.MediaInstances?.Count == 1)
 		{
-			<img src="@UniImage.ConvertByteArrayToBase64Url(this.ImageData)" class="frame-img"/>
+			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
+							ActionDispatcher="@ActionDispatcher" />
+			<canvas class="tagging-canvas">
+			</canvas>
 		}
-		<canvas class="tagging-canvas"> 
-		</canvas>
+		else if (MediaDataStore.Data.MediaInstances?.Count == 2)
+		{
+			<div> *** comparative tagging is not yet implemented *** </div>
+		}
 	</div>
 </div>
