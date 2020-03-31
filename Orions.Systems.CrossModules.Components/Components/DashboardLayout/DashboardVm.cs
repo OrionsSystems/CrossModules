@@ -289,8 +289,12 @@ namespace Orions.Systems.CrossModules.Components
 				res.Id = IdHelper.GenerateId();
 
 			//update and save
-			if (res != null) 
+			if (res != null) {
+				var currentId = Source.Id;
 				Source = res;
+				Source.Id = currentId;
+			} 
+				
 		}
 
 		public string LoadDashboardAsJson()

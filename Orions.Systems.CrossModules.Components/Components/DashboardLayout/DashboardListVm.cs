@@ -179,6 +179,20 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public async Task<DashboardData> GetDashboard(string dashboardId)
+		{
+			var documentId = HyperDocumentId.Create<DashboardData>(dashboardId);
+			var args = new RetrieveHyperDocumentArgs(documentId);
+			var doc = await HyperStore.ExecuteAsync(args);
+
+			if (args.ExecutionResult.IsNotSuccess)
+				return null;
+
+			var dashboard = doc?.GetPayload<DashboardData>();
+			
+			return dashboard;
+		}
+
 		public async Task ImportProject(byte[] bytes, bool isNew = true)
 		{
 			var json = Encoding.Default.GetString(bytes);

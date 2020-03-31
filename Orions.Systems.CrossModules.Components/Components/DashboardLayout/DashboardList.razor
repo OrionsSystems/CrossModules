@@ -418,8 +418,6 @@
 		StateHasChanged();
 	}
 
-
-
 	private async Task HandleInputFileSelection(IFileListEntry[] files)
 	{
 		var file = files.FirstOrDefault();
@@ -460,6 +458,10 @@
 
 	private async Task ExportDashboard(DashboardData data)
 	{
+		if (data == null || string.IsNullOrEmpty(data.Id)) return;
+
+		data = await Vm.GetDashboard(data.Id);
+
 		if (data == null) return;
 
 		var projectJson = JsonHelper.Serialize(data);
