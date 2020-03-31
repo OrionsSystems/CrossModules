@@ -1,0 +1,52 @@
+﻿@using  Orions.Systems.Desi.Common.Models;
+@using Orions.Systems.Desi.Common.Extensions;
+@using System.Reactive.Linq;
+@using Orions.Systems.Desi.Common.General;
+
+@inherits Orions.Systems.CrossModules.Desi.Infrastructure.BaseComponent;
+
+@{
+    var style = string.Join(' ',
+        IsCurrent ? "selected" : string.Empty,
+        Task.Seen ? "seen" : string.Empty);
+}
+
+<div @onclick="_ => SetCurrentTask(_task)" class="@style" />
+
+@code
+{
+    private TaskModel _task;
+    private IDisposable _propertyChangedSub;
+
+    [Parameter]
+    public bool IsCurrent { get; set; }
+
+    [Parameter]
+    public Action<TaskModel> SetCurrentTask { get; set; }
+
+    [Parameter]
+    public TaskModel Task
+    {
+        get => _task;
+        set => SetProperty(ref _task,
+            value,
+            () =>
+            {
+                _propertyChangedSub?.Dispose();
+                _propertyChangedSub = value?
+                .GetPropertyChangedObservable()
+                .Where(i => i.EventArgs.PropertyName == nameof(TaskModel.Seen))
+                .Subscribe(_ => UpdateState());
+            });
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _propertyChangedSub?.Dispose();
+            _propertyChangedSub = null;
+        }
+        base.Dispose(disposing);
+    }
+}

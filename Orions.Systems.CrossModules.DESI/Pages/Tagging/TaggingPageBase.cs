@@ -1,26 +1,21 @@
-﻿using Orions.Systems.Desi.Common.TagsExploitation;
-using Orions.Systems.Desi.Common.Models;
-using Orions.Infrastructure.HyperMedia;
-using Orions.Node.Common;
-using Orions.Systems.CrossModules.Desi.Infrastructure;
+﻿using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Core.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Tagging;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 using System.Reactive.Linq;
 using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
+using Orions.Systems.Desi.Common.TagsExploitation;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
 	{
-		protected readonly List<IDisposable> _subscriptions = new List<IDisposable>();
-
 		protected TaggingSystem _taggingSystem;
+		private IDisposable _tagonomyExecutionStartedSub;
 		protected TaggingSurface TaggingSurface;
 
 		private SessionIsOverPopup _sessionIsOverPopup;
@@ -35,7 +30,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				popupService.SessionIsOverPopup = _sessionIsOverPopup;
 			}
 		}
-
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -64,63 +58,23 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			if(Vm.CurrentTask != null)
-			{
-				Vm.CurrentPosition = Vm.CurrentTask.HyperId;
-			}
-			_subscriptions.Add(Vm.TasksData.CurrentTaskChanged.Where(i => i.NewTask != null).Subscribe(i =>
-			{
-				Vm.IsTaggingMode = true;
-				Vm.CurrentPosition = i.NewTask.HyperId;
-			}));
+			_tagonomyExecutionStartedSub = _taggingSystem
+				.TagonomyExecutionDataStore
+				.TagonomyExecutionStarted
+				.Subscribe(_ => UpdateVizListPosition());
 
 			await base.OnInitializedAsync();
 		}
 
-		public void TagAdded(Components.TaggingSurface.Model.Rectangle rectangle)
-		{
-			var actionDispatcher = _taggingSystem.ActionDispatcher;
+		protected override bool AutoWirePropertyChangedListener => false;
 
-			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-
-			var tagsGeometry = new TagGeometry(rectF, ShapeType.Rectangle);
-			var currentPosition = Vm.CurrentTask.HyperId;
-			actionDispatcher.Dispatch(CreateNewTagAction.Create(tagsGeometry, currentPosition));
-		}
-
-		public void TagSelected(string id)
-		{
-			var actionDispatcher = _taggingSystem.ActionDispatcher;
-
-			var tagModel = this.Vm.TagData.CurrentTaskTags.Single(t => t.Id.ToString() == id);
-			actionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
-		}
-
-		public void TagPositionOrSizeChanged(Components.TaggingSurface.Model.Rectangle rectangle)
-		{
-			var rectF = new System.Drawing.RectangleF(rectangle.X, rectangle.Y, rectangle.Width, rectangle.Height);
-			var tagModel = this.Vm.TagData.CurrentTaskTags.SingleOrDefault(t => t.Id.ToString() == rectangle.Id);
-
-			if(tagModel != null)
-			{
-				tagModel.Geometry = tagModel.Geometry.WithNewBounds(rectF);
-			}
-		}
-
-		protected override async Task OnAfterRenderAsync(bool firstRender)
-		{
-			if (this.Vm?.TagonomyExecutionData != null)
-			{
-				await TaggingSurface.AttachElementPositionToRectangle(Vm.TagData.CurrentTaskTags.Single(t => t.IsSelected).Id.ToString(), ".vizlist-positioned");
-			}
-		}
+		private void UpdateVizListPosition() => TaggingSurface.AttachElementPositionToRectangle(Vm.TagData.CurrentTaskTags.Single(t => t.IsSelected).Id.ToString(), ".vizlist-positioned");
 
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				_subscriptions.ForEach(i => i.Dispose());
-				_subscriptions.Clear();
+				_tagonomyExecutionStartedSub.Dispose();
 				Vm?.Dispose();
 				Vm = null;
 			}
