@@ -18,7 +18,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		protected TaggingSystem _taggingSystem;
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		protected TaggingSurface TaggingSurface;
-
 		private SessionIsOverPopup _sessionIsOverPopup;
 
 		public SessionIsOverPopup SessionIsOverPopup
@@ -59,10 +58,8 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			_subscriptions.Add(_taggingSystem
-				.TagonomyExecutionDataStore
-				.TagonomyExecutionStarted
-				.Subscribe(_ => UpdateVizListPosition()));
+			_taggingSystem.TagsStore.SelectedTagsUpdated.Subscribe(_ => UpdateVizListPosition());
+
 			_subscriptions.Add(
 				_taggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState())
 				);
@@ -70,9 +67,16 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			await base.OnInitializedAsync();
 		}
 
-		protected override bool AutoWirePropertyChangedListener => false;
+		protected override bool AutoWirePropertyChangedListener => true;
 
-		private void UpdateVizListPosition() => TaggingSurface?.AttachElementPositionToRectangle(Vm.TagData.CurrentTaskTags.Single(t => t.IsSelected).Id.ToString(), ".vizlist-positioned");
+		private void UpdateVizListPosition() 
+		{
+			if (Vm.TagData != null && Vm.TagData.SelectedTags.Any())
+			{
+				StateHasChanged();
+				TaggingSurface?.AttachElementPositionToRectangle(Vm.TagData.SelectedTags.First().Id.ToString(), ".vizlist-positioned");
+			}
+		}
 
 		protected override void Dispose(bool disposing)
 		{

@@ -30,6 +30,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private ITagsStore _tagsStore;
 		private IDisposable _tagsCollectionChagedSub;
 		private bool _initializationDone;
+		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
 		[Parameter]
@@ -49,11 +50,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				value,
 				() =>
 				{
-					_subscriptions.AddItem(value.SelectedTagsUpdated.Subscribe(OnSelectedTagsUpdated))
-					.AddItem(value.Data
-					.GetPropertyChangedObservable()
-					.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-					.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
+					_subscriptions
+						.AddItem(value.SelectedTagsUpdated.Subscribe(OnSelectedTagsUpdated))
+						.AddItem(value.Data
+						.GetPropertyChangedObservable()
+						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+						.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
 
 					// why (ask Anton)???
 					value.Data.CurrentTaskTags.CollectionChanged += (s, e) =>
@@ -115,12 +117,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task AttachElementPositionToRectangle(string rectangleId, string elementSelector)
 		{
-			if (_initializationDone)
+			await _initializationTaskTcs.Task;
+			if(this.Rectangles.Any(r => r.Id == rectangleId))
 			{
-				if(this.Rectangles.Any(r => r.Id == rectangleId))
-				{
-					await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
-				}
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
 			}
 		}
 
@@ -134,6 +134,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await InitializeClientJs();
 				_initializationDone = true;
+				_initializationTaskTcs.SetResult(true);
 			}
 			_initializationSemaphore.Release();
 
@@ -206,15 +207,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task InitializeClientJs()
 		{
 			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
-			foreach(var tag in _rectangles)
-			{
-				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { tag });
-			}
 		}
 
-		private void OnSelectedTagsUpdated(IReadOnlyCollection<TagModel> obj)
+		private void OnSelectedTagsUpdated(IReadOnlyCollection<TagModel> tags)
 		{
-			/// TODO : update selected tags on client's UI
+			Rectangles = TagsStore.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 		}
 
 		private HyperId GetCurrentPosition()
@@ -227,9 +224,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			return TaskDataStore.Data.CurrentTask?.HyperId ?? new HyperId();
 		}
 
-		private void UpdateTagsOnClient(List<Rectangle> oldRectangleCollection, List<Rectangle> newRectangleCollection)
+		private async Task UpdateTagsOnClient(List<Rectangle> oldRectangleCollection, List<Rectangle> newRectangleCollection)
 		{
-			if(_initializationDone && MediaDataStore.Data.MediaInstances?.Any() == true)
+			await _initializationTaskTcs.Task;
+			if(MediaDataStore.Data.MediaInstances?.Any() == true)
 			{
 				// add newly added tags
 				foreach(var newTag in newRectangleCollection)

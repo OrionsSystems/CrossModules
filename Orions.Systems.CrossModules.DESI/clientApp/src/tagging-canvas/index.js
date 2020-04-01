@@ -184,7 +184,9 @@ class BaseVisual {
 	}
 
 	// normalizes the coordinates
-	create(p1, p2) {
+	create(p1, p2, selected = false) {
+		this.is_selected = selected;
+
 		var top_left = new paper.Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
 		var bottom_right = new paper.Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
 
@@ -592,7 +594,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		var newTagVisual = new TagVisual(raster.strokeBounds);
 		var tagCoords = getRectangleRealFromProportional(tag, raster.strokeBounds);
 
-		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
+		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight, tag.isSelected)
 		newTagVisual.id = tag.id;
 
 		if (tag.isSelected) {
