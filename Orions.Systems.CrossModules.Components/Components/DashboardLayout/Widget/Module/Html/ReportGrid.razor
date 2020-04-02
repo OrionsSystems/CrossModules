@@ -2,13 +2,10 @@
 
 @inherits DashboardComponent<ReportGridVm, ReportGridWidget>
 
-@using Orions.Infrastructure.Reporting
-
 <div class="widget-content-report @Widget.Class" style="@Widget.MarginWidget.GetInlineStyle() @Widget.PaddingWidget.GetInlineStyle()">
 
 	@if (Vm.Report != null && Vm.ReportChartData != null && Vm.IsLoadedReportResult)
 	{
-		var rowIndex = 0;
 
 		<TitleCard Settings="Widget.TitleSettings"></TitleCard>
 
@@ -19,6 +16,7 @@
 					<thead>
 						<tr>
 							<th scope="col"></th>
+							<th scope="col"></th>
 							@foreach (var category in Vm.ReportChartData.Categories)
 							{
 								<th scope="col">@category</th>
@@ -26,26 +24,22 @@
 						</tr>
 					</thead>
 					<tbody>
+
 						@for (int i = 0; i < Vm.ReportChartData.Series.FirstOrDefault().Data.Count(); i++)
 						{
-							<tr>
-
-								@*@if ( Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].StartTime.HasValue)
-									{
-										<td>@Vm.ReportChartData.Series.FirstOrDefault()?.Data[0].Label.StartTime?.ToString("dd MMM HH:mm")</td>
-									}
-									else
-									{*@
-								<td>@Vm.ReportChartData.Series.FirstOrDefault().Data[0].Label</td>
-								@*							}*@
-
-								@foreach (var item in Vm.ReportChartData.Series)
+						<tr>
+							@for (var z = 0; z < Vm.ReportChartData.Series.Count(); z++)
+							{
+								var currentSeries = Vm.ReportChartData.Series[z];
+								if (z == 0)
 								{
-
-									<td>@item.Data[i].Value</td>
-
+									<td>@(i+1)</td>
+									<td>@currentSeries.Data[i].Label</td>
 								}
-							</tr>
+
+								<td>@currentSeries.Data[i].Value</td>
+							}
+						</tr>
 						}
 					</tbody>
 				</table>
