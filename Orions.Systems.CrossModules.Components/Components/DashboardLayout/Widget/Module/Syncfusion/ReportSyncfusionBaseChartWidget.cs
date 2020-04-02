@@ -98,6 +98,9 @@ namespace Orions.Systems.CrossModules.Components
 
 		public class ChartMarkerConfiguration 
 		{
+			[HelpText("The different shape of a marker")]
+			public ChartShape Shape { get; set; } = ChartShape.Circle;
+
 			[HelpText("The opacity of the marker.")]
 			public double Opacity { get; set; } = 1;
 
@@ -106,6 +109,9 @@ namespace Orions.Systems.CrossModules.Components
 
 			[HelpText("The fill color of the marker that accepts value in hex and rgba as a valid CSS color string. By default, it will take series' color.")]
 			public string Fill { get; set; }
+
+			[HelpText("The data label for the series.")]
+			public ChartDataLabel DataLabel { get; set; }
 
 			[HelpText("Options for customizing the border of a marker.")]
 			public ChartMarkerBorder Border { get; set; }
@@ -141,6 +147,63 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("Options for customizing the Subtitle of the Chart.")]
 			public ChartSubTitleStyle SubTitleStyle { get; set; }
 		}
+
+		public class ChartSeriesConfiguration 
+		{
+			[HelpText("The opacity of the series.")]
+			public double Opacity { get; set; } = 1;
+
+			[HelpText("Minimum radius")]
+			public double MinRadius { get; set; } = 1;
+
+			[HelpText("Maximum radius")]
+			public double MaxRadius { get; set; } = 3;
+
+			[HelpText("If set true, the mean value for box and whisker will be visible.")]
+			public bool ShowMean { get; set; } = true;
+
+			[HelpText("The normal distribution of histogram series.")]
+			public bool ShowNormalDistribution { get; set; }
+
+			[HelpText(" Defines type of spline to be rendered.")]
+			public SplineType SplineType { get; set; } = SplineType.Natural;
+
+			[HelpText("This property allows grouping series in `stacked column / bar` charts.")]
+			public string StackingGroup { get; set; }
+
+			[HelpText("user can format now each series tooltip format separately.")]
+			public string TooltipFormat { get; set; }
+
+			[HelpText("The stroke width for the series that is applicable only for `Line` type series.")]
+			public double Width { get; set; } = 1;
+
+			[HelpText(" The shape of the legend. Each series has its own legend shape.")]
+			public LegendShape LegendShape { get; set; }
+
+			[HelpText("Options to customizing animation for the series.")]
+			public ChartSeriesAnimation Animation { get; set; }
+
+			[HelpText("Options to customizing the border of the series. This is applicable only for `Column` and `Bar` type series.")]
+			public ChartSeriesBorder Border { get; set; }
+
+			[HelpText("To render the column series points with particular column spacing. It takes value from 0 - 1.")]
+			public double ColumnSpacing { get; set; } = 0;
+
+			[HelpText("To render the column series points with particular rounded corner.")]
+			public ChartCornerRadius CornerRadius { get; set; }
+
+			[HelpText("The fill color for the series that accepts value in hex and rgba as a valid CSS color string.")]
+			public string Fill { get; set; }
+
+			[HelpText("Defines the pattern of dashes and gaps to stroke the lines in `Line` type series.")]
+			public string DashArray { get; set; } = "0";
+
+			[HelpText("Options to customize the drag settings for series")]
+			public ChartDragSettings DragSettings { get; set; }
+		}
+
+		[HelpText("Options for chart series settings")]
+		public ChartSeriesConfiguration SeriesSettings { get; set; } = new ChartSeriesConfiguration();
 
 		[HelpText("Options for chart titles settings")]
 		public ChartTitlesConfiguration ChartTitleSettings { get; set; } = new ChartTitlesConfiguration();
@@ -191,7 +254,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public PrimaryYAxis YAxisSettings { get; set; } = new PrimaryYAxis();
 
-		public ChartCornerRadius CornerRadius { get; set; } = new ChartCornerRadius();
 
 		public ChartMargin Margin { get; set; } = new ChartMargin();
 

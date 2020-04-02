@@ -85,22 +85,37 @@
 					<ChartSeriesCollection>
 						@foreach (var ser in Vm.ReportChartData.Series)
 						{
-
 							<ChartSeries DataSource="@ser.Data"
 											 Name="@ser.Name"
 											 XName="@nameof(ReportSeriesChartDataItem.Label)"
-											 YName="@nameof(ReportSeriesChartDataItem.Value)"
-											 CornerRadius="@Widget.CornerRadius"
+											 YName="@nameof(ReportSeriesChartDataItem.Value)" 
+											 Opacity="@Widget.SeriesSettings.Opacity"
+											 MinRadius="@Widget.SeriesSettings.MinRadius"
+											 MaxRadius="@Widget.SeriesSettings.MaxRadius"
+											 ShowMean="@Widget.SeriesSettings.ShowMean"
+											 ShowNormalDistribution="@Widget.SeriesSettings.ShowNormalDistribution"
+											 SplineType="@Widget.SeriesSettings.SplineType"
+											 StackingGroup="@Widget.SeriesSettings.StackingGroup"
+											 TooltipFormat="@Widget.SeriesSettings.TooltipFormat"
+											 Width="@Widget.SeriesSettings.Width"
+											 LegendShape="@Widget.SeriesSettings.LegendShape"
+											 Animation="@Widget.SeriesSettings.Animation"
+											 Border="@Widget.SeriesSettings.Border"
+											 ColumnSpacing="@Widget.SeriesSettings.ColumnSpacing"
+											 CornerRadius="@Widget.SeriesSettings.CornerRadius"
+											 Fill="@Widget.SeriesSettings.Fill"
+											 DashArray="@Widget.SeriesSettings.DashArray"
+											 DragSettings="@Widget.SeriesSettings.DragSettings"
 											 Type="@Widget.ChartSeriesType">
 
-								<ChartMarker Width="@Widget.ChartMarkerSettings.Width"
+								<ChartMarker Visible="@Widget.ChartMarkerSettings.Visible"
+												 Shape="@Widget.ChartMarkerSettings.Shape"
+												 Opacity="@Widget.ChartMarkerSettings.Opacity"
 												 Height="@Widget.ChartMarkerSettings.Height"
+												 Fill="@Widget.ChartMarkerSettings.Fill"
+												 DataLabel="@Widget.ChartMarkerSettings.DataLabel"
+												 Width="@Widget.ChartMarkerSettings.Width" 
 												 Border="@Widget.ChartMarkerSettings.Border">
-									<ChartDataLabel Visible="@Widget.ChartMarkerSettings.Visible"
-														 Fill="@Widget.ChartMarkerSettings.Fill"
-														 Opacity="@Widget.ChartMarkerSettings.Opacity"
-														 Position="@Widget.ChartMarkerSettings.Position"
-														 Font="@Widget.ChartMarkerSettings.Font"></ChartDataLabel>
 								</ChartMarker>
 							</ChartSeries>
 						}
