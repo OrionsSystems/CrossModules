@@ -25,11 +25,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 
 		private List<Rectangle> _rectangles = new List<Rectangle>();
-		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
 		private IDisposable _tagsCollectionChagedSub;
 		private bool _initializationDone;
+		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
