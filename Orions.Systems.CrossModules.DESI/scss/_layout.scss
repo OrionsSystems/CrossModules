@@ -46,9 +46,9 @@ body{
 	}
 
 	.page-content {
+		background-color: rgb(250,250,250);
 		width: calc(100% - 66px);
 		padding-top: 13px;
-		background-color: white;
 		display: flex;
 		flex-direction: column;
 
@@ -60,7 +60,7 @@ body{
 			a {
 				color: #7e7e7e;
 				padding-bottom: 3px;
-				cursor:pointer;
+				cursor: pointer;
 			}
 
 			.footer-logo {
@@ -80,7 +80,7 @@ body{
 			}
 
 			.logout {
-				margin:15px;
+				margin: 15px;
 			}
 		}
 	}

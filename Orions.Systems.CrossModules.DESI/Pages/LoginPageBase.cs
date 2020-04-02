@@ -23,7 +23,14 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		public void Login()
 		{
 			this.SettingsStorage.Save();
-			Vm.LoginCommand.Execute(null);
+			try
+			{
+				Vm.LoginCommand.Execute(null);
+			}
+			catch (Exception)
+			{
+				throw;
+			}
 		}
 
 		protected override async Task OnInitializedAsync()
