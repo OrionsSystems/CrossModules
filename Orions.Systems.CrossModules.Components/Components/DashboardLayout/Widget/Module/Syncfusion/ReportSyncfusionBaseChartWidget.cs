@@ -110,6 +110,9 @@ namespace Orions.Systems.CrossModules.Components
 			[HelpText("The fill color of the marker that accepts value in hex and rgba as a valid CSS color string. By default, it will take series' color.")]
 			public string Fill { get; set; }
 
+			[HelpText("The data label for the series.")]
+			public ChartDataLabel DataLabel { get; set; }
+
 			[HelpText("Options for customizing the border of a marker.")]
 			public ChartMarkerBorder Border { get; set; }
 
@@ -145,7 +148,10 @@ namespace Orions.Systems.CrossModules.Components
 			public ChartSubTitleStyle SubTitleStyle { get; set; }
 		}
 
-		public class ChartSeriesConfiguration {
+		public class ChartSeriesConfiguration 
+		{
+			[HelpText("The opacity of the series.")]
+			public double Opacity { get; set; } = 1;
 
 			[HelpText("Minimum radius")]
 			public double MinRadius { get; set; } = 1;
