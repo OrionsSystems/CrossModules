@@ -71,7 +71,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		private void UpdateVizListPosition() 
 		{
-			if (Vm.TagData != null && Vm.TagData.SelectedTags.Any())
+			if (Vm?.TagData != null && Vm.TagData.SelectedTags.Any())
 			{
 				StateHasChanged();
 				TaggingSurface?.AttachElementPositionToRectangle(Vm.TagData.SelectedTags.First().Id.ToString(), ".vizlist-positioned");

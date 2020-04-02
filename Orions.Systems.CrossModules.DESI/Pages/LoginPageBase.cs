@@ -5,6 +5,7 @@ using Microsoft.JSInterop;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
+using Orions.Systems.Desi.Common.Authentication;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
@@ -23,14 +24,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		public void Login()
 		{
 			this.SettingsStorage.Save();
-			try
-			{
-				Vm.LoginCommand.Execute(null);
-			}
-			catch (Exception)
-			{
-				throw;
-			}
+			Vm.LoginCommand.Execute(null);
 		}
 
 		protected override async Task OnInitializedAsync()
@@ -42,6 +36,11 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			Vm = new AuthenticationViewModel(authenticationSystem, navigationService)
 			{
 			};
+
+			if(Vm.AuthenticationData.AuthenticationStatus == AuthenticationStatus.LoggedIn)
+			{
+				authenticationSystem.Controller.Dispatch(LogoutAction.Create());
+			}
 
 			await base.OnInitializedAsync();
 		}

@@ -25,7 +25,7 @@ function stickToCanvasBounds(coords, containerRectangle) {
 	}
 
 	if (coords.bottomRight.y > containerRectangle.y + containerRectangle.height) {
-		coords.bottomRight.y = containerRectangle.height;
+		coords.bottomRight.y = containerRectangle.height + containerRectangle.y;
 	}
 }
 
@@ -402,25 +402,29 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	paper.setup(self.canvas);
 
+	self.canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); e.stopPropagation(); }, false);
+
 	self.canvas.addEventListener('wheel', function (e) {
-		let step = 0.2;
-		let maxZoom = 3;
-		let minZoom = 1;
-		if (e.deltaY > 0) {
-			if (paper.view.zoom - step >= minZoom) {
-				paper.view.zoom -= step;
+		if (e.shiftKey) {
+			let step = 0.2;
+			let maxZoom = 3;
+			let minZoom = 1;
+			if (e.deltaY > 0) {
+				if (paper.view.zoom - step >= minZoom) {
+					paper.view.zoom -= step;
+				}
+				else {
+					paper.view.zoom = minZoom;
+					paper.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
+				}
 			}
 			else {
-				paper.view.zoom = minZoom;
-				paper.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
-			}
-		}
-		else {
-			if (paper.view.zoom + step < 3) {
-				paper.view.zoom += step;
-			}
-			else {
-				paper.view.zoom = maxZoom;
+				if (paper.view.zoom + step < 3) {
+					paper.view.zoom += step;
+				}
+				else {
+					paper.view.zoom = maxZoom;
+				}
 			}
 		}
 	})
@@ -499,7 +503,14 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	// Define a mousedown and mousedrag handler
 	tool.onMouseDown = function (event) {
-		if (event.event.ctrlKey) {
+		if (event.event.buttons == 2) {
+			return;
+		}
+
+		if (event.point.x < raster.strokeBounds.x
+			|| event.point.x > raster.strokeBounds.x + raster.strokeBounds.width
+			|| event.point.y < raster.strokeBounds.y
+			|| event.point.y > raster.strokeBounds.y + raster.strokeBounds.height) {
 			return;
 		}
 
@@ -529,7 +540,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	tool.onMouseUp = function (event) {
-
 		if (isDefined(mouseDownAt) == false)
 			return;
 
@@ -559,20 +569,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		path.remove();
 	}
 
-	tool.onMouseMove = function (event) {
-
-		paper.project.activeLayer.selected = false;
-		if (event.modifiers.shift) {
-			if (hitResult.type == 'segment') {
-				hitResult.segment.remove();
-			};
-
-			return;
-		}
-	}
-
 	tool.onMouseDrag = function (event) {
-		if (event.event.ctrlKey) {
+		if (event.event.buttons == 2) {
 			if (paper.view.zoom > 1) {
 				paper.view.center = paper.view.center.add(event.downPoint.subtract(event.point));
 			}
@@ -650,15 +648,27 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
 		let tag = items.find(i => i.id == id);
 		if (tag) {
+			
+
 			let tagAbsolutePosition = {
 				x: tag.get_topLeft().x,
 				y: tag.get_topLeft().y
 			}
 
-			let elementPosition = {
-				x: tagAbsolutePosition.x + tag.getWidth() + 20,
+			let dummyEl = document.createElement('div')
+			dummyEl.style.width = '2px'
+			dummyEl.style.height = '2px'
+			dummyEl.style.position = 'absolute';
+			dummyEl.style.left = tagAbsolutePosition.x + 'px'
+			dummyEl.style.top = tagAbsolutePosition.y + 'px'
+			dummyEl.style.backgroundColor = 'red'
+			document.getElementsByClassName('tagging-surface-container')[0].appendChild(dummyEl)
+
+			let elementPosition = paper.view.projectToView({
+				x: tagAbsolutePosition.x + tag.getWidth(),
 				y: tagAbsolutePosition.y
-			}
+			})
+			elementPosition.x += 20
 
 			let elementToAttach = document.querySelector(elementSelector);
 			if (elementToAttach) {
@@ -667,7 +677,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				let elemHeight = elementToAttach.offsetHeight
 
 				if (elementPosition.x + elemWidth > self.canvas.width) {
-					elementPosition.x = tagAbsolutePosition.x - elemWidth - 20
+					elementPosition.x = elementPosition.x - elemWidth - tag.getWidth() * paper.view.zoom - 40
 				}
 
 				elementToAttach.style.left = elementPosition.x + 'px'
