@@ -1,17 +1,20 @@
-using System;
-using System.Linq;
-using System.Net.Http;
 using EmbeddedBlazorContent;
+
 using MatBlazor;
+
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
 using Orions.Systems.CrossModules.Common;
 using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Sandbox.Data;
+using Syncfusion.EJ2.Blazor;
+using System;
+using System.Linq;
+using System.Net.Http;
 
 namespace Orions.Systems.CrossModules.Sandbox
 {
@@ -46,6 +49,8 @@ namespace Orions.Systems.CrossModules.Sandbox
 
 			services.AddTelerikBlazor();
 
+			services.AddSyncfusionBlazor();
+
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 
 			// Server Side Blazor doesn't register HttpClient by default - https://github.com/Suchiman/BlazorDualMode
@@ -69,6 +74,10 @@ namespace Orions.Systems.CrossModules.Sandbox
 		{
 
 			base.Configure(app, env);
+
+			//Register Syncfusion license
+			var syncfusionLicense = Configuration.GetValue<string>("SyncfusionLicense");
+			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
 
 			app.UseStaticFiles();
 

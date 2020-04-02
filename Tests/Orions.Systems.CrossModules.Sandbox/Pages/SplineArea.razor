@@ -1,0 +1,77 @@
+﻿@namespace Orions.Systems.CrossModules.Pages
+
+@page "/spline-area"
+
+@inherits BaseOrionsComponent
+
+<h3>SplineArea</h3>
+
+<hr />
+
+<EjsChart>
+	<ChartPrimaryXAxis ValueType="Syncfusion.EJ2.Blazor.Charts.ValueType.Category"></ChartPrimaryXAxis>
+
+	<ChartSeriesCollection>
+		<Syncfusion.EJ2.Blazor.Charts.ChartSeries DataSource="@Series1"
+																XName="X"
+																YName="Y"
+																Opacity="0.5"
+																DashArray="5,5"
+																Fill="blue"
+																Type="Syncfusion.EJ2.Blazor.Charts.ChartSeriesType.SplineArea">
+		</Syncfusion.EJ2.Blazor.Charts.ChartSeries>
+			<Syncfusion.EJ2.Blazor.Charts.ChartSeries DataSource="@Series2"
+																	XName="X"
+																	YName="Y"
+																	Opacity="0.5"
+																	DashArray="5,5"
+																	Fill="blue"
+																	Type="Syncfusion.EJ2.Blazor.Charts.ChartSeriesType.SplineArea">
+				<ChartSeriesBorder Width="2" Color="black"></ChartSeriesBorder>
+			</Syncfusion.EJ2.Blazor.Charts.ChartSeries>
+	</ChartSeriesCollection>
+</EjsChart>
+
+
+
+@code {
+
+	public class ChartData
+	{
+		public string X;
+		public double Y;
+	}
+
+	public List<ChartData> Series1 = new List<ChartData>
+{
+		  new ChartData { X= "South Korea", Y= 39.4 },
+		  new ChartData { X= "India", Y= 61.3 },
+		  new ChartData { X= "Pakistan", Y= 20.4 },
+		  new ChartData { X= "Germany", Y= 65.1 },
+		  new ChartData { X= "Australia", Y= 15.8 },
+		  new ChartData { X= "Italy", Y= 29.2 },
+		  new ChartData { X= "United Kingdom", Y= 44.6 },
+		  new ChartData { X= "Saudi Arabia", Y= 9.7 },
+		  new ChartData { X= "Russia", Y= 40.8 },
+		  new ChartData { X= "Mexico", Y= 31 },
+		  new ChartData { X= "Brazil", Y= 75.9 },
+		  new ChartData { X= "China", Y= 51.4 }
+	 };
+
+	public List<ChartData> Series2 = new List<ChartData>
+{
+		  new ChartData { X= "South Korea", Y= 29.4 },
+		  new ChartData { X= "India", Y= 41.3 },
+		  new ChartData { X= "Pakistan", Y= 60.4 },
+		  new ChartData { X= "Germany", Y= 25.1 },
+		  new ChartData { X= "Australia", Y= 35.8 },
+		  new ChartData { X= "Italy", Y= 79.2 },
+		  new ChartData { X= "United Kingdom", Y= 84.6 },
+		  new ChartData { X= "Saudi Arabia", Y= 19.7 },
+		  new ChartData { X= "Russia", Y= 20.8 },
+		  new ChartData { X= "Mexico", Y= 11 },
+		  new ChartData { X= "Brazil", Y= 55.9 },
+		  new ChartData { X= "China", Y= 41.4 }
+	 };
+
+}
