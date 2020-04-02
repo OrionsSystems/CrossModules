@@ -655,15 +655,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				y: tag.get_topLeft().y
 			}
 
-			let dummyEl = document.createElement('div')
-			dummyEl.style.width = '2px'
-			dummyEl.style.height = '2px'
-			dummyEl.style.position = 'absolute';
-			dummyEl.style.left = tagAbsolutePosition.x + 'px'
-			dummyEl.style.top = tagAbsolutePosition.y + 'px'
-			dummyEl.style.backgroundColor = 'red'
-			document.getElementsByClassName('tagging-surface-container')[0].appendChild(dummyEl)
-
 			let elementPosition = paper.view.projectToView({
 				x: tagAbsolutePosition.x + tag.getWidth(),
 				y: tagAbsolutePosition.y
