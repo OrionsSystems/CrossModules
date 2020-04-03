@@ -32,7 +32,7 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		}
 		public Task GoToLoginPage()
 		{
-			_navManager.NavigateTo("/", true);
+			_navManager.NavigateTo("/");
 			return Task.CompletedTask;
 		}
 		public Task GoToManageCustomNodes() => throw new NotImplementedException();

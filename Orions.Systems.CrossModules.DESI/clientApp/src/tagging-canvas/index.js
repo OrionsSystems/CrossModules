@@ -185,8 +185,7 @@ class BaseVisual {
 	}
 
 	// normalizes the coordinates
-	create(p1, p2, selected = false) {
-		this.is_selected = selected;
+	create(p1, p2) {
 
 		var top_left = new paper.Point(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
 		var bottom_right = new paper.Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
@@ -232,7 +231,7 @@ class BaseVisual {
 
 		var path = new paper.Path.Rectangle(rect);
 		path.strokeColor = this.strokeColor;
-		path.fillColor = this.fillColor;
+		path.fillColor = this.is_selected ? this.selectedColor : this.fillColor;
 
 		path.owner = this;
 
@@ -257,6 +256,10 @@ class BaseVisual {
 	}
 
 	select(selected, fireEvent = true) {
+		if (selected == this.is_selected) {
+			return;
+		}
+
 		if (selected) {
 			this.main_group.fillColor = this.selectedColor;
 			this.is_selected = true;
@@ -524,13 +527,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			}
 		}
 
-		//var hitResult = paper.project.hitTest(event.point/*, hitOptions*/);
-		//if (isDefined(hitResult)) {
-		//	var type = hitResult.item instanceof paper.Raster;
-		//	if (type != true)
-		//		return;
-		//}
-
 		mouseDownAt = event.point;
 
 		for (var i = 0; i < items.length; i++) {
@@ -601,7 +597,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		var newTagVisual = new TagVisual(raster.strokeBounds);
 		var tagCoords = getRectangleRealFromProportional(tag, raster.strokeBounds);
 
-		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight, tag.isSelected)
+		newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 		newTagVisual.id = tag.id;
 
 		if (tag.isSelected) {
