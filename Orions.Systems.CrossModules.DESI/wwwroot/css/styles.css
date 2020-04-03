@@ -1866,29 +1866,31 @@ video::-webkit-media-text-track-display {
     display: flex;
     flex-direction: column;
     border-radius: 10px;
-    margin-top: 40vh; }
+    margin-top: 40vh;
+    border: 1px solid #c8c8c8; }
     .modal-popup-overlay > .popup-window > .content {
       text-align: center;
       display: flex;
       flex-direction: column;
       padding: 15px; }
       .modal-popup-overlay > .popup-window > .content .header {
-        font-weight: bold; }
+        font-weight: bold;
+        margin-bottom: 10px; }
     .modal-popup-overlay > .popup-window > .buttons {
       display: flex;
-      flex-direction: row; }
+      flex-direction: row;
+      border-top: 1px solid #c8c8c8; }
       .modal-popup-overlay > .popup-window > .buttons button {
         display: block;
-        border: 1px solid #c8c8c8;
+        border: none;
+        border-right: 1px solid #c8c8c8;
         color: #eb9771;
         text-align: center;
         flex: 1;
         padding: 15px;
-        background-color: white; }
-        .modal-popup-overlay > .popup-window > .buttons button.right-button {
-          border-radius: 0 0 10px 0; }
-        .modal-popup-overlay > .popup-window > .buttons button.left-button {
-          border-radius: 0 0 0 10px; }
+        background-color: transparent; }
+      .modal-popup-overlay > .popup-window > .buttons button:last-of-type {
+        border-right: none; }
 
 .missions-page-container {
   display: flex;

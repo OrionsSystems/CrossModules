@@ -19,6 +19,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		private readonly NavigationManager _navigationManager;
 		private readonly IJSRuntime _jSRuntime;
 		private readonly IConfiguration _appConfig;
+		private PopupService _popupService;
 
 		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime, IConfiguration appConfig)
 		{
@@ -35,7 +36,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IDialogService GetDialogService()
 		{
-			return new BlazorDialogService();
+			return new BlazorDialogService(_popupService);
 		}
 
 		public override IImageService GetImageService()
@@ -49,8 +50,6 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		}
 
 		private ISettingsStorage _settingsStorage;
-
-		public PopupService PopupService { get; private set; }
 
 		public override ISettingsStorage GetSettingsStorage()
 		{
@@ -87,17 +86,17 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public INavigationService GetNavigationService()
 		{
-			return new NavigationService(_navigationManager, _jSRuntime, PopupService);
+			return new NavigationService(_navigationManager, _jSRuntime, _popupService);
 		}
 
 		public void SetPopupService(PopupService service)
 		{
-			this.PopupService = service;
+			this._popupService = service;
 		}
 
 		public PopupService GetPopupService()
 		{
-			return this.PopupService;
+			return this._popupService;
 		}
 	}
 }

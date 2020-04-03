@@ -21,10 +21,23 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		public async Task<bool> ShowConfirmation(string title, string question)
 		{
 			_popupComponent.Title = title;
-			_popupComponent.Question = question;
+			_popupComponent.Message = question;
 			var result = await _popupComponent.ShowYesNoModal();
 
 			return result;
+		}
+
+		public async Task ShowAlert(string title, string question)
+		{
+			_popupComponent.Title = title;
+			_popupComponent.Message = question;
+			await _popupComponent.ShowOkModal();
+		}
+
+		public async Task ShowAlert(string title, string question, string okBtnCaption)
+		{
+			_popupComponent.OkCaption = okBtnCaption;
+			await this.ShowAlert(title, question);
 		}
 
 		public async Task<bool> ShowSessionIsOver(int secondsToTimeout)
