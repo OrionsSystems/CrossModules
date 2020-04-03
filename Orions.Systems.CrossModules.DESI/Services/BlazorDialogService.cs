@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Orions.Systems.CrossModules.Desi.Components.Popup.Alert;
 using Orions.Systems.Desi.Common.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Services
