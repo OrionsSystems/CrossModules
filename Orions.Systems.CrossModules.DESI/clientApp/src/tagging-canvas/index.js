@@ -1,4 +1,5 @@
 import * as paper from 'paper';
+import CanvasCrosshair from './canvas-crosshair'
 
 window.Orions.TaggingSurface = {}
 
@@ -392,15 +393,15 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	let self = this;
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
-	var tool = new paper.Tool();
 
+	var tool = new paper.Tool();
 	var mouseDownAt;
 	var path;
 	var rect;
-
 	var items = [];
 
 	paper.setup(self.canvas);
+	let crosshair = new CanvasCrosshair(self.canvas);
 
 	self.canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); e.stopPropagation(); }, false);
 
@@ -426,6 +427,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 					paper.view.zoom = maxZoom;
 				}
 			}
+
+			crosshair.move(paper.view.viewToProject({ x: e.offsetX, y: e.offsetY }))
 		}
 	})
 
@@ -521,12 +524,12 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			}
 		}
 
-		var hitResult = paper.project.hitTest(event.point/*, hitOptions*/);
-		if (isDefined(hitResult)) {
-			var type = hitResult.item instanceof paper.Raster;
-			if (type != true)
-				return;
-		}
+		//var hitResult = paper.project.hitTest(event.point/*, hitOptions*/);
+		//if (isDefined(hitResult)) {
+		//	var type = hitResult.item instanceof paper.Raster;
+		//	if (type != true)
+		//		return;
+		//}
 
 		mouseDownAt = event.point;
 
@@ -570,6 +573,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	tool.onMouseDrag = function (event) {
+		crosshair.move(event.point)
+
 		if (event.event.buttons == 2) {
 			if (paper.view.zoom > 1) {
 				paper.view.center = paper.view.center.add(event.downPoint.subtract(event.point));
@@ -585,6 +590,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			path = new paper.Path.Rectangle(rect);
 			path.strokeColor = 'black';
 		}
+	}
+
+	tool.onMouseMove = function (event) {
+		crosshair.move(event.point)
 	}
 
 	window.Orions.TaggingSurface.addTag = function (tag) {
