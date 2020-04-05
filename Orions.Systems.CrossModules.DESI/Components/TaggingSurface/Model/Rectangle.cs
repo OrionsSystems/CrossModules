@@ -14,6 +14,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model
 		public float Height { get; set; }
 
 		public bool IsSelected { get; set; }
+		public string BorderColor { get; set; }
 
 		public override bool Equals(object other)
 		{
@@ -28,7 +29,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model
 				|| otherRect.Y != this.Y
 				|| otherRect.Height != this.Height
 				|| otherRect.Width != this.Width
-				|| otherRect.IsSelected != this.IsSelected)
+				|| otherRect.IsSelected != this.IsSelected
+				|| otherRect.BorderColor != this.BorderColor)
 				return false;
 
 			return true;

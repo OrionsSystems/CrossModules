@@ -22,8 +22,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
 	public class TaggingSurfaceBase : BaseComponent
 	{
-		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+		private readonly string TaggedSelectedMarkerBoundsColor = "#0000FF";
+		private readonly string UntaggedSelectedMarkerBoundsColor = "#FF0000";
+		private readonly string TaggedUnselectedMarkerBoundsColor = "#E3FF00";
+		private readonly string UntaggedUnselectedMarkerBoundsColor = "#FFFF00";
 
+		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 		private List<Rectangle> _rectangles = new List<Rectangle>();
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
@@ -181,15 +185,29 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			return Enumerable.Empty<TagModel>();
 		}
 
-		private Rectangle ConvertToRectangle(TagModel tagModel) => new Rectangle
+		private Rectangle ConvertToRectangle(TagModel tagModel) 
 		{
-			X = tagModel.Geometry.ProportionalBounds.X,
-			Y = tagModel.Geometry.ProportionalBounds.Y,
-			Height = tagModel.Geometry.ProportionalBounds.Height,
-			Width = tagModel.Geometry.ProportionalBounds.Width,
-			Id = tagModel.Id.ToString(),
-			IsSelected = tagModel.IsSelected
-		};
+			var rect = new Rectangle
+			{
+				X = tagModel.Geometry.ProportionalBounds.X,
+				Y = tagModel.Geometry.ProportionalBounds.Y,
+				Height = tagModel.Geometry.ProportionalBounds.Height,
+				Width = tagModel.Geometry.ProportionalBounds.Width,
+				Id = tagModel.Id.ToString(),
+				IsSelected = tagModel.IsSelected
+			};
+
+			if (tagModel.TagonomyExecutionResult != null)
+			{
+				rect.BorderColor = tagModel.IsSelected ? TaggedSelectedMarkerBoundsColor : TaggedUnselectedMarkerBoundsColor;
+			}
+			else
+			{
+				rect.BorderColor = tagModel.IsSelected ? UntaggedSelectedMarkerBoundsColor : UntaggedUnselectedMarkerBoundsColor;
+			}
+
+			return rect;
+		}
 
 		private void OnGeometryCreated(Rectangle geometry)
 		{
