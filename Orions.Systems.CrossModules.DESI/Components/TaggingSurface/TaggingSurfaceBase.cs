@@ -10,6 +10,7 @@ using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
 using Orions.Systems.Desi.Common.TaskExploitation;
+using Orions.Systems.Desi.Common.TagonomyExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,10 +62,27 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 						.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
 
-					// why (ask Anton)???
+					value.Data.CurrentTaskTags.Foreach(t =>
+					{
+						t.PropertyChanged += (s, e) =>
+						{
+							OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+						};
+					});
 					value.Data.CurrentTaskTags.CollectionChanged += (s, e) =>
 					{
 						OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+
+						if (e.NewItems != null)
+						{
+							foreach (var newT in e.NewItems)
+							{
+								(newT as TagModel).PropertyChanged += (s, e) =>
+								{
+									OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+								};
+							}
+						}
 					};
 
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
@@ -194,7 +212,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				Height = tagModel.Geometry.ProportionalBounds.Height,
 				Width = tagModel.Geometry.ProportionalBounds.Width,
 				Id = tagModel.Id.ToString(),
-				IsSelected = tagModel.IsSelected
+				IsSelected = tagModel.IsSelected,
+				Label = tagModel.IsSelected ? "" : tagModel.LabelValue
 			};
 
 			if (tagModel.TagonomyExecutionResult != null)

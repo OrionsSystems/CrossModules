@@ -9,6 +9,7 @@ export default class TagVisual extends BaseVisual {
 		super(containerRectangle, opts)
 		this.adornerSize = 8;
 		this.is_selected = false;
+		this.label = isDefined(opts.label) ? opts.label : null;
 	}
 
 	path_onMouseDown(event) {
@@ -33,6 +34,12 @@ export default class TagVisual extends BaseVisual {
 
 			this.path.strokeColor = tag.borderColor;
 		}
+
+		if (isDefined(tag.label)) {
+			this.label = tag.label;
+		}
+
+		this.updateElements();
 	}
 
 	updateElements() {
@@ -53,6 +60,20 @@ export default class TagVisual extends BaseVisual {
 
 			this.elements.push(element);
 		}
+
+		if (this.label != null) {
+
+			if (this.labelItem == null) {
+				this.labelItem = new paper.PointText(new paper.Point(this.main_group.bounds.x + 5, this.main_group.bounds.y + 5));
+			}
+
+			this.labelItem.fillColor = 'white';
+			this.labelItem.content = this.label;
+		}
+	}
+
+	clearElements() {
+		super.clearElements();
 	}
 
 	path_onMouseDrag(event) {
