@@ -15,23 +15,19 @@ export default class BaseVisual {
 		this.selectedColor = defaultSelectedColor;
 		this.selectedStrokeColor = isDefined(opts.borderColor) ? opts.borderColor : defaultSelectedStrokeColor;
 		this.elements = [];
-		this.moved_event_listeners = [];
 		this.eventListeners = {
 			'selected': [],
 			'deselected': [],
 			'moved': [],
-			'resized': []
+			'resized': [],
+			'moved_inner': []
 		}
 
 		this.was_moved = false;
 	}
 
-	add_moved_event_listener(listener) {
-		this.moved_event_listeners.push(listener);
-	}
-
 	get_topLeft() {
-		return new paper.Point(this.main_group.position.x - this.width / 2, this.main_group.position.y - this.height / 2);
+		return new paper.Point(this.path.bounds.left, this.path.bounds.top);
 	}
 
 	get_center() {
@@ -42,7 +38,7 @@ export default class BaseVisual {
 	}
 
 	get_bottomRight() {
-		return new paper.Point(this.main_group.position.x + this.width / 2, this.main_group.position.y + this.height / 2);
+		return new paper.Point(this.path.bounds.right, this.path.bounds.bottom)
 	}
 
 	getWidth() {
@@ -61,7 +57,7 @@ export default class BaseVisual {
 				return res;
 		}
 
-		return this.main_group.hitTest(point);
+		return this.path.hitTest(point);
 	}
 
 	remove() {
@@ -99,31 +95,22 @@ export default class BaseVisual {
 		this.owner.clearElements();
 	}
 
-	raise_moved_event() {
-		for (var i = 0; i < this.moved_event_listeners.length; i++) {
-			this.moved_event_listeners[i].moved_event(this);
-		}
-	}
-
 	path_onMouseUp(event) {
 		if (this.owner.was_moved) {
-			this.owner.raise_moved_event();
 			this.owner.was_moved = false;
 			this.owner.fire('moved');
 		}
 
 		this.owner.select(true);
 
-
 		this.owner.updateElements();
 	}
 
 	path_onMouseDrag(event) {
-
 		this.owner.was_moved = true;
 		this.position = new paper.Point(this.position.x + event.delta.x, this.position.y + event.delta.y);
 
-		this.owner.raise_moved_event();
+		this.owner.fire('moved_inner')
 	}
 
 	create(p1, p2) {
@@ -177,7 +164,7 @@ export default class BaseVisual {
 		}
 
 		if (selected) {
-			this.main_group.fillColor = this.selectedColor;
+			this.path.fillColor = this.selectedColor;
 			this.path.strokeColor = this.selectedStrokeColor;
 			this.is_selected = true;
 
@@ -185,7 +172,7 @@ export default class BaseVisual {
 				this.fire('selected');
 		}
 		else {
-			this.main_group.fillColor = this.fillColor;
+			this.path.fillColor = this.fillColor;
 			this.path.strokeColor = this.strokeColor;
 			this.is_selected = false;
 

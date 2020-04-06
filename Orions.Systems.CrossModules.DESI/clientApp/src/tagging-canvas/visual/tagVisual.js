@@ -14,7 +14,6 @@ export default class TagVisual extends BaseVisual {
 
 	path_onMouseDown(event) {
 		super.path_onMouseDown(event);
-
 	}
 
 	path_onMouseLeave(event) {
@@ -53,7 +52,7 @@ export default class TagVisual extends BaseVisual {
 			var element = new AdornerElement(self.containerRectangle)
 			element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 
-			element.add_moved_event_listener(this);
+			element.on('moved_inner', (el) => this.adorner_moved(el));
 			element.on('moved', function () {
 				self.fire('resized');
 			})
@@ -63,12 +62,18 @@ export default class TagVisual extends BaseVisual {
 
 		if (this.label != null) {
 
+			let labelPos = new paper.Point(this.path.bounds.left + 10, this.path.bounds.top + 10);
 			if (this.labelItem == null) {
-				this.labelItem = new paper.PointText(new paper.Point(this.main_group.bounds.x + 5, this.main_group.bounds.y + 5));
+				this.labelItem = new paper.PointText(labelPos);
+			}
+			else {
+				this.labelItem.position.top = labelPos.y;
+				this.labelItem.position.left = labelPos.x;
 			}
 
 			this.labelItem.fillColor = 'white';
 			this.labelItem.content = this.label;
+			this.main_group.addChild(this.labelItem);
 		}
 	}
 
@@ -96,8 +101,7 @@ export default class TagVisual extends BaseVisual {
 		super.path_onMouseDrag(event);
 	}
 
-	// Element was moved.
-	moved_event(element) {
+	adorner_moved(element) {
 		var center = element.get_center();
 
 		var t = this.get_topLeft();
