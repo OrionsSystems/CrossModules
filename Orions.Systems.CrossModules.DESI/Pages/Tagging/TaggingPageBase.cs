@@ -71,7 +71,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		private List<Action> _afterRenderTasks = new List<Action>();
 		private void UpdateVizListPosition() 
 		{
-			StateHasChanged();
+			UpdateState();
 			_afterRenderTasks.Add(() =>
 			{
 				if (Vm?.TagData != null && Vm.TagData.SelectedTags.Any())

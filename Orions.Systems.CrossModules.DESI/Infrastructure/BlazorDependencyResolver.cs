@@ -75,8 +75,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IDeviceClipboardService GetDeviceClipboardService()
 		{
-			return null;
-			throw new NotImplementedException();
+			return new BlazorClipboardService(_jSRuntime);
 		}
 
 		public override ILoggerService GetLoggerService()

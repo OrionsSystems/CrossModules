@@ -15,10 +15,9 @@ namespace Orions.Systems.CrossModules.Desi.Services
 			_popupService = popupService;
 		}
 
-		public Task<bool> DisplayAlertAsync(string title, string message, string acceptButton, string cancelButton)
+		public async Task<bool> DisplayAlertAsync(string title, string message, string okBtnCaption, string cancelButton)
 		{
-			Debug.WriteLine($"BlazorDialogService message: {title} : {message}");
-			return Task.FromResult(true);
+			return await _popupService.ShowConfirmation(title, message, okBtnCaption, cancelButton);
 		}
 
 		public async Task DisplayAlertAsync(string title, string message, string okBtnCaption)

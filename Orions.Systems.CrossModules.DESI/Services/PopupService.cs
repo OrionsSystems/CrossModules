@@ -40,6 +40,13 @@ namespace Orions.Systems.CrossModules.Desi.Services
 			await this.ShowAlert(title, question);
 		}
 
+		public async Task<bool> ShowConfirmation(string title, string question, string okBtnCaption, string cancelBtnCaption)
+		{
+			_popupComponent.OkCaption = okBtnCaption;
+			_popupComponent.CancelCaption = cancelBtnCaption;
+			return await this.ShowConfirmation(title, question);
+		}
+
 		public async Task<bool> ShowSessionIsOver(int secondsToTimeout)
 		{
 			if(SessionIsOverPopup != null)
