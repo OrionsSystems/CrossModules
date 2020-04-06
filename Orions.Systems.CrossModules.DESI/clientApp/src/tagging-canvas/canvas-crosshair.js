@@ -9,9 +9,8 @@ function getMousePos(canvas, evt) {
 }
 
 export default class CanvasCrosshair {
-	constructor(canvasEl) {
-		this.canvasEl = canvasEl;
-
+	constructor(paperScope) {
+		this.scope = paperScope;
 		this.vertticalLine1 = new Path.Line(new Point(0, 0), new Point(0, 0));
 		this.vertticalLine2 = new Path.Line(new Point(0, 0), new Point(0, 0));
 
@@ -22,15 +21,15 @@ export default class CanvasCrosshair {
 	move(point) {
 		this.vertticalLine1.remove()
 		this.vertticalLine2.remove()
-		this.vertticalLine1 = new Path.Line(new Point(point.x, paper.view.bounds.top), new Point(point.x, point.y - 1));
-		this.vertticalLine2 = new Path.Line(new Point(point.x, point.y + 1), new Point(point.x, paper.view.bounds.bottom))
+		this.vertticalLine1 = new Path.Line(new Point(point.x, this.scope.view.bounds.top), new Point(point.x, point.y - 1));
+		this.vertticalLine2 = new Path.Line(new Point(point.x, point.y + 1), new Point(point.x, this.scope.view.bounds.bottom))
 		this.vertticalLine1.strokeColor = 'red'
 		this.vertticalLine2.strokeColor = 'red'
 
 		this.horizontalLine1.remove()
 		this.horizontalLine2.remove()
-		this.horizontalLine1 = new Path.Line(new Point(paper.view.bounds.left, point.y), new Point(point.x - 1, point.y))
-		this.horizontalLine2 = new Path.Line(new Point(point.x+1, point.y), new Point(paper.view.bounds.right, point.y))
+		this.horizontalLine1 = new Path.Line(new Point(this.scope.view.bounds.left, point.y), new Point(point.x - 1, point.y))
+		this.horizontalLine2 = new Path.Line(new Point(point.x + 1, point.y), new Point(this.scope.view.bounds.right, point.y))
 		this.horizontalLine1.strokeColor = 'red'
 		this.horizontalLine2.strokeColor = 'red'
 	}

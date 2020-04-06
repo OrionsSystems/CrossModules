@@ -306,6 +306,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected override void Dispose(bool disposing)
 		{
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose");
+
 			if (disposing)
 			{
 				_subscriptions.ForEach(i => i.Dispose());

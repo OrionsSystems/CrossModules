@@ -25,17 +25,19 @@ function stickToCanvasBounds(coords, containerRectangle) {
 
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
 	this.componentRef = componentRef;
+	this.scope = new paper.PaperScope
+
 	let self = this;
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
-	var tool = new paper.Tool();
+	var tool = new self.scope.Tool();
 	var mouseDownAt;
 	var path;
 	var rect;
 	var items = [];
 
-	paper.setup(self.canvas);
-	let crosshair = new CanvasCrosshair(self.canvas);
+	self.scope.setup(self.canvas);
+	let crosshair = new CanvasCrosshair(self.scope);
 
 	self.canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); e.stopPropagation(); }, false);
 
@@ -45,24 +47,24 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			let maxZoom = 3;
 			let minZoom = 1;
 			if (e.deltaY > 0) {
-				if (paper.view.zoom - step >= minZoom) {
-					paper.view.zoom -= step;
+				if (self.scope.view.zoom - step >= minZoom) {
+					self.scope.view.zoom -= step;
 				}
 				else {
-					paper.view.zoom = minZoom;
-					paper.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
+					self.scope.view.zoom = minZoom;
+					self.scope.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
 				}
 			}
 			else {
-				if (paper.view.zoom + step < 3) {
-					paper.view.zoom += step;
+				if (self.scope.view.zoom + step < 3) {
+					self.scope.view.zoom += step;
 				}
 				else {
-					paper.view.zoom = maxZoom;
+					self.scope.view.zoom = maxZoom;
 				}
 			}
 
-			crosshair.move(paper.view.viewToProject({ x: e.offsetX, y: e.offsetY }))
+			crosshair.move(self.scope.view.viewToProject({ x: e.offsetX, y: e.offsetY }))
 		}
 	})
 
@@ -77,7 +79,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		raster.image = frameImage
 
 		raster.onLoad = function() {
-			raster.position = paper.view.center
+			raster.position = self.scope.view.center
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
 		}
 	}
@@ -203,8 +205,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		crosshair.move(event.point)
 
 		if (event.event.buttons == 2) {
-			if (paper.view.zoom > 1) {
-				paper.view.center = paper.view.center.add(event.downPoint.subtract(event.point));
+			if (self.scope.view.zoom > 1) {
+				self.scope.view.center = self.scope.view.center.add(event.downPoint.subtract(event.point));
 			}
 		}
 		else if (isDefined(mouseDownAt)) {
@@ -238,14 +240,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		items.push(newTagVisual)
 
 		newTagVisual.on('selected', function (selectedVisual) {
-			//// deselect other tags
-			//for (var i in items) {
-			//	let visual = items[i]
-			//	if (visual != selectedVisual) {
-			//		visual.select(false);
-			//	}
-			//}
-
 			self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
 		})
 
@@ -291,7 +285,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				y: tag.get_topLeft().y
 			}
 
-			let elementPosition = paper.view.projectToView({
+			let elementPosition = self.scope.view.projectToView({
 				x: tagAbsolutePosition.x + tag.getWidth(),
 				y: tagAbsolutePosition.y
 			})
@@ -304,7 +298,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				let elemHeight = elementToAttach.offsetHeight
 
 				if (elementPosition.x + elemWidth > self.canvas.width) {
-					elementPosition.x = elementPosition.x - elemWidth - tag.getWidth() * paper.view.zoom - 40
+					elementPosition.x = elementPosition.x - elemWidth - tag.getWidth() * self.scope.view.zoom - 40
 				}
 
 				elementToAttach.style.left = elementPosition.x + 'px'
@@ -317,5 +311,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			}
 		}
 
+	}
+
+	window.Orions.TaggingSurface.dispose = function () {
+		self.scope.remove();
 	}
 }
