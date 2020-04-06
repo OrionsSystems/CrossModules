@@ -81,7 +81,13 @@
 						</div>
 						<div class="right-column">
 							<div class="info-button">
-								<img src="images/outline_info_white_24dp.png" />
+								@{ 
+									if(this.CurrentTagonomyInfoShown == tag.Id && this.Vm.CurrentTask != null)
+									{
+										<TagonomyInfoPopup TaskInfo="this.Vm.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null"/>
+									}
+									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id"/>
+								}
 							</div>
 						</div>
 					</div>

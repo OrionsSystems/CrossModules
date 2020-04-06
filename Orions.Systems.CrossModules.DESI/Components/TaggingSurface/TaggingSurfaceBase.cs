@@ -32,6 +32,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private List<Rectangle> _rectangles = new List<Rectangle>();
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
+		private ITaskDataStore _taskDataStore;
 		private IDisposable _tagsCollectionChagedSub;
 		private bool _initializationDone;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
@@ -90,7 +91,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[Parameter]
-		public ITaskDataStore TaskDataStore { get; set; }
+		public ITaskDataStore TaskDataStore
+		{
+			get { return _taskDataStore; }
+			set 
+			{
+				_taskDataStore = value; 
+				_taskDataStore?.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged());
+			}
+		}
+
 
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
@@ -172,6 +182,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				tagModel.Geometry = tagModel.Geometry.WithNewBounds(rectF);
 			}
+		}
+
+		private void OnCurrentTaskChanged()
+		{
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.zoom", new object[] { 1 });
 		}
 
 		private void OnCurrentTaskTagsChanged(ReadOnlyObservableCollectionEx<TagModel> tags)

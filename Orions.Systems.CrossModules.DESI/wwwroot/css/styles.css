@@ -2185,6 +2185,12 @@ video::-webkit-media-text-track-display {
             margin-left: 10px; }
         .tagging-page-container .tag-preview-control-container .tag-container .tagonomy-info .right-column {
           width: 30px; }
+          .tagging-page-container .tag-preview-control-container .tag-container .tagonomy-info .right-column > .info-button {
+            width: 30px;
+            height: 30px;
+            text-align: center; }
+            .tagging-page-container .tag-preview-control-container .tag-container .tagonomy-info .right-column > .info-button:hover {
+              background-color: #4D5F87; }
       .tagging-page-container .tag-preview-control-container .tag-container .position-info {
         margin-bottom: 15px; }
       .tagging-page-container .tag-preview-control-container .tag-container .thumbnail {
@@ -2232,6 +2238,21 @@ video::-webkit-media-text-track-display {
       position: absolute;
       width: 100%;
       height: 100%; }
+
+.tagonomy-info-popup-container {
+  background-color: #f2f2f2;
+  color: black;
+  width: 600px;
+  z-index: 9999;
+  text-align: left;
+  padding: 15px;
+  border: 1px solid #787878; }
+  .tagonomy-info-popup-container > .copy-btn {
+    width: 100%;
+    margin-top: 10px;
+    border: none;
+    background-color: #787878;
+    color: white; }
 
 .desi-login.form .invalid-form-feedback {
   margin-top: 20px;

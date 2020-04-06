@@ -24,17 +24,16 @@ function stickToCanvasBounds(coords, containerRectangle) {
 }
 
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
-	this.componentRef = componentRef;
-	this.scope = new paper.PaperScope
-
 	let self = this;
+	self.componentRef = componentRef;
+	self.scope = new paper.PaperScope
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 
-	var tool = new self.scope.Tool();
-	var mouseDownAt;
-	var path;
-	var rect;
-	var items = [];
+	let tool = new self.scope.Tool();
+	let mouseDownAt;
+	let path;
+	let rect;
+	let items = [];
 
 	self.scope.setup(self.canvas);
 	let crosshair = new CanvasCrosshair(self.scope);
@@ -311,6 +310,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			}
 		}
 
+	}
+
+	window.Orions.TaggingSurface.zoom = function (zoomValue) {
+		self.scope.view.zoom = zoomValue;
 	}
 
 	window.Orions.TaggingSurface.dispose = function () {

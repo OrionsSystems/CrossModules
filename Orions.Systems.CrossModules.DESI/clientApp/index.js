@@ -1,4 +1,6 @@
-export * from './src/tagging-canvas'
+export * from './src/tagging/tagging-canvas'
+export * from './src/tagging/tagging-page'
 export * from './src/player'
 export * from './src/login'
 export * from './src/utils/clipboardService'
+export * from './src/utils/element-positioning'
