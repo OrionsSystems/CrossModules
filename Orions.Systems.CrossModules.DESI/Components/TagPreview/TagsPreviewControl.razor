@@ -48,35 +48,14 @@
 								<div class="header">
 									Current tagonomy
 								</div>
-								<div class="tagonomy-execution-result">
-									@{
-										var tagonomyExecutionResult = tag.TagonomyExecutionResult?.ExtractLabel() ?? "N/A";
-									}
-									@tagonomyExecutionResult
-								</div>
-
+								<TagonomyExecutionResultView Tag="tag" TagonomyExecutionResult="tag.TagonomyExecutionResult"/>
 							}
 							@if (tag.PreviousTagonomyExecutionResult != null || tag.GetLabel() != null)
 							{
 								<div class="header">
 									Previous tagonomy/label
 								</div>
-								<div class="tagonomy-execution-result">
-									@{
-										string tagonomyLabel = null;
-										if (tag.PreviousTagonomyExecutionResult != null)
-										{
-											tagonomyLabel = tag.PreviousTagonomyExecutionResult.ExtractLabel();
-										}
-										else if (tag.GetLabel() is HyperTagLabel label)
-										{
-											tagonomyLabel = label.Label;
-										}
-
-										tagonomyLabel = tagonomyLabel ?? "N/A";
-									}
-									@tagonomyLabel
-								</div>
+								<TagonomyExecutionResultView Tag="tag" TagonomyExecutionResult="tag.PreviousTagonomyExecutionResult"/>
 							}
 						</div>
 						<div class="right-column">
@@ -86,7 +65,7 @@
 									{
 										<TagonomyInfoPopup TaskInfo="this.Vm.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null"/>
 									}
-									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id"/>
+									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id" @onclick:stopPropagation="true"/>
 								}
 							</div>
 						</div>

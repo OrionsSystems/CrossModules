@@ -31,7 +31,7 @@
 	<div class="info-row">
 		HyperBlockType: @TaskInfo.HyperBlockType
 	</div>
-	<button @onclick="OnCopy" class="copy-btn">Copy</button>
+	<button @onclick="OnCopy" @onclick:stopPropagation="true" class="copy-btn">Copy</button>
 </div>
 
 @code {
@@ -52,16 +52,16 @@
 
 	private string _id = $"tagonomy-info-popup-{Guid.NewGuid().ToString()}";
 
-	protected override Task OnAfterRenderAsync(bool firstRender)
+	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
 		if (firstRender)
 		{
 			var thisRef = DotNetObjectReference.Create(this);
+			await JSRuntime.InvokeVoidAsync("Orions.Dom.positionAbsoluteToParent", new object[] { new { top = -30, left = 10 }, $"#{_id}", "topRight", true });
 			JSRuntime.InvokeVoidAsync("Orions.TaggingPage.tagonomyInfoInit", new object[] { $"#{_id}", thisRef });
-			JSRuntime.InvokeVoidAsync("Orions.PositioningTools.positionAbsoluteToParent", new object[] { new { top = -30, left = 10 }, $"#{_id}", "topRight", true });
 		}
 
-		return base.OnInitializedAsync();
+		base.OnInitializedAsync();
 	}
 
 	[JSInvokable]

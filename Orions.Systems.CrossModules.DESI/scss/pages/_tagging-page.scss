@@ -253,6 +253,11 @@
 	text-align: left;
 	padding: 15px;
 	border: 1px solid #787878;
+	position: absolute;
+	top: 0;
+	left: 0;
+	visibility: hidden;
+	z-index:9999;
 
 	& > .copy-btn {
 		width: 100%;
@@ -260,5 +265,22 @@
 		border: none;
 		background-color: #787878;
 		color: white;
+	}
+}
+
+.tagonomy-execution-tooltip-container {
+	position: absolute;
+	background-color: #f5deb3;
+	color: black;
+	top: 0;
+	left: 0;
+	visibility: hidden;
+	padding: 7px;
+	z-index: 9999;
+
+	.finished-path {
+		.step-node-name:first-of-type {
+			font-weight: bold;
+		}
 	}
 }

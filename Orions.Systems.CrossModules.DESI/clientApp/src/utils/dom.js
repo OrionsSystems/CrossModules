@@ -1,6 +1,6 @@
-﻿window.Orions.PositioningTools = {
+﻿window.Orions.Dom = {
 	// positions element with absolute coordinates relative to its parent
-	positionAbsoluteToParent: function (pos, elementSelector, cornerToPositionTo, fitDocumentBody) {
+	positionAbsoluteToParent: function (pos, elementSelector, cornerToPositionTo, fitDocumentBody, setVisibilityToTrue = false) {
 		let elements = document.querySelectorAll(elementSelector);
 
 		for (let el of elements) {
@@ -52,6 +52,20 @@
 
 			el.style.top = elPos.top + 'px'
 			el.style.left = elPos.left + 'px'
+
+			if (setVisibilityToTrue) {
+				el.style.visibility = 'visible'
+			}
+		}
+	},
+
+	setStyle: function (elementSelector, styles) {
+		let elements = document.querySelectorAll(elementSelector);
+
+		for (let el of elements) {
+			for (let key of Object.keys(styles)) {
+				el.style[key] = styles[key];
+			}
 		}
 	}
 }

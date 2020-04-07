@@ -2246,13 +2246,30 @@ video::-webkit-media-text-track-display {
   z-index: 9999;
   text-align: left;
   padding: 15px;
-  border: 1px solid #787878; }
+  border: 1px solid #787878;
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  z-index: 9999; }
   .tagonomy-info-popup-container > .copy-btn {
     width: 100%;
     margin-top: 10px;
     border: none;
     background-color: #787878;
     color: white; }
+
+.tagonomy-execution-tooltip-container {
+  position: absolute;
+  background-color: #f5deb3;
+  color: black;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  padding: 7px;
+  z-index: 9999; }
+  .tagonomy-execution-tooltip-container .finished-path .step-node-name:first-of-type {
+    font-weight: bold; }
 
 .desi-login.form .invalid-form-feedback {
   margin-top: 20px;

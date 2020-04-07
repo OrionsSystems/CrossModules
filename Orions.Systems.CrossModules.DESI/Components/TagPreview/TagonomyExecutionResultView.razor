@@ -1,0 +1,87 @@
+﻿@using Orions.Infrastructure.HyperSemantic
+@using Orions.Systems.Desi.Common.TagonomyExecution
+@using Orions.Systems.Desi.Common.Extensions;
+@using Orions.Systems.Desi.Common.Models
+@using Orions.Infrastructure.HyperMedia;
+
+<div class="tagonomy-execution-result"
+	 @onmouseover="() => this.ShowTooltip(true)"
+	 @onmouseout="() => this.ShowTooltip(false)">
+	@{
+		var tagonomyExecutionResult = TagonomyExecutionResult?.ExtractLabel() ?? "N/A";
+		string tagonomyLabel = null;
+		if (TagonomyExecutionResult != null)
+		{
+			tagonomyLabel = TagonomyExecutionResult.ExtractLabel();
+		}
+		else if (Tag.GetLabel() is HyperTagLabel label)
+		{
+			tagonomyLabel = label.Label;
+		}
+	}
+	@tagonomyExecutionResult
+	<div id="@_tooltipId" class="tagonomy-execution-tooltip-container @CssClass">
+		@if (TagonomyExecutionResult?.FinishedPaths != null)
+		{
+			foreach (var path in TagonomyExecutionResult.FinishedPaths)
+			{
+				<div class="finished-path">
+
+					@{
+						var itemMargin = 0;
+						if (path.Steps != null)
+						{
+							foreach (var step in path.Steps)
+							{
+								<div class="step-node-name" style="margin-left:@($"{itemMargin}px")">
+									@step.OptionalTargetNodeName
+								</div>
+								itemMargin += 10;
+							}
+						}
+					}
+				</div>
+			}
+		}
+	</div>
+</div>
+
+
+@code {
+	[Parameter]
+	public string CssClass { get; set; }
+
+	[Parameter]
+	public TagModel Tag { get; set; }
+
+	[Parameter]
+	public TagonomyExecutionResult TagonomyExecutionResult { get; set; }
+
+	[Inject]
+	public IJSRuntime JSRuntime { get; set; }
+
+	private string _tooltipId = $"tagonomy-executionresult-tooltip-{Guid.NewGuid().ToString()}";
+
+	protected async Task ShowTooltip(bool show)
+	{
+		if (TagonomyExecutionResult?.FinishedPaths?.FirstOrDefault() == null) {
+			return;
+		}
+
+		var thisRef = DotNetObjectReference.Create(this);
+
+		if (show)
+		{
+			JSRuntime.InvokeVoidAsync("Orions.Dom.positionAbsoluteToParent", new object[] { new { top = 10, left = 10 }, $"#{_tooltipId}", "bottomLeft", true, true });
+		}
+		else
+		{
+			var styleDict = new Dictionary<string, string>()
+			{
+				{ "visibility", "hidden" }
+			};
+
+			JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { $"#{_tooltipId}", styleDict});
+		}
+	}
+}
