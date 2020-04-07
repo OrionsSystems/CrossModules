@@ -10,7 +10,7 @@
             <div class="paths">
                 @if (Data.FinishedPaths.IsNotNullOrEmpty())
                 {
-                    @foreach (var path in Data.FinishedPaths)
+                    foreach (var path in Data.FinishedPaths)
                     {
                         <div class="path-container finished">
                             @foreach (var step in path.Steps)
@@ -41,25 +41,33 @@
 
             @if (Data.TagonomyNodes != null)
             {
+                _tagonomyNodesShortcutSub?.Dispose();
+                var sub = KeyboardListener.CreateSubscription();
+                _tagonomyNodesShortcutSub = sub;
+
                 <div class="nodes-container">
                     @foreach (var tagonomyNode in Data.TagonomyNodes)
                     {
-                    <button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode(tagonomyNode) ">
-                        <div class="key node">@KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode)</div>
-                        @if (tagonomyNode.IconData.IsNotNullOrEmpty())
-                        {
-                            <img src="@tagonomyNode.IconData.GetImgSource()"/>
-                        }
-                        @tagonomyNode.Title
-                        @if (tagonomyNode.IsChecked == true)
-                        {
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" /></svg>
-                        }
-                        else if (tagonomyNode.IsChecked == null && tagonomyNode.IsPathPending)
-                        {
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M9.29 15.88L13.17 12 9.29 8.12c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3c-.39.39-1.02.39-1.41 0-.38-.39-.39-1.03 0-1.42z" /></svg>
-                        }
-                    </button>
+                        var stringKey = KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode);
+                        var keys = MapKeyCodeToKeys(stringKey);
+                        keys.Foreach(k => sub.AddShortcut(k, () => SelectTagonomyNode(tagonomyNode)));
+
+                        <button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode(tagonomyNode) ">
+                            <div class="key node">@stringKey</div>
+                            @if (tagonomyNode.IconData.IsNotNullOrEmpty())
+                            {
+                                <img src="@tagonomyNode.IconData.GetImgSource()" />
+                            }
+                            @tagonomyNode.Title
+                            @if (tagonomyNode.IsChecked == true)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" /></svg>
+                            }
+                            else if (tagonomyNode.IsChecked == null && tagonomyNode.IsPathPending)
+                            {
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M9.29 15.88L13.17 12 9.29 8.12c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3c-.39.39-1.02.39-1.41 0-.38-.39-.39-1.03 0-1.42z" /></svg>
+                            }
+                        </button>
                     }
                 </div>
             }
@@ -67,10 +75,9 @@
             @if (Data.PendingUserAction != null)
             {
                 <UserInputView Type="@Data.PendingUserAction.Type"
-                               Title="@Data.PendingUserAction.Text" 
+                               Title="@Data.PendingUserAction.Text"
                                OnBoolResult="@FinishInputAction"
-                               OnStringResult="@FinishInputAction"/>
-
+                               OnStringResult="@FinishInputAction" />
             }
 
             @if (Data.ReadyToFinish)
@@ -96,12 +103,19 @@
 
         @if (Data.HasProperties)
         {
+            _tagonomyPropertiesShortcutSub?.Dispose();
+            var sub = KeyboardListener.CreateSubscription();
+            _tagonomyPropertiesShortcutSub = sub;
             <div class="viz-container properties">
                 @foreach (var propertyGroup in Data.Properties)
                 {
                     <div class="title">@propertyGroup.GroupName</div>
-                    foreach (var property in propertyGroup.GroupItems)
+                    @foreach (var property in propertyGroup.GroupItems)
                     {
+                        var stringKey = KeyCodeHelper.GetStringKey(property.KeyCodeDelta);
+                        var keys = MapKeyCodeToKeys(stringKey);
+                        keys.Foreach(k => sub.AddShortcut(k, KeyModifiers.Shift, () => SelectTagonomyProperty(property)));
+
                         <button class="viz-btn nodes" @onclick="_ => SelectTagonomyProperty(property)">
                             <div class="key property">
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 511.999 511.999" style="enable-background:new 0 0 511.999 511.999;" xml:space="preserve">
@@ -110,8 +124,14 @@
                                           c10.248,0,17.081-6.832,17.081-17.081C480.948,283.116,479.24,277.991,475.824,274.575z M383.587,269.452v1.708
                                           c-10.249,0-17.081,6.832-17.081,17.081v189.598H144.455V288.24c0-10.249-6.832-17.081-17.081-17.081h-44.41L255.48,43.984 l172.518,225.468H383.587z" />
 
+
+
+
+
+
+
                                 </svg>
-                                + @KeyCodeHelper.GetStringKey(property.KeyCodeDelta)
+                                + @stringKey
                             </div>
                             @property.Title
                         </button>
@@ -120,4 +140,40 @@
             </div>
         }
     </div>
+}
+else
+{
+    _tagonomyNodesShortcutSub?.Dispose();
+    _tagonomyPropertiesShortcutSub?.Dispose();
+}
+
+@code{
+    private IDisposable _tagonomyNodesShortcutSub;
+    private IDisposable _tagonomyPropertiesShortcutSub;
+
+    private IEnumerable<Key> MapKeyCodeToKeys(string keyCode)
+    {
+        if (int.TryParse(keyCode, out var keyCodeResult))
+        {
+            Enum.TryParse<Key>($"{"Num"}{keyCodeResult}", out var result1);
+            Enum.TryParse<Key>($"{"NumPad"}{keyCodeResult}", out var result2);
+
+            yield return result1;
+            yield return result2;
+        }
+        else
+        {
+            Enum.TryParse<Key>(keyCode, out var result);
+            yield return result;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+
+        }
+        base.Dispose(disposing);
+    }
 }

@@ -50,7 +50,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				navigationService,
 				DependencyResolver.GetDialogService(),
 				DependencyResolver.GetImageService(),
-				DependencyResolver.GetFrameCacheService(),
 				DependencyResolver.GetClipboardService(),
 				DependencyResolver.GetNetStoreProvider(),
 				_taggingSystem,
