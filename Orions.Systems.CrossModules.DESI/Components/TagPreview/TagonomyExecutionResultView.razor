@@ -8,18 +8,22 @@
 	 @onmouseover="() => this.ShowTooltip(true)"
 	 @onmouseout="() => this.ShowTooltip(false)">
 	@{
-		var tagonomyExecutionResult = TagonomyExecutionResult?.ExtractLabel() ?? "N/A";
 		string tagonomyLabel = null;
 		if (TagonomyExecutionResult != null)
 		{
-			tagonomyLabel = TagonomyExecutionResult.ExtractLabel();
+			tagonomyLabel = TagonomyExecutionResult?.ExtractLabel();
 		}
 		else if (Tag.GetLabel() is HyperTagLabel label)
 		{
 			tagonomyLabel = label.Label;
 		}
+
+		if(tagonomyLabel == null)
+		{
+			tagonomyLabel = "N/A";
+		}
 	}
-	@tagonomyExecutionResult
+	@tagonomyLabel
 	<div id="@_tooltipId" class="tagonomy-execution-tooltip-container @CssClass">
 		@if (TagonomyExecutionResult?.FinishedPaths != null)
 		{

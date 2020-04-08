@@ -63,28 +63,39 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 						.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
 
-					value.Data.CurrentTaskTags.Foreach(t =>
+					Action<ReadOnlyObservableCollectionEx<TagModel>> subscriveToCurrentTaskTagsChanges = (tags) =>
 					{
-						t.PropertyChanged += (s, e) =>
+						tags.Foreach(t =>
+						{
+							t.PropertyChanged += (s, e) =>
+							{
+								OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+							};
+						});
+						tags.CollectionChanged += (s, e) =>
 						{
 							OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-						};
-					});
-					value.Data.CurrentTaskTags.CollectionChanged += (s, e) =>
-					{
-						OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
 
-						if (e.NewItems != null)
-						{
-							foreach (var newT in e.NewItems)
+							if (e.NewItems != null)
 							{
-								(newT as TagModel).PropertyChanged += (s, e) =>
+								foreach (var newT in e.NewItems)
 								{
-									OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-								};
+									(newT as TagModel).PropertyChanged += (s, e) =>
+									{
+										OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+									};
+								}
 							}
-						}
+						};
 					};
+					value.Data.PropertyChanged += (s, e) =>
+					{
+						if(value.Data.CurrentTaskTags != null && e.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+						{
+							subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
+						};
+					};
+					subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
 
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 				});

@@ -139,7 +139,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		}
 	}
 
-	// Define a mousedown and mousedrag handler
 	tool.onMouseDown = function (event) {
 		if (event.event.buttons == 2) {
 			return;
@@ -261,7 +260,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.updateTag = function (tag) {
 		let tagToUpdate = items.find(i => i.id == tag.id);
 
-		tagToUpdate.update(tag);
+		if (isDefined(tagToUpdate)) {
+			tagToUpdate.update(tag);
+		}
 	}
 
 	window.Orions.TaggingSurface.removeTag = function (tag) {
@@ -313,7 +314,9 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.zoom = function (zoomValue) {
-		self.scope.view.zoom = zoomValue;
+		if (isDefined(self.scope.view)) {
+			self.scope.view.zoom = zoomValue;
+		}
 	}
 
 	window.Orions.TaggingSurface.dispose = function () {
