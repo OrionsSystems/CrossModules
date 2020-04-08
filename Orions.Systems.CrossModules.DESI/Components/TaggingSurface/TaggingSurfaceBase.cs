@@ -90,7 +90,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					};
 					value.Data.PropertyChanged += (s, e) =>
 					{
-						if(value.Data.CurrentTaskTags != null && e.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+						if(value.Data?.CurrentTaskTags != null && e.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 						{
 							subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
 						};
