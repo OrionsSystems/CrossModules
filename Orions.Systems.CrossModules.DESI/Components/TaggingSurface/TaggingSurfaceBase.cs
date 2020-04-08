@@ -98,7 +98,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
 						};
 					};
-					subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
+
+					if(value?.Data.CurrentTaskTags != null)
+					{
+						subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
+					}
 
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 				});

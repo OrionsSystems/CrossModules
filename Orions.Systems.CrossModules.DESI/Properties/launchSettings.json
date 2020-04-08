@@ -22,6 +22,11 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "withCrossmoduleConfigLoaded": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "commandLineArgs": "--file=appsettings.json"
     }
   }
 }
