@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Extensions;
@@ -43,6 +45,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
+		[Inject]
+		public IJSRuntime JSRuntime { get; set; }
+
+		protected string _componentId = $"vizlist-{Guid.NewGuid().ToString()}";
+		private bool _jsInitialized = false;
 		protected TagonomyExecutionData Data => _store.Data;
 
 		protected void SelectTagonomyNode(TagonomyNodeModel tagonomyNodeModel) => ActionDispatcher.Dispatch(SelectTagonomyNodeAction.Create(tagonomyNodeModel));
@@ -55,6 +62,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		protected void FinishInputAction(string value) => ActionDispatcher.Dispatch(FinishTagonomyInputAction.Create(value));
 		protected void FinishInputAction(bool value) => ActionDispatcher.Dispatch(FinishTagonomyConfirmationAction.Create(value));
 		protected void CancelExecution() => ActionDispatcher.Dispatch(CancelTagonomyExecutionAction.Create());
+
+		protected override async Task OnAfterRenderAsync(bool firstRender)
+		{
+			if (!_jsInitialized)
+			{
+				await JSRuntime.InvokeVoidAsync("window.Orions.Vizlist.init", new object[] { _componentId });
+				_jsInitialized = true;
+			}
+
+			await base.OnAfterRenderAsync(firstRender);
+		}
 
 		protected override void Dispose(bool disposing)
 		{
