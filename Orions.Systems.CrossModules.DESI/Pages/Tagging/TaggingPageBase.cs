@@ -66,7 +66,10 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 			await base.OnInitializedAsync();
 
-			_subscriptions.Add(KeyboardListener.CreateSubscription().AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null)));
+			_subscriptions.Add(KeyboardListener.CreateSubscription()
+				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))
+				.AddShortcut(Key.N, () => Vm.ConfirmCurrentTaskTagsCommand.Execute(null))
+				.AddShortcut(Key.P, () => Vm.GoPreviousTaskCommand.Execute(null)));
 		}
 
 		protected override bool AutoWirePropertyChangedListener => false;
