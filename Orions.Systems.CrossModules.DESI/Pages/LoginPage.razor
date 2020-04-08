@@ -4,88 +4,64 @@
 @inherits LoginPageBase
 
 <form class="desi-login form" novalidate>
-	<div class="form-container">
-		<div class="form-content">
-			<h6 align="center">Sign into DESI</h6>
+    <div class="form-container">
+        <div class="form-content">
+            <h6 align="center">Sign into DESI</h6>
 
-			<div class="form-group">
-				<input type="text"
-					   class="form-control"
-					   id="desiLoginConnection"
-					   placeholder="Connection string"
-					   disabled="@(!this.Vm.IsDevModeEnabled || Vm.AuthenticationData.IsBusy)"
-					   @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString"
-					   required>
-			</div>
-			@if (Vm.AuthenticationData.AuthenticationInfo is HyperNodeAuthenticationInfo hyperNodeAuthenticationInfo)
-		{
-			<div class="form-group">
-				<input type="text"
-					   class="form-control"
-					   id="desiLoginInput"
-					   placeholder="Username"
-					   disabled="@(Vm.AuthenticationData.IsBusy)"
-					   @bind-value="hyperNodeAuthenticationInfo.Username"
-					   required>
-			</div>
-			<div class="form-group">
-				<input type="password"
-					   class="form-control"
-					   id="desiPasswordInput"
-					   placeholder="Password"
-					   disabled="@(Vm.AuthenticationData.IsBusy)"
-					   @bind-value="hyperNodeAuthenticationInfo.Password"
-					   required>
-			</div>
-		}
-		else if (Vm.AuthenticationData.AuthenticationInfo is HyperDomainAuthenticationInfo hyperDomainAuthenticationInfo)
-		{
-			<div class="form-group">
-				<input type="text"
-					   class="form-control"
-					   id="desiLoginInput"
-					   placeholder="Username"
-					   disabled="@(Vm.AuthenticationData.IsBusy)"
-					   @bind-value="hyperDomainAuthenticationInfo.Username"
-					   required>
-			</div>
-			<div class="form-group">
-				<input type="password"
-					   class="form-control"
-					   id="desiPasswordInput"
-					   placeholder="Password"
-					   disabled="@(Vm.AuthenticationData.IsBusy)"
-					   @bind-value="hyperDomainAuthenticationInfo.Password.Value"
-					   required>
-			</div>
-		}
-			<div class="form-check">
-				<input type="checkbox"
-					   class="form-check-input desi-check-input"
-					   id="desiAlwaysSignedInCheck"
-					   disabled="@Vm.AuthenticationData.IsBusy"
-					   @bind=this.Vm.IsStaySigned>
-				<label class="form-check-label" for="desiAlwaysSignedInCheck">Always stay signed into DESI</label>
-			</div>
-			<div class="form-check">
-				<input type="checkbox"
-					   class="form-check-input desi-check-input"
-					   id="desiDeveloperModeCheck"
-					   disabled="@Vm.AuthenticationData.IsBusy"
-					   @bind="this.Vm.IsDevModeEnabled">
-				<label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
-			</div>
-		</div>
+            <div class="form-group">
+                <input type="text"
+                       class="form-control"
+                       id="desiLoginConnection"
+                       placeholder="Connection string"
+                       disabled="@(!this.Vm.IsDevModeEnabled || Vm.AuthenticationData.IsBusy)"
+                       @bind-value="this.SettingsStorage.HyperNodeAuthenticationData.ConnectionString"
+                       required>
+            </div>
+            <div class="form-group">
+                <input type="text"
+                       class="form-control"
+                       id="desiLoginInput"
+                       placeholder="Username"
+                       disabled="@(Vm.AuthenticationData.IsBusy)"
+                       @bind-value="Vm.Username"
+                       required>
+            </div>
+            <div class="form-group">
+                <input type="password"
+                       class="form-control"
+                       id="desiPasswordInput"
+                       placeholder="Password"
+                       disabled="@(Vm.AuthenticationData.IsBusy)"
+                       @bind-value="Vm.Password"
+                       required>
+            </div>
+            <div class="form-check">
+                <input type="checkbox"
+                       class="form-check-input desi-check-input"
+                       id="desiAlwaysSignedInCheck"
+                       disabled="@Vm.AuthenticationData.IsBusy"
+                       @bind=this.Vm.IsStaySigned>
+                <label class="form-check-label" for="desiAlwaysSignedInCheck">Always stay signed into DESI</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox"
+                       class="form-check-input desi-check-input"
+                       id="desiDeveloperModeCheck"
+                       disabled="@Vm.AuthenticationData.IsBusy"
+                       @bind="this.Vm.IsDevModeEnabled">
+                <label class="form-check-label" for="desiDeveloperModeCheck">Developer mode</label>
+            </div>
+        </div>
 
-		<button type="submit" class="btn btn-primary submit-button" disabled="@Vm.AuthenticationData.IsBusy">
-			@if (Vm.AuthenticationData.IsBusy)
-		{
-			<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:inline-block"></span>
-		}
-			<span>Login</span>
-		</button>
-	</div>
-	<div class="invalid-form-feedback">
-		* Field can not be empty
-	</div>
+        <button type="submit" class="btn btn-primary submit-button" disabled="@(Vm.AuthenticationData.IsBusy || string.IsNullOrEmpty(Vm.Username) || string.IsNullOrEmpty(Vm.Password))">
+            @if (Vm.AuthenticationData.IsBusy)
+            {
+                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display:inline-block"></span>
+            }
+            <span>Login</span>
+        </button>
+    </div>
+    <div class="invalid-form-feedback">
+        * Field can not be empty
+    </div>
 </form>
