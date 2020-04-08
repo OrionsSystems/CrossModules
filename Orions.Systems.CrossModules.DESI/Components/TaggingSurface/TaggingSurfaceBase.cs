@@ -74,16 +74,19 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						});
 						tags.CollectionChanged += (s, e) =>
 						{
-							OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-
-							if (e.NewItems != null)
+							if (value?.Data?.CurrentTaskTags != null)
 							{
-								foreach (var newT in e.NewItems)
+								OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+
+								if (e.NewItems != null)
 								{
-									(newT as TagModel).PropertyChanged += (s, e) =>
+									foreach (var newT in e.NewItems)
 									{
-										OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-									};
+										(newT as TagModel).PropertyChanged += (s, e) =>
+										{
+											OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+										};
+									}
 								}
 							}
 						};
@@ -290,44 +293,49 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task UpdateTagsOnClient(List<Rectangle> oldRectangleCollection, List<Rectangle> newRectangleCollection)
 		{
 			await _initializationTaskTcs.Task;
-			if(MediaDataStore.Data.MediaInstances?.Any() == true)
+
+			try
 			{
-				// add newly added tags
-				foreach(var newTag in newRectangleCollection)
+				if (MediaDataStore.Data.MediaInstances?.Any() == true)
 				{
-					if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+					// add newly added tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						continue;
+						if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
+						}
 					}
-					else
-					{
-						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
-					}
-				}
 
-				// update tags
-				foreach(var newTag in newRectangleCollection)
-				{
-					var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
-					if (oldTag  != null && !oldTag.Equals(newTag))
+					// update tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
+						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
+						if (oldTag != null && !oldTag.Equals(newTag))
+						{
+							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
+						}
 					}
-				}
 
-				// remove removed tags
-				foreach (var oldTag in oldRectangleCollection)
-				{
-					if(newRectangleCollection.Any(t => t.Id == oldTag.Id))
+					// remove removed tags
+					foreach (var oldTag in oldRectangleCollection)
 					{
-						continue;
-					}
-					else
-					{
-						JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+						if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+						}
 					}
 				}
 			}
+			catch { }
 		}
 
 		protected override void Dispose(bool disposing)
