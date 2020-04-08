@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reactive.Linq;
@@ -19,7 +18,6 @@ namespace Orions.Systems.CrossModules.Desi.Util
 		[JSInvokable]
 		public static Task OnKeyEvent(Key key, KeyModifiers modifiers)
 		{
-			Debug.WriteLine($"{modifiers} {key}");
 			_keyEventSobject.OnNext(new KeyboardEventData(key, modifiers));
 			return Task.FromResult(true);
 		}
@@ -46,10 +44,9 @@ namespace Orions.Systems.CrossModules.Desi.Util
 			}
 
 			private void OnKeyboardEvent(KeyboardEventData keyboardEventData) => _shortcuts
+				.ToList()
 				.Where(i => i.EventData.Equals(keyboardEventData))
-				.ForEach(i => { 
-					i.Handler(); 
-				});
+				.ForEach(i => i.Handler());
 
 			public KeyboardEventSubscription AddShortcut(Key key, Action handler) => AddShortcut(key, KeyModifiers.None, handler);
 

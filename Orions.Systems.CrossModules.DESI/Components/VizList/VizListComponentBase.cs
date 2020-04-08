@@ -11,6 +11,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 {
 	public class VizListComponentBase : BaseComponent
 	{
+		private const int UpdateStateTickRateMilliseconds = 30;
 		private ITagonomyExecutionDataStore _store;
 		private IDisposable _dataPropertyChangedSub;
 		private IDisposable _dataChangedSub;
@@ -31,7 +32,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 					{
 						UpdateState();
 						_dataPropertyChangedSub?.Dispose();
-						_dataPropertyChangedSub = d?.GetPropertyChangedObservable().Subscribe(_ => UpdateState());
+						_dataPropertyChangedSub = d?
+							.GetPropertyChangedObservable()
+							.Sample(TimeSpan.FromMilliseconds(UpdateStateTickRateMilliseconds))
+							.Subscribe(_ => UpdateState());
 					});
 				});
 		}
@@ -50,6 +54,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		protected void SelectTagonomyProperty(TagonomyPropertyModel tagonomyPropertyModel) => ActionDispatcher.Dispatch(SelectTagonomyPropertyAction.Create(tagonomyPropertyModel));
 		protected void FinishInputAction(string value) => ActionDispatcher.Dispatch(FinishTagonomyInputAction.Create(value));
 		protected void FinishInputAction(bool value) => ActionDispatcher.Dispatch(FinishTagonomyConfirmationAction.Create(value));
+		protected void CancelExecution() => ActionDispatcher.Dispatch(CancelTagonomyExecutionAction.Create());
 
 		protected override void Dispose(bool disposing)
 		{

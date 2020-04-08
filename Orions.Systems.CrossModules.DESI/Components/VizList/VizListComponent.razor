@@ -48,7 +48,7 @@
                 <div class="nodes-container">
                     @foreach (var tagonomyNode in Data.TagonomyNodes)
                     {
-                        var stringKey = KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode);
+                        var stringKey = KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode + 1);
                         var keys = MapKeyCodeToKeys(stringKey);
                         keys.Foreach(k => sub.AddShortcut(k, () => SelectTagonomyNode(tagonomyNode)));
 
@@ -96,7 +96,7 @@
             @if (Data.CanSkipCurrentPath)
             {
                 <ActionButton CssClass="continue" OnClick="_ => SkipCurrentPath()">
-                    Finish @Data.CurrentTagonomyName
+                    Skip @Data.CurrentTagonomyName
                 </ActionButton>
             }
         </div>
@@ -112,7 +112,7 @@
                     <div class="title">@propertyGroup.GroupName</div>
                     @foreach (var property in propertyGroup.GroupItems)
                     {
-                        var stringKey = KeyCodeHelper.GetStringKey(property.KeyCodeDelta);
+                        var stringKey = KeyCodeHelper.GetStringKey(property.KeyCodeDelta + 1);
                         var keys = MapKeyCodeToKeys(stringKey);
                         keys.Foreach(k => sub.AddShortcut(k, KeyModifiers.Shift, () => SelectTagonomyProperty(property)));
 
@@ -123,13 +123,6 @@
                                           c0,10.249,6.832,17.081,17.081,17.081h254.506c10.249,0,17.081-6.832,17.081-17.081V305.321h63.2
                                           c10.248,0,17.081-6.832,17.081-17.081C480.948,283.116,479.24,277.991,475.824,274.575z M383.587,269.452v1.708
                                           c-10.249,0-17.081,6.832-17.081,17.081v189.598H144.455V288.24c0-10.249-6.832-17.081-17.081-17.081h-44.41L255.48,43.984 l172.518,225.468H383.587z" />
-
-
-
-
-
-
-
                                 </svg>
                                 + @stringKey
                             </div>
@@ -150,6 +143,29 @@ else
 @code{
     private IDisposable _tagonomyNodesShortcutSub;
     private IDisposable _tagonomyPropertiesShortcutSub;
+    private IDisposable _shortcutsSub;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _shortcutsSub = KeyboardListener.CreateSubscription()
+            .AddShortcut(Key.C, () => TryFinishExecution())
+            .AddShortcut(Key.F, () => TryFinishCurrentPath())
+            .AddShortcut(Key.S, () => TrySkipCurrentPath())
+            .AddShortcut(Key.Escape, () => CancelExecution());
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _tagonomyNodesShortcutSub?.Dispose();
+            _tagonomyPropertiesShortcutSub?.Dispose();
+            _shortcutsSub.Dispose();
+        }
+        base.Dispose(disposing);
+    }
 
     private IEnumerable<Key> MapKeyCodeToKeys(string keyCode)
     {
@@ -168,12 +184,29 @@ else
         }
     }
 
-    protected override void Dispose(bool disposing)
+    private void TryFinishExecution()
     {
-        if (disposing)
+        if (Data.ReadyToFinish)
         {
-
+            FinishTagonomyExecution();
         }
-        base.Dispose(disposing);
+
     }
+
+    private void TryFinishCurrentPath()
+    {
+        if(Data.CanFinishCurrentPath)
+        {
+            FinishCurrentPath();
+        }
+    }
+
+    private void TrySkipCurrentPath()
+    {
+        if (Data.CanSkipCurrentPath)
+        {
+            SkipCurrentPath();
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ using System.Reactive.Linq;
 using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System.Collections.Generic;
 using Orions.Systems.Desi.Common.TagsExploitation;
+using Orions.Systems.CrossModules.Desi.Util;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
@@ -64,6 +65,8 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				);
 
 			await base.OnInitializedAsync();
+
+			_subscriptions.Add(KeyboardListener.CreateSubscription().AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null)));
 		}
 
 		protected override bool AutoWirePropertyChangedListener => false;
