@@ -26,6 +26,7 @@
     }
 
     .paths {
+        cursor: grab;
         display: grid;
         grid-template-rows: repeat(auto-fill,auto);
         grid-gap: $unitMin;
