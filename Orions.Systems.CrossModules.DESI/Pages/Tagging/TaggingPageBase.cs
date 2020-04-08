@@ -57,7 +57,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
 
-			_taggingSystem.TagsStore.SelectedTagsUpdated.Subscribe(_ => UpdateVizListPosition());
+			_taggingSystem.TagonomyExecutionDataStore.TagonomyExecutionStarted.Subscribe(_ => UpdateVizListPosition());
 
 			_subscriptions.Add(
 				_taggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState())
@@ -66,15 +66,33 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			await base.OnInitializedAsync();
 		}
 
-		protected override bool AutoWirePropertyChangedListener => true;
+		protected override bool AutoWirePropertyChangedListener => false;
 
+		private List<Action> _afterRenderTasks = new List<Action>();
 		private void UpdateVizListPosition() 
 		{
-			if (Vm.TagData != null && Vm.TagData.SelectedTags.Any())
+			UpdateState();
+			_afterRenderTasks.Add(() =>
 			{
-				StateHasChanged();
-				TaggingSurface?.AttachElementPositionToRectangle(Vm.TagData.SelectedTags.First().Id.ToString(), ".vizlist-positioned");
+				if (Vm?.TagData != null && Vm.TagData.SelectedTags.Any())
+				{
+					TaggingSurface?.AttachElementPositionToRectangle(Vm.TagData.SelectedTags.First().Id.ToString(), ".vizlist-positioned");
+				}
+			});
+		}
+
+		protected override void OnAfterRender(bool firstRender)
+		{
+			lock (_afterRenderTasks)
+			{
+				foreach(var t in _afterRenderTasks)
+				{
+					t.Invoke();
+				}
+				_afterRenderTasks.Clear();
 			}
+
+			base.OnAfterRenderAsync(firstRender);
 		}
 
 		protected override void Dispose(bool disposing)

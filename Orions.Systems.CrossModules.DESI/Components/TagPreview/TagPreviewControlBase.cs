@@ -17,6 +17,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
+		protected Guid? CurrentTagonomyInfoShown;
+
 		public void SelectItem(TagModel tag)
 		{
 			ActionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tag));

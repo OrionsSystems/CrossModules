@@ -14,10 +14,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
 
+		public string OkCaption { get; set; } = "Yes";
+		public string CancelCaption { get; set; } = "No";
 		public string Title { get; set; }
-		public string Question { get; set; }
+		public string Message { get; set; }
 
 		public bool IsDisplayed { get; set; }
+
+		public bool OnlyOkMode { get; set; }
 
 		protected override Task OnInitializedAsync()
 		{
@@ -32,9 +36,22 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 		public async Task<bool> ShowYesNoModal()
 		{
 			this.IsDisplayed = true;
+			this.OnlyOkMode = false;
 			_tcs = new TaskCompletionSource<bool>();
 
-			StateHasChanged();
+			this.InvokeAsync(() => StateHasChanged());
+			var result = await _tcs.Task;
+
+			return result;
+		}
+
+		public async Task<bool> ShowOkModal()
+		{
+			this.IsDisplayed = true;
+			this.OnlyOkMode = true;
+			_tcs = new TaskCompletionSource<bool>();
+
+			this.InvokeAsync(() => StateHasChanged());
 			var result = await _tcs.Task;
 
 			return result;

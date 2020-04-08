@@ -1,22 +1,28 @@
 ﻿using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Orions.Systems.Desi.Common.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class BlazorDialogService : IDialogService
 	{
-		public Task<bool> DisplayAlertAsync(string title, string message, string acceptButton, string cancelButton)
+		private readonly PopupService _popupService;
+
+		public BlazorDialogService(PopupService popupService)
 		{
-			Debug.WriteLine($"BlazorDialogService message: {title} : {message}");
-			return Task.FromResult(true);
+			_popupService = popupService;
 		}
 
-		public Task DisplayAlertAsync(string title, string message, string cancelButton)
+		public async Task<bool> DisplayAlertAsync(string title, string message, string okBtnCaption, string cancelButton)
 		{
-			Debug.WriteLine($"BlazorDialogService message: {title} : {message}");
-			return Task.CompletedTask;
+			return await _popupService.ShowConfirmation(title, message, okBtnCaption, cancelButton);
+		}
+
+		public async Task DisplayAlertAsync(string title, string message, string okBtnCaption)
+		{
+			await _popupService.ShowAlert(title, message, okBtnCaption);
 		}
 
 		public Task<bool> DisplayAlertAsync(string title, string message, string acceptButton, string cancelButton, CancellationToken cancellationToken)

@@ -10,6 +10,7 @@ using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
 using Orions.Systems.Desi.Common.TaskExploitation;
+using Orions.Systems.Desi.Common.TagonomyExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +23,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
 	public class TaggingSurfaceBase : BaseComponent
 	{
-		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
+		private readonly string TaggedSelectedMarkerBoundsColor = "#0000FF";
+		private readonly string UntaggedSelectedMarkerBoundsColor = "#FF0000";
+		private readonly string TaggedUnselectedMarkerBoundsColor = "#E3FF00";
+		private readonly string UntaggedUnselectedMarkerBoundsColor = "#FFFF00";
 
+		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 		private List<Rectangle> _rectangles = new List<Rectangle>();
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
+		private ITaskDataStore _taskDataStore;
 		private IDisposable _tagsCollectionChagedSub;
 		private bool _initializationDone;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
@@ -57,18 +63,55 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 						.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
 
-					// why (ask Anton)???
-					value.Data.CurrentTaskTags.CollectionChanged += (s, e) =>
+					Action<ReadOnlyObservableCollectionEx<TagModel>> subscriveToCurrentTaskTagsChanges = (tags) =>
 					{
-						OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+						tags.Foreach(t =>
+						{
+							t.PropertyChanged += (s, e) =>
+							{
+								OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+							};
+						});
+						tags.CollectionChanged += (s, e) =>
+						{
+							OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+
+							if (e.NewItems != null)
+							{
+								foreach (var newT in e.NewItems)
+								{
+									(newT as TagModel).PropertyChanged += (s, e) =>
+									{
+										OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+									};
+								}
+							}
+						};
 					};
+					value.Data.PropertyChanged += (s, e) =>
+					{
+						if(value.Data.CurrentTaskTags != null && e.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+						{
+							subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
+						};
+					};
+					subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
 
 					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
 				});
 		}
 
 		[Parameter]
-		public ITaskDataStore TaskDataStore { get; set; }
+		public ITaskDataStore TaskDataStore
+		{
+			get { return _taskDataStore; }
+			set 
+			{
+				_taskDataStore = value; 
+				_taskDataStore?.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged());
+			}
+		}
+
 
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
@@ -152,6 +195,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
+		private void OnCurrentTaskChanged()
+		{
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.zoom", new object[] { 1 });
+		}
+
 		private void OnCurrentTaskTagsChanged(ReadOnlyObservableCollectionEx<TagModel> tags)
 		{
 			Rectangles = tags.Select(ConvertToRectangle).ToList();
@@ -181,15 +229,30 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			return Enumerable.Empty<TagModel>();
 		}
 
-		private Rectangle ConvertToRectangle(TagModel tagModel) => new Rectangle
+		private Rectangle ConvertToRectangle(TagModel tagModel) 
 		{
-			X = tagModel.Geometry.ProportionalBounds.X,
-			Y = tagModel.Geometry.ProportionalBounds.Y,
-			Height = tagModel.Geometry.ProportionalBounds.Height,
-			Width = tagModel.Geometry.ProportionalBounds.Width,
-			Id = tagModel.Id.ToString(),
-			IsSelected = tagModel.IsSelected
-		};
+			var rect = new Rectangle
+			{
+				X = tagModel.Geometry.ProportionalBounds.X,
+				Y = tagModel.Geometry.ProportionalBounds.Y,
+				Height = tagModel.Geometry.ProportionalBounds.Height,
+				Width = tagModel.Geometry.ProportionalBounds.Width,
+				Id = tagModel.Id.ToString(),
+				IsSelected = tagModel.IsSelected,
+				Label = tagModel.IsSelected ? "" : tagModel.LabelValue
+			};
+
+			if (tagModel.TagonomyExecutionResult != null)
+			{
+				rect.BorderColor = tagModel.IsSelected ? TaggedSelectedMarkerBoundsColor : TaggedUnselectedMarkerBoundsColor;
+			}
+			else
+			{
+				rect.BorderColor = tagModel.IsSelected ? UntaggedSelectedMarkerBoundsColor : UntaggedUnselectedMarkerBoundsColor;
+			}
+
+			return rect;
+		}
 
 		private void OnGeometryCreated(Rectangle geometry)
 		{
@@ -269,6 +332,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected override void Dispose(bool disposing)
 		{
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose");
+
 			if (disposing)
 			{
 				_subscriptions.ForEach(i => i.Dispose());

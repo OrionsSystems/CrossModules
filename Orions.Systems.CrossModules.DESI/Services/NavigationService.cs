@@ -22,19 +22,28 @@ namespace Orions.Systems.CrossModules.Desi.Services
 			_jSRuntime = jSRuntime;
 		}
 
-		public Task GoBack(bool? useModalNavigation = null, bool animated = true) => throw new NotImplementedException();
-		public Task GoBackFrom(object context, bool animated = true) => throw new NotImplementedException();
+		public async Task GoBack(bool? useModalNavigation = null, bool animated = true)
+		{
+			await _jSRuntime.InvokeVoidAsync("history.back");
+		}
+		public async Task GoBackFrom(object context, bool animated = true)
+		{
+			await _jSRuntime.InvokeVoidAsync("history.back");
+		}
+
 		public Task GoBackFromTaggingPage()
 		{
-			_jSRuntime.InvokeVoidAsync("history.back");
+			_navManager.NavigateTo("missions");
 
 			return Task.CompletedTask;
 		}
+
 		public Task GoToLoginPage()
 		{
-			_navManager.NavigateTo("/", true);
+			_navManager.NavigateTo("/");
 			return Task.CompletedTask;
 		}
+
 		public Task GoToManageCustomNodes() => throw new NotImplementedException();
 
 		public Task GoToMissionsPage()

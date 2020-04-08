@@ -5,11 +5,14 @@
 	<div class="popup-window">
 		<div class="content">
 			<div class="header">@Title</div>
-			<div class="question">@Question</div>
+			<div class="question">@Message</div>
 		</div>
 		<div class="buttons">
-			<button class="left-button" @onclick="OnYes">Yes</button>
-			<button class="right-button" @onclick="OnNo">No</button>
+			<button class="left-button" @onclick="OnYes">@OkCaption</button>
+			@if (!OnlyOkMode)
+			{
+				<button class="right-button" @onclick="OnNo">@CancelCaption</button>
+			}
 		</div>
 	</div>
 </div>

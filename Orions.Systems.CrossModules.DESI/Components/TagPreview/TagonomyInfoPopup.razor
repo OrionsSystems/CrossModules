@@ -1,0 +1,82 @@
+﻿@using Orions.Systems.Desi.Common.Models
+
+<div id="@_id" class="tagonomy-info-popup-container @CssClass">
+	<div class="info-row">
+		AssetId: @TaskInfo.AssetId
+	</div>
+	<div class="info-row">
+		FragmentId: @TaskInfo.FragmentId
+	</div>
+	<div class="info-row">
+		MissionId: @TaskInfo.MissionId
+	</div>
+	<div class="info-row">
+		MissionInstanceId: @TaskInfo.MissionInstanceId
+	</div>
+	<div class="info-row">
+		TrackId: @TaskInfo.TrackId
+	</div>
+	<div class="info-row">
+		TaskId: @TaskInfo.TaskId
+	</div>
+	<div class="info-row">
+		TaskNumber: @TaskInfo.TaskNumber
+	</div>
+	<div class="info-row">
+		UserId: @TaskInfo.UserId
+	</div>
+	<div class="info-row">
+		TaggingMode: @TaskInfo.TaggingMode
+	</div>
+	<div class="info-row">
+		HyperBlockType: @TaskInfo.HyperBlockType
+	</div>
+	<button @onclick="OnCopy" @onclick:stopPropagation="true" class="copy-btn">Copy</button>
+</div>
+
+@code {
+	[Parameter]
+	public string CssClass { get; set; }
+
+	[Parameter]
+	public TaskInfo TaskInfo { get; set; }
+
+	[Parameter]
+	public EventCallback OnClose { get; set; }
+
+	[Inject]
+	public BlazorDependencyResolver DependencyResolver { get; set; }
+
+	[Inject]
+	public IJSRuntime JSRuntime { get; set; }
+
+	private string _id = $"tagonomy-info-popup-{Guid.NewGuid().ToString()}";
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		if (firstRender)
+		{
+			var thisRef = DotNetObjectReference.Create(this);
+			await JSRuntime.InvokeVoidAsync("Orions.Dom.positionAbsoluteToParent", new object[] { new { top = -30, left = 10 }, $"#{_id}", "topRight", true });
+			JSRuntime.InvokeVoidAsync("Orions.TaggingPage.tagonomyInfoInit", new object[] { $"#{_id}", thisRef });
+		}
+
+		base.OnInitializedAsync();
+	}
+
+	[JSInvokable]
+	public void Close()
+	{
+		OnClose.InvokeAsync(null);
+	}
+
+	protected void OnCopy()
+	{
+		var clipboardService = DependencyResolver.GetDeviceClipboardService();
+
+		if (TaskInfo != null)
+		{
+			clipboardService.SetTextAsync(this.TaskInfo.ToString());
+		}
+	}
+}

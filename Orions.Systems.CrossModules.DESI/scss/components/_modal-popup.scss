@@ -15,13 +15,15 @@
 
 	& > .popup-window {
 		$border-radius: 10px;
+		$border-color: #c8c8c8;
 		width: 500px;
 		margin: auto;
 		background-color: white;
 		display: flex;
 		flex-direction: column;
 		border-radius: $border-radius;
-		margin-top:40vh;
+		margin-top: 40vh;
+		border: 1px solid $border-color;
 
 		& > .content {
 			text-align: center;
@@ -31,6 +33,7 @@
 
 			.header {
 				font-weight: bold;
+				margin-bottom:10px;
 			}
 
 			.question {
@@ -40,23 +43,21 @@
 		& > .buttons {
 			display: flex;
 			flex-direction: row;
+			border-top: 1px solid $border-color;
 
 			button {
 				display: block;
-				border: 1px solid #c8c8c8;
+				border: none;
+				border-right: 1px solid $border-color ;
 				color: #eb9771;
 				text-align: center;
 				flex: 1;
 				padding: 15px;
-				background-color:white;
+				background-color: transparent;
+			}
 
-				&.right-button {
-					border-radius: 0 0 $border-radius 0;
-				}
-
-				&.left-button {
-					border-radius: 0 0 0 $border-radius;
-				}
+			button:last-of-type{
+				border-right:none;
 			}
 		}
 	}
