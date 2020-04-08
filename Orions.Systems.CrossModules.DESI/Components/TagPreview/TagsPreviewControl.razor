@@ -7,10 +7,10 @@
 
 @inherits TagPreviewControlBase
 
-@if (this.Vm != null)
+@if (this.TagData != null)
 {
 	<div class="tag-preview-control-container">
-		@if (this.Vm.TagData == null || this.Vm.TagData.CurrentTaskTags.Count == 0)
+		@if (this.TagData == null || this.TagData.CurrentTaskTags.Count == 0)
 		{
 			<div class="user-manual">
 				<div class="header">
@@ -35,7 +35,7 @@
 		else
 		{
 			var tagIsSelectedClass = "";
-			@foreach (var tag in this.Vm.TagData.CurrentTaskTags)
+			@foreach (var tag in this.TagData.CurrentTaskTags)
 			{
 				{
 					tagIsSelectedClass = tag.IsSelected ? "active" : "";
@@ -61,9 +61,9 @@
 						<div class="right-column">
 							<div class="info-button">
 								@{ 
-									if(this.CurrentTagonomyInfoShown == tag.Id && this.Vm.CurrentTask != null)
+									if(this.CurrentTagonomyInfoShown == tag.Id && this.TaskDataStore.Data.CurrentTask != null)
 									{
-										<TagonomyInfoPopup TaskInfo="this.Vm.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null"/>
+										<TagonomyInfoPopup TaskInfo="this.TaskDataStore.Data.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null"/>
 									}
 									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id" @onclick:stopPropagation="true"/>
 								}
@@ -85,12 +85,12 @@
 					</div>
 					<div class="buttons">
 						<div class="button">
-							<button @onclick="(MouseEventArgs e) => { this.Vm.EditTagCommand.Execute(tag); }" @onclick:stopPropagation="true">Edit</button>
+							<button @onclick="(MouseEventArgs e) => { this.EditTagCommand.Execute(tag); }" @onclick:stopPropagation="true">Edit</button>
 						</div>
 						@if (tag.TaggingSpecification.TagRemovalAllowed && tag.TagKind == Systems.Desi.Common.Models.TagKind.Regular)
 						{
 							<div class="button">
-								<button @onclick="() => this.Vm.RemoveTagCommand.Execute(tag)" @onclick:stopPropagation="true">Remove</button>
+								<button @onclick="() => this.RemoveTagCommand.Execute(tag)" @onclick:stopPropagation="true">Remove</button>
 							</div>
 						}
 					</div>

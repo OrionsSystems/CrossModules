@@ -28,12 +28,12 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	self.componentRef = componentRef;
 	self.scope = new paper.PaperScope
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
+	self.items = [];
 
 	let tool = new self.scope.Tool();
 	let mouseDownAt;
 	let path;
 	let rect;
-	let items = [];
 
 	self.scope.setup(self.canvas);
 	let crosshair = new CanvasCrosshair(self.scope);
@@ -129,10 +129,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	tool.onKeyDown = function (event) {
 		if (event.key == 'delete') {
-			for (var i = 0; i < items.length; i++) {
-				if (items[i].is_selected) {
-					items[i].remove(); // Remove from visual space.
-					items.splice(i, 1);
+			for (var i = 0; i < self.items.length; i++) {
+				if (self.items[i].is_selected) {
+					self.items[i].remove(); // Remove from visual space.
+					self.items.splice(i, 1);
 				}
 			}
 
@@ -151,17 +151,17 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			return;
 		}
 
-		for (var i = 0; i < items.length; i++) {
-			var hitResult = items[i].hitTest(event.point);
+		for (var i = 0; i < self.items.length; i++) {
+			var hitResult = self.items[i].hitTest(event.point);
 			if (isDefined(hitResult)) {
-				return; // Hit one of the existing items
+				return; // Hit one of the existing self.items
 			}
 		}
 
 		mouseDownAt = event.point;
 
-		for (var i = 0; i < items.length; i++) {
-			items[i].clearElements();
+		for (var i = 0; i < self.items.length; i++) {
+			self.items[i].clearElements();
 		}
 
 		rect = new paper.Rectangle(mouseDownAt, mouseDownAt);
@@ -235,7 +235,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			newTagVisual.select(true);
 		}
 
-		items.push(newTagVisual)
+		self.items.push(newTagVisual)
 
 		newTagVisual.on('selected', function (selectedVisual) {
 			self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
@@ -258,7 +258,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.updateTag = function (tag) {
-		let tagToUpdate = items.find(i => i.id == tag.id);
+		let tagToUpdate = self.items.find(i => i.id == tag.id);
 
 		if (isDefined(tagToUpdate)) {
 			tagToUpdate.update(tag);
@@ -266,17 +266,17 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.removeTag = function (tag) {
-		let tagToRemove = items.find(i => i.id == tag.id);
+		let tagToRemove = self.items.find(i => i.id == tag.id);
 
 		if (tagToRemove) {
 			tagToRemove.remove();
 
-			items.splice(items.indexOf(tagToRemove), 1);
+			self.items.splice(self.items.indexOf(tagToRemove), 1);
 		}
 	}
 
 	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
-		let tag = items.find(i => i.id == id);
+		let tag = self.items.find(i => i.id == id);
 		if (tag) {
 			
 
@@ -321,5 +321,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	window.Orions.TaggingSurface.dispose = function () {
 		self.scope.remove();
+		tool.remove();
 	}
 }
