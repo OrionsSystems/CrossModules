@@ -103,7 +103,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		// This method adds StateHasChanged method call to every event fired on any Vm property that implements either INotifyPropertyChanged or
 		// INotifyCollectionChanged interface
-		private void AddVmDataPropertyChangedHandlers(object vm)
+		protected void AddVmDataPropertyChangedHandlers(object vm)
 		{
 			PropertyChangedEventHandler propChangedHandler = (s, e) => {
 				if(e != null && e.PropertyName != null)
