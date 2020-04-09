@@ -18,11 +18,15 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model.Rectangle;
+using System.Reactive.Concurrency;
+using System.Diagnostics;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
 	public class TaggingSurfaceBase : BaseComponent
 	{
+		private const int UpdateRateMilliseconds = 50;
+
 		private readonly string TaggedSelectedMarkerBoundsColor = "#0000FF";
 		private readonly string UntaggedSelectedMarkerBoundsColor = "#FF0000";
 		private readonly string TaggedUnselectedMarkerBoundsColor = "#E3FF00";
@@ -33,7 +37,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
 		private ITaskDataStore _taskDataStore;
-		private IDisposable _tagsCollectionChagedSub;
 		private bool _initializationDone;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
@@ -56,69 +59,27 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				value,
 				() =>
 				{
-					_subscriptions
-						.AddItem(value.SelectedTagsUpdated.Subscribe(OnSelectedTagsUpdated))
-						.AddItem(value.Data
-						.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-						.Subscribe(i => OnCurrentTaskTagsChanged(i.Source.CurrentTaskTags)));
+					var aggregatedSub = Observable.Merge(
+						value.CurrentTaskTagsCollectionChanged.Select(_ => true),
+						value.TagPropertyChanged
+							.Where(i => CommonExtensions.IsOneOf(i.PropertyName, nameof(TagModel.Geometry), nameof(TagModel.IsSelected), nameof(TagModel.LabelValue)))
+							.Select(_ => true))
+					.Sample(TimeSpan.FromMilliseconds(UpdateRateMilliseconds))
+					.ObserveOn(Scheduler.Default)
+					.Subscribe(_ => UpdateRectangles());
 
-					Action<ReadOnlyObservableCollectionEx<TagModel>> subscriveToCurrentTaskTagsChanges = (tags) =>
-					{
-						tags.Foreach(t =>
-						{
-							t.PropertyChanged += (s, e) =>
-							{
-								OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-							};
-						});
-						tags.CollectionChanged += (s, e) =>
-						{
-							if (value?.Data?.CurrentTaskTags != null)
-							{
-								OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
+					_subscriptions.AddItem(aggregatedSub);
 
-								if (e.NewItems != null)
-								{
-									foreach (var newT in e.NewItems)
-									{
-										(newT as TagModel).PropertyChanged += (s, e) =>
-										{
-											OnCurrentTaskTagsChanged(value.Data.CurrentTaskTags);
-										};
-									}
-								}
-							}
-						};
-					};
-					value.Data.PropertyChanged += (s, e) =>
-					{
-						if(value.Data?.CurrentTaskTags != null && e.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-						{
-							subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
-						};
-					};
-
-					if(value?.Data.CurrentTaskTags != null)
-					{
-						subscriveToCurrentTaskTagsChanges(value.Data.CurrentTaskTags);
-					}
-
-					Rectangles = value.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
+					UpdateRectangles();
 				});
 		}
 
 		[Parameter]
 		public ITaskDataStore TaskDataStore
 		{
-			get { return _taskDataStore; }
-			set 
-			{
-				_taskDataStore = value; 
-				_taskDataStore?.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged());
-			}
+			get => _taskDataStore;
+			set => SetProperty(ref _taskDataStore, value, () => _taskDataStore?.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged()));
 		}
-
 
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
@@ -207,36 +168,27 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.zoom", new object[] { 1 });
 		}
 
-		private void OnCurrentTaskTagsChanged(ReadOnlyObservableCollectionEx<TagModel> tags)
-		{
-			Rectangles = tags.Select(ConvertToRectangle).ToList();
+		private void UpdateRectangles() => Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags ?? Enumerable.Empty<TagModel>());
 
-			_tagsCollectionChagedSub?.Dispose();
-			_tagsCollectionChagedSub = tags?
-				.GetCollectionChangedObservable()
-				.Select(i => CurrentPositionTagsSelector(i.Source))
-				.Subscribe(i => Rectangles = i.Select(ConvertToRectangle).ToList());
-		}
-
-		protected IEnumerable<TagModel> CurrentPositionTagsSelector(IEnumerable<TagModel> tags)
+		protected List<Rectangle> CurrentPositionRectanglesSelector(IEnumerable<TagModel> tags)
 		{
 			if(TaskDataStore.Data.CurrentTask != null)
 			{
 				if(TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Video)
 				{
 					var position = GetCurrentPosition();
-					return tags.Where(t => t.TagHyperId.Equals(position));
+					return new List<Rectangle>(tags.Where(t => t.TagHyperId.Equals(position)).Select(ConvertToRectangle));
 				}
 				else if(TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Image || TaskDataStore.Data.CurrentTask.IsComparative())
 				{
-					return tags;
+					return new List<Rectangle>(tags.Select(ConvertToRectangle));
 				}
 			}
 
-			return Enumerable.Empty<TagModel>();
+			return new List<Rectangle>();
 		}
 
-		private Rectangle ConvertToRectangle(TagModel tagModel) 
+		private Rectangle ConvertToRectangle(TagModel tagModel)
 		{
 			var rect = new Rectangle
 			{
@@ -279,11 +231,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
 		}
 
-		private void OnSelectedTagsUpdated(IReadOnlyCollection<TagModel> tags)
-		{
-			Rectangles = TagsStore.Data.CurrentTaskTags.Select(ConvertToRectangle).ToList();
-		}
-
 		private HyperId GetCurrentPosition()
 		{
 			if(MediaDataStore.Data.MediaInstances.Count == 1)
@@ -300,6 +247,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			try
 			{
+				Debug.WriteLine($"UpdateTagsOnClient thread id: {Thread.CurrentThread.ManagedThreadId}");
+
 				if (MediaDataStore.Data.MediaInstances?.Any() == true)
 				{
 					// add newly added tags
@@ -311,7 +260,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						}
 						else
 						{
-							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
+							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
 						}
 					}
 
@@ -321,7 +270,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
 						if (oldTag != null && !oldTag.Equals(newTag))
 						{
-							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
+							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
 						}
 					}
 
@@ -334,7 +283,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						}
 						else
 						{
-							JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
 						}
 					}
 				}
