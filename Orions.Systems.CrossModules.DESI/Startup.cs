@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
@@ -13,6 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.JSInterop;
 using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
+using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Common.Services;
@@ -37,17 +39,9 @@ namespace Orions.Systems.CrossModules.Desi
 			services.AddServerSideBlazor();
 			services.AddBlazoredLocalStorage();
 
-			services.AddScoped<ILocalStorageService>(p =>
-			{
-				return new LocalStorageService(p.GetService<IJSRuntime>());
-			});
-
-			AddPageViewModels(services);
-		}
-
-		private void AddPageViewModels(IServiceCollection services)
-		{
-			services.AddScoped<BlazorDependencyResolver>();
+			services.AddScoped<ILocalStorageService, LocalStorageService>()
+				.AddScoped<BlazorDependencyResolver>()
+				.AddScoped<IKeyboardListener, KeyboardListener>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

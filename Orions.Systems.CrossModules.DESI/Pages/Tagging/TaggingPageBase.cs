@@ -9,8 +9,8 @@ using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 using System.Reactive.Linq;
 using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System.Collections.Generic;
-using Orions.Systems.Desi.Common.TagsExploitation;
-using Orions.Systems.CrossModules.Desi.Util;
+using Orions.Systems.CrossModules.Desi.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
@@ -20,6 +20,9 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		protected TaggingSurface TaggingSurface;
 		private SessionIsOverPopup _sessionIsOverPopup;
+
+		[Inject]
+		public IKeyboardListener KeyboardListener { get; set; }
 
 		public SessionIsOverPopup SessionIsOverPopup
 		{

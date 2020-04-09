@@ -8,25 +8,31 @@ using System.Reactive.Subjects;
 using System.Threading.Tasks;
 using Microsoft.JSInterop;
 
-namespace Orions.Systems.CrossModules.Desi.Util
+namespace Orions.Systems.CrossModules.Desi.Services
 {
-	public static class KeyboardListener
+	public class KeyboardListener: IKeyboardListener
 	{
-		private static readonly Subject<KeyboardEventData> _keyEventSobject = new Subject<KeyboardEventData>();
+		private readonly Subject<KeyboardEventData> _keyEventSubject = new Subject<KeyboardEventData>();
+
+		public KeyboardListener(IJSRuntime jSRuntime)
+		{
+			var handle = DotNetObjectReference.Create(this);
+			jSRuntime.InvokeVoidAsync("Orions.KeyboardListener.init", handle);
+		}
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[JSInvokable]
-		public static Task OnKeyEvent(Key key, KeyModifiers modifiers)
+		public Task OnKeyEvent(Key key, KeyModifiers modifiers)
 		{
-			_keyEventSobject.OnNext(new KeyboardEventData(key, modifiers));
+			_keyEventSubject.OnNext(new KeyboardEventData(key, modifiers));
 			return Task.FromResult(true);
 		}
 
-		private static IObservable<KeyboardEventData> KeyboardObservable => _keyEventSobject.AsObservable();
+		private IObservable<KeyboardEventData> KeyboardObservable => _keyEventSubject.AsObservable();
 
-		public static KeyboardEventSubscription CreateSubscription() => new KeyboardEventSubscription(KeyboardObservable);
+		public IKeyboardEventSubscription CreateSubscription() => new KeyboardEventSubscription(KeyboardObservable);
 
-		public class KeyboardEventSubscription : IDisposable
+		public class KeyboardEventSubscription : IKeyboardEventSubscription
 		{
 			private readonly List<(KeyboardEventData EventData, Action Handler)> _shortcuts = new List<(KeyboardEventData, Action)>();
 
@@ -48,9 +54,9 @@ namespace Orions.Systems.CrossModules.Desi.Util
 				.Where(i => i.EventData.Equals(keyboardEventData))
 				.ForEach(i => i.Handler());
 
-			public KeyboardEventSubscription AddShortcut(Key key, Action handler) => AddShortcut(key, KeyModifiers.None, handler);
+			public IKeyboardEventSubscription AddShortcut(Key key, Action handler) => AddShortcut(key, KeyModifiers.None, handler);
 
-			public KeyboardEventSubscription AddShortcut(Key key, KeyModifiers modifiers, Action handler)
+			public IKeyboardEventSubscription AddShortcut(Key key, KeyModifiers modifiers, Action handler)
 			{
 				if (handler == null)
 				{
