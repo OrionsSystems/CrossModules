@@ -17,10 +17,27 @@ body {
   height: 80px;
   box-shadow: 0 4px 6px #cccccc;
   z-index: 2;
-  position: relative; }
+  position: relative;
+  display: flex;
+  padding-right: 8px; }
   .top-row .logo {
     height: 50px;
     margin: 15px; }
+  .top-row button {
+    margin-left: auto;
+    border-style: hidden;
+    background-color: transparent; }
+    .top-row button:hover {
+      border-style: hidden;
+      outline: none;
+      transform: scale(1.03); }
+    .top-row button:active {
+      border-style: hidden;
+      outline: none;
+      transform: scale(0.95); }
+    .top-row button:focus {
+      border-style: hidden;
+      outline: none; }
 
 .content {
   display: flex;
