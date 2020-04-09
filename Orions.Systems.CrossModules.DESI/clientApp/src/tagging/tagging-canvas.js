@@ -320,6 +320,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.dispose = function () {
+		self.items = [];
 		self.scope.remove();
 		tool.remove();
 	}
