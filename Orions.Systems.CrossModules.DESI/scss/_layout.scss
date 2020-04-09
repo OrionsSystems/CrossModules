@@ -14,6 +14,7 @@ body{
 	display: flex;
 	flex-direction: column;
 	height:100%;
+	overflow:hidden;
 }
 
 .top-row {
@@ -33,6 +34,8 @@ body{
 	display: flex;
 	align-items: stretch;
 	flex: 1;
+	overflow:hidden;
+	max-height:100%;
 
 	.side-bar {
 		width: 66px;
@@ -43,6 +46,7 @@ body{
 
 	.body-container {
 		flex: 1;
+		overflow:hidden;
 	}
 
 	.page-content {

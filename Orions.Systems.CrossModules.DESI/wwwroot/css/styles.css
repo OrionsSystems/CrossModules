@@ -9,7 +9,8 @@ body {
 .main {
   display: flex;
   flex-direction: column;
-  height: 100%; }
+  height: 100%;
+  overflow: hidden; }
 
 .top-row {
   width: 100%;
@@ -24,14 +25,17 @@ body {
 .content {
   display: flex;
   align-items: stretch;
-  flex: 1; }
+  flex: 1;
+  overflow: hidden;
+  max-height: 100%; }
   .content .side-bar {
     width: 66px;
     position: relative;
     z-index: 3;
     background-color: #4a4d54; }
   .content .body-container {
-    flex: 1; }
+    flex: 1;
+    overflow: hidden; }
   .content .page-content {
     background-color: #fafafa;
     width: calc(100% - 66px);
@@ -1927,7 +1931,8 @@ video::-webkit-media-text-track-display {
     background-color: #E9E9E9;
     display: flex;
     flex-direction: column;
-    height: 100%; }
+    height: 100%;
+    overflow: hidden; }
     .missions-widget-container .mission-list-container .misssion-list-header {
       font-weight: bold;
       padding: 8px;
@@ -1944,43 +1949,45 @@ video::-webkit-media-text-track-display {
         color: #4d5f87; }
       .missions-widget-container .mission-list-container .misssion-list-header .sorting-orders a:visited {
         color: inherit; }
-    .missions-widget-container .mission-list-container .mission-list-items-container .mission-item {
-      padding: 8px;
-      border-top: 1px solid #ced4da;
-      position: relative; }
-      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container {
-        width: 100px;
-        height: 100px;
-        border: 5px solid white;
-        border-radius: 3px;
-        background: black;
-        float: left; }
-        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container img {
-          object-fit: contain;
-          width: 100%;
-          height: 100%; }
-      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container {
-        float: left;
-        margin-left: 15px;
-        padding-top: 5px;
-        width: calc(100% - 120px); }
-        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .mission-title {
-          font-weight: bold; }
-        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .started-label {
-          color: #6c757d; }
-        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .status-label {
-          color: #6c757d; }
-      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .enter-mission-btn {
-        display: none;
-        position: absolute;
-        bottom: 20px;
-        right: 30px; }
-      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:hover .enter-btn {
-        display: block; }
-      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:after {
-        content: "";
-        clear: both;
-        display: table; }
+    .missions-widget-container .mission-list-container .mission-list-items-container {
+      overflow-y: auto; }
+      .missions-widget-container .mission-list-container .mission-list-items-container .mission-item {
+        padding: 8px;
+        border-top: 1px solid #ced4da;
+        position: relative; }
+        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container {
+          width: 100px;
+          height: 100px;
+          border: 5px solid white;
+          border-radius: 3px;
+          background: black;
+          float: left; }
+          .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-thumbnail-container img {
+            object-fit: contain;
+            width: 100%;
+            height: 100%; }
+        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container {
+          float: left;
+          margin-left: 15px;
+          padding-top: 5px;
+          width: calc(100% - 120px); }
+          .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .mission-title {
+            font-weight: bold; }
+          .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .started-label {
+            color: #6c757d; }
+          .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .mission-description-container .status-label {
+            color: #6c757d; }
+        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item .enter-mission-btn {
+          display: none;
+          position: absolute;
+          bottom: 20px;
+          right: 30px; }
+        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:hover .enter-btn {
+          display: block; }
+        .missions-widget-container .mission-list-container .mission-list-items-container .mission-item:after {
+          content: "";
+          clear: both;
+          display: table; }
 
 .available-nodes-widget-container {
   width: 25%;
@@ -2015,7 +2022,8 @@ video::-webkit-media-text-track-display {
 .stage-selection-page-container {
   display: flex;
   height: 100%;
-  flex-direction: column; }
+  flex-direction: column;
+  overflow: hidden; }
   .stage-selection-page-container > .mission-title {
     background-color: #f2f2f2;
     font-size: 1.3em;
@@ -2024,7 +2032,8 @@ video::-webkit-media-text-track-display {
   .stage-selection-page-container .bottom-row {
     flex: 1;
     display: flex;
-    flex-direction: row; }
+    flex-direction: row;
+    overflow: hidden; }
     .stage-selection-page-container .bottom-row .left-column {
       display: flex;
       flex-direction: column;
@@ -2052,18 +2061,22 @@ video::-webkit-media-text-track-display {
     .stage-selection-page-container .bottom-row .right-column {
       flex: 1;
       background-color: #181818;
-      padding: 20px; }
+      padding: 20px;
+      display: flex;
+      flex-direction: column; }
       .stage-selection-page-container .bottom-row .right-column .stage-selection-list {
         background-color: #282828;
         border-radius: 5px;
         display: flex;
-        flex-direction: column; }
+        flex-direction: column;
+        overflow: hidden; }
         .stage-selection-page-container .bottom-row .right-column .stage-selection-list > .header {
           padding: 20px;
           color: #f5f5f5; }
         .stage-selection-page-container .bottom-row .right-column .stage-selection-list .stage-list-items {
           display: flex;
-          flex-direction: column; }
+          flex-direction: column;
+          overflow-y: auto; }
           .stage-selection-page-container .bottom-row .right-column .stage-selection-list .stage-list-items .list-item {
             padding: 20px;
             border-top: 2px solid #979797;
