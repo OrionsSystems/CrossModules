@@ -1810,6 +1810,28 @@ h5.modal-title {
       transition-delay: 0.3s;
       opacity: 1; }
 
+.wizard-container .wizzard-item-link {
+  cursor: pointer; }
+
+.wizard-container .wizard-header-actions {
+  text-align: right; }
+
+.wizard-container .wizard-message {
+  padding: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px; }
+
+.wizard-container #footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  height: 32px;
+  width: 100%;
+  background: #e1e1e1;
+  text-align: center;
+  padding: 4px;
+  z-index: 9999; }
+
 .wizard-container .wizard-filter-breadcrumb {
   /*padding-top: 19.00008px;
 		padding-top: 1.58334rem;*/
@@ -1869,6 +1891,28 @@ h5.modal-title {
           height: 7px;
           font-family: Verdana, sans-serif; }
 
+.wizard-container-v2 .wizzard-item-link {
+  cursor: pointer; }
+
+.wizard-container-v2 .wizard-header-actions {
+  text-align: right; }
+
+.wizard-container-v2 .wizard-message {
+  padding: 14px;
+  text-transform: uppercase;
+  letter-spacing: 3px; }
+
+.wizard-container-v2 #footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  height: 32px;
+  width: 100%;
+  background: #e1e1e1;
+  text-align: center;
+  padding: 4px;
+  z-index: 9999; }
+
 .wizard-container-v2 .wizard-filter-breadcrumb {
   width: auto;
   float: none;
@@ -1891,7 +1935,8 @@ h5.modal-title {
         font: inherit;
         font-size: 1rem;
         vertical-align: baseline;
-        border-radius: 6px; }
+        border-radius: 6px;
+        /** Default button **/ }
         .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item {
           float: left;
           display: block;
@@ -1911,7 +1956,8 @@ h5.modal-title {
           white-space: nowrap;
           line-height: 1.42; }
         .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:hover {
-          color: red; }
+          color: #cb2525;
+          background-color: #cccccc; }
         .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:not(:last-child):before {
           content: " ";
           display: block;
@@ -1939,3 +1985,10 @@ h5.modal-title {
           margin-top: -17px;
           left: 100%;
           z-index: 3; }
+        .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:not(:last-child):after {
+          border-left: 10px solid #fff; }
+        .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:not(:last-child):before {
+          border-left: 10px solid #ccc; }
+        .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:hover:not(:last-child):after,
+        .wizard-container-v2 .wizard-filter-breadcrumb .wizard-filter-container .wizard-breadcrumbs-containers ul li.wizard-filter-breadcrumb-item:hover:not(:last-child):before {
+          border-left: 10px solid #cccccc; }

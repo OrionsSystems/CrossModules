@@ -1,6 +1,38 @@
 ﻿
+
+@mixin wizard-common {
+
+	.wizzard-item-link {
+		cursor: pointer;
+	}
+
+	.wizard-header-actions {
+		text-align: right;
+	}
+
+	.wizard-message {
+		padding: 14px;
+		text-transform: uppercase;
+		letter-spacing: 3px;
+	}
+
+	#footer {
+		position: fixed;
+		left: 0px;
+		bottom: 0px;
+		height: 32px;
+		width: 100%;
+		background: #e1e1e1;
+		text-align: center;
+		padding: 4px;
+		z-index: 9999;
+	}
+}
+
+
 .wizard-container {
 
+	@include wizard-common;
 
 	.wizard-filter-breadcrumb {
 		/*padding-top: 19.00008px;
@@ -68,9 +100,6 @@
 						height: 7px;
 						font-family: Verdana, sans-serif;
 					}
-
-
-
 				}
 			}
 		}
@@ -78,8 +107,9 @@
 }
 
 
-
 .wizard-container-v2 {
+
+	@include wizard-common;
 
 	.wizard-filter-breadcrumb {
 		width: auto;
@@ -129,7 +159,8 @@
 					}
 
 					li.wizard-filter-breadcrumb-item:hover {
-						color: red;
+						color: #cb2525;
+						background-color: #cccccc;
 					}
 
 					li.wizard-filter-breadcrumb-item:not(:last-child):before {
@@ -162,8 +193,23 @@
 						left: 100%;
 						z-index: 3;
 					}
+					/** Default button **/
+					li.wizard-filter-breadcrumb-item:not(:last-child):after {
+						border-left: 10px solid #fff;
+					}
+
+					li.wizard-filter-breadcrumb-item:not(:last-child):before {
+						border-left: 10px solid #ccc;
+					}
+
+					li.wizard-filter-breadcrumb-item:hover:not(:last-child):after,
+					li.wizard-filter-breadcrumb-item:hover:not(:last-child):before {
+						border-left: 10px solid #cccccc;
+					}
 				}
 			}
 		}
 	}
 }
+
+
