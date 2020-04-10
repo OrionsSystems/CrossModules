@@ -14,6 +14,7 @@ body{
 	display: flex;
 	flex-direction: column;
 	height:100%;
+	overflow:hidden;
 }
 
 .top-row {
@@ -22,10 +23,35 @@ body{
 	box-shadow: 0 4px 6px #cccccc;
 	z-index: 2;
 	position: relative;
+	display: flex;
+	padding-right: 8px;
 
 	.logo {
 		height: $logo-height;
 		margin: $logo-margin;
+	}
+
+	button {
+		margin-left: auto;
+		border-style: hidden;
+		background-color: transparent;
+
+		&:hover {
+			border-style: hidden;
+			outline: none;
+			transform: scale(1.03);
+		}
+
+		&:active {
+			border-style: hidden;
+			outline: none;
+			transform: scale(0.95);
+		}
+
+		&:focus {
+			border-style: hidden;
+			outline: none;
+		}
 	}
 }
 
@@ -33,6 +59,8 @@ body{
 	display: flex;
 	align-items: stretch;
 	flex: 1;
+	overflow:hidden;
+	max-height:100%;
 
 	.side-bar {
 		width: 66px;
@@ -43,6 +71,7 @@ body{
 
 	.body-container {
 		flex: 1;
+		overflow:hidden;
 	}
 
 	.page-content {

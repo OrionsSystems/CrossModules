@@ -127,18 +127,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		return { topLeft, bottomRight };
 	};
 
-	tool.onKeyDown = function (event) {
-		if (event.key == 'delete') {
-			for (var i = 0; i < self.items.length; i++) {
-				if (self.items[i].is_selected) {
-					self.items[i].remove(); // Remove from visual space.
-					self.items.splice(i, 1);
-				}
-			}
-
-		}
-	}
-
 	tool.onMouseDown = function (event) {
 		if (event.event.buttons == 2) {
 			return;

@@ -48,14 +48,16 @@
 								<div class="header">
 									Current tagonomy
 								</div>
-								<TagonomyExecutionResultView Tag="tag" TagonomyExecutionResult="tag.TagonomyExecutionResult"/>
+								<TagonomyExecutionResultView Label="@tag.LabelValue"
+															 TagonomyExecutionResult="tag.TagonomyExecutionResult"/>
 							}
-							@if (tag.PreviousTagonomyExecutionResult != null || tag.GetLabel() != null)
+							@if (!string.IsNullOrEmpty(tag.PreviousLabelValue))
 							{
 								<div class="header">
 									Previous tagonomy/label
 								</div>
-								<TagonomyExecutionResultView Tag="tag" TagonomyExecutionResult="tag.PreviousTagonomyExecutionResult"/>
+								<TagonomyExecutionResultView Label="@tag.PreviousLabelValue"
+															 TagonomyExecutionResult="tag.PreviousTagonomyExecutionResult"/>
 							}
 						</div>
 						<div class="right-column">

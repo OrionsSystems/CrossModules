@@ -1,8 +1,4 @@
-﻿@layout EmptyLayout
-@page "/tagging"
-@inherits TaggingPageBase
-@namespace Orions.Systems.CrossModules.Desi.Pages
-@using Orions.Systems.CrossModules.Desi.Components.TabSet;
+﻿@using Orions.Systems.CrossModules.Desi.Components.TabSet;
 @using Orions.Systems.CrossModules.Desi.Components.VizList;
 @using Orions.Systems.CrossModules.Desi.Components.TaskNavigation;
 @using Orions.Systems.CrossModules.Desi.Components.TagPreview;
@@ -10,76 +6,82 @@
 @using Orions.Systems.CrossModules.Desi.Components;
 @using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 
+@attribute [Microsoft.AspNetCore.Components.RouteAttribute(Routes.Tagging)]
+
+@layout EmptyLayout
+@inherits TaggingPageBase
+@namespace Orions.Systems.CrossModules.Desi.Pages
+
+
 @if (this.Vm != null)
 {
-	<div class="tagging-page-container">
-		<ExploitationTimerWidget TaskDataStore="@_taggingSystem.TaskDataStore" />
-		<div class="bottom-row">
-			<div class="left-column">
-				<div class="top-area">
-					<div class="mission-description">
-						<div class="mission-title">
-							@this.Vm.Mission.TitleShorten
-						</div>
-						<div class="mission-status">
-							@this.Vm.Mission.TitleDetails
-						</div>
-						<div class="mission-run">
-							Started at: @this.Vm.Mission.MissionRunStartUTC.ToString()
-						</div>
-					</div>
-					<div class="tabs-control">
-						<TabSet>
-							<Tab Active="true" Title="Tags">
-								<TagsPreviewControl 
-									TagsStore="this.Vm.TagsStore" 
-									TaskDataStore="this.Vm.TaskDataStore" 
-									EditTagCommand="this.Vm.EditTagCommand"
-									RemoveTagCommand="this.Vm.RemoveTagCommand"
-									ActionDispatcher="_taggingSystem.ActionDispatcher" />
-							</Tab>
-							<Tab Title="Tracking">Tracking content</Tab>
-							<Tab Title="Segmentation">Segmentation content</Tab>
-						</TabSet>
-					</div>
-				</div>
-				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
-			</div>
-			<div class="right-column">
-				@if (Vm.TasksData?.Tasks != null && Vm.TasksData.CurrentTask != null)
-				{
-					{
-						<TaskNavigationWidget ActionDispatcher="_taggingSystem.ActionDispatcher"
-											  Store="@_taggingSystem.TaskDataStore">
-						</TaskNavigationWidget>
+    <div class="tagging-page-container">
+        <ExploitationTimerWidget TaskDataStore="@_taggingSystem.TaskDataStore" />
+        <div class="bottom-row">
+            <div class="left-column">
+                <div class="top-area">
+                    <div class="mission-description">
+                        <div class="mission-title">
+                            @this.Vm.Mission.TitleShorten
+                        </div>
+                        <div class="mission-status">
+                            @this.Vm.Mission.TitleDetails
+                        </div>
+                        <div class="mission-run">
+                            Started at: @this.Vm.Mission.MissionRunStartUTC.ToString()
+                        </div>
+                    </div>
+                    <div class="tabs-control">
+                        <TabSet>
+                            <Tab Active="true" Title="Tags">
+                                <TagsPreviewControl TagsStore="this.Vm.TagsStore"
+                                                    TaskDataStore="this.Vm.TaskDataStore"
+                                                    EditTagCommand="this.Vm.EditTagCommand"
+                                                    RemoveTagCommand="this.Vm.RemoveTagCommand"
+                                                    ActionDispatcher="_taggingSystem.ActionDispatcher" />
+                            </Tab>
+                            <Tab Title="Tracking">Tracking content</Tab>
+                            <Tab Title="Segmentation">Segmentation content</Tab>
+                        </TabSet>
+                    </div>
+                </div>
+                <button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
+            </div>
+            <div class="right-column">
+                @if (Vm.TasksData?.Tasks != null && Vm.TasksData.CurrentTask != null)
+                {
+                    {
+                        <TaskNavigationWidget ActionDispatcher="_taggingSystem.ActionDispatcher"
+                                              Store="@_taggingSystem.TaskDataStore">
+                        </TaskNavigationWidget>
 
-						<TaggingSurface @ref="TaggingSurface"
-										TaskDataStore="@_taggingSystem.TaskDataStore"
-										TagsStore="@_taggingSystem.TagsStore"
-										MediaDataStore="@_taggingSystem.MediaDataStore"
-										ActionDispatcher="@_taggingSystem.ActionDispatcher">
+                        <TaggingSurface @ref="TaggingSurface"
+                                        TaskDataStore="@_taggingSystem.TaskDataStore"
+                                        TagsStore="@_taggingSystem.TagsStore"
+                                        MediaDataStore="@_taggingSystem.MediaDataStore"
+                                        ActionDispatcher="@_taggingSystem.ActionDispatcher">
 
-							<VizListComponent Store="@_taggingSystem.TagonomyExecutionDataStore"
-											  ActionDispatcher="this._taggingSystem.ActionDispatcher"
-											  CssClass="vizlist-positioned"
-											  VizListRendered="this.OnVizListRendered">
-							</VizListComponent>
-						</TaggingSurface>
-					}
-				}
-				else
-				{
-					<Orions.Systems.CrossModules.Desi.Components.DotsLoader CssClass="tagging-content-loader" />
-				}
-			</div>
-		</div>
-	</div>
+                            <VizListComponent Store="@_taggingSystem.TagonomyExecutionDataStore"
+                                              ActionDispatcher="this._taggingSystem.ActionDispatcher"
+                                              CssClass="vizlist-positioned"
+                                              VizListRendered="this.OnVizListRendered">
+                            </VizListComponent>
+                        </TaggingSurface>
+                    }
+                }
+                else
+                {
+                    <Orions.Systems.CrossModules.Desi.Components.DotsLoader CssClass="tagging-content-loader" />
+                }
+            </div>
+        </div>
+    </div>
 }
 <SessionIsOverPopup @ref="SessionIsOverPopup" />
 
 <style>
-	.vizlist-positioned {
-		position: absolute;
-		z-index: 100;
-	}
+    .vizlist-positioned {
+        position: absolute;
+        z-index: 100;
+    }
 </style>

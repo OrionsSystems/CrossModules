@@ -42,6 +42,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 										{
 											(t as TagModel).GetPropertyChangedObservable().Subscribe(_ => UpdateState());
 										});
+
+										UpdateState();
 									});
 								UpdateState();
 							});

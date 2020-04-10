@@ -70,7 +70,11 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))
 				.AddShortcut(Key.N, () => Vm.ConfirmCurrentTaskTagsCommand.Execute(null))
-				.AddShortcut(Key.P, () => Vm.GoPreviousTaskCommand.Execute(null)));
+				.AddShortcut(Key.P, () => Vm.GoPreviousTaskCommand.Execute(null))
+				.AddShortcut(Key.Delete, () => {
+					if (Vm.TagData.SelectedTags.Any()) 
+						Vm.RemoveTagCommand.Execute(Vm.TagData.SelectedTags.First());
+				}));
 		}
 
 		protected override bool AutoWirePropertyChangedListener => false;
