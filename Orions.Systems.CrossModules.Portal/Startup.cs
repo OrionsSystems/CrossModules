@@ -10,6 +10,9 @@ using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Portal.Providers;
 using Syncfusion.EJ2.Blazor;
 using Blazored.LocalStorage;
+using Orions.Common;
+using ReactNOW.ML;
+using ReactNOW.Integration;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -62,6 +65,12 @@ namespace Orions.Systems.CrossModules.Portal
 			//Register Syncfusion license
 			var syncfusionLicense = Configuration.GetValue<string>("SyncfusionLicense");
 			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
+
+			// Do not delete
+			var z = new MLStatisticsJobConfig();
+			var x = new TagExportDataWizardConfig();
+
+			ReflectionHelper.Instance.GatherExtraNativeAssemblies();
 
 			if (env.IsDevelopment())
 			{
