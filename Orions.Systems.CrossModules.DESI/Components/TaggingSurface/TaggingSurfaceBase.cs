@@ -251,6 +251,19 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 				if (MediaDataStore.Data.MediaInstances?.Any() == true)
 				{
+					// remove removed tags
+					foreach (var oldTag in oldRectangleCollection)
+					{
+						if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+						}
+					}
+
 					// add newly added tags
 					foreach (var newTag in newRectangleCollection)
 					{
@@ -271,19 +284,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						if (oldTag != null && !oldTag.Equals(newTag))
 						{
 							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
-						}
-					}
-
-					// remove removed tags
-					foreach (var oldTag in oldRectangleCollection)
-					{
-						if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
-						{
-							continue;
-						}
-						else
-						{
-							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
 						}
 					}
 				}
