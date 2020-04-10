@@ -3,14 +3,12 @@ using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
-using Orions.Systems.Desi.Common.Collections;
 using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
 using Orions.Systems.Desi.Common.TaskExploitation;
-using Orions.Systems.Desi.Common.TagonomyExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +17,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model.Rectangle;
 using System.Reactive.Concurrency;
-using System.Diagnostics;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -247,10 +244,18 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			try
 			{
-				Debug.WriteLine($"UpdateTagsOnClient thread id: {Thread.CurrentThread.ManagedThreadId}");
-
 				if (MediaDataStore.Data.MediaInstances?.Any() == true)
 				{
+					// update tags
+					foreach (var newTag in newRectangleCollection)
+					{
+						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
+						if (oldTag != null && !oldTag.Equals(newTag))
+						{
+							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
+						}
+					}
+
 					// remove removed tags
 					foreach (var oldTag in oldRectangleCollection)
 					{
@@ -274,16 +279,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						else
 						{
 							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
-						}
-					}
-
-					// update tags
-					foreach (var newTag in newRectangleCollection)
-					{
-						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
-						if (oldTag != null && !oldTag.Equals(newTag))
-						{
-							await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
 						}
 					}
 				}
