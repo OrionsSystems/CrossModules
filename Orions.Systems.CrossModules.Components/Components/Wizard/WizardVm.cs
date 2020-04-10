@@ -5,7 +5,6 @@ using Orions.Node.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
@@ -32,7 +31,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public WizardItem SelectedItem { get; set; }
 
-		public List<string> Selections { get; set; } = new List<string>();
+		public LinkedList<WizardItem> SelectionHistory { get; set; } = new LinkedList<WizardItem>();
 
 		public string MessageDescription { get; set; }
 
@@ -43,7 +42,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		public WizardVm()
 		{
-			UpdateUI();
 		}
 
 		public async Task InitWizzard()
@@ -81,6 +79,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			SelectedItem = item;
 
+			SelectionHistory.AddLast(item);
+
 			WizardStageResult selections = null;
 			if (_wizardId == null)
 			{
@@ -104,13 +104,16 @@ namespace Orions.Systems.CrossModules.Components
 						// Show the wizard properties before anything else.
 						ShowPropertyGrid = true;
 						IsLoadedData = true;
+
+						SelectionHistory.RemoveLast(); // 
+
 						return;
 					}
 				}
 
 				// Create a new wizard.
 				var res = await this.HyperStore.ExecuteAsync(new StartHyperJobArgs(wizardType) { JobConfig = _pendingConfig });
-				
+
 				// Clean it up from the last populate.
 				Items.Clear();
 				_pendingConfig = null;
@@ -119,6 +122,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 			else
 			{
+				
 				if (_currentStage is WizardListStage)
 				{
 					selections = new WizardStageResult() { Results = Items.Select(it => it.Name).ToArray() };
@@ -133,7 +137,7 @@ namespace Orions.Systems.CrossModules.Components
 			Items.Clear();
 
 			_currentStage = await this.HyperStore.ExecuteAsync(new StepAheadWizardArgs() { JobId = _wizardId, PreviousStepResult = selections });
-			
+
 			if (_currentStage == null || _currentStage.IsFinal)
 			{
 				if (_wizardId != null)
@@ -161,16 +165,17 @@ namespace Orions.Systems.CrossModules.Components
 
 
 				}
-				else if (inputStage != null) {
+				else if (inputStage != null)
+				{
 
 					ShowConfirmDialog = true;
 
 					ConfirmDialogTitle = inputStage.Title;
-					if (inputStage.DefaultValue != null) 
+					if (inputStage.DefaultValue != null)
 					{
 						ConfirmDialogMessage = Convert.ToString(inputStage.DefaultValue);
 					}
-				
+
 				}
 
 			}
@@ -182,6 +187,9 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			IsLoadedData = false;
 			IsWizardFinish = false;
+
+			SelectionHistory = new LinkedList<WizardItem>();
+			SelectedItem = null;
 
 			var id = _wizardId;
 
@@ -217,7 +225,7 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 
-		public async Task CloseConfirmDialog() 
+		public async Task CloseConfirmDialog()
 		{
 			ShowConfirmDialog = false;
 
@@ -235,7 +243,7 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 
-		public void UpdateUI() 
+		public void UpdateUI()
 		{
 			var id = _wizardId;
 
@@ -274,6 +282,19 @@ namespace Orions.Systems.CrossModules.Components
 			return Task.FromResult((object)_pendingConfig);
 		}
 
+		public void OnClickFilter(WizardItem item) { 
+		
+		}
+
+	}
+
+	public class WizardHistoryItem
+	{
+		public string Name { get; set; }
+
+		public string Value { get; set; }
+
+		public bool IsPropertySelection { get; set; }
 	}
 
 	public class WizardItem
