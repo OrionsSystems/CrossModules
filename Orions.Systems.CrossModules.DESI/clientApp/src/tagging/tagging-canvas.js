@@ -76,8 +76,10 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			raster = new paper.Raster(frameImage);
 		}
 		raster.image = frameImage
+		raster.size = new paper.Size(frameImage.width, frameImage.height);
+		raster.position = self.scope.view.center
 
-		raster.onLoad = function() {
+		raster.onLoad = function () {
 			raster.position = self.scope.view.center
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
 		}
@@ -93,7 +95,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		}
 	});
 	frameImageObserver.observe(frameImage, {
-		attributes: true		
+		attributes: true
 	})
 
 	frameImage.addEventListener('resize', function (e) {
@@ -212,7 +214,6 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	}
 
 	window.Orions.TaggingSurface.addTag = function (tag) {
-		let rasterg = raster;
 		var newTagVisual = new TagVisual(raster.strokeBounds, tag);
 		var tagCoords = getRectangleRealFromProportional(tag, raster.strokeBounds);
 
@@ -266,7 +267,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.attachElementPositionToTag = function (id, elementSelector) {
 		let tag = self.items.find(i => i.id == id);
 		if (tag) {
-			
+
 
 			let tagAbsolutePosition = {
 				x: tag.get_topLeft().x,

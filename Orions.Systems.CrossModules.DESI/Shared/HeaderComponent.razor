@@ -41,6 +41,8 @@
             .Select(i => i.EventArgs.Location)
             .DistinctUntilChanged()
             .Subscribe(OnLocationChanged);
+
+        OnLocationChanged(NavigationManager.Uri);
     }
 
     protected override void Dispose(bool disposing)
