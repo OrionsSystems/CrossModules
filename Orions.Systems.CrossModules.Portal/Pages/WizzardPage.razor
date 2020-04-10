@@ -1,0 +1,20 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/wizzard"
+
+@inherits PortalBaseComponent
+
+@using Orions.Infrastructure.HyperMedia
+
+<Wizard HyperStore="@HyperStore"></Wizard>
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+}
+
+
+
