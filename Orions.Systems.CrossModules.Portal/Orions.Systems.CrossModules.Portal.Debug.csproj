@@ -10,7 +10,7 @@
 		<PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
 		<PackageReference Include="BlazorStrap" Version="1.2.0" />
 		<PackageReference Include="ChartJs.Blazor" Version="1.0.3" />
-		<PackageReference Include="EmbeddedBlazorContent" Version="1.9.0" />
+		<PackageReference Include="EmbeddedBlazorContent" Version="1.10.0" />
 		<PackageReference Include="MatBlazor" Version="2.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.ProtectedBrowserStorage" Version="0.1.0-alpha.19521.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.4.0" />
