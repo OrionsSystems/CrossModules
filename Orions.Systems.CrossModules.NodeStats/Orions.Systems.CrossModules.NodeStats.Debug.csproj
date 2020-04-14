@@ -12,7 +12,7 @@
     <PackageReference Include="EmbeddedBlazorContent" Version="1.10.0" />
     <PackageReference Include="MatBlazor" Version="2.0.0" />
     <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="3.4.0" />
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.3.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="2.10.0" />
   </ItemGroup>
 
   <ItemGroup>
