@@ -28,6 +28,9 @@
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\src\WorkflowDesigner\workflowDesigner.js">
+		  <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
+		</EmbeddedResource>
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<!--<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
@@ -79,6 +82,7 @@
 		<None Remove="content\scripts\kendoComponents.js" />
 		<None Remove="content\css\styles.css" />
 		<None Remove="content\scripts\svgMapEditor.js" />
+		<None Remove="content\scripts\workflowDesigner.js" />
 		<None Remove="content\vanilla-picker\vanilla-picker.js" />
 		<None Remove="content\codemirror\codemirror.css" />
 		<None Remove="content\codemirror\codemirror.js" />
