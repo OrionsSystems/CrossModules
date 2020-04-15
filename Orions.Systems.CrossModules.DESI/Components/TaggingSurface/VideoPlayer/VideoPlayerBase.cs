@@ -36,7 +36,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public bool IsVideoLoading { get; set; } = true;
 		protected bool Paused { get; private set; } = true;
 		protected byte[] PayLoad { get; private set; }
-		protected string PausedFrameBase64 { get; private set; }
+		protected string PausedFrameBase64 { get { return MediaInstance?.CurrentPositionFrameImage == null ? null : UniImage.ConvertByteArrayToBase64Url(MediaInstance?.CurrentPositionFrameImage); } }
 
 		public VideoPlayerBase()
 		{
@@ -127,10 +127,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (hyperId.SliceId == null)
 				return;
 
-			var framePayload = await CacheService.GetCachedFrameAsync(_store, hyperId, null);
-
-			_pausedFrame = new UniImage(framePayload);
-			PausedFrameBase64 = _pausedFrame.DataBase64Link;
+			// Ask frame cache to load a frame if needed. The CurrentPositionFrameImage will be set automatically on the MediaInstance
+			await CacheService.GetCachedFrameAsync(_store, hyperId, null); 
 			UpdateState();
 
 			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
@@ -177,7 +175,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task OnPlayJsCallback()
 		{
-			PausedFrameBase64 = null;
 			Paused = false;
 
 			await OnPlay.InvokeAsync(null);

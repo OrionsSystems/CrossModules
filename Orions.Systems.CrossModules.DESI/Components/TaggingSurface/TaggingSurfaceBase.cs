@@ -37,6 +37,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private ITaskDataStore _taskDataStore;
 		private bool _initializationDone;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
+		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private TaskCompletionSource<bool> _frameRenderedTaskTcs = new TaskCompletionSource<bool>();
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
@@ -280,6 +281,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			try
 			{
+				await _updateTagsClientSemaphore.WaitAsync();
 				if (MediaDataStore.Data.MediaInstances?.Any() == true)
 				{
 					// update tags
@@ -320,6 +322,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				}
 			}
 			catch { }
+			finally
+			{
+				_updateTagsClientSemaphore.Release();
+			}
 		}
 
 		protected async Task OverlayMediaWithCanvas(bool overlay)
