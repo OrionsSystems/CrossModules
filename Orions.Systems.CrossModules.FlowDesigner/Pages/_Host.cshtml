@@ -1,0 +1,37 @@
+﻿@page "/"
+@namespace Orions.Systems.CrossModules.FlowDesigner.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@using EmbeddedBlazorContent;
+
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Orions.Systems.CrossModules.FlowDesigner</title>
+	<base href="~/" />
+
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+	<script src="EmbeddedBlazorFile/codemirror.js"></script>
+
+	@Html.EmbeddedBlazorContent()
+
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.css" />
+	<link rel="stylesheet" href="~/lib/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.css" />
+
+</head>
+<body>
+	<app>
+		<component type="typeof(App)" render-mode="ServerPrerendered" />
+	</app>
+
+	<script src="_framework/blazor.server.js"></script>
+</body>
+</html>
