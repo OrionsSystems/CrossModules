@@ -82,6 +82,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		raster.onLoad = function () {
 			raster.position = self.scope.view.center
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
+
+			componentRef.invokeMethodAsync("FrameImageRendered")
 		}
 	}
 	updateFrameImageOnCanvas();

@@ -9,12 +9,21 @@
     switch (Media.MediaSource)
     {
         case MemoryImagePlaylistEntry memoryImage:
-            <img src="@UniImage.ConvertByteArrayToBase64Url(memoryImage.Handle)" class="frame-img"/>
+            <div class="centered-container">
+                <img src="@UniImage.ConvertByteArrayToBase64Url(memoryImage.Handle)" class="frame-img"/>
+            </div>
             break;
 
         case HyperAssetPlaylistEntry hyperAsset:
-            <img class="frame-img"/>
-            <div> *** video mode is not yet supported *** </div>
+            <VideoPlayer
+                    CurrentTask="this.CurrentTask" 
+                    TagsStore="this.TagsStore"
+                    OnPaused="this.OnMediaPaused" 
+                    OnPlay="this.OnMediaPlay"
+                    OnLoading="this.OnMediaLoading"
+                    OnLoaded="this.OnMediaLoaded"
+                    ActionDispatcher="this.ActionDispatcher"
+                    MediaInstance="this.Media"/>
             break;
     }
 }

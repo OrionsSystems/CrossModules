@@ -95,6 +95,7 @@
 			padding: 20px;
 			display: flex;
 			flex-direction: column;
+			overflow: hidden;
 
 			.tagging-content-loader {
 				margin-top: 30px;
@@ -218,13 +219,12 @@
 		position: relative;
 		overflow: hidden;
 		align-items: center;
-		justify-content: center;
 		position: relative;
 
 		.centered-container {
 			display: flex;
 			max-width: 100%;
-			max-height: 100%;
+			max-height: calc(100% - 30px);
 			position: relative;
 
 			& > * {
@@ -240,7 +240,9 @@
 		.tagging-canvas {
 			position: absolute;
 			width: 100%;
-			height: 100%;
+			height: calc(100% - 30px);
+			top: 0;
+			background: #181818;
 		}
 	}
 }

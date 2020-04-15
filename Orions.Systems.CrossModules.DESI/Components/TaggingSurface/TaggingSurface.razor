@@ -3,14 +3,20 @@
 @inherits TaggingSurfaceBase
 
 <div class="tagging-surface-container" id="@this.ComponentId">
-	@ChildContent
+	<div class="tagging-surface-child-content">
+		@ChildContent
+	</div>
 
 	@if (MediaDataStore.Data.MediaInstances?.Count == 1)
 	{
-		<div class="centered-container">
 			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
-							ActionDispatcher="@ActionDispatcher" />
-		</div>
+							ActionDispatcher="@ActionDispatcher"
+							TaskDataStore="@TaskDataStore"
+							TagsStore="@TagsStore"
+							OnMediaPaused="async () => this.OverlayMediaWithCanvas(true)"
+							OnMediaPlay="async () => this.OverlayMediaWithCanvas(false)"
+							OnMediaLoading="async () => this.OverlayMediaWithCanvas(false)"
+							OnMediaLoaded="async () => this.OverlayMediaWithCanvas(true)"/>
 		<canvas class="tagging-canvas">
 		</canvas>
 	}

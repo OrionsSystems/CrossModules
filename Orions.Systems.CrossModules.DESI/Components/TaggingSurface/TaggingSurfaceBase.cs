@@ -29,6 +29,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private readonly string TaggedUnselectedMarkerBoundsColor = "#E3FF00";
 		private readonly string UntaggedUnselectedMarkerBoundsColor = "#FFFF00";
 
+		private string _componentId { get; set; }
 		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 		private List<Rectangle> _rectangles = new List<Rectangle>();
 		private IMediaDataStore _mediaDataStore;
@@ -37,6 +38,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private bool _initializationDone;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
+		private TaskCompletionSource<bool> _frameRenderedTaskTcs = new TaskCompletionSource<bool>();
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
 		[Parameter]
@@ -45,7 +47,31 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			get => _mediaDataStore;
 			set => SetProperty(ref _mediaDataStore,
 				value,
-				() => _subscriptions.Add(value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances)).Subscribe(_ => UpdateState())));
+				() => {
+					_subscriptions.Add(
+						value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances)).Subscribe(_ =>
+						{
+							UpdateRectangles();
+							if(value?.Data?.MediaInstances != null)
+							{
+								_subscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ => UpdateRectangles()));
+
+								_subscriptions.Add(
+									value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
+									{
+										UpdateRectangles();
+									}));
+							}
+						}));
+
+					_subscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ => UpdateRectangles()));
+
+					_subscriptions.Add(
+						value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
+						{
+							UpdateRectangles();
+						}));
+				});
 		}
 
 		[Parameter]
@@ -91,8 +117,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private string _componentId { get; set; }
-
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
 
@@ -126,6 +150,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public async Task AttachElementPositionToRectangle(string rectangleId, string elementSelector)
 		{
 			await _initializationTaskTcs.Task;
+			await _frameRenderedTaskTcs.Task;
 			if(this.Rectangles.Any(r => r.Id == rectangleId))
 			{
 				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
@@ -134,6 +159,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		[JSInvokable]
 		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
+
+		[JSInvokable]
+		public async Task FrameImageRendered()
+		{
+			if (!_frameRenderedTaskTcs.Task.IsCompleted)
+			{
+				_frameRenderedTaskTcs.SetResult(true);
+			}
+		}
 
 		protected override async Task OnAfterRenderAsync(bool firstRender)
 		{
@@ -162,6 +196,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private void OnCurrentTaskChanged()
 		{
+			UpdateRectangles();
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.zoom", new object[] { 1 });
 		}
 
@@ -230,7 +265,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private HyperId GetCurrentPosition()
 		{
-			if(MediaDataStore.Data.MediaInstances.Count == 1)
+			if(MediaDataStore != null && MediaDataStore.Data.MediaInstances.Count == 1)
 			{
 				return MediaDataStore.Data.MediaInstances[0].CurrentPosition;
 			}
@@ -241,6 +276,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task UpdateTagsOnClient(List<Rectangle> oldRectangleCollection, List<Rectangle> newRectangleCollection)
 		{
 			await _initializationTaskTcs.Task;
+			await _frameRenderedTaskTcs.Task;
 
 			try
 			{
@@ -284,6 +320,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				}
 			}
 			catch { }
+		}
+
+		protected async Task OverlayMediaWithCanvas(bool overlay)
+		{
+			await _initializationTaskTcs.Task;
+			await this.JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { ".tagging-canvas, .tagging-surface-child-content", new { visibility = overlay ? "visible" : "hidden" } });
 		}
 
 		protected override void Dispose(bool disposing)

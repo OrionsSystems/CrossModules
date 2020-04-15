@@ -202,12 +202,32 @@ body {
     .enter-btn[disabled] svg {
       border-color: #a0a7b6; }
 
+.video-js {
+  position: absolute !important;
+  width: 100%;
+  height: 100%; }
+
+.vjs-tech {
+  height: calc(100% - 30px) !important; }
+
+.vjs-control-bar {
+  display: flex !important; }
+
+.video-js .vjs-big-play-button {
+  display: none !important; }
+
 .vjs-modal-dialog .vjs-modal-dialog-content, .video-js .vjs-modal-dialog, .vjs-button > .vjs-icon-placeholder:before, .video-js .vjs-big-play-button .vjs-icon-placeholder:before {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%; }
+
+.video-js .vjs-picture-in-picture-control {
+  display: none !important; }
+
+.video-js .vjs-fullscreen-control {
+  display: none !important; }
 
 .vjs-button > .vjs-icon-placeholder:before, .video-js .vjs-big-play-button .vjs-icon-placeholder:before {
   text-align: center; }
@@ -1633,6 +1653,17 @@ video::-webkit-media-text-track-display {
   outline: none;
   background: none; }
 
+.video-player-overlay {
+  position: absolute !important;
+  width: 100%;
+  height: calc(100% - 30px);
+  z-index: 9999;
+  background: rgba(242, 242, 242, 0.2);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center; }
+
 .vizlist-main-container {
   display: flex; }
   .vizlist-main-container .viz-container {
@@ -2181,7 +2212,8 @@ video::-webkit-media-text-track-display {
       background-color: #181818;
       padding: 20px;
       display: flex;
-      flex-direction: column; }
+      flex-direction: column;
+      overflow: hidden; }
       .tagging-page-container > .bottom-row > .right-column .tagging-content-loader {
         margin-top: 30px; }
         .tagging-page-container > .bottom-row > .right-column .tagging-content-loader .sk-flow-dot {
@@ -2253,12 +2285,11 @@ video::-webkit-media-text-track-display {
     position: relative;
     overflow: hidden;
     align-items: center;
-    justify-content: center;
     position: relative; }
     .tagging-page-container .tagging-surface-container .centered-container {
       display: flex;
       max-width: 100%;
-      max-height: 100%;
+      max-height: calc(100% - 30px);
       position: relative; }
       .tagging-page-container .tagging-surface-container .centered-container > * {
         max-height: 100%;
@@ -2268,7 +2299,9 @@ video::-webkit-media-text-track-display {
     .tagging-page-container .tagging-surface-container .tagging-canvas {
       position: absolute;
       width: 100%;
-      height: 100%; }
+      height: calc(100% - 30px);
+      top: 0;
+      background: #181818; }
 
 .tagonomy-info-popup-container {
   background-color: #f2f2f2;
