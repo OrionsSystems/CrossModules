@@ -23,8 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{65D18785-E4D5-4D54-8294-797DF3695F56}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.Portal.Open", "Orions.Systems.CrossModules.Portal\Orions.Systems.CrossModules.Portal.Open.csproj", "{E00566B4-E39A-4E56-BEF0-135FDE745CB0}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.Desi.Core", "..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Core\Orions.Systems.Desi.Core.csproj", "{29486A35-E065-4DA1-A2C1-B8D416A54545}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.Desi.Common", "..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Common\Orions.Systems.Desi.Common.csproj", "{DC85B63E-AE25-4274-AB7B-ED639DA6ACFC}"
@@ -67,10 +65,6 @@ Global
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{27629BF2-917A-42E0-83F4-380FEC6D9BF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E00566B4-E39A-4E56-BEF0-135FDE745CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E00566B4-E39A-4E56-BEF0-135FDE745CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E00566B4-E39A-4E56-BEF0-135FDE745CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E00566B4-E39A-4E56-BEF0-135FDE745CB0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{29486A35-E065-4DA1-A2C1-B8D416A54545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{29486A35-E065-4DA1-A2C1-B8D416A54545}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29486A35-E065-4DA1-A2C1-B8D416A54545}.Release|Any CPU.ActiveCfg = Release|Any CPU

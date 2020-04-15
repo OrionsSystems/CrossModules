@@ -52,7 +52,7 @@
 						<tr>
 							<th width="1%" class="nowrap center"></th>
 							<th>Name</th>
-							<th width="30%" class="nowrap center"></th>
+							@*<th width="30%" class="nowrap center"></th>*@
 						</tr>
 					</thead>
 					<tbody>
@@ -64,7 +64,7 @@
 							<tr>
 								<td class="center nowrap">@counter</td>
 								<td class="wizzard-item-link nowrap" @onclick="@(async ev => await Vm.OnOpenWizzard(item))">@item.Name</td>
-								<td class="center nowrap"></td>
+								@*<td class="center nowrap"></td>*@
 							</tr>
 
 						}
@@ -121,7 +121,7 @@
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>@Vm.ConfirmDialogMessage</p>
+					<input type="text" @bind="@Vm.ConfirmDialogMessage" />
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-primary" @onclick="Vm.ApplyConfirmDialog">Apply</button>

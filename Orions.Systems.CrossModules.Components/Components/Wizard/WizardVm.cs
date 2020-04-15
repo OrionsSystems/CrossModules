@@ -77,9 +77,11 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			IsLoadedData = false;
 
-			SelectedItem = item;
+			if (item != null) {
+				SelectedItem = item;
 
-			SelectionHistory.AddLast(item);
+				SelectionHistory.AddLast(item);
+			}
 
 			WizardStageResult selections = null;
 			if (_wizardId == null)
@@ -125,11 +127,13 @@ namespace Orions.Systems.CrossModules.Components
 				
 				if (_currentStage is WizardListStage)
 				{
-					selections = new WizardStageResult() { Results = Items.Select(it => it.Name).ToArray() };
+					//selections = new WizardStageResult() { Results = Items.Where(it=>it.Selected == true).Select(it => it.Name).ToArray() };
+					selections = new WizardStageResult() { Results = new[] { SelectedItem.Value } };
 				}
 				else if (_currentStage is WizardDataInputStage)
 				{
-					selections = new WizardStageResult() { Results = new string[] { _lastInputValue } };
+					//selections = new WizardStageResult() { Results = new string[] { _lastInputValue } };
+					selections = new WizardStageResult() { Results = new string[] { ConfirmDialogMessage } };
 				}
 			}
 
@@ -238,7 +242,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			// Auto-move ahead on entry.
 
-			//TODO
+			await OnOpenWizzard(null);
 
 		}
 

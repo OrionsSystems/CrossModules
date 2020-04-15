@@ -4,8 +4,12 @@
     <AssemblyName>Orions.Systems.CrossModules.Common</AssemblyName>
     <RootNamespace>Orions.Systems.CrossModules.Common</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
+  
+  	<ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
     <PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
   </ItemGroup>
