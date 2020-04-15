@@ -8,7 +8,7 @@ using Orions.Node.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WorkflowDesignerVm : BlazorVm
+	public class FlowDesignerVm : BlazorVm
 	{
 		public bool IsShowDesignerSetting { get; set; }
 
@@ -16,7 +16,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
 
-		public WorkflowDesignerVm()
+		public FlowDesignerVm()
 		{
 			
 		}

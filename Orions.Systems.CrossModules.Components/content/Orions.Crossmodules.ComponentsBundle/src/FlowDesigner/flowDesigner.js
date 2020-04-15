@@ -77,12 +77,12 @@ var testData = {
 }
 
 
-window.Orions.WorkflowDesigner = {
+window.Orions.FlowDesigner = {
 
-	init: function (componentInstance) {
+	Init: function (componentInstance) {
 
 		// User Configuration
-		let baseComponentPath = '/workflowDesigner/';
+		let baseComponentPath = '/flowDesigner/';
 		let componentsConfigFilePath = 'components/components.json';
 		let fileDesigner = 'designer.json';
 

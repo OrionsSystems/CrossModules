@@ -1,24 +1,25 @@
 {
-  "name": "orions.crossmodules.componentsbundle",
-  "version": "1.0.0",
-  "description": "",
-  "private": true,
-  "scripts": {},
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
-    "babel-loader": "^8.0.6",
-    "webpack": "^4.41.6",
-    "webpack-cli": "^3.3.11"
-  },
-  "dependencies": {
-    "@svgdotjs/svg.draggable.js": "^3.0.2",
-    "@svgdotjs/svg.js": "^3.0.16",
-    "jquery": "^3.4.1",
-    "jquery-ui": "^1.12.1",
-    "svg-pan-zoom": "^3.6.1",
-    "svg.draw.js": "^2.0.4"
-  }
+	"name": "orions.crossmodules.componentsbundle",
+	"version": "1.0.0",
+	"description": "",
+	"private": true,
+	"scripts": {},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"@babel/core": "^7.8.4",
+		"@babel/preset-env": "^7.8.4",
+		"babel-loader": "^8.0.6",
+		"webpack": "^4.41.6",
+		"webpack-cli": "^3.3.11"
+	},
+	"dependencies": {
+		"@svgdotjs/svg.draggable.js": "^3.0.2",
+		"@svgdotjs/svg.js": "^3.0.16",
+		"jquery": "^3.4.1",
+		"jquery-ui": "^1.12.1",
+		"svg-pan-zoom": "^3.6.1",
+		"svg.draw.js": "^2.0.4",
+		"bootstrap-colorpicker": "3.2.0"
+	}
 }

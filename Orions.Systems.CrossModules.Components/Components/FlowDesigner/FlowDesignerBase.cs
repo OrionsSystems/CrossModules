@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WorkflowDesignerBase : BaseBlazorComponent<WorkflowDesignerVm>, IDisposable
+	public class FlowDesignerBase : BaseBlazorComponent<FlowDesignerVm>, IDisposable
 	{
 		IDisposable thisReference;
 
@@ -30,7 +30,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public WorkflowDesignerBase()
+		public FlowDesignerBase()
 		{
 
 		}
@@ -44,7 +44,7 @@ namespace Orions.Systems.CrossModules.Components
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			thisReference = DotNetObjectReference.Create(this);
-			await JsInterop.InvokeAsync<object>("Orions.WorkflowDesigner.init", new object[] { thisReference });
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference });
 
 		}
 

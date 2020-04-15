@@ -3,7 +3,7 @@
 var wFlowDiagram = (function () {
 
     // User Configuration
-    let baseComponentPath = '/js/wFlowDiagram/';
+    let baseComponentPath = '/flowDesigner/';
     let componentsConfigFilePath = 'components/components.json';
     let fileDesigner = 'designer.json';
 
