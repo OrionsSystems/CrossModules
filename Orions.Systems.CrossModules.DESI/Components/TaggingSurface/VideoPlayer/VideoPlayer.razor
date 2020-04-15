@@ -18,16 +18,17 @@
 @if (CurrentFrameIsLoading || IsVideoLoading)
 {
 	<div class="video-player-overlay">
+		<div class="overlay-message">
 		@if (CurrentFrameIsLoading)
 		{
-			<span>
-				Loading frame image...
-			</span>
+			@("Loading frame image...")
 		}
 		else if (IsVideoLoading)
 		{
-			<span>Buffering video...</span>
+			@("Buffering video...")
 		}
+		</div>
+		<DotsLoader CssClass="video-overlay-dots-loader"/>
 	</div>
 }
 

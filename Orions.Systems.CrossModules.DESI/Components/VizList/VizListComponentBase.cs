@@ -54,7 +54,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		public Action VizListRendered { get; set; }
 
 		protected string _componentId = $"vizlist-{Guid.NewGuid().ToString()}";
-		private bool _jsInitialized = false;
 		protected TagonomyExecutionData Data => _store.Data;
 
 		protected void SelectTagonomyNode(TagonomyNodeModel tagonomyNodeModel) => ActionDispatcher.Dispatch(SelectTagonomyNodeAction.Create(tagonomyNodeModel));

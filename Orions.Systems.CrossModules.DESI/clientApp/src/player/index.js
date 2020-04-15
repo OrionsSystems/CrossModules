@@ -59,6 +59,12 @@ window.Orions.Player = {
     setPosition: function (position) {
         this.video.doNotProcessPositionChanged = true;
         this.video.currentTime(position);
+    },
+    play: function () {
+        this.video.play();
+    },
+    pause: function () {
+        this.video.pause();
     }
 };
 

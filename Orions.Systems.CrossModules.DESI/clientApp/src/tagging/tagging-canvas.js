@@ -72,18 +72,20 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	let updateFrameImageOnCanvas = function () {
 		frameImage = document.getElementsByClassName('frame-img')[0];
 
-		if (!raster) {
-			raster = new paper.Raster(frameImage);
-		}
-		raster.image = frameImage
-		raster.size = new paper.Size(frameImage.width, frameImage.height);
-		raster.position = self.scope.view.center
-
-		raster.onLoad = function () {
-			raster.position = self.scope.view.center
+		if (frameImage.src != '') {
+			if (!raster) {
+				raster = new paper.Raster(frameImage);
+			}
+			raster.image = frameImage
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
+			raster.position = self.scope.view.center
 
-			componentRef.invokeMethodAsync("FrameImageRendered")
+			raster.onLoad = function () {
+				raster.position = self.scope.view.center
+				raster.size = new paper.Size(frameImage.width, frameImage.height);
+
+				componentRef.invokeMethodAsync("FrameImageRendered")
+			}
 		}
 	}
 	updateFrameImageOnCanvas();
