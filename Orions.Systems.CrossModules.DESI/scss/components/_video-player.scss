@@ -1,0 +1,11 @@
+﻿.video-player-overlay {
+	position: absolute !important;
+	width: 100%;
+	height: calc(100% - 30px);
+	z-index: 9999;
+	background: rgba(242, 242, 242, 0.2);
+	color: white;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
