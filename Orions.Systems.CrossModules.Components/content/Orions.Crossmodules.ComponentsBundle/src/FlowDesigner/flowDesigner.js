@@ -2,215 +2,395 @@
 //import 'bootstrap-colorpicker';
 
 
-var testData = {
-	"tabs": [
-		{
-			"id": "1516287215994",
-			"name": "Main",
-			"icon": "fa-object-ungroup",
-			"linker": "main",
-			"index": 0
+(function () {
+
+	// User Configuration
+	let baseComponentPath = '/flowDesigner/';
+	let componentsConfigFilePath = 'components/components.json';
+	let fileDesigner = 'designer.json';
+
+	let defaultRefreshNodeStatusInMilisecond = 30000; //default is 30 sec
+
+	var common = {};
+	common.touches = false;
+	common.localComponents = [];
+	common.components = [];
+	common.theme = 'dark';
+	common.callbacks = {};
+	common.statics = {}; // cache for static content
+	common.remoteData = true; // TODO default is true !
+
+	var flow = {};
+	flow.components = [];
+	flow.connections = [];
+	flow.designer = [];
+	flow.loaded = false;
+	flow.workflow = {};
+	flow.isReadOnly = false;
+
+	var mdraggable = {};
+
+	var settings = {};
+
+	var operation = {};
+	operation.designer = {};
+
+	let baseUrl = window.location.origin;
+
+	function checktouches(e) {
+		common.touches = true;
+		$(document).off('touchstart', checktouches);
+	}
+
+	function findItemById(data, id) {
+		return data.find(function (el) {
+			return el.id === id;
+		});
+	};
+
+	function diagonal(x1, y1, x2, y2) {
+		return 'M' + x1 + ',' + y1 + 'C' + ((x1 + x2) / 2) + ',' + y1 + ' ' + ((x1 + x2) / 2) + ',' + y2 + ' ' + x2 + ',' + y2;
+	}
+
+	function getTranslate(value) {
+		if (value instanceof jQuery)
+			value = value.attr('transform');
+		var arr = value.substring(10, value.length - 1).split(/\s|,/);
+		return {
+			x: parseInt(arr[0]),
+			y: parseInt(arr[1])
 		}
-	],
-	"components": [
-		{
-			"component": "assetsourcehyperworkflowdata",
-			"state": {
-				"text": null,
-				"color": null
-			},
-			"x": 57,
-			"y": 56,
-			"tab": null,
-			"connections": [
-				{
-					"index": "0",
-					"id": "2a6fd615-8e7b-455d-b1c8-92ba40a017aa"
-				}
-			],
-			"id": "cc5bc02a-6741-4fc3-8c02-f5480735f563"
-		},
-		{
-			"component": "mltagginghyperworkflowdata",
-			"state": {
-				"text": null,
-				"color": null
-			},
-			"x": 582,
-			"y": 165,
-			"tab": null,
-			"connections": [
-				{
-					"index": "0",
-					"id": "c5c3c4fe-1ca7-4276-8882-554c67f2019c"
-				}
-			],
-			"id": "2a6fd615-8e7b-455d-b1c8-92ba40a017aa"
-		},
-		{
-			"component": "taggingsinkhyperworkflowdata",
-			"state": {
-				"text": null,
-				"color": null
-			},
-			"x": 863,
-			"y": 124,
-			"tab": null,
-			"connections": [],
-			"id": "c5c3c4fe-1ca7-4276-8882-554c67f2019c"
-		},
-		{
-			"component": "ooitagginghyperworkflowdata",
-			"state": {
-				"text": null,
-				"color": null
-			},
-			"x": 95,
-			"y": 342,
-			"tab": null,
-			"connections": [],
-			"id": "1e12e469-1ea0-421f-b623-794838186ba5"
+	}
+
+	function setState(value) {
+		$('#designerstate').html(value);
+		setBlinkState(value ? true : false);
+	}
+
+	function setBlinkState(isBlink) {
+		if (typeof (isBlink) == typeof (true)) {
+			$('.mainmenu').find('.highlight').toggleClass('blink', isBlink);
 		}
-	],
-	"version": 223,
-	"variables": ""
-}
+	}
+
+	function offsetter(evt) {
+
+		var position = { x: 0, y: 0 };
+
+		if (!evt)
+			return position;
+
+		if (evt.touches) {
+			position.x = evt.touches[0].pageX;
+			position.y = evt.touches[0].pageY;
+		} else {
+			position.x = evt.pageX;
+			position.y = evt.pageY;
+		}
+		var parent = evt.target;
+		while (parent.offsetParent) {
+			position.x -= parent.offsetLeft;
+			position.y -= parent.offsetTop;
+			parent = parent.offsetParent;
+		}
+
+		return position;
+	}
+
+	function savescrollposition() {
+		if (common.tab) {
+			var el = $('.designer-scrollbar');
+			var tmp = common.tabscroll['tab' + common.tab.id];
+			var pos = { x: el.prop('scrollLeft'), y: el.prop('scrollTop') };
+			if (!tmp || (tmp.x !== pos.x && tmp.y !== pos.y)) {
+				//SET('common.tabscroll.tab' + common.tab.id, pos);
+			}
+		}
+	}
+
+	function staticContent(target, type, callback) {
+
+		var key = type + '.' + target;
+
+		if (common.statics[key]) {
+			callback(common.statics[key], true);
+			return;
+		}
+
+		//var id = GUID(15);
+		var id = Date.now().toString();
+
+		if (type === 'html') {
+			common.statics[key] = 'html.' + target;
+			var com = findItemById(common.components, target);
+			var title = target;
+			if (com)
+				title = com.name;
+
+			//TODO
+			$('#flowsettings').append('<div data-jc-id="html.' + target + '" data-jc="form" data-jc-path="common.form" class="hidden"> <div data-jc-scope="settings.' + target + '"> <div class="padding bg-fade"> <div class="row"> <div class="col-md-4 m"> <div data-jc="textbox" data-jc-path="comname" data-jc-config="placeholder: Type a label for node"> Label </div> </div> <div class="col-md-4 m"> <div data-jc="textbox" data-jc-path="comreference" data-jc-config="placeholder: Type a reference for this instance">Reference</div> </div> <div class="col-md-4 m"> <div class="fs12">Color:</div> <div data-jc="colorselector" data-jc-path="comcolor"></div> </div> </div> </div> ' + response + '<br/> <div class="ui-center padding gray"><i class="fa fa-ban mr5"></i> No advanced configuration.</div> <br/> <div class="ui-form-buttons"> <div class="help nmt" style="margin-bottom:5px">The options will be applied immediately.</div> <div data-jc="validation" data-jc-path="?" style="width:100%"> <button name="submit" class="exec" data-exec="#flow.settings" disabled="disabled" style="width:100%"> APPLY SETTINGS </button> </div> </div> </div> </div>');
+
+			//COMPILE($('#flowsettings').append('<div data-jc-id="html.{0}" data-jc="form" data-jc-config="title:@(Settings\\:) {2};if:settings-{0};width:960" data-jc-path="common.form" class="hidden"><div data-jc-scope="settings.{0}"><div class="padding bg-fade"><div class="row"><div class="col-md-4 m"><div data-jc="textbox" data-jc-path="comname" data-jc-config="placeholder:@(Type a label for node)">@(Label)</div></div><div class="col-md-4 m"><div data-jc="textbox" data-jc-path="comreference" data-jc-config="placeholder:@(Type a reference for this instance)">@(Reference)</div></div><div class="col-md-4 m"><div class="fs12">@(Color:)</div><div data-jc="colorselector" data-jc-path="comcolor"></div></div></div></div>{1}<div class="ui-form-buttons"><div class="help nmt" style="margin-bottom:5px">@(The options will be applied immediately.)</div><div data-jc="validation" data-jc-path="?" style="width:100%"><button name="submit" class="exec" data-exec="#flow.settings" disabled="disabled" style="width:100%">@(APPLY SETTINGS)</button></div></div></div></div>'.format(target, response || '<br /><div class="ui-center padding gray"><i class="fa fa-ban mr5"></i>@(No advanced configuration.)</div><br />', title.replace(/\:/g, '\\:'))));
+		} else {
+			var response = callback();
+			common.statics[key] = response;
+		}
+
+		callback(common.statics[key], false);
+	}
+
+	function html(component, value) {
+		//var el = this.element;
+		var el = component;
+		if (value === undefined)
+			return el.html();
+		if (value instanceof Array)
+			value = value.join('');
+		var type = typeof (value);
+		return value || type === 'number' || type === 'boolean' ? el.empty().append(value) : el.empty();
+	}
+
+	function createComponentMenu(remoteCommonComponents) {
+
+		debugger;
+
+		if (!common.localComponents) return;
+
+		var groupMap = {};
+
+		if (remoteCommonComponents && remoteCommonComponents instanceof Array) {
+
+			let defGroup = "Default Group";
+
+			$.each(remoteCommonComponents, function (index, element) {
+
+				var findLocalComponent = common.localComponents.find(function (localElement) {
+					return localElement.id === element.id;
+				});
+
+				if (findLocalComponent) {
+
+					element.author = element.author || findLocalComponent.author;
+					element.color = element.color || findLocalComponent.color;
+					element.group = element.group || findLocalComponent.group;
+					element.html = element.html || findLocalComponent.html;
+					element.icon = element.icon || findLocalComponent.icon;
+					element.readme = element.readme || findLocalComponent.readme;
+				}
+
+				//console.log(index + ' | '+ element.id + ' | ' +element.typeFull);
+
+				element.group = element.group || defGroup;
+
+				var _menuData = [];
+
+				if (groupMap[element.group]) {
+					_menuData = groupMap[element.group];
+				}
+
+				_menuData.push(element);
+				groupMap[element.group] = _menuData;
+			});
+
+		} else {
+
+			$.each(common.localComponents, function (index, element) {
+
+				var _menuData = [];
+
+				if (groupMap[element.group]) {
+					_menuData = groupMap[element.group];
+				}
+
+				_menuData.push(element);
+				groupMap[element.group] = _menuData;
+			});
+		}
+
+		// create menu
+		var c = $('.components');
+		$.each(groupMap, function (groupName, group) {
+			c.append('<li class="group" data-search=""><i class="fa fa-folder-open"></i> ' + groupName + '</li>')
+
+			//sort group by Title
+			group.sort(function (a, b) {
+				var p1 = a.title.toLowerCase();
+				var p2 = b.title.toLowerCase();
+				if (p1 < p2) return -1;
+				if (p1 > p2) return 1;
+				return 0;
+			});
+
+			$.each(group, function (index, element) {
+				element.color = element.color || '#e3e3e8';
+				c.append('<li draggable="true" class="component" data-id="' + element.id + '"><div><i class="fa fa-square" style="color:' + element.color + '"></i> ' + element.title + '</div></li>')
+			});
+		});
+	}
+
+	function loadRemoteJsonData() {
+
+		if (!_loadWorkflowDesignData) return Error('Missing loading address..');
+		if (!_workflowId) return Error('workflowId');
+		if (!_nodeId) return Error('nodeId')
+
+		return new Promise(function (resolve, reject) {
+
+			var data = { 'workflowId': _workflowId, 'nodeId': _nodeId };
+
+			$.post(_loadWorkflowDesignData, data).done(function (response) {
+				resolve(JSON.parse(response));
+			}).fail(function (jqxhr, textStatus, error) {
+				Error(error);
+				reject();
+			});
+		});
+	}
+
+	function copySettingsFromOriginalNode(original) {
+
+		original.x += 50;
+		original.y += 50;
+		var desingComponent = JSON.stringify(original);
+		var originalNodeConfigId = original.id;
+		return new Promise(function (resolve, reject) {
+
+			var data = {
+				'workflowId': _workflowId,
+				'nodeId': _nodeId,
+				'originalNodeConfigId': originalNodeConfigId,
+				'desingComponentJson': desingComponent
+			};
+
+			$.post(_duplicateNodeAddress, data).done(function (response) {
+				var res = JSON.parse(response);
+
+				res.$component = component;
+
+				res.output = res.output || component.output;
+				res.input = res.input || component.input;
+
+				resolve(res);
+			}).fail(function (jqxhr, textStatus, error) {
+				loading.hide();
+				Error(error);
+				reject();
+			});
+		});
+	}
+
+	function createNodeConfiguration(component) {
+		//TODO call external callback
+
+		var desingComponent = JSON.stringify(component);
+
+		//return new Promise(function (resolve, reject) {
+
+		//	var data = {
+		//		'workflowId': _workflowId,
+		//		'nodeId': _nodeId,
+		//		'desingComponentJson': desingComponent
+		//	};
+
+		//	$.post(_createNodeAddress, data).done(function (response) {
+		//		var res = JSON.parse(response);
+
+		//		res.$component = component;
+
+		//		res.title = res.title || component.title;
+		//		res.output = res.output || component.output;
+		//		res.input = res.input || component.input;
+
+		//		if (typeof (res.state) === 'object' && res.state)
+		//			res.state = { text: res.state.text || component.title, color: res.state.color || component.color };
+		//		else
+		//			res.state = { text: res.title || '', color: component.color };
+
+		//		resolve(res);
+		//	}).fail(function (jqxhr, textStatus, error) {
+		//		loading.hide();
+		//		Error(error);
+		//		reject();
+		//	});
+		//});
+	}
+
+	function saveRemoteJsonConfiguration(flowJson) {
+
+		if (!_saveWorkflowDesignData) return Error('Missing save address..');
+		if (!_workflowId) return Error('workflowId');
+		if (!_nodeId) return Error('nodeId')
+
+		if (!flow.workflow) return Error('workflow')
+
+		return new Promise(function (resolve, reject) {
+
+			var data = { 'workflowId': _workflowId, 'nodeId': _nodeId, json: flowJson };
+
+			$.post(_saveWorkflowDesignData, data).done(function (response) {
+				resolve(response);
+			}).fail(function (jqxhr, textStatus, error) {
+				Error(error);
+				reject();
+			});
+		});
+	}
+
+	function ToggleMainMenu() {
+
+		$(document.body).toggleClass('mainmenu-hidden', settings.isMinimizeMainMenu.get());
+
+		if (settings.isMinimizeMainMenu.get() == true) {
+			$('#mainMenuBtnId i').removeClass('fa-chevron-left');
+			$('#mainMenuBtnId i').addClass('fa-chevron-right');
+		} else {
+			$('#mainMenuBtnId i').removeClass('fa-chevron-right');
+			$('#mainMenuBtnId i').addClass('fa-chevron-left');
+		}
+
+		settings.isMinimizeMainMenu.toggle();
+	}
+
+	function ToggleCommonMenu() {
+
+		if (settings.isCommonMinimized.get() == true) {
+			$('.panel').css('margin-right', -($('.panel').width()));
+			$('.body').css('margin-right', 0);
+
+			$('#commonMenuBtnId i').removeClass('fa-chevron-right');
+			$('#commonMenuBtnId i').addClass('fa-chevron-left');
+		} else {
+			$('.panel').css('margin-right', 0);
+			$('.body').css('margin-right', $('.panel').width());
+
+			$('#commonMenuBtnId i').removeClass('fa-chevron-left');
+			$('#commonMenuBtnId i').addClass('fa-chevron-right');
+		}
+
+		settings.isCommonMinimized.toggle();
+	}
+
+	window.Orions.FlowDesigner = {};
+
+	window.Orions.FlowDesigner.ToggleMainMenu = ToggleMainMenu;
+
+	window.Orions.FlowDesigner.ToggleCommonMenu = ToggleCommonMenu;
+
+	window.Orions.FlowDesigner.Copy = function (el) { operation.designer.copy(el); };
+	window.Orions.FlowDesigner.Paste = function (el) { operation.designer.paste(el); };
+	window.Orions.FlowDesigner.Duplicate = function (el) { operation.designer.duplicate(el); };
+	window.Orions.FlowDesigner.Remove = function (el) { operation.designer.remove(el); };
+
+	window.Orions.FlowDesigner.ZoomIn = function () { operation.designer.zoomin(); };
+	window.Orions.FlowDesigner.ZoomReset = function () { operation.designer.zoomreset(); };
+	window.Orions.FlowDesigner.ZoomOut = function () { operation.designer.zoomout(); };
 
 
-window.Orions.FlowDesigner = {
+	window.Orions.FlowDesigner.Init = function (componentInstance, designData) {
 
-	Init: function (componentInstance) {
-
-		// User Configuration
-		let baseComponentPath = '/flowDesigner/';
-		let componentsConfigFilePath = 'components/components.json';
-		let fileDesigner = 'designer.json';
-
-		let defaultRefreshNodeStatusInMilisecond = 30000; //default is 30 sec
-
-		var common = {};
-		common.touches = false;
-		common.localComponents = [];
-		common.components = [];
-		common.theme = 'dark';
-		common.callbacks = {};
-		common.statics = {}; // cache for static content
-		common.remoteData = false; // TODO default is true !
-
-		var flow = {};
-		flow.components = [];
-		flow.connections = [];
-		flow.designer = [];
-		flow.loaded = false;
-		flow.workflow = {};
-		flow.isReadOnly = false;
 
 		// Hybrid devices
 		$(document).on('touchstart', checktouches);
-
-		function checktouches(e) {
-			common.touches = true;
-			$(document).off('touchstart', checktouches);
-		}
-
-		function findItemById(data, id) {
-			return data.find(function (el) {
-				return el.id === id;
-			});
-		};
-
-		var mdraggable = {};
-
-		function diagonal(x1, y1, x2, y2) {
-			return 'M' + x1 + ',' + y1 + 'C' + ((x1 + x2) / 2) + ',' + y1 + ' ' + ((x1 + x2) / 2) + ',' + y2 + ' ' + x2 + ',' + y2;
-		}
-
-		function getTranslate(value) {
-			if (value instanceof jQuery)
-				value = value.attr('transform');
-			var arr = value.substring(10, value.length - 1).split(/\s|,/);
-			return {
-				x: parseInt(arr[0]),
-				y: parseInt(arr[1])
-			}
-		}
-
-		function setState(value) {
-			$('#designerstate').html(value);
-			setBlinkState(value ? true : false);
-		}
-
-		function setBlinkState(isBlink) {
-			if (typeof (isBlink) == typeof (true)) {
-				$('.mainmenu').find('.highlight').toggleClass('blink', isBlink);
-			}
-		}
-
-		function offsetter(evt) {
-
-			var position = { x: 0, y: 0 };
-
-			if (!evt)
-				return position;
-
-			if (evt.touches) {
-				position.x = evt.touches[0].pageX;
-				position.y = evt.touches[0].pageY;
-			} else {
-				position.x = evt.pageX;
-				position.y = evt.pageY;
-			}
-			var parent = evt.target;
-			while (parent.offsetParent) {
-				position.x -= parent.offsetLeft;
-				position.y -= parent.offsetTop;
-				parent = parent.offsetParent;
-			}
-
-			return position;
-		}
-
-		function savescrollposition() {
-			if (common.tab) {
-				var el = $('.designer-scrollbar');
-				var tmp = common.tabscroll['tab' + common.tab.id];
-				var pos = { x: el.prop('scrollLeft'), y: el.prop('scrollTop') };
-				if (!tmp || (tmp.x !== pos.x && tmp.y !== pos.y)) {
-					//SET('common.tabscroll.tab' + common.tab.id, pos);
-				}
-			}
-		}
-
-		function staticContent(target, type, callback) {
-
-			var key = type + '.' + target;
-
-			if (common.statics[key]) {
-				callback(common.statics[key], true);
-				return;
-			}
-
-			//var id = GUID(15);
-			var id = Date.now().toString();
-
-			if (type === 'html') {
-				common.statics[key] = 'html.' + target;
-				var com = findItemById(common.components, target);
-				var title = target;
-				if (com)
-					title = com.name;
-
-				//TODO
-				$('#flowsettings').append('<div data-jc-id="html.' + target + '" data-jc="form" data-jc-path="common.form" class="hidden"> <div data-jc-scope="settings.' + target + '"> <div class="padding bg-fade"> <div class="row"> <div class="col-md-4 m"> <div data-jc="textbox" data-jc-path="comname" data-jc-config="placeholder: Type a label for node"> Label </div> </div> <div class="col-md-4 m"> <div data-jc="textbox" data-jc-path="comreference" data-jc-config="placeholder: Type a reference for this instance">Reference</div> </div> <div class="col-md-4 m"> <div class="fs12">Color:</div> <div data-jc="colorselector" data-jc-path="comcolor"></div> </div> </div> </div> ' + response + '<br/> <div class="ui-center padding gray"><i class="fa fa-ban mr5"></i> No advanced configuration.</div> <br/> <div class="ui-form-buttons"> <div class="help nmt" style="margin-bottom:5px">The options will be applied immediately.</div> <div data-jc="validation" data-jc-path="?" style="width:100%"> <button name="submit" class="exec" data-exec="#flow.settings" disabled="disabled" style="width:100%"> APPLY SETTINGS </button> </div> </div> </div> </div>');
-
-				//COMPILE($('#flowsettings').append('<div data-jc-id="html.{0}" data-jc="form" data-jc-config="title:@(Settings\\:) {2};if:settings-{0};width:960" data-jc-path="common.form" class="hidden"><div data-jc-scope="settings.{0}"><div class="padding bg-fade"><div class="row"><div class="col-md-4 m"><div data-jc="textbox" data-jc-path="comname" data-jc-config="placeholder:@(Type a label for node)">@(Label)</div></div><div class="col-md-4 m"><div data-jc="textbox" data-jc-path="comreference" data-jc-config="placeholder:@(Type a reference for this instance)">@(Reference)</div></div><div class="col-md-4 m"><div class="fs12">@(Color:)</div><div data-jc="colorselector" data-jc-path="comcolor"></div></div></div></div>{1}<div class="ui-form-buttons"><div class="help nmt" style="margin-bottom:5px">@(The options will be applied immediately.)</div><div data-jc="validation" data-jc-path="?" style="width:100%"><button name="submit" class="exec" data-exec="#flow.settings" disabled="disabled" style="width:100%">@(APPLY SETTINGS)</button></div></div></div></div>'.format(target, response || '<br /><div class="ui-center padding gray"><i class="fa fa-ban mr5"></i>@(No advanced configuration.)</div><br />', title.replace(/\:/g, '\\:'))));
-			} else {
-				var response = callback();
-				common.statics[key] = response;
-			}
-
-			callback(common.statics[key], false);
-		}
 
 		Array.prototype.flowConnection = function (index, id) {
 			for (var i = 0; i < this.length; i++)
@@ -802,17 +982,6 @@ window.Orions.FlowDesigner = {
 			}
 		});
 
-		function html(component, value) {
-			//var el = this.element;
-			var el = component;
-			if (value === undefined)
-				return el.html();
-			if (value instanceof Array)
-				value = value.join('');
-			var type = typeof (value);
-			return value || type === 'number' || type === 'boolean' ? el.empty().append(value) : el.empty();
-		}
-
 		var isConfirm,
 			visibleConfirm = false,
 			confirmComponent;
@@ -908,7 +1077,7 @@ window.Orions.FlowDesigner = {
 			_isCommonMinimized = false,
 			_createNodeAddress,
 			_duplicateNodeAddress;
-		var settings = {
+		settings = {
 			jsonConfiguration: {
 				get: function () { return _jsonConfiguration; },
 				set: function (value) { _jsonConfiguration = value; }
@@ -989,189 +1158,6 @@ window.Orions.FlowDesigner = {
 			}
 		};
 
-		function createComponentMenu(remoteCommonComponents) {
-
-			if (!common.localComponents) return;
-
-			var groupMap = {};
-
-			if (remoteCommonComponents && remoteCommonComponents instanceof Array) {
-
-				let defGroup = "Default Group";
-
-				$.each(remoteCommonComponents, function (index, element) {
-
-					var findLocalComponent = common.localComponents.find(function (localElement) {
-						return localElement.id === element.id;
-					});
-
-					if (findLocalComponent) {
-
-						element.author = element.author || findLocalComponent.author;
-						element.color = element.color || findLocalComponent.color;
-						element.group = element.group || findLocalComponent.group;
-						element.html = element.html || findLocalComponent.html;
-						element.icon = element.icon || findLocalComponent.icon;
-						element.readme = element.readme || findLocalComponent.readme;
-					}
-
-					//console.log(index + ' | '+ element.id + ' | ' +element.typeFull);
-
-					element.group = element.group || defGroup;
-
-					var _menuData = [];
-
-					if (groupMap[element.group]) {
-						_menuData = groupMap[element.group];
-					}
-
-					_menuData.push(element);
-					groupMap[element.group] = _menuData;
-				});
-
-			} else {
-
-				$.each(common.localComponents, function (index, element) {
-
-					var _menuData = [];
-
-					if (groupMap[element.group]) {
-						_menuData = groupMap[element.group];
-					}
-
-					_menuData.push(element);
-					groupMap[element.group] = _menuData;
-				});
-			}
-
-			// create menu
-			var c = $('.components');
-			$.each(groupMap, function (groupName, group) {
-				c.append('<li class="group" data-search=""><i class="fa fa-folder-open"></i> ' + groupName + '</li>')
-
-				//sort group by Title
-				group.sort(function (a, b) {
-					var p1 = a.title.toLowerCase();
-					var p2 = b.title.toLowerCase();
-					if (p1 < p2) return -1;
-					if (p1 > p2) return 1;
-					return 0;
-				});
-
-				$.each(group, function (index, element) {
-					element.color = element.color || '#e3e3e8';
-					c.append('<li draggable="true" class="component" data-id="' + element.id + '"><div><i class="fa fa-square" style="color:' + element.color + '"></i> ' + element.title + '</div></li>')
-				});
-			});
-		}
-
-		let baseUrl = window.location.origin;
-
-		function loadRemoteJsonData() {
-
-			if (!_loadWorkflowDesignData) return Error('Missing loading address..');
-			if (!_workflowId) return Error('workflowId');
-			if (!_nodeId) return Error('nodeId')
-
-			return new Promise(function (resolve, reject) {
-
-				var data = { 'workflowId': _workflowId, 'nodeId': _nodeId };
-
-				$.post(_loadWorkflowDesignData, data).done(function (response) {
-					resolve(JSON.parse(response));
-				}).fail(function (jqxhr, textStatus, error) {
-					Error(error);
-					reject();
-				});
-			});
-		}
-
-		function copySettingsFromOriginalNode(original) {
-
-			original.x += 50;
-			original.y += 50;
-			var desingComponent = JSON.stringify(original);
-			var originalNodeConfigId = original.id;
-			return new Promise(function (resolve, reject) {
-
-				var data = {
-					'workflowId': _workflowId,
-					'nodeId': _nodeId,
-					'originalNodeConfigId': originalNodeConfigId,
-					'desingComponentJson': desingComponent
-				};
-
-				$.post(_duplicateNodeAddress, data).done(function (response) {
-					var res = JSON.parse(response);
-
-					res.$component = component;
-
-					res.output = res.output || component.output;
-					res.input = res.input || component.input;
-
-					resolve(res);
-				}).fail(function (jqxhr, textStatus, error) {
-					loading.hide();
-					Error(error);
-					reject();
-				});
-			});
-		}
-
-		function createNodeConfiguration(component) {
-			var desingComponent = JSON.stringify(component);
-			return new Promise(function (resolve, reject) {
-
-				var data = {
-					'workflowId': _workflowId,
-					'nodeId': _nodeId,
-					'desingComponentJson': desingComponent
-				};
-
-				$.post(_createNodeAddress, data).done(function (response) {
-					var res = JSON.parse(response);
-
-					res.$component = component;
-
-					res.title = res.title || component.title;
-					res.output = res.output || component.output;
-					res.input = res.input || component.input;
-
-					if (typeof (res.state) === 'object' && res.state)
-						res.state = { text: res.state.text || component.title, color: res.state.color || component.color };
-					else
-						res.state = { text: res.title || '', color: component.color };
-
-					resolve(res);
-				}).fail(function (jqxhr, textStatus, error) {
-					loading.hide();
-					Error(error);
-					reject();
-				});
-			});
-		}
-
-		function saveRemoteJsonConfiguration(flowJson) {
-
-			if (!_saveWorkflowDesignData) return Error('Missing save address..');
-			if (!_workflowId) return Error('workflowId');
-			if (!_nodeId) return Error('nodeId')
-
-			if (!flow.workflow) return Error('workflow')
-
-			return new Promise(function (resolve, reject) {
-
-				var data = { 'workflowId': _workflowId, 'nodeId': _nodeId, json: flowJson };
-
-				$.post(_saveWorkflowDesignData, data).done(function (response) {
-					resolve(response);
-				}).fail(function (jqxhr, textStatus, error) {
-					Error(error);
-					reject();
-				});
-			});
-		}
-
 		var svg;
 		var connection;
 		var drag = {};
@@ -1181,7 +1167,7 @@ window.Orions.FlowDesigner = {
 		var zoom = 1;
 
 		var designerComponet;
-		var designer = {
+		designer = {
 			findPoint: function (selector, x, y) {
 				var arr = svg.find(selector);
 				var o = svg.offset();
@@ -1199,23 +1185,36 @@ window.Orions.FlowDesigner = {
 				}
 				return svg.get(0);
 			},
+
 			// Init designer !
 			make: function () {
 
 				designerComponet = {};
-				designerComponet = $('.designer');
+				designerComponet = $('.ui-designer');
 				var self = designerComponet;
 
 				scroller = self.parent();
 				self.aclass('ui-designer');
-				self.append('<div class="ui-designer-grid"><svg width="3000" height="3000"></svg></div>');
+				//self.append('<div class="ui-designer-grid"><svg width="3000" height="3000"></svg></div>');
+				self.append('<div class="ui-designer-grid"><svg width="6000" height="6000"><defs><filter id="svgshadow" x="0" y="0" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="2" dy="2" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.20"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><pattern patternUnits="userSpaceOnUse" id="svggrid" x="0" y="0" width="150" height="150"><image width="150" height="150" xlink:href="images/flowDesigner/themedark.png" /></pattern></defs><g class="svggrid"><rect id="svggridbg" width="15000" height="15000" fill="url(#svggrid)" /></g></svg></div>');
+
 				var tmp = self.find('svg');
+
 				svg = $(tmp.get(0));
 				main = svg.asvg('g');
 				connection = main.asvg('path').attr('class', 'connection');
 				lines = main.asvg('g');
 				container = main.asvg('g');
+
+				//anim = svg.asvg('g').attr('class', 'animations');
+				//selector = svg.asvg('rect').attr('class', 'selector').attr('opacity', 0).attr('rx', 5).attr('ry', 5);
+
 				designer.resize();
+
+				tmp.on('mouseleave', function (e) {
+					if (!common.touches && move.drag)
+						self.mup(e.pageX, e.pageY, 0, 0, e);
+				});
 
 				tmp.on('mousedown mousemove mouseup', function (e) {
 
@@ -1237,6 +1236,7 @@ window.Orions.FlowDesigner = {
 							self.mdown(e.pageX, e.pageY, offset.x, offset.y, e);
 					}
 				});
+
 				tmp.on('touchstart touchmove touchend', function (evt) {
 
 					if (!common.touches)
@@ -1347,10 +1347,14 @@ window.Orions.FlowDesigner = {
 							loading.show();
 							dragdrop.x = (x - 50) / zoom;
 							dragdrop.y = (y - 30) / zoom;
-							createNodeConfiguration(dragdrop).then(function (response) {
-								on.designer.add(response, response.x, response.y, false);
-								loading.hide();
-							});
+
+							on.designer.add(dragdrop, dragdrop.x, dragdrop.y, false);
+							loading.hide();
+
+							//createNodeConfiguration(dragdrop).then(function (response) {
+							//	on.designer.add(response, response.x, response.y, false);
+							//	loading.hide();
+							//});
 							break;
 					}
 
@@ -1469,7 +1473,15 @@ window.Orions.FlowDesigner = {
 
 					var el = $(e.target);
 					var tmp;
+
 					move.drag = true;
+					move.moved = false;
+
+					var mpos = offsetter(e);
+					var off = svg.offset();
+					// mouse position within svg
+					move.mposx = mpos.x - off.left;
+					move.mposy = mpos.y - off.top;
 
 					if (e.target.tagName === 'svg') {
 						move.x = x + scroller.prop('scrollLeft');
@@ -1598,6 +1610,7 @@ window.Orions.FlowDesigner = {
 					});
 				};
 			},
+
 			dragdrop: function (el) {
 				dragdrop = el;
 			},
@@ -2256,7 +2269,7 @@ window.Orions.FlowDesigner = {
 			propertyGrid_Run(arg, model);
 		}
 
-		var operation = {
+		operation = {
 			flow: {
 				apply: function () {
 
@@ -2662,6 +2675,7 @@ window.Orions.FlowDesigner = {
 			// Load a JavaScript components from files
 			function loadScript(urlPack) {
 
+				debugger;
 				if (urlPack.length == 0) return;
 
 				var promises = [];
@@ -2685,16 +2699,18 @@ window.Orions.FlowDesigner = {
 				});
 
 				return Promise.all(promises)
-					.then(function () {
-						if (common.remoteData) {
-							return loadRemoteJsonData();
-						}
+					//.then(function () {
+					//	if (common.remoteData) {
+					//		return loadRemoteJsonData();
+					//	}
 
-						//init components from design.json
-						return loadJsonDataFromFile()
-					})
+					//	//init components from design.json
+					//	return loadJsonDataFromFile()
+					//})
 					.then(function (jsonConfigurations) {
 
+						jsonConfigurations = JSON.parse(designData);;
+						debugger;
 						if (jsonConfigurations && jsonConfigurations.defComponents && jsonConfigurations.defComponents instanceof Array) {
 							$.each(jsonConfigurations.defComponents, function (index, element) {
 								common.components.push(element);
@@ -2792,24 +2808,27 @@ window.Orions.FlowDesigner = {
 					});
 			}
 
+			debugger;
+
 			initComponents();
 
 			// UI style part
+			$('body').attr('class', 'touch');
 			$('body').attr('class', 'themedark');
 			// $('#page-header').attr('class', 'hidden');
 
 			//Auto collapes the navigation bar ot the left
-			$("body").toggleClass("mini-navbar");
+			//$("body").toggleClass("mainmenu-hidden");
 			$(".nav-header").attr("onclick", "$('body').toggleClass('mini-navbar')")
-			$("#page-wrapper .row.border-bottom").remove();
-			$("#side-menu .nav-header .logo-element a").each(function () {
-				$(this).removeAttr("href");
-			});
+			//$("#page-wrapper .row.border-bottom").remove();
+			//$("#side-menu .nav-header .logo-element a").each(function () {
+			//	$(this).removeAttr("href");
+			//});
 
 			// Color Picker
 			//$('#mycp').colorpicker({ useAlpha: false }); // TODO 
 
-			$('.colorpicker-alpha').remove();
+			//$('.colorpicker-alpha').remove();
 
 			//set modal designer settings on open
 			$('#workflowDesignerSettings').on('shown.bs.modal', function () {
@@ -2831,6 +2850,8 @@ window.Orions.FlowDesigner = {
 		});
 
 		function HideComponentsInReadOnlyMode() {
+
+			//debugger;
 			$('#applyFlowDesignId').addClass('hidden');
 			$('nav#designerbuttons').addClass('hidden');
 			$(document.body).toggleClass('mainmenu-hidden', true);
@@ -2839,15 +2860,7 @@ window.Orions.FlowDesigner = {
 			settings.isCommonMinimized.set(true);
 		}
 
-		function ToggleMainMenu() {
-			$(document.body).toggleClass('mainmenu-hidden', settings.isMinimizeMainMenu.get());
-			settings.isMinimizeMainMenu.toggle();
-		}
 
-		function ToggleCommonMenu() {
-			$(document.body).toggleClass('panel-minized', settings.isCommonMinimized.get());
-			settings.isCommonMinimized.toggle();
-		}
 
 		var manage = {
 			toggleMainMenu: ToggleMainMenu,
@@ -2870,4 +2883,6 @@ window.Orions.FlowDesigner = {
 		}
 
 	}
-}
+
+})();
+
