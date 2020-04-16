@@ -1,40 +1,29 @@
 ﻿
+/***************************
+File list:
+* github.min.css
+* codemirror.min.css
+* spa.min.css
+* Bootstrap v3.3.1
+* normalize.css v3.0.2
+* Font Awesome Free 5.1.0
+*****************************/
 
-//@import "workflow-designer/hljs";
+@import "flow-designer/dep";
 
-//@import "workflow-designer/code-mirror";
+@import "flow-designer/default";
 
-
-/*!
-/*!
-* Bootstrap v3.3.1 (http://getbootstrap.com)
-* Copyright 2011-2014 Twitter, Inc.
-* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-* ----
-* normalize.css v3.0.2 | MIT License | git.io/normalize
-* ----
-* Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
-* License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
-*/
+@import "flow-designer/ui";
 
 
 
-/*!
- * ===========================================================================================
- * MERGED: D:/Development/Orions/Systems/Orions.Systems.Open/Orions.XPlatform/Orions.Total.JS.Flow/tmp/flow.package/wFlowDiagram.css
- * ===========================================================================================
- */
-
-//@import "workflow-designer/wFlow-diagram";
-
-/*!
- * ===========================================================================================
- * MERGED: D:/Development/Orions/Systems/Orions.Systems.Open/Orions.XPlatform/Orions.Total.JS.Flow/tmp/flow.package/ui.css
- * ===========================================================================================
- */
-
-//@import "workflow-designer/ui-diagram";
+/*@import "workflow-designer/old";*/
 
 
 
-@import "workflow-designer/old";
+.body-designer {
+	position: absolute;
+	display: inherit;
+	left: 0px;
+	right: 0px;
+}
