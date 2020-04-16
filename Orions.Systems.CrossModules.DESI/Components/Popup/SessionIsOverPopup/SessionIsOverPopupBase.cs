@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Orions.Systems.CrossModules.Desi.Infrastructure;
 using System.Threading.Tasks;
 using System.Timers;
 
 namespace Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup
 {
-	public class SessionIsOverPopupBase : ComponentBase
+	public class SessionIsOverPopupBase : BaseComponent
 	{
 		public bool IsDisplayed { get; set; }
 		public int SecondsToTimeOutLeft { get; set; }

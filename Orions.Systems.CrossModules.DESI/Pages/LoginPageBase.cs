@@ -9,7 +9,7 @@ using Orions.Systems.Desi.Common.Authentication;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
-	public class LoginPageBase : DesiBaseComponent<AuthenticationViewModel>
+	public class LoginPageBase : BaseViewModelComponent<AuthenticationViewModel>
 	{
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
@@ -27,7 +27,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			Vm.LoginCommand.Execute(null);
 		}
 
-		protected override async Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			SettingsStorage = DependencyResolver.GetSettingsStorage();
 			var authenticationSystem = DependencyResolver.GetAuthenticationSystem();
@@ -41,18 +41,14 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			{
 				authenticationSystem.Controller.Dispatch(LogoutAction.Create());
 			}
-
-			await base.OnInitializedAsync();
 		}
 
-		protected override async Task OnAfterRenderAsync(bool firstRender)
+		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
 			if (firstRender)
 			{
 				await InitializeJs();
 			}
-
-			base.OnAfterRender(firstRender);
 		}
 
 		private async Task InitializeJs()

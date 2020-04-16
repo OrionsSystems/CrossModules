@@ -9,9 +9,9 @@ using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
-	public class StageSelectionPageBase : DesiBaseComponent<StageSelectionViewModel>
+	public class StageSelectionPageBase : BaseViewModelComponent<StageSelectionViewModel>
 	{
-		protected override async Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			var authSystem = DependencyResolver.GetAuthenticationSystem();
 			var navigationService = DependencyResolver.GetNavigationService();
@@ -19,7 +19,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
 			{
 				await navigationService.GoToLoginPage();
-				await base.OnInitializedAsync();
 
 				return;
 			}
@@ -28,8 +27,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetMissionsExploitationSystem(),
 				DependencyResolver.GetNavigationService()
 			);
-
-			await base.OnInitializedAsync();
 		}
 
 		public void Switch_Toggled(PhaseModel phase)

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 {
-	public class ConfirmationPopupBase : ComponentBase
+	public class ConfirmationPopupBase : BaseComponent
 	{
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
@@ -23,13 +23,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 
 		public bool OnlyOkMode { get; set; }
 
-		protected override Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			var popupService = new PopupService(this);
 
 			DependencyResolver.SetPopupService(popupService);
-
-			return base.OnInitializedAsync();
 		}
 
 		private TaskCompletionSource<bool> _tcs;

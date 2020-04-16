@@ -149,10 +149,8 @@ else
     [Inject]
     public IKeyboardListener KeyboardListener { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnInitializedSafe()
     {
-        base.OnInitialized();
-
         _shortcutsSub = KeyboardListener.CreateSubscription()
             .AddShortcut(Key.C, () => TryFinishExecution())
             .AddShortcut(Key.F, () => TryFinishCurrentPath())

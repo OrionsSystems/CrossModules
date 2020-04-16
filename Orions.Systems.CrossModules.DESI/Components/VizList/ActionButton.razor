@@ -1,4 +1,5 @@
-﻿<button class="viz-btn action @CssClass" @onclick="@OnClick" disabled="@Disabled">
+﻿@inherits BaseComponent
+<button class="viz-btn action @CssClass" @onclick="@OnClick" disabled="@Disabled">
     @ChildContent
     <div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36px" height="36px">

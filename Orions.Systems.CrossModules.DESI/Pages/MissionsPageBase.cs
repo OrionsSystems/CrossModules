@@ -6,9 +6,9 @@ using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Core.ViewModels;
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
-	public class MissionsPageBase : DesiBaseComponent<MissionsViewModel>
+	public class MissionsPageBase : BaseViewModelComponent<MissionsViewModel>
 	{
-		protected override async Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			await Initialize();
 		}
