@@ -40,7 +40,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public bool IsVideoLoading { get; set; } = true;
 		protected bool Paused { get; private set; } = true;
 		protected byte[] PayLoad { get; private set; }
-		protected string PausedFrameBase64 { get { return MediaInstance?.CurrentPositionFrameImage == null ? null : UniImage.ConvertByteArrayToBase64Url(MediaInstance?.CurrentPositionFrameImage); } }
+		protected string PausedFrameBase64 
+		{
+			get; set;
+		}
 
 		public VideoPlayerBase()
 		{
@@ -91,8 +94,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					if(_mediaInstance != null)
 					{
 						_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
-							.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
-							.Subscribe(_ => UpdateState()));
+							.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition))
+							.Subscribe(_ => UpdateCurrentPositionFrameImage()));
 					}
 				});
 			}
@@ -219,7 +222,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (hyperId.SliceId == null)
 				return;
 
-			// Ask frame cache to load a frame if needed. The CurrentPositionFrameImage will be set automatically on the MediaInstance
 			var frameLoadTask = CacheService.GetCachedFrameAsync(_store, hyperId, null);
 
 			await Task.WhenAny(loaderDelayTask, frameLoadTask);
@@ -252,6 +254,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { newPosition.TotalSeconds });
 		}
 
+		private async Task UpdateCurrentPositionFrameImage()
+		{
+			var frameImage = await CacheService.GetCachedFrameAsync(_store, MediaInstance.CurrentPosition, null);
+
+			if(frameImage != null)
+			{
+				PausedFrameBase64 = UniImage.ConvertByteArrayToBase64Url(frameImage);
+			}
+		}
+
 		private async Task UpdateCurrentTaskData()
 		{
 			await _initializationTaskTcs.Task;
@@ -261,6 +273,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			var assetTuple = await InitTaskPlaybackAsync();
 
 			await InitMP4PayloadAsync(assetTuple.track, assetTuple.fragment);
+			if (!TagsStore.Data.SelectedTags.Any())
+			{
+				await UpdateFrameImageByCurrentPosition();
+			}
 
 			IsVideoLoading = false;
 			await OnLoaded.InvokeAsync(null);
