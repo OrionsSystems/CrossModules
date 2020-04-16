@@ -1662,7 +1662,12 @@ video::-webkit-media-text-track-display {
   color: white;
   display: flex;
   align-items: center;
-  justify-content: center; }
+  justify-content: center;
+  flex-direction: column; }
+  .video-player-overlay .overlay-message {
+    margin-bottom: 12px; }
+  .video-player-overlay .video-overlay-dots-loader .sk-flow-dot {
+    background-color: white; }
 
 .vizlist-main-container {
   display: flex; }

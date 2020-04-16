@@ -8,4 +8,13 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	flex-direction: column;
+
+	.overlay-message {
+		margin-bottom: 12px;
+	}
+
+	.video-overlay-dots-loader .sk-flow-dot {
+		background-color:white;
+	}
 }
