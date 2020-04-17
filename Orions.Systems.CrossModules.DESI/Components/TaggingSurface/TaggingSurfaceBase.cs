@@ -40,6 +40,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private TaskCompletionSource<bool> _frameRenderedTaskTcs = new TaskCompletionSource<bool>();
+		protected bool _mediaPaused = true;
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 
 		[Parameter]
@@ -109,13 +110,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Parameter]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
+		private object _rectanglesSetterLock = new object();
 		private List<Rectangle> Rectangles
 		{
 			get => _rectangles;
 			set
 			{
-				UpdateTagsOnClient(_rectangles, value);
-				_rectangles = value;
+				lock (_rectanglesSetterLock)
+				{
+					UpdateTagsOnClient(_rectangles, value);
+					_rectangles = value;
+				}
 			}
 		}
 

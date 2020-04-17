@@ -13,9 +13,9 @@
 							ActionDispatcher="@ActionDispatcher"
 							TaskDataStore="@TaskDataStore"
 							TagsStore="@TagsStore"
-							OnMediaPaused="async () => this.OverlayMediaWithCanvas(true)"
-							OnMediaPlay="async () => this.OverlayMediaWithCanvas(false)"
-							OnMediaLoading="async () => this.OverlayMediaWithCanvas(false)"
+							OnMediaPaused="async () => { _mediaPaused = true; this.OverlayMediaWithCanvas(true); }"
+							OnMediaPlay="async () => { _mediaPaused = false; this.OverlayMediaWithCanvas(false); }"
+							OnMediaLoading="async () => { if (!_mediaPaused) this.OverlayMediaWithCanvas(false); }"
 							OnMediaLoaded="async () => this.OverlayMediaWithCanvas(true)"/>
 		<canvas class="tagging-canvas">
 		</canvas>

@@ -117,7 +117,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							.SelectedTagsUpdated
 							.Subscribe(_ =>
 							{
-								GoToSelectedTagFrame();
+								if (Paused)
+								{
+									GoToSelectedTagFrame();
+								}
 							}));
 					}
 				});
@@ -145,19 +148,25 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task GoToNextFrame()
 		{
-			var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) + 1;
-			if (newFrameIndex > _taskPlaybackInfo.TotalFrames - 1) newFrameIndex = _taskPlaybackInfo.TotalFrames - 1;
+			if (!IsVideoLoading && !CurrentFrameIsLoading)
+			{
+				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) + 1;
+				if (newFrameIndex > _taskPlaybackInfo.TotalFrames - 1) newFrameIndex = _taskPlaybackInfo.TotalFrames - 1;
 
-			await GoToFrame(newFrameIndex);
+				await GoToFrame(newFrameIndex);
+			}
 		}
 
 		[JSInvokable]
 		public async Task GoToPreviousFrame()
 		{
-			var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) - 1;
-			if (newFrameIndex < 0) newFrameIndex = 0;
+			if (!IsVideoLoading && !CurrentFrameIsLoading)
+			{
+				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) - 1;
+				if (newFrameIndex < 0) newFrameIndex = 0;
 
-			await GoToFrame(newFrameIndex);
+				await GoToFrame(newFrameIndex);
+			}
 		}
 
 		[JSInvokable]
@@ -203,7 +212,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task Play()
 		{
-			await JSRuntime.InvokeVoidAsync("Orions.Player.play", new object[] { });
+			if(!IsVideoLoading && !CurrentFrameIsLoading)
+			{
+				await JSRuntime.InvokeVoidAsync("Orions.Player.play", new object[] { });
+			}
 		}
 
 		private async Task Pause()
@@ -280,6 +292,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			IsVideoLoading = false;
 			await OnLoaded.InvokeAsync(null);
+			await OnPaused.InvokeAsync(null);
 			UpdateState();
 		}
 		
