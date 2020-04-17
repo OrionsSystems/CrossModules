@@ -5,6 +5,7 @@ using Orions.Node.Common;
 
 using System;
 using System.Threading.Tasks;
+using Orions.Systems.CrossModules.Components.Model;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -18,6 +19,9 @@ namespace Orions.Systems.CrossModules.Components
 			get => Vm.HyperStore;
 			set => Vm.HyperStore = value;
 		}
+
+		[Parameter]
+		public EventCallback<IFlowDesignData> OnApply { get; set; }
 
 		PropertyGrid _propGrid;
 		PropertyGrid propGrid
@@ -57,9 +61,12 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ToggleCommonMenu");
 		}
 
-		public async Task OnClickApply()
-		{ 
+		[JSInvokable]
+		public async  Task OnClickApply()
+		{
 			//TODO
+
+			await OnApply.InvokeAsync(Vm.DesignData);
 		}
 
 		public async Task ToggleMainMenu() 

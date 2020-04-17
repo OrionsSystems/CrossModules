@@ -6,15 +6,25 @@ using System.Globalization;
 
 namespace Orions.Systems.CrossModules.Components.Model
 {
-	public class WorkflowDesignData
+
+	public interface IFlowDesignData 
+	{
+
+		public string FlowName { get; set; }
+
+		public string FlowId { get; set; }
+	}
+
+
+	public class FlowDesignData : IFlowDesignData
 	{
 		private static long version = 223;
 
 		[JsonProperty("tabs")]
-		public List<Tab> Tabs { get; set; }
+		public List<FlowTab> Tabs { get; set; }
 
 		[JsonProperty("components")]
-		public List<DesignComponent> Components { get; set; }
+		public List<FlowDesignComponent> Components { get; set; }
 
 		[JsonProperty("version")]
 		public long Version { get; set; }
@@ -22,29 +32,29 @@ namespace Orions.Systems.CrossModules.Components.Model
 		[JsonProperty("variables")]
 		public string Variables { get; set; }
 
-		[JsonProperty("workflowName")]
-		public string WorkflowName { get; set; }
+		[JsonProperty("flowName")]
+		public string FlowName { get; set; }
 
-		[JsonProperty("workflowId")]
-		public string WorkflowId { get; set; }
+		[JsonProperty("flowId")]
+		public string FlowId { get; set; }
 
 		[JsonProperty("defComponents")]
-		public List<DesignNodeConfiguration> NodeConfigurations { get; set; }
+		public List<FlowDesignNodeConfiguration> NodeConfigurations { get; set; }
 
-		public WorkflowDesignData()
+		public FlowDesignData()
 		{
-			Tabs = new List<Tab>();
-			Tabs.Add(new Tab());
-			Components = new List<DesignComponent>();
+			Tabs = new List<FlowTab>();
+			Tabs.Add(new FlowTab());
+			Components = new List<FlowDesignComponent>();
 			Version = version;
 			Variables = string.Empty;
-			NodeConfigurations = new List<DesignNodeConfiguration>();
+			NodeConfigurations = new List<FlowDesignNodeConfiguration>();
 		}
 
 		//public static WorkflowDesignData FromJson(string json) => JsonConvert.DeserializeObject<WorkflowDesignData>(json, Converter.Settings);
 	}
 
-	public class DesignComponent
+	public class FlowDesignComponent
 	{
 		[JsonProperty("component")]
 		public string Name { get; set; }
@@ -53,7 +63,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string Type { get; set; }
 
 		[JsonProperty("state")]
-		public State State { get; set; }
+		public FlowState State { get; set; }
 
 		[JsonProperty("group")]
 		public string Group { get; set; }
@@ -68,7 +78,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string Tab { get; set; }
 
 		[JsonProperty("connections")]
-		public List<Connection> Connections { get; set; }
+		public List<FlowConnection> Connections { get; set; }
 
 		[JsonProperty("id")]
 		public string Id { get; set; }
@@ -76,13 +86,13 @@ namespace Orions.Systems.CrossModules.Components.Model
 		[JsonProperty("isnew")]
 		public bool IsNew { get; set; }
 
-		public DesignComponent()
+		public FlowDesignComponent()
 		{
-			Connections = new List<Connection>();
+			Connections = new List<FlowConnection>();
 		}
 	}
 
-	public class Connection
+	public class FlowConnection
 	{
 		[JsonProperty("index")]
 		public string Index { get; set; }
@@ -91,7 +101,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string Id { get; set; }
 	}
 
-	public class State
+	public class FlowState
 	{
 		[JsonProperty("text")]
 		public string Text { get; set; }
@@ -100,7 +110,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string Color { get; set; }
 	}
 
-	public class Tab
+	public class FlowTab
 	{
 		[JsonProperty("id")]
 		public string Id { get; set; }
@@ -118,7 +128,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public long Index { get; set; }
 
 		//TODO
-		public Tab()
+		public FlowTab()
 		{
 			Name = "Default";
 			Id = "1516287215994";
@@ -128,7 +138,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		}
 	}
 
-	public class WorkflowDesignNodeStatus
+	public class FlowDesignNodeStatus
 	{
 		[JsonProperty("nodeId")]
 		public string NodeId { get; set; }
@@ -152,7 +162,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string State { get; set; }
 	}
 
-	public class DesignNodeConfiguration
+	public class FlowDesignNodeConfiguration
 	{
 		[JsonProperty("id")]
 		public string Id { get; set; }
@@ -188,7 +198,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 		public string Readme { get; set; }
 	}
 
-	internal class WorkflowDesignConverter
+	internal class FlowDesignConverter
 	{
 		public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
 		{

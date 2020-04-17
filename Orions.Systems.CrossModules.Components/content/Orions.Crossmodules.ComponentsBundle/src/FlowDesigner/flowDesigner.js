@@ -228,25 +228,6 @@
 		});
 	}
 
-	function loadRemoteJsonData() {
-
-		if (!_loadWorkflowDesignData) return Error('Missing loading address..');
-		if (!_workflowId) return Error('workflowId');
-		if (!_nodeId) return Error('nodeId')
-
-		return new Promise(function (resolve, reject) {
-
-			var data = { 'workflowId': _workflowId, 'nodeId': _nodeId };
-
-			$.post(_loadWorkflowDesignData, data).done(function (response) {
-				resolve(JSON.parse(response));
-			}).fail(function (jqxhr, textStatus, error) {
-				Error(error);
-				reject();
-			});
-		});
-	}
-
 	function copySettingsFromOriginalNode(original) {
 
 		original.x += 50;
@@ -1628,6 +1609,7 @@
 			},
 			add: function (item) {
 
+				debugger;
 				var self = designerComponet;
 
 				if (!item.component) return;
@@ -2015,6 +1997,8 @@
 					//TODO Fix Me!
 				},
 				add: function (component, x, y, is, cf, ct, toindex, duplicate, fromindex) {
+
+					debugger;
 					var obj = {};
 					obj.component = component.$component.id;
 					obj.$component = component;
@@ -2738,7 +2722,7 @@
 						if (!data) data = {};
 
 						//add workflow name in tab
-						$('.workflowTabName').html(data.workflowName);
+						$('.flowTabName').html(data.flowName);
 
 						if (settings.isCommonMinimized.get() == 'true') {
 							$('body').addClass('panel-minized');
