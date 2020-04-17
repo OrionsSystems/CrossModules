@@ -226,6 +226,7 @@
 			max-width: 100%;
 			max-height: calc(100% - 30px);
 			position: relative;
+			z-index:-1; // set to -1 to enable events of overlaying elements (for example videoplayer click)
 
 			& > * {
 				max-height: 100%;

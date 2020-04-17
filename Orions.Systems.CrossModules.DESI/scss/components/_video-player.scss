@@ -10,11 +10,15 @@
 	justify-content: center;
 	flex-direction: column;
 
+	$red: #de0000;
+
 	.overlay-message {
 		margin-bottom: 12px;
+		color: $red;
+		font-weight: 500;
 	}
 
 	.video-overlay-dots-loader .sk-flow-dot {
-		background-color:white;
+		background-color: $red;
 	}
 }
