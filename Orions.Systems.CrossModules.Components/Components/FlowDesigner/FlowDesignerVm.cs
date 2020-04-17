@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public HyperWorkflow Source { get; set; }
 
-		public WorkflowDesignData DesignData { get; private set; } 	 = new WorkflowDesignData();
+		public FlowDesignData DesignData { get; private set; } 	 = new FlowDesignData();
 
 		/// <summary>
 		/// Statuses for this view model.
@@ -47,12 +47,12 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		public string GetJesonDesignData() {
-			return JsonConvert.SerializeObject(DesignData, WorkflowDesignConverter.Settings);
+			return JsonConvert.SerializeObject(DesignData, FlowDesignConverter.Settings);
 		}
 
 		private void PopulateDesignerData() 
 		{
-			var design = new WorkflowDesignData();
+			var design = new FlowDesignData();
 
 			var types = GetHyperWorkflowNodeDataType();
 
@@ -71,7 +71,7 @@ namespace Orions.Systems.CrossModules.Components
 				var group = node.Group;
 				var color = UniColorToHex(node.Color);
 
-				var designNodeConfiguration = new DesignNodeConfiguration()
+				var designNodeConfiguration = new FlowDesignNodeConfiguration()
 				{
 					Id = nodeConfigId.ToLower(),
 					TypeFull = nodeNameFull,
@@ -88,8 +88,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			// TODO : Save data in session !!!
 
-			design.WorkflowName = Source.Name;
-			design.WorkflowId = Source.Id;
+			design.FlowName = Source.Name;
+			design.FlowId = Source.Id;
 
 			foreach (NodeConfiguration nodeConfig in Source.Nodes)
 			{
@@ -100,14 +100,14 @@ namespace Orions.Systems.CrossModules.Components
 				var color = UniColorToHex(nodeConfig.Color);
 				var group = nodeConfig.Group;
 
-				var component = new DesignComponent()
+				var component = new FlowDesignComponent()
 				{
 					X = Convert.ToInt64(x),
 					Y = Convert.ToInt64(y),
 					Name = nodeConfig.NodeType.Name.ToLower(),
 					Id = nodeConfig.Id,
 					Type = nodeConfig.NodeType.TypeName,
-					State = new State()
+					State = new FlowState()
 					{
 						Text = string.IsNullOrWhiteSpace(nodeConfig.Name) ? nodeConfig.NodeType.Name : nodeConfig.Name,
 						Color = color
@@ -127,7 +127,7 @@ namespace Orions.Systems.CrossModules.Components
 					var sourceConnectionId = connection.SourceId;
 					var targetConnectionId = connection.TargetId;
 
-					var con = new Connection()
+					var con = new FlowConnection()
 					{
 						Id = targetConnectionId,
 						Index = "0"
