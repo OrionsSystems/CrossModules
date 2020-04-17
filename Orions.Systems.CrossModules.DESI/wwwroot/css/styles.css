@@ -1665,9 +1665,11 @@ video::-webkit-media-text-track-display {
   justify-content: center;
   flex-direction: column; }
   .video-player-overlay .overlay-message {
-    margin-bottom: 12px; }
+    margin-bottom: 12px;
+    color: #de0000;
+    font-weight: 500; }
   .video-player-overlay .video-overlay-dots-loader .sk-flow-dot {
-    background-color: white; }
+    background-color: #de0000; }
 
 .vizlist-main-container {
   display: flex; }
@@ -2295,7 +2297,8 @@ video::-webkit-media-text-track-display {
       display: flex;
       max-width: 100%;
       max-height: calc(100% - 30px);
-      position: relative; }
+      position: relative;
+      z-index: -1; }
       .tagging-page-container .tagging-surface-container .centered-container > * {
         max-height: 100%;
         max-width: 100%; }

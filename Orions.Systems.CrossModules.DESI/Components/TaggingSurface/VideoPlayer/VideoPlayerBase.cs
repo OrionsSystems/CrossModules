@@ -26,7 +26,7 @@ using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
-	public class VideoPlayerBase : DesiBaseComponent<AuthenticationViewModel>
+	public class VideoPlayerBase : BaseComponent
 	{
 		private NetStore _store;
 		protected TaskPlaybackInfo _taskPlaybackInfo;
@@ -186,7 +186,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await GoToSelectedTagFrame();
 		}
 
-		protected override async Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			await OnLoading.InvokeAsync(null);
 
@@ -283,10 +283,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateState();
 		}
 		
-		protected async override Task OnAfterRenderAsync(bool firstRender)
+		protected async override Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
-			await base.OnAfterRenderAsync(firstRender);
-
 			if (firstRender)
 			{
 				await JSRuntime.InvokeVoidAsync("Orions.Player.init", _componentReference, _videoElementId);
@@ -339,20 +337,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				await GoToFrame(tagFrameToGoTo.Value.Index);
 				//await OnPaused.InvokeAsync(null);
 			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				foreach (var sub in _subscriptions)
-				{
-					sub.Dispose();
-				}
-				Vm?.Dispose();
-				Vm = null;
-			}
-			base.Dispose(disposing);
 		}
 	}
 }

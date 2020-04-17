@@ -67,13 +67,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		protected void FinishInputAction(bool value) => ActionDispatcher.Dispatch(FinishTagonomyConfirmationAction.Create(value));
 		protected void CancelExecution() => ActionDispatcher.Dispatch(CancelTagonomyExecutionAction.Create());
 
-		protected override async Task OnAfterRenderAsync(bool firstRender)
+		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
 			await JSRuntime.InvokeVoidAsync("window.Orions.Vizlist.init", new object[] { _componentId });
 
 			this.VizListRendered.Invoke();
-
-			await base.OnAfterRenderAsync(firstRender);
 		}
 
 		protected override void Dispose(bool disposing)

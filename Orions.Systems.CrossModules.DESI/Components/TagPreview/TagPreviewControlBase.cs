@@ -91,10 +91,5 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 		{
 			ActionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tag));
 		}
-
-		protected override async Task OnAfterRenderAsync(bool firstRender)
-		{
-			
-		}
 	}
 }

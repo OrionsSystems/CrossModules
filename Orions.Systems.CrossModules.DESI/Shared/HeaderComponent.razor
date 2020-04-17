@@ -31,10 +31,8 @@
 
     private string CurrentLocation { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnInitializedSafe()
     {
-        base.OnInitialized();
-
         _locationChangedSub = Observable.FromEventPattern<EventHandler<LocationChangedEventArgs>, LocationChangedEventArgs>(
             i => NavigationManager.LocationChanged += i,
             i => NavigationManager.LocationChanged -= i)

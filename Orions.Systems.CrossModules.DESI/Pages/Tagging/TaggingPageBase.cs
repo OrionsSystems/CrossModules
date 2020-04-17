@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
-	public class TaggingPageBase : DesiBaseComponent<TaggingViewModel>
+	public class TaggingPageBase : BaseViewModelComponent<TaggingViewModel>
 	{
 		protected TaggingSystem _taggingSystem;
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
@@ -35,7 +35,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			}
 		}
 
-		protected override async Task OnInitializedAsync()
+		protected override async Task OnInitializedAsyncSafe()
 		{
 			var navigationService = DependencyResolver.GetNavigationService();
 			_taggingSystem = DependencyResolver.GetTaggingSystem(navigationService);
@@ -44,7 +44,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
 			{
 				await navigationService.GoToLoginPage();
-				await base.OnInitializedAsync();
 
 				return;
 			}
@@ -64,8 +63,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			_subscriptions.Add(
 				_taggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState())
 				);
-
-			await base.OnInitializedAsync();
 
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))
@@ -89,7 +86,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			}
 		}
 
-		protected override void OnAfterRender(bool firstRender)
+		protected override void OnAfterRenderSafe(bool firstRender)
 		{
 			lock (_afterRenderTasks)
 			{
@@ -99,8 +96,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				}
 				_afterRenderTasks.Clear();
 			}
-
-			base.OnAfterRenderAsync(firstRender);
 		}
 
 		protected override void Dispose(bool disposing)

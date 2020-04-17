@@ -1,4 +1,4 @@
-﻿@inherits ComponentBase
+﻿@inherits BaseComponent
 
 <div @onclick="@Activate" class="tab @ActiveCssClass">
 	@Title
@@ -19,7 +19,7 @@
 
 	protected string ActiveCssClass => ContainerTabSet.ActiveTab == this ? "active" : null;
 
-	protected override void OnInitialized()
+	protected override void OnInitializedSafe()
 	{
 		ContainerTabSet.AddTab(this);
 
