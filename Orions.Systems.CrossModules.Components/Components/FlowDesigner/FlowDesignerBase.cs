@@ -80,11 +80,13 @@ namespace Orions.Systems.CrossModules.Components
 		[JSInvokable]
 		public string CreateNode(string desingComponentJson)
 		{
-			var result = Vm.CreateNode(desingComponentJson);
+			return Vm.CreateNode(desingComponentJson);
+		}
 
-			StateHasChanged();
-
-			return result;
+		[JSInvokable]
+		public string DuplicateNode(string originalNodeConfigId, string desingComponentJson)
+		{
+			return Vm.DuplicateNode(originalNodeConfigId, desingComponentJson);
 		}
 
 		public async Task ToggleMainMenu() 
@@ -102,6 +104,12 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			thisReference = DotNetObjectReference.Create(this);
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Paste", new object[] { thisReference });
+		}
+
+		public async Task SettingsElement() 
+		{
+			thisReference = DotNetObjectReference.Create(this);
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Settings", new object[] { thisReference });
 		}
 
 		public async Task DuplicateElement()

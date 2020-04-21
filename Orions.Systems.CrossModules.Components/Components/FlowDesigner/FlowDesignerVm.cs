@@ -1,13 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+
 using Orions.Common;
 using Orions.Infrastructure.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Model;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -15,7 +18,7 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public HyperWorkflow Source { get; set; }
 
-		public FlowDesignData DesignData { get; private set; } 	 = new FlowDesignData();
+		public FlowDesignData DesignData { get; private set; } = new FlowDesignData();
 
 		/// <summary>
 		/// Statuses for this view model.
@@ -34,11 +37,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public FlowDesignerVm()
 		{
-			
+
 		}
 
-		public virtual async Task Init() 
-		{ 
+		public virtual async Task Init()
+		{
 			var workflowId = "f4a66ad3-b538-4bcd-8e09-739e4b37e016";
 			var workflowInstanceId = "";
 
@@ -48,11 +51,12 @@ namespace Orions.Systems.CrossModules.Components
 			PopulateDesignerData();
 		}
 
-		public string GetJesonDesignData() {
+		public string GetJesonDesignData()
+		{
 			return JsonConvert.SerializeObject(DesignData, FlowDesignConverter.Settings);
 		}
 
-		public void ShowPropertyGrid(string nodeConfigId) 
+		public void ShowPropertyGrid(string nodeConfigId)
 		{
 			// load node configuration
 
@@ -68,7 +72,8 @@ namespace Orions.Systems.CrossModules.Components
 			return Task.FromResult<object>(SelectedNode);
 		}
 
-		public void OnCancelProperty() {
+		public void OnCancelProperty()
+		{
 			IsShowProperty = false;
 			PropertyGridVm.CleanSourceCache();
 		}
@@ -80,7 +85,7 @@ namespace Orions.Systems.CrossModules.Components
 			FlowDesignComponent nodeConfig = JsonConvert.DeserializeObject<FlowDesignComponent>(desingComponentJson, FlowDesignConverter.Settings);
 
 
-			var types = GetHyperWorkflowNodeDataType();
+			var types = GetHyperWorkflowNodeDataTypes();
 			var type = types.FirstOrDefault(it => it.FullName == nodeConfig.Type);
 
 			var node = new NodeConfiguration(type)
@@ -113,25 +118,75 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
-		private void PopulateDesignerData() 
+		public string DuplicateNode(string originalNodeConfigId, string desingComponentJson)
+		{
+
+			if (string.IsNullOrEmpty(originalNodeConfigId)) throw new Exception("Missing node component id");
+
+			var oldNodeConfiguration = Source.Nodes?.FirstOrDefault(it => it.Id == originalNodeConfigId);
+
+			if (oldNodeConfiguration == null) throw new Exception("Missing node configuration");
+
+			var hyperWorkflowHyperNodeData = (HyperWorkflowNodeData)oldNodeConfiguration.CreateNodeInstance(true);
+
+			FlowDesignComponent nodeConfig = JsonConvert.DeserializeObject<FlowDesignComponent>(desingComponentJson, FlowDesignConverter.Settings);
+
+			var types = GetHyperWorkflowNodeDataTypes();
+			var type = types.FirstOrDefault(it => it.FullName == nodeConfig.Type);
+
+			if (type == null) throw new ApplicationException("Missing node type");
+
+			var node = new NodeConfiguration(type)
+			{
+				AllowMultiOutputPortConnections = true
+			};
+
+			node.CopySettingsFromNode(hyperWorkflowHyperNodeData);
+
+			nodeConfig.Id = node.Id;
+
+			var nodeName = nodeConfig.State.Text;
+			if (nodeName != null) node.Name = nodeName;
+
+			var nodeColor = nodeConfig.State.Color;
+			if (!string.IsNullOrEmpty(nodeColor))
+			{
+				var colorR = UniColorFromHex(nodeColor);
+				node.Color = colorR;
+			}
+
+			var nodeGroup = nodeConfig.Group;
+			if (nodeGroup != null) node.Group = nodeGroup;
+
+			node.GUIPosition = new UniPoint2f(nodeConfig.X, nodeConfig.Y);
+
+			Source.AddNode(node);
+
+			var nodeConfigJson = JsonConvert.SerializeObject(nodeConfig, FlowDesignConverter.Settings);
+
+			return nodeConfigJson;
+		}
+
+		private void PopulateDesignerData()
 		{
 			var design = new FlowDesignData();
 
-			var types = GetHyperWorkflowNodeDataType();
+			//var types = GetHyperWorkflowNodeDataTypes();
 
-			foreach (var nodeType in types)
+			var nodeDataGroupTypes = GroupingNodeDataTypes();
+
+			foreach (var nodeGroupType in nodeDataGroupTypes)
 			{
-				var nodeName = nodeType.Name;
-				var nodeConfigId = String.Copy(nodeName);
+				var nodeType = nodeGroupType.Type;
 
-				nodeName = RemovePrefix(nodeName);
+				var nodeName = nodeGroupType.Name;
+				var nodeConfigId = nodeType.Name;
 
 				var nodeNameFull = nodeType.FullName;
 
 				var node = new NodeConfiguration(nodeType);
 				var inputCount = node.InputCount;
 				var outputCount = node.OutputCount;
-				var group = node.Group;
 				var color = UniColorToHex(node.Color);
 
 				var designNodeConfiguration = new FlowDesignNodeConfiguration()
@@ -141,10 +196,11 @@ namespace Orions.Systems.CrossModules.Components
 					Title = nodeName,
 					Input = inputCount,
 					Output = outputCount,
+					Group = nodeGroupType.Group
 				};
 
 				if (!string.IsNullOrEmpty(color)) designNodeConfiguration.Color = color;
-				if (!string.IsNullOrEmpty(group)) designNodeConfiguration.Group = group;
+
 
 				design.NodeConfigurations.Add(designNodeConfiguration);
 			}
@@ -169,7 +225,7 @@ namespace Orions.Systems.CrossModules.Components
 					Y = Convert.ToInt64(y),
 					Name = nodeConfig.NodeType.Name.ToLower(),
 					Id = nodeConfig.Id,
-					Type = nodeConfig.NodeType.TypeName,
+					Type = nodeConfig.NodeType.AsType().FullName,
 					State = new FlowState()
 					{
 						Text = string.IsNullOrWhiteSpace(nodeConfig.Name) ? nodeConfig.NodeType.Name : nodeConfig.Name,
@@ -202,7 +258,7 @@ namespace Orions.Systems.CrossModules.Components
 				design.Components.Add(component);
 			}
 
-			DesignData =  design;
+			DesignData = design;
 
 		}
 
@@ -217,7 +273,7 @@ namespace Orions.Systems.CrossModules.Components
 			throw new NotImplementedException();
 		}
 
-		private async Task PopulateWorkflow(string workflowId) 
+		private async Task PopulateWorkflow(string workflowId)
 		{
 			if (HyperStore == null) return;
 
@@ -228,34 +284,81 @@ namespace Orions.Systems.CrossModules.Components
 			if (args.ExecutionResult.IsNotSuccess)
 				return;
 
-			Source =  doc?.GetPayload<HyperWorkflow>();
+			Source = doc?.GetPayload<HyperWorkflow>();
 		}
 
-		private async Task PopulateWorkflowStatuses(string workflowInstanceId) 
+		private async Task PopulateWorkflowStatuses(string workflowInstanceId)
 		{
 
 			if (HyperStore == null) return;
 			if (string.IsNullOrWhiteSpace(workflowInstanceId)) return;
 
-			try 
+			try
 			{
 				var args = new RetrieveHyperWorkflowsStatusesArgs() { WorkflowInstancesIds = new string[] { workflowInstanceId } };
 
 				WorkflowStatuses = await HyperStore.ExecuteAsyncThrows(args);
 
-			} catch(Exception ex) {
+			}
+			catch (Exception ex)
+			{
 				Console.WriteLine(ex.Message);
 			}
 			// Pull all working statuses.
-			
+
 		}
 
-		private List<Type> GetHyperWorkflowNodeDataType()
+		private List<FlowMenuItem> GroupingNodeDataTypes()
 		{
-			List<Type> types = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(HyperWorkflowNodeData),
-				 ReflectionHelper.Instance.AllAssemblies);
+			var result = new List<FlowMenuItem>();
 
-			types = types.Where(it => it.IsAbstract == false && it.GetCustomAttributes(true).Any(it2 => it2 is ObsoleteAttribute) == false).ToList();
+			var types = GetHyperWorkflowNodeDataTypes();
+
+			var decoratedNodeTypes = types.Where(t => t.GetCustomAttributes(typeof(GroupAttribute), true).Length > 0).ToList();
+
+			var otherNodeTypes = types.Where(t => t.GetCustomAttributes(typeof(GroupAttribute), true).Length == 0).ToList();
+
+			foreach (var item in Enum.GetValues(typeof(GroupAttribute.SystemGroups)))
+			{
+				var enumName = Enum.GetName(typeof(GroupAttribute.SystemGroups), item);
+
+				var selectedNodeTypes = decoratedNodeTypes.Where(t => t.GetCustomAttribute<GroupAttribute>().Name == enumName).ToArray();
+
+				foreach (var type in selectedNodeTypes)
+				{
+					var name = GetComponentNameForContextMenu(type);
+
+					result.Add(new FlowMenuItem { Group = enumName, Name = name, Type = type });
+
+				}
+
+				if (enumName == GroupAttribute.SystemGroups.Other.ToString())
+				{
+					foreach (var otherConfigType in otherNodeTypes)
+					{
+						var name = GetComponentNameForContextMenu(otherConfigType);
+
+						result.Add(new FlowMenuItem { Group = enumName, Name = name, Type = otherConfigType });
+					}
+				}
+			}
+
+			return result;
+		}
+
+		private string GetComponentNameForContextMenu(Type configType)
+		{
+			var truncatedName = configType.Name.Replace("HyperWorkflowNodeData", string.Empty)
+														 .Replace("WorkflowNodeData", string.Empty) ?? "";
+
+			return StringHelper.SplitCamelCase(truncatedName);
+		}
+
+		private List<Type> GetHyperWorkflowNodeDataTypes()
+		{
+			List<Type> types = ReflectionHelper.Instance.GatherTypeChildrenTypesFromAssemblies(typeof(HyperWorkflowNodeData), ReflectionHelper.Instance.AllAssemblies);
+
+			types = types.Where(it => it.IsAbstract == false && it.GetCustomAttributes(true).Any(it2 => it2 is ObsoleteAttribute) == false).OrderBy(it => it.Name).ToList();
 
 			return types;
 		}
@@ -272,7 +375,8 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		private string[] _remStr = new string[] { "HyperWorkflowNodeData", "WorkflowNodeData" };
-		private string RemovePrefix(string value) {
+		private string RemovePrefix(string value)
+		{
 			foreach (var sciptEndPrefix in _remStr)
 			{
 				if (value.EndsWith(sciptEndPrefix))
@@ -311,6 +415,15 @@ namespace Orions.Systems.CrossModules.Components
 			return new UniColor(0, r, g, b);
 		}
 
+
+		class FlowMenuItem {
+
+			public string Name { get; set; }
+
+			public Type Type { get; set; }
+
+			public string Group { get; set; }
+		}
 
 	}
 }

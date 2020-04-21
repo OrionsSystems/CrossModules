@@ -4,11 +4,6 @@
 
 (function () {
 
-	// User Configuration
-	let baseComponentPath = '/flowDesigner/';
-	let componentsConfigFilePath = 'components/components.json';
-	let fileDesigner = 'designer.json';
-
 	let defaultRefreshNodeStatusInMilisecond = 30000; //default is 30 sec
 
 	var common = {};
@@ -18,7 +13,6 @@
 	common.theme = 'dark';
 	common.callbacks = {};
 	common.statics = {}; // cache for static content
-	common.remoteData = true; // TODO default is true !
 
 	var flow = {};
 	flow.components = [];
@@ -34,8 +28,6 @@
 
 	var operation = {};
 	operation.designer = {};
-
-	let baseUrl = window.location.origin;
 
 	function checktouches(e) {
 		common.touches = true;
@@ -151,8 +143,6 @@
 	}
 
 	function createComponentMenu(remoteCommonComponents) {
-
-		//debugger;
 
 		if (!common.localComponents) return;
 
@@ -321,6 +311,7 @@
 
 	window.Orions.FlowDesigner.ToggleCommonMenu = ToggleCommonMenu;
 
+	window.Orions.FlowDesigner.Settings = function (el) { operation.designer.settings(el); };
 	window.Orions.FlowDesigner.Copy = function (el) { operation.designer.copy(el); };
 	window.Orions.FlowDesigner.Paste = function (el) { operation.designer.paste(el); };
 	window.Orions.FlowDesigner.Duplicate = function (el) { operation.designer.duplicate(el); };
@@ -1296,7 +1287,7 @@
 							// create node
 							var desingComponent = JSON.stringify(dragdrop);
 							componentInstance.invokeMethodAsync('CreateNode', desingComponent).then(function (data) {
-				
+
 								res = JSON.parse(data);
 
 								res.$component = dragdrop;
@@ -1561,15 +1552,31 @@
 					var component = findItemById(flow.components, flow.selected.attr('data-id'));
 					if (!component) return;
 
-					// copy settings from original node
 					loading.show();
-					copySettingsFromOriginalNode(Object.assign({}, component)).then(function (dupCompoment) {
+
+					// copy settings from original node
+					var copyComponent = Object.assign({}, component)
+					copyComponent.x += 50;
+					copyComponent.y += 50;
+					copyComponent.connections = [];
+					var desingComponent = JSON.stringify(copyComponent);
+					componentInstance.invokeMethodAsync('DuplicateNode', copyComponent.id, desingComponent).then(function (data) {
+
+						dupCompoment = JSON.parse(data);
+
+						dupCompoment.$component = copyComponent;
+						dupCompoment.output = dupCompoment.output || copyComponent.output || copyComponent.$component.output;
+						dupCompoment.input = dupCompoment.input || copyComponent.input || copyComponent.$component.input;
+
 						dupCompoment.$component = component.$component;
-
 						on.designer.add(dupCompoment, dupCompoment.x, dupCompoment.y, false);
+						loading.hide();
 
+					}, function (err) {
+						debugger;
 						loading.hide();
 					});
+
 				};
 			},
 
@@ -2367,7 +2374,7 @@
 
 					var clone = function (component, callback) {
 
-						var obj = Object.assign({}, component); //CLONE
+						var obj = Object.assign({}, component);
 						var org = component.$component;
 						obj.title = org.title;
 						obj.output = org.output;
@@ -2379,21 +2386,45 @@
 						else
 							obj.state = { text: org.title || '', color: org.color };
 
-						// copy settings from original node
 						loading.show();
-						copySettingsFromOriginalNode(obj).then(function (copiedComponent) {
-							copiedComponent.$component = component.$component;
 
-							on.designer.add(copiedComponent, copiedComponent.x, copiedComponent.y, false);
+						// copy settings from original node
+						obj.x += 50;
+						obj.y += 50;
+						obj.connections = [];
+						var desingComponent = JSON.stringify(obj);
+						componentInstance.invokeMethodAsync('DuplicateNode', obj.id, desingComponent).then(function (data) {
 
+							dupCompoment = JSON.parse(data);
+
+							dupCompoment.$component = obj;
+							dupCompoment.output = dupCompoment.output || obj.output || obj.$component.output;
+							dupCompoment.input = dupCompoment.input || obj.input || obj.$component.input;
+
+							//dupCompoment.$component = obj.$component;
+							on.designer.add(dupCompoment, dupCompoment.x, dupCompoment.y, false);
+							loading.hide();
+
+						}, function (err) {
+							debugger;
 							loading.hide();
 						});
+
 					};
 
 					clone(flow.clipboard, function (id) {
 						flow.clipboard = null;
 						on.designer.selectable(flow.selected);
 					});
+				},
+				settings: function (el) {
+					el = $(el);
+					if (el.hasClass('disabled'))
+						return;
+
+					debugger;
+					var idconnection = selected.attr('data-id');
+					on.designer.settings(idconnection);
 				}
 			}
 		};
