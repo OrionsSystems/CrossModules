@@ -19,6 +19,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
     <PackageReference Include="SkiaSharp" Version="1.68.1.1" />
+    <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
   </ItemGroup>
 
   <ItemGroup>
