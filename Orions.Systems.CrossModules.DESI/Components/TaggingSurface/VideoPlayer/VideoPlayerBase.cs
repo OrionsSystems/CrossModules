@@ -145,6 +145,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 									GoToSelectedTagFrame();
 								}
 							}));
+						_subscriptions.Add(_tagsStore.Data
+							.CurrentTaskTags
+							.GetCollectionChangedObservable()
+							.Subscribe(_ =>
+							{
+								UpdateState();
+							}));
 					}
 				});
 			}

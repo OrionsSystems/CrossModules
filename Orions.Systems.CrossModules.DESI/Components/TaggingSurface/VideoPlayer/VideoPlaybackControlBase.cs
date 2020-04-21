@@ -103,18 +103,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateState();
 		}
 
-		private void UpdateMarkersJs(List<TimelineMarker> oldTimelineMarkers, List<TimelineMarker> newTimelineMarkers)
-		{
-			foreach (var marker in newTimelineMarkers) 
-			{ 
-				if(!oldTimelineMarkers.Any(m => m.PercentagePosition == marker.PercentagePosition))
-				{
-					_afterRenderTasks.Add(PositionMarkersJs);
-					break;
-				}
-			}
-		}
-
 		public void PlayPauseClick()
 		{
 			if (IsPlaying)
