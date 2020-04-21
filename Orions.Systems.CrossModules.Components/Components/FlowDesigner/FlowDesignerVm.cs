@@ -113,6 +113,54 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
+		public string DuplicateNode(string originalNodeConfigId, string desingComponentJson) {
+
+			if (string.IsNullOrEmpty(originalNodeConfigId)) throw new Exception("Missing node component id");
+
+			var oldNodeConfiguration = Source.Nodes?.FirstOrDefault(it => it.Id == originalNodeConfigId);
+
+			if (oldNodeConfiguration == null) throw new Exception("Missing node configuration");
+
+			var hyperWorkflowHyperNodeData = (HyperWorkflowNodeData)oldNodeConfiguration.CreateNodeInstance(true);
+
+			FlowDesignComponent nodeConfig = JsonConvert.DeserializeObject<FlowDesignComponent>(desingComponentJson, FlowDesignConverter.Settings);
+
+			var types = GetHyperWorkflowNodeDataType();
+			var type = types.FirstOrDefault(it => it.FullName == nodeConfig.Type);
+
+			if (type == null) throw new ApplicationException("Missing node type");
+
+			var node = new NodeConfiguration(type)
+			{
+				AllowMultiOutputPortConnections = true
+			};
+
+			node.CopySettingsFromNode(hyperWorkflowHyperNodeData);
+
+			nodeConfig.Id = node.Id;
+
+			var nodeName = nodeConfig.State.Text;
+			if (nodeName != null) node.Name = nodeName;
+
+			var nodeColor = nodeConfig.State.Color;
+			if (!string.IsNullOrEmpty(nodeColor))
+			{
+				var colorR = UniColorFromHex(nodeColor);
+				node.Color = colorR;
+			}
+
+			var nodeGroup = nodeConfig.Group;
+			if (nodeGroup != null) node.Group = nodeGroup;
+
+			node.GUIPosition = new UniPoint2f(nodeConfig.X, nodeConfig.Y);
+
+			Source.AddNode(node);
+
+			var nodeConfigJson = JsonConvert.SerializeObject(nodeConfig, FlowDesignConverter.Settings);
+
+			return nodeConfigJson;
+		}
+
 		private void PopulateDesignerData() 
 		{
 			var design = new FlowDesignData();
@@ -169,7 +217,7 @@ namespace Orions.Systems.CrossModules.Components
 					Y = Convert.ToInt64(y),
 					Name = nodeConfig.NodeType.Name.ToLower(),
 					Id = nodeConfig.Id,
-					Type = nodeConfig.NodeType.TypeName,
+					Type = nodeConfig.NodeType.AsType().FullName,
 					State = new FlowState()
 					{
 						Text = string.IsNullOrWhiteSpace(nodeConfig.Name) ? nodeConfig.NodeType.Name : nodeConfig.Name,

@@ -4,11 +4,6 @@
 
 (function () {
 
-	// User Configuration
-	let baseComponentPath = '/flowDesigner/';
-	let componentsConfigFilePath = 'components/components.json';
-	let fileDesigner = 'designer.json';
-
 	let defaultRefreshNodeStatusInMilisecond = 30000; //default is 30 sec
 
 	var common = {};
@@ -18,7 +13,6 @@
 	common.theme = 'dark';
 	common.callbacks = {};
 	common.statics = {}; // cache for static content
-	common.remoteData = true; // TODO default is true !
 
 	var flow = {};
 	flow.components = [];
@@ -34,8 +28,6 @@
 
 	var operation = {};
 	operation.designer = {};
-
-	let baseUrl = window.location.origin;
 
 	function checktouches(e) {
 		common.touches = true;
@@ -151,8 +143,6 @@
 	}
 
 	function createComponentMenu(remoteCommonComponents) {
-
-		//debugger;
 
 		if (!common.localComponents) return;
 
@@ -1296,7 +1286,7 @@
 							// create node
 							var desingComponent = JSON.stringify(dragdrop);
 							componentInstance.invokeMethodAsync('CreateNode', desingComponent).then(function (data) {
-				
+
 								res = JSON.parse(data);
 
 								res.$component = dragdrop;
@@ -1563,13 +1553,30 @@
 
 					// copy settings from original node
 					loading.show();
-					copySettingsFromOriginalNode(Object.assign({}, component)).then(function (dupCompoment) {
+
+					var copyComponent = Object.assign({}, component)
+					copyComponent.x += 50;
+					copyComponent.y += 50;
+					copyComponent.connections = [];
+					var desingComponent = JSON.stringify(copyComponent);
+					componentInstance.invokeMethodAsync('DuplicateNode', copyComponent.id, desingComponent).then(function (data) {
+						
+						dupCompoment = JSON.parse(data);
+
+						dupCompoment.$component = copyComponent;
+
+						dupCompoment.output = dupCompoment.output || copyComponent.output || copyComponent.$component.output;
+						dupCompoment.input = dupCompoment.input || copyComponent.input || copyComponent.$component.input;
+
 						dupCompoment.$component = component.$component;
-
 						on.designer.add(dupCompoment, dupCompoment.x, dupCompoment.y, false);
+						loading.hide();
 
+					}, function (err) {
+						debugger;
 						loading.hide();
 					});
+
 				};
 			},
 
