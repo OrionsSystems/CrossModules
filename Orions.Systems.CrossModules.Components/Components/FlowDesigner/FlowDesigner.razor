@@ -19,8 +19,8 @@
 				<a href="#" class="exec"><i class="fa fa-history"></i>Console</a>
 				<a href="#" class="exec"><i class="fa fa-history"></i>Debug</a>
 				@*<a href="#" class="exec"><i class="fa fa-info-circle"></i>Info</a>
-		<a href="#" class="exec"><i class="fa fa-bug"></i>Errors</a>
-		<a href="#" class="exec"><i class="fa fa-tasks"></i>Traffic</a>*@
+					<a href="#" class="exec"><i class="fa fa-bug"></i>Errors</a>
+					<a href="#" class="exec"><i class="fa fa-tasks"></i>Traffic</a>*@
 			</nav>
 		</section>
 		<div class="hidden body-settings">
@@ -49,29 +49,29 @@
 		</div>
 
 		@*<div class="tab-content scroller">
-			<div class="container-fluid m-t-md" id="nodeSettingsId">
-				<h4 class="nodeSettingsId"> Node Id: <span style="color:#d4d4d4;"></span></h4>
-				<div class="nodeSettingsReadme">
-					<p style="color:#d4d4d4;"></p>
-				</div>
-				<form>
-					<div class="form-group">
-						<label for="nodeUpdateNameId" class="col-form-label">Node Name</label>
-						<input type="text" class="form-control" id="nodeUpdateNameId">
+				<div class="container-fluid m-t-md" id="nodeSettingsId">
+					<h4 class="nodeSettingsId"> Node Id: <span style="color:#d4d4d4;"></span></h4>
+					<div class="nodeSettingsReadme">
+						<p style="color:#d4d4d4;"></p>
 					</div>
-					<div class="form-group">
-						<label for="mycp" class="col-form-label">Node Color</label>
-						<div id="mycp" class="input-group colorpicker-component" title="Using input value">
-							<input type="text" class="form-control input-lg" />
-							<span class="input-group-addon"><i class="colorSp"></i></span>
+					<form>
+						<div class="form-group">
+							<label for="nodeUpdateNameId" class="col-form-label">Node Name</label>
+							<input type="text" class="form-control" id="nodeUpdateNameId">
 						</div>
-					</div>
-					<input type="hidden" name="nodeConfigId" id="nodeConfigId" />
-					<input type="hidden" name="nodeConfigOriginalName" id="nodeConfigOriginalName" />
-				</form>
-				<button type="button" class="btn btn-primary" id="saveNodeUpdateChanges">Save</button>
-			</div>
-		</div>*@
+						<div class="form-group">
+							<label for="mycp" class="col-form-label">Node Color</label>
+							<div id="mycp" class="input-group colorpicker-component" title="Using input value">
+								<input type="text" class="form-control input-lg" />
+								<span class="input-group-addon"><i class="colorSp"></i></span>
+							</div>
+						</div>
+						<input type="hidden" name="nodeConfigId" id="nodeConfigId" />
+						<input type="hidden" name="nodeConfigOriginalName" id="nodeConfigOriginalName" />
+					</form>
+					<button type="button" class="btn btn-primary" id="saveNodeUpdateChanges">Save</button>
+				</div>
+			</div>*@
 	</div>
 
 	<div class="mainmenu body-components">
@@ -103,8 +103,8 @@
 	<div class="body body-designer" style="margin-right: 340px;">
 		<div class="tabs-tools">
 			@*<button class="exec green" data-exec="#tabs.add" title="New tab"><i class="fa fa-plus"></i></button>
-			<button class="exec" data-exec="showhelp" title="Help"><i class="fa fa-question-circle"></i></button>
-			<button class="exec" data-exec="themechanger" title="Change theme"><i class="fa fa-paint-brush"></i></button>*@
+				<button class="exec" data-exec="showhelp" title="Help"><i class="fa fa-question-circle"></i></button>
+				<button class="exec" data-exec="themechanger" title="Change theme"><i class="fa fa-paint-brush"></i></button>*@
 			<button class="exec scrolling hidden" data-exec="tabscrolling" data-value="-200" title="Scroll tabs to right"><i class="fa fa-chevron-left"></i></button>
 			<button class="exec scrolling hidden" data-exec="tabscrolling" data-value="200" title="Scroll tabs to left"><i class="fa fa-chevron-right"></i></button>
 		</div>
@@ -160,6 +160,29 @@
 	<div id="tmpclone"></div>
 
 </div>
+
+
+@if (Vm.IsShowProperty)
+{
+	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<PropertyGrid Vm="Vm.PropertyGridVm"
+									  Loader="Vm.LoadPropertyGridData"
+									  CancelVisible="true"
+									  HyperStore="Vm.HyperStore"
+									  OKVisible="true"
+									  CancelCommand="Vm.OnCancelProperty"
+									  OkCommand="Vm.OnCancelProperty">
+					</PropertyGrid>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal-backdrop fade show"></div>
+}
 
 @if (Vm.IsShowDesignerSetting)
 {

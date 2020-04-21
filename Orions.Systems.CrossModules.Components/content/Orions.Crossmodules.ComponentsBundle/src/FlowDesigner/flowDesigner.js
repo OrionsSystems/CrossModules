@@ -2108,27 +2108,8 @@
 					settings.$input = component.input;
 
 					// open property node settings 
-
-					staticContent(component.component, 'html', function () {
-
-						var isEditable = component.isnew ? false : true;
-
-						// if(!isEditable) {
-						//     toastr.error('Node is new! You should save configuration before edit it.');
-						//     return;
-						// }
-
-						var title = component.$component.name;
-
-						openPropertyGrid(id, component.typeFull, title, isEditable);
-
-						//TODO
-
-						//    EMIT('open.' + component.component, component, model);
-						//    SET('settings.' + component.component, model);
-						//    SET('common.form', 'settings-' + component.component);
-						//    RESET('settings.' + component.component + '.*', 500);
-						//    settings.$backup = STRINGIFY(model);
+					componentInstance.invokeMethodAsync('OpenPropertyGrid', id).then(null, function (err) {
+						throw new Error(err);
 					});
 
 					settings.$id = id;

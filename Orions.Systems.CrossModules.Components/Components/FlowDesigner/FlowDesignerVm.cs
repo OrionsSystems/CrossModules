@@ -24,6 +24,9 @@ namespace Orions.Systems.CrossModules.Components
 
 
 		public bool IsShowDesignerSetting { get; set; }
+		public bool IsShowProperty { get; set; }
+
+		public HyperWorkflowNodeData SelectedNode { get; set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
 
@@ -43,11 +46,31 @@ namespace Orions.Systems.CrossModules.Components
 			await PopulateWorkflowStatuses(workflowInstanceId);
 
 			PopulateDesignerData();
-
 		}
 
 		public string GetJesonDesignData() {
 			return JsonConvert.SerializeObject(DesignData, FlowDesignConverter.Settings);
+		}
+
+		public void ShowPropertyGrid(string nodeConfigId) 
+		{
+			// load node configuration
+
+			var nodeConfiguration = Source.Nodes.FirstOrDefault(it => it.Id == nodeConfigId);
+
+			SelectedNode = (HyperWorkflowNodeData)nodeConfiguration.CreateNodeInstance(true);
+
+			IsShowProperty = true;
+		}
+
+		public Task<object> LoadPropertyGridData()
+		{
+			return Task.FromResult<object>(SelectedNode);
+		}
+
+		public void OnCancelProperty() {
+			IsShowProperty = false;
+			PropertyGridVm.CleanSourceCache();
 		}
 
 		private void PopulateDesignerData() 

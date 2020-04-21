@@ -21,6 +21,9 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
+		public EventCallback<string> OnOpenPropertyGrid { get; set; }
+
+		[Parameter]
 		public EventCallback<IFlowDesignData> OnApply { get; set; }
 
 		PropertyGrid _propGrid;
@@ -67,6 +70,16 @@ namespace Orions.Systems.CrossModules.Components
 			//TODO
 
 			await OnApply.InvokeAsync(Vm.DesignData);
+		}
+
+		[JSInvokable]
+		public async Task OpenPropertyGrid(string id)
+		{
+			Vm.ShowPropertyGrid(id);
+
+			StateHasChanged();
+
+			await OnOpenPropertyGrid.InvokeAsync(id);
 		}
 
 		public async Task ToggleMainMenu() 
