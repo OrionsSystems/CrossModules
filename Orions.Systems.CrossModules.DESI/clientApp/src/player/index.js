@@ -1,70 +1,107 @@
 import videojs from 'video.js';
-import {mp4} from './mux.js';
 
 window.Orions.Player = {
     init: function (vmInstance, videoElementId) {
-        videojs.registerPlugin('framebyframe', GenerateFrameByFramePlugin(vmInstance));
+        let video = document.getElementById(videoElementId)
 
-        let video = videojs(videoElementId, {
-            inactivityTimeout: 0
-        });
+        video.addEventListener('keydown', function (e) {
+            e.preventDefault();
+        })
 
-        video.framebyframe({
-            steps: [{
-                text: '<',
-                step: -1
-            },
-            {
-                text: '>',
-                step: 1
-                }]
-        }, vmInstance);
-
-        
-
-        video.on('pause', function () {
-            vmInstance.invokeMethodAsync("OnPauseJsCallback", video.currentTime());
-        });
-
-        video.on('timeupdate', function () {
+        video.addEventListener('timeupdate', function () {
             if (!video.doNotProcessPositionChanged) {
-                vmInstance.invokeMethodAsync("OnPositionUpdate", video.currentTime());
+                vmInstance.invokeMethodAsync("OnPositionUpdate", video.currentTime);
             }
 
             video.doNotProcessPositionChanged = false;
         });
 
-        video.on('play', function () {
-            vmInstance.invokeMethodAsync("OnPlayJsCallback");
-        });
-
-        video.on('loadeddata', function () {
+        video.addEventListener('loadeddata', function () {
             vmInstance.invokeMethodAsync("OnPlayerDataLoaded");
         });
 
         this.video = video;
     },
-    setSrc: function(payload, vmInstance, options) {
+    setSrc: function (payload, vmInstance, options) {
         let self = this;
 
         var blob = new Blob([Base64ToByteArray(payload)], { type: "video/mp4" });
 
         var url = URL.createObjectURL(blob);
 
-        self.video.src({
-            type: blob.type,
-            src: url
-        });
+        self.video.src = url;
     },
     setPosition: function (position) {
         this.video.doNotProcessPositionChanged = true;
-        this.video.currentTime(position);
+        this.video.currentTime = position;
+    },
+    setVolumeLevel: function (volLevel) {
+        this.video.volume = volLevel / 100;
+    },
+    setSpeed: function (speed) {
+        this.video.playbackRate = speed;
     },
     play: function () {
         this.video.play();
     },
     pause: function () {
         this.video.pause();
+    },
+
+    playbackControl: {
+        init: function (elementId, componentRef) {
+            let self = this;
+
+            self.componentRef = componentRef;
+            self.elementId = elementId;
+
+            let element = document.getElementById(elementId);
+            let timeline = element.querySelector('.timeline');
+
+            timeline.addEventListener('click', function (e) {
+                let boundingRect = this.getBoundingClientRect();
+                let percentage = (e.clientX - boundingRect.x) / this.getBoundingClientRect().width;
+
+                if (percentage < 0) percentage = 0;
+                if (percentage > 1) percentage = 1;
+
+                self.componentRef.invokeMethodAsync('TimelineClick', percentage * 100 < 0 ? 0 : percentage * 100)
+            });
+
+            let autohideControls = element.querySelectorAll('.control-autohide');
+            let autoHideControlParents = element.querySelectorAll('.control-autohide-parent');
+            for (let control of autoHideControlParents) {
+                control.addEventListener('click', function (e) {
+                    let child = this.querySelector('.control-autohide')
+
+                    if (child.style.visibility == 'hidden') {
+                        child.style.visibility = 'visible'
+                    }
+                    else {
+                        child.style.visibility = 'hidden'
+                    }
+                })
+            }
+
+            document.addEventListener('click', function (e) {
+                for (let control of autohideControls) {
+                    if (!e.target.parentElement.contains(control)) {
+                        control.style.visibility = 'hidden'
+                    }
+                }
+            })
+        },
+        positionMarkers: function (markers) {
+            let self = this;
+            let element = document.getElementById(self.elementId);
+            let timeline = element.querySelector('.timeline');
+            let boundingRect = timeline.getBoundingClientRect();
+
+            for (let marker of markers) {
+                let markerEl = element.querySelector(`.marker[data-sliceId="${marker.id}"]`);
+                markerEl.style.left = boundingRect.width * marker.percentagePosition + 'px';
+            }
+        }
     }
 };
 
@@ -76,58 +113,4 @@ function Base64ToByteArray(payload) {
         bytes[i] = binary_string.charCodeAt(i);
     }
     return bytes.buffer;
-}
-
-function GenerateFrameByFramePlugin(vmInstance) {
-    var VjsButton = videojs.getComponent('Button');
-    var FBFButton = videojs.extend(VjsButton, {
-        constructor: function (player, options) {
-            VjsButton.call(this, player, options);
-            this.player = player;
-            this.step_size = options.value;
-            this.on('click', this.onClick);
-        },
-
-        onClick: function () {
-            this.player.pause();
-            if (this.step_size > 0) {
-                vmInstance.invokeMethodAsync("GoToNextFrame");
-            }
-            else {
-                vmInstance.invokeMethodAsync("GoToPreviousFrame");
-            }
-        }
-    });
-
-    function framebyframe(options, vmInstance) {
-        var player = this;
-        player.on('loadeddata', function () {
-        });
-
-        player.on('timeupdate', function () {
-        });
-
-        player.ready(function (a) {
-            options.steps.forEach(function (opt) {
-                player.controlBar.addChild(
-                    new FBFButton(player, {
-                        el: videojs.dom.createEl(
-                            'button',
-                            {
-                                className: 'vjs-res-button vjs-control',
-                                innerHTML: '<div class="vjs-control-content" style="font-size: 11px; line-height: 28px;"><span class="vjs-fbf">' + opt.text + '</span></div>'
-                            },
-                            {
-                                role: 'button'
-                            }
-                        ),
-                        value: opt.step
-                    }),
-                    {}, opt.index);
-            });
-
-        });
-    }
-
-    return framebyframe;
 }

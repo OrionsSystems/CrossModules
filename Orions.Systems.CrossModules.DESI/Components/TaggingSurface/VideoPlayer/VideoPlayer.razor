@@ -2,35 +2,45 @@
 @using Orions.Common;
 @inherits VideoPlayerBase
 
-<video id="@_videoElementId"
-	   class="video-js"
-	   controls
-	   preload="auto"
-	   width="1280"
-	   height="720"
-	   data-setup="{}">
-	<p class="vjs-no-js">
-		To view this video please enable JavaScript, and consider upgrading to a
-		web browser that
-		<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-	</p>
-</video>
-@if (CurrentFrameIsLoading || IsVideoLoading)
-{
-	<div class="video-player-overlay">
-		<div class="overlay-message">
-		@if (CurrentFrameIsLoading)
-		{
-			@("Loading frame image...")
-		}
-		else if (IsVideoLoading)
-		{
-			@("Buffering video...")
-		}
+<div class="tagging-video-player-container">
+	<video id="@_videoElementId"
+		   preload="auto"
+		   class="video-player">
+		<p>
+			To view this video please enable JavaScript, and consider upgrading to a
+			web browser that
+			<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+		</p>
+	</video>
+	<VideoPlaybackControl
+						  OnPlay="this.Play"
+						  OnPause="this.Pause"
+						  OnPositionChanged="this.OnPlaybackControlPositionChanged"
+						  OnVolumeLevelChanged="this.ChangeVolumeLevel"
+						  OnPlaybackSpeedChanged="this.ChangePlaybackSpeed"
+						  PlaybackSpeed="this.PlaybackSpeed"
+						  IsPlaying="!this.Paused"
+						  CurrentTimePosition="this.CurrentPosition"
+						  TotalDuration="this.TotalDuration"
+						  VolumeLevel="VolumeLevel"
+						  TimelineMarkers="TimelineMarkers"/>
+	@if (CurrentFrameIsLoading || IsVideoLoading)
+	{
+		<div class="video-player-overlay">
+			<div class="overlay-message">
+			@if (CurrentFrameIsLoading)
+			{
+				@("Loading frame image...")
+			}
+			else if (IsVideoLoading)
+			{
+				@("Buffering video...")
+			}
+			</div>
+			<DotsLoader CssClass="video-overlay-dots-loader"/>
 		</div>
-		<DotsLoader CssClass="video-overlay-dots-loader"/>
-	</div>
-}
+	}
+</div>
 
 <div class="centered-container">
 	<img src="@this.PausedFrameBase64" class="frame-img" />

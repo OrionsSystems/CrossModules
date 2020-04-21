@@ -1,0 +1,101 @@
+﻿@namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
+@inherits VideoPlaybackControlBase
+@using Syncfusion.EJ2.Blazor
+@using Syncfusion.EJ2.Blazor.Inputs;
+@using Orions.Systems.Desi.Common.View;
+
+<div class="video-control-bar" id="@_elementId">
+	<div class="play-btn button" @onclick="PlayPauseClick">
+		@if (IsPlaying)
+		{
+			<img src="images/ic_pause_white.png" />
+		}
+		else
+		{
+			<img src="images/ic_play_arrow_white.png" />
+		}
+	</div>
+	<div class="sound-control button control-autohide-parent">
+		<img src="images/ic_volume_up_white.png" />
+		<div class="volume-slider control-autohide">
+			<EjsSlider TValue="double"
+					   Type="SliderType.MinRange"
+					   Step="10"
+					   Min="0"
+					   Max="100"
+					   Value=@this.VolumeLevel
+					   Orientation="SliderOrientation.Vertical"
+					   ValueChanged="(double value) => { this.VolumeLevel = value; this.OnVolumeLevelChanged.InvokeAsync(value); } ">
+			</EjsSlider>
+		</div>
+	</div>
+	<div class="playback-speed  control-autohide-parent">
+		<div class="current-speed">
+			@($"{this.PlaybackSpeed}x")
+		</div>
+
+		<div class="speed-options control-autohide">
+			@foreach (var speedOpt in this.PlaybackSpeedOptions)
+			{
+				var active = speedOpt == PlaybackSpeed ? "active" : "";
+				<div class="speed-opt @active" @onclick="() => { PlaybackSpeed = speedOpt; OnPlaybackSpeedChanged.InvokeAsync(PlaybackSpeed); }">
+					@($"{speedOpt}x")
+				</div>
+			}
+		</div>
+	</div>
+
+	<div class="time-left">
+		@CurrentTimePosition.ToString(@"mm\:ss")
+	</div>
+	<div class="timeline">
+		@{
+			var timerMarkerPositions = TimelineControlUtils.GetTimweMarkersPositions(TotalDuration);
+		}
+		<div class="time-markers time-markers-top">
+			@{
+				foreach (var dash in timerMarkerPositions.DashPositions)
+				{
+					<div class="marker dash" style="left:@($"{dash.TotalMilliseconds / TotalDuration.TotalMilliseconds * 100}%")"></div>
+				}
+				foreach (var dot in timerMarkerPositions.DotPositions)
+				{
+					<div class="marker dot" style="left:@($"{dot.TotalMilliseconds / TotalDuration.TotalMilliseconds * 100}%")"></div>
+				}
+			}
+		</div>
+		<div class="time-fill">
+			<div class="time-played" style="width:@($"{TimePlayedWidthPercentrage}%")"></div>
+			<div class="current-pos-indicator" style="left:@($"{TimePlayedWidthPercentrage}%")">
+				<div class="triangle-down"></div>
+				<div class="line"></div>
+				<div class="triangle-up"></div>
+			</div>
+			<div class="time-to-play" style="width:@($"{TimeToPlayWidthPercentrage}%")"></div>
+			<div class="markers-overlay">
+				@if (TimelineMarkers?.Any() ?? false)
+				{
+					foreach (var marker in TimelineMarkers)
+					{
+						<div class="marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
+					}
+				}
+			</div>
+		</div>
+		<div class="time-markers time-markers-bottom">
+			@{
+				foreach (var dash in timerMarkerPositions.DashPositions)
+				{
+					<div class="marker dash" style="left:@($"{dash.TotalMilliseconds / TotalDuration.TotalMilliseconds * 100}%")"></div>
+				}
+				foreach (var dot in timerMarkerPositions.DotPositions)
+				{
+					<div class="marker dot" style="left:@($"{dot.TotalMilliseconds / TotalDuration.TotalMilliseconds * 100}%")"></div>
+				}
+			}
+		</div>
+	</div>
+	<div class="time-right">
+		@TotalDuration.ToString(@"mm\:ss")
+	</div>
+</div>

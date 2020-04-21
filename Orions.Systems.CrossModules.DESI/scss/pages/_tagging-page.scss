@@ -92,7 +92,6 @@
 		& > .right-column {
 			flex: 1;
 			background-color: #181818;
-			padding: 20px;
 			display: flex;
 			flex-direction: column;
 			overflow: hidden;
@@ -224,10 +223,9 @@
 		.centered-container {
 			display: flex;
 			max-width: 100%;
-			max-height: calc(100% - 30px);
+			max-height: calc(100% - #{$player-control-bar-height});
 			position: relative;
-			z-index:-1; // set to -1 to enable events of overlaying elements (for example videoplayer click)
-
+			z-index: -1; // set to -1 to enable events of overlaying elements (for example videoplayer click)
 			& > * {
 				max-height: 100%;
 				max-width: 100%;
@@ -241,9 +239,9 @@
 		.tagging-canvas {
 			position: absolute;
 			width: 100%;
-			height: calc(100% - 30px);
+			height: calc(100% - #{$player-control-bar-height});
 			top: 0;
-			background: #181818;
+			background: black;
 		}
 	}
 }
