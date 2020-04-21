@@ -78,11 +78,13 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[JSInvokable]
-		public void CreateNode(string desingComponentJson)
+		public string CreateNode(string desingComponentJson)
 		{
-			Vm.CreateNode(desingComponentJson);
+			var result = Vm.CreateNode(desingComponentJson);
 
 			StateHasChanged();
+
+			return result;
 		}
 
 		public async Task ToggleMainMenu() 

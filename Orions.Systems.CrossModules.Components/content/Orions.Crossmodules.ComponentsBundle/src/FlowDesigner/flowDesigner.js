@@ -152,7 +152,7 @@
 
 	function createComponentMenu(remoteCommonComponents) {
 
-		debugger;
+		//debugger;
 
 		if (!common.localComponents) return;
 
@@ -258,42 +258,6 @@
 				reject();
 			});
 		});
-	}
-
-	function createNodeConfiguration(component) {
-		//TODO call external callback
-
-		var desingComponent = JSON.stringify(component);
-
-		//return new Promise(function (resolve, reject) {
-
-		//	var data = {
-		//		'workflowId': _workflowId,
-		//		'nodeId': _nodeId,
-		//		'desingComponentJson': desingComponent
-		//	};
-
-		//	$.post(_createNodeAddress, data).done(function (response) {
-		//		var res = JSON.parse(response);
-
-		//		res.$component = component;
-
-		//		res.title = res.title || component.title;
-		//		res.output = res.output || component.output;
-		//		res.input = res.input || component.input;
-
-		//		if (typeof (res.state) === 'object' && res.state)
-		//			res.state = { text: res.state.text || component.title, color: res.state.color || component.color };
-		//		else
-		//			res.state = { text: res.title || '', color: component.color };
-
-		//		resolve(res);
-		//	}).fail(function (jqxhr, textStatus, error) {
-		//		loading.hide();
-		//		Error(error);
-		//		reject();
-		//	});
-		//});
 	}
 
 	function saveRemoteJsonConfiguration(flowJson) {
@@ -1324,18 +1288,35 @@
 							x += self.prop('scrollLeft');
 							y += self.prop('scrollTop');
 
-							// create node
 							loading.show();
+
 							dragdrop.x = (x - 50) / zoom;
 							dragdrop.y = (y - 30) / zoom;
 
-							on.designer.add(dragdrop, dragdrop.x, dragdrop.y, false);
-							loading.hide();
+							// create node
+							var desingComponent = JSON.stringify(dragdrop);
+							componentInstance.invokeMethodAsync('CreateNode', desingComponent).then(function (data) {
+				
+								res = JSON.parse(data);
 
-							//createNodeConfiguration(dragdrop).then(function (response) {
-							//	on.designer.add(response, response.x, response.y, false);
-							//	loading.hide();
-							//});
+								res.$component = dragdrop;
+
+								res.title = res.title || dragdrop.title;
+								res.output = res.output || dragdrop.output;
+								res.input = res.input || dragdrop.input;
+
+								if (typeof (res.state) === 'object' && res.state)
+									res.state = { text: res.state.text || dragdrop.title, color: res.state.color || dragdrop.color };
+								else
+									res.state = { text: res.title || '', color: dragdrop.color };
+
+								on.designer.add(res, res.x, res.y, false);
+								loading.hide();
+							}, function (err) {
+								debugger;
+								loading.hide();
+							});
+
 							break;
 					}
 
@@ -1608,8 +1589,6 @@
 				self.css(size);
 			},
 			add: function (item) {
-
-				debugger;
 
 				var self = designerComponet;
 
@@ -1999,7 +1978,6 @@
 				},
 				add: function (component, x, y, is, cf, ct, toindex, duplicate, fromindex) {
 
-					debugger;
 					var obj = {};
 					obj.component = component.$component.id;
 					obj.$component = component;
@@ -2649,7 +2627,7 @@
 
 			}
 
-			
+
 			initComponents();
 
 			// UI style part
