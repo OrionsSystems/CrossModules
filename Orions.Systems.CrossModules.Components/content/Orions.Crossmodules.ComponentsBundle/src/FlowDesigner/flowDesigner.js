@@ -1551,20 +1551,19 @@
 					var component = findItemById(flow.components, flow.selected.attr('data-id'));
 					if (!component) return;
 
-					// copy settings from original node
 					loading.show();
 
+					// copy settings from original node
 					var copyComponent = Object.assign({}, component)
 					copyComponent.x += 50;
 					copyComponent.y += 50;
 					copyComponent.connections = [];
 					var desingComponent = JSON.stringify(copyComponent);
 					componentInstance.invokeMethodAsync('DuplicateNode', copyComponent.id, desingComponent).then(function (data) {
-						
+
 						dupCompoment = JSON.parse(data);
 
 						dupCompoment.$component = copyComponent;
-
 						dupCompoment.output = dupCompoment.output || copyComponent.output || copyComponent.$component.output;
 						dupCompoment.input = dupCompoment.input || copyComponent.input || copyComponent.$component.input;
 
@@ -2374,7 +2373,7 @@
 
 					var clone = function (component, callback) {
 
-						var obj = Object.assign({}, component); //CLONE
+						var obj = Object.assign({}, component); 
 						var org = component.$component;
 						obj.title = org.title;
 						obj.output = org.output;
@@ -2386,15 +2385,30 @@
 						else
 							obj.state = { text: org.title || '', color: org.color };
 
-						// copy settings from original node
 						loading.show();
-						copySettingsFromOriginalNode(obj).then(function (copiedComponent) {
-							copiedComponent.$component = component.$component;
 
-							on.designer.add(copiedComponent, copiedComponent.x, copiedComponent.y, false);
+						// copy settings from original node
+						obj.x += 50;
+						obj.y += 50;
+						obj.connections = [];
+						var desingComponent = JSON.stringify(obj);
+						componentInstance.invokeMethodAsync('DuplicateNode', obj.id, desingComponent).then(function (data) {
 
+							dupCompoment = JSON.parse(data);
+
+							dupCompoment.$component = obj;
+							dupCompoment.output = dupCompoment.output || obj.output || obj.$component.output;
+							dupCompoment.input = dupCompoment.input || obj.input || obj.$component.input;
+
+							//dupCompoment.$component = obj.$component;
+							on.designer.add(dupCompoment, dupCompoment.x, dupCompoment.y, false);
+							loading.hide();
+
+						}, function (err) {
+							debugger;
 							loading.hide();
 						});
+
 					};
 
 					clone(flow.clipboard, function (id) {
