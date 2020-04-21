@@ -1610,6 +1610,7 @@
 			add: function (item) {
 
 				debugger;
+
 				var self = designerComponet;
 
 				if (!item.component) return;
@@ -2108,27 +2109,8 @@
 					settings.$input = component.input;
 
 					// open property node settings 
-
-					staticContent(component.component, 'html', function () {
-
-						var isEditable = component.isnew ? false : true;
-
-						// if(!isEditable) {
-						//     toastr.error('Node is new! You should save configuration before edit it.');
-						//     return;
-						// }
-
-						var title = component.$component.name;
-
-						openPropertyGrid(id, component.typeFull, title, isEditable);
-
-						//TODO
-
-						//    EMIT('open.' + component.component, component, model);
-						//    SET('settings.' + component.component, model);
-						//    SET('common.form', 'settings-' + component.component);
-						//    RESET('settings.' + component.component + '.*', 500);
-						//    settings.$backup = STRINGIFY(model);
+					componentInstance.invokeMethodAsync('OpenPropertyGrid', id).then(null, function (err) {
+						throw new Error(err);
 					});
 
 					settings.$id = id;
@@ -2225,33 +2207,6 @@
 				});
 			}
 		};
-
-		function openPropertyGrid(nodeConfigId, type, title) {
-
-			if (!type && !nodeConfigId && !_nodeProperty) return Error('Missied property');
-
-			var arg = {};
-
-			var params = '?workflowId=' + _workflowId + '&nodeId=' + _nodeId + '&nodeConfigId=' + nodeConfigId;
-
-			var url = _nodeProperty + params;
-
-			var model = {};
-			model.type = type;
-			model.postUrl = url;
-			model.getUrl = url;
-			if (title) model.title = title;
-			model.editable = !flow.isReadOnly;
-
-			model.Events = {
-				onSave: function () {
-					on.designer.refresh();
-					setState(MESSAGES.apply);
-				}
-			};
-
-			propertyGrid_Run(arg, model);
-		}
 
 		operation = {
 			flow: {
@@ -2589,221 +2544,121 @@
 
 		$(document).ready(function () {
 
-			//debugger;
 
 			loading.make();
 			confirm.make();
 
-			function getComponentsConfigPath() {
-
-				var result = '';
-				if (baseUrl) {
-					result = baseUrl + baseComponentPath + componentsConfigFilePath;
-				} else {
-					result = baseComponentPath + componentsConfigFilePath;
-				}
-
-				return result;
-			}
-
-			function getComponentsPath(element) {
-
-				var result = '';
-				if (baseUrl) {
-					result = baseUrl + baseComponentPath + element;
-				} else {
-					result = baseComponentPath + element;
-				}
-
-				return result;
-			}
-
-			function getLocalDesignerConfigPath() {
-
-				var result = '';
-				if (baseUrl) {
-					result = baseUrl + baseComponentPath + fileDesigner;
-				} else {
-					result = baseComponentPath + fileDesigner;
-				}
-
-				return result;
-			}
-
 			// Init Components
 			function initComponents() {
+
 				return new Promise(function (resolve, reject) {
-					var address = getComponentsConfigPath();
-					$.getJSON(address, function (json) {
-						loadScript(json);
-						resolve(json);
-					}).fail(function (jqxhr, textStatus, error) {
-						Error(error);
-						reject();
-					});
-				});
-			}
 
-			// load compoment configuration localy
-			function loadJsonDataFromFile() {
-				return new Promise(function (resolve, reject) {
-					$.getJSON(getLocalDesignerConfigPath(), function (json) {
-						resolve(json);
-					}).fail(function (jqxhr, textStatus, error) {
-						Error(error);
-						reject();
-					});
-				});
-			}
+					jsonConfigurations = JSON.parse(designData);
 
-			// Load a JavaScript components from files
-			function loadScript(urlPack) {
-
-				debugger;
-				if (urlPack.length == 0) return;
-
-				var promises = [];
-
-				$.each(urlPack, function (index, element) {
-
-					element = getComponentsPath(element);
-
-					var promise = new Promise(function (resolve, reject) {
-						$.getScript(element)
-							.done(function (script, textStatus) {
-								common.localComponents.push(component);
-								resolve(textStatus);
-							})
-							.fail(function (jqxhr, settings, exception) {
-								reject(Error(exception));
-							});
-					});
-
-					promises.push(promise);
-				});
-
-				return Promise.all(promises)
-					//.then(function () {
-					//	if (common.remoteData) {
-					//		return loadRemoteJsonData();
-					//	}
-
-					//	//init components from design.json
-					//	return loadJsonDataFromFile()
-					//})
-					.then(function (jsonConfigurations) {
-
-						jsonConfigurations = JSON.parse(designData);;
-						debugger;
-						if (jsonConfigurations && jsonConfigurations.defComponents && jsonConfigurations.defComponents instanceof Array) {
-							$.each(jsonConfigurations.defComponents, function (index, element) {
-								common.components.push(element);
-							});
-						} else {
-							common.components = common.localComponents;
-						}
-
-						return jsonConfigurations;
-					})
-					.then(function (jsonConfigurations) {
-
-						if (jsonConfigurations && jsonConfigurations.defComponents) {
-							createComponentMenu(jsonConfigurations.defComponents);
-						} else {
-							createComponentMenu();
-						}
-
-						designer.make();
-
-						return jsonConfigurations;
-					})
-					.then(function (data) {
-
-						if (!data) data = {};
-
-						//add workflow name in tab
-						$('.flowTabName').html(data.flowName);
-
-						if (settings.isCommonMinimized.get() == 'true') {
-							$('body').addClass('panel-minized');
-						}
-
-						if (settings.isMinimizeMainMenu.get() == 'true') {
-							$('body').addClass('mainmenu-hidden');
-						}
-
-						if (_workflowInstanceId) {
-							flow.isReadOnly = true;
-							HideComponentsInReadOnlyMode();
-						}
-
-						if (!data.components || !data.components.length) {
-							loading.hide();
-							$('.ui-loading').removeClass('ui-loading-firstload');
-							return;
-						}
-
-						//add external data
-						$.each(data.components, function (index, item) {
-
-							let found = $.map(common.components, function (val) {
-								return val.id === item.component ? val : null;
-							});
-
-							item.$component = found[0];
-							//item.name =  item.$component.title;
-
-							if (item.$component) {
-
-								item.$component.name = item.$component.title;
-								item.$component.traffic = !flow.isReadOnly;
-							} else {
-								item.$component = {}
-								item.$component.name = 'Test';
-								item.$component.traffic = !flow.isReadOnly;
-							}
-
-							item.state = item.state || {};
-							item.isnew = false;
-
-							Object.keys(item.connections).forEach(function (index) {
-								var conn = item.connections[index];
-								flow.connections[item.id + '#' + index + '#' + conn.index + '#' + conn.id] = true;
-							});
-
-							flow.components.push(item);
+					if (jsonConfigurations && jsonConfigurations.defComponents && jsonConfigurations.defComponents instanceof Array) {
+						$.each(jsonConfigurations.defComponents, function (index, element) {
+							common.components.push(element);
 						});
+					} else {
+						common.components = common.localComponents;
+					}
 
-						designer.setter(data.components);
+					if (jsonConfigurations && jsonConfigurations.defComponents) {
+						createComponentMenu(jsonConfigurations.defComponents);
+					} else {
+						createComponentMenu();
+					}
 
-						on.resize();
+					designer.make();
 
-						flow.loaded = true;
+					resolve(jsonConfigurations);
 
+				}).then(function (data) {
+
+					if (!data) data = {};
+
+					//add flow name in tab
+					$('.flowTabName').html(data.flowName);
+
+					if (settings.isCommonMinimized.get() == 'true') {
+						$('body').addClass('panel-minized');
+					}
+
+					if (settings.isMinimizeMainMenu.get() == 'true') {
+						$('body').addClass('mainmenu-hidden');
+					}
+
+					if (_workflowInstanceId) {
+						flow.isReadOnly = true;
+						HideComponentsInReadOnlyMode();
+					}
+
+					if (!data.components || !data.components.length) {
 						loading.hide();
 						$('.ui-loading').removeClass('ui-loading-firstload');
+						return;
+					}
 
-						if (flow.isReadOnly) {
-							$('#saveNodeUpdateChanges').remove();
-							refreshTraffic();
-							var ref = window.setInterval(refreshTraffic, settings.refreshNodeStatusInMilisecond.get());
+					//add external data
+					$.each(data.components, function (index, item) {
+
+						let found = $.map(common.components, function (val) {
+							return val.id === item.component ? val : null;
+						});
+
+						item.$component = found[0];
+						//item.name =  item.$component.title;
+
+						if (item.$component) {
+
+							item.$component.name = item.$component.title;
+							item.$component.traffic = !flow.isReadOnly;
+						} else {
+							item.$component = {}
+							item.$component.name = 'Test';
+							item.$component.traffic = !flow.isReadOnly;
 						}
 
+						item.state = item.state || {};
+						item.isnew = false;
+
+						Object.keys(item.connections).forEach(function (index) {
+							var conn = item.connections[index];
+							flow.connections[item.id + '#' + index + '#' + conn.index + '#' + conn.id] = true;
+						});
+
+						flow.components.push(item);
 					});
+
+					designer.setter(data.components);
+
+					on.resize();
+
+					flow.loaded = true;
+
+					loading.hide();
+					$('.ui-loading').removeClass('ui-loading-firstload');
+
+					if (flow.isReadOnly) {
+						$('#saveNodeUpdateChanges').remove();
+						refreshTraffic();
+						var ref = window.setInterval(refreshTraffic, settings.refreshNodeStatusInMilisecond.get());
+					}
+
+				});
+
 			}
 
-			debugger;
-
+			
 			initComponents();
 
 			// UI style part
 			$('body').attr('class', 'touch');
 			$('body').attr('class', 'themedark');
-			// $('#page-header').attr('class', 'hidden');
 
 			//Auto collapes the navigation bar ot the left
 			//$("body").toggleClass("mainmenu-hidden");
-			$(".nav-header").attr("onclick", "$('body').toggleClass('mini-navbar')")
+			//$(".nav-header").attr("onclick", "$('body').toggleClass('mini-navbar')")
 			//$("#page-wrapper .row.border-bottom").remove();
 			//$("#side-menu .nav-header .logo-element a").each(function () {
 			//	$(this).removeAttr("href");
@@ -2842,28 +2697,6 @@
 			settings.isMinimizeMainMenu.set(true);
 			$(document.body).toggleClass('panel-minized', true);
 			settings.isCommonMinimized.set(true);
-		}
-
-
-
-		var manage = {
-			toggleMainMenu: ToggleMainMenu,
-			toggleCommonMenu: ToggleCommonMenu,
-			Designer: {
-				Copy: operation.designer.copy,
-				Paste: operation.designer.paste,
-				Duplicate: operation.designer.duplicate,
-				Remove: operation.designer.remove,
-				Zoomin: operation.designer.zoomin,
-				Zoomreset: operation.designer.zoomreset,
-				Zoomout: operation.designer.zoomout
-			},
-			Apply: operation.flow.apply
-		};
-
-		return {
-			Settings: settings,
-			Manage: manage
 		}
 
 	}

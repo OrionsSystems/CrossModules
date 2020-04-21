@@ -24,6 +24,9 @@ namespace Orions.Systems.CrossModules.Components
 
 
 		public bool IsShowDesignerSetting { get; set; }
+		public bool IsShowProperty { get; set; }
+
+		public HyperWorkflowNodeData SelectedNode { get; set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
 
@@ -43,11 +46,71 @@ namespace Orions.Systems.CrossModules.Components
 			await PopulateWorkflowStatuses(workflowInstanceId);
 
 			PopulateDesignerData();
-
 		}
 
 		public string GetJesonDesignData() {
 			return JsonConvert.SerializeObject(DesignData, FlowDesignConverter.Settings);
+		}
+
+		public void ShowPropertyGrid(string nodeConfigId) 
+		{
+			// load node configuration
+
+			var nodeConfiguration = Source.Nodes.FirstOrDefault(it => it.Id == nodeConfigId);
+
+			SelectedNode = (HyperWorkflowNodeData)nodeConfiguration.CreateNodeInstance(true);
+
+			IsShowProperty = true;
+		}
+
+		public Task<object> LoadPropertyGridData()
+		{
+			return Task.FromResult<object>(SelectedNode);
+		}
+
+		public void OnCancelProperty() {
+			IsShowProperty = false;
+			PropertyGridVm.CleanSourceCache();
+		}
+
+		public string CreateNode(string desingComponentJson)
+		{
+			if (string.IsNullOrEmpty(desingComponentJson)) throw new Exception("Missing desing component json");
+
+			FlowDesignComponent nodeConfig = JsonConvert.DeserializeObject<FlowDesignComponent>(desingComponentJson, FlowDesignConverter.Settings);
+
+
+			var types = GetHyperWorkflowNodeDataType();
+			var type = types.FirstOrDefault(it => it.FullName == nodeConfig.Type);
+
+			var node = new NodeConfiguration(type)
+			{
+				AllowMultiOutputPortConnections = true
+			};
+
+			nodeConfig.Id = node.Id;
+
+			var nodeName = nodeConfig.State?.Text;
+			if (nodeName != null) node.Name = nodeName;
+
+			var nodeColor = nodeConfig.State?.Color;
+			if (!string.IsNullOrEmpty(nodeColor))
+			{
+				var colorR = UniColorFromHex(nodeColor);
+				node.Color = colorR;
+			}
+
+			var nodeGroup = nodeConfig.Group;
+			if (nodeGroup != null) node.Group = nodeGroup;
+
+			node.GUIPosition = new UniPoint2f(nodeConfig.X, nodeConfig.Y);
+
+			Source.AddNode(node);
+
+			var nodeConfigJson = JsonConvert.SerializeObject(nodeConfig, FlowDesignConverter.Settings);
+
+			return nodeConfigJson;
+
 		}
 
 		private void PopulateDesignerData() 
@@ -231,6 +294,23 @@ namespace Orions.Systems.CrossModules.Components
 						color.G,
 						color.B);
 		}
+
+		private UniColor UniColorFromHex(string hex)
+		{
+			if (string.IsNullOrWhiteSpace(hex)) throw new Exception("Color not valid");
+
+			if (hex.StartsWith("#"))
+				hex = hex.Substring(1).ToUpper();
+
+			if (hex.Length != 6) throw new Exception("Color not valid");
+
+			var r = Convert.ToByte(hex.Substring(0, 2), 16);
+			var g = Convert.ToByte(hex.Substring(2, 2), 16);
+			var b = Convert.ToByte(hex.Substring(4, 2), 16);
+
+			return new UniColor(0, r, g, b);
+		}
+
 
 	}
 }

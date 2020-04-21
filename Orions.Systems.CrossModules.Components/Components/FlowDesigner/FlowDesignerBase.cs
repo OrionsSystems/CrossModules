@@ -69,6 +69,22 @@ namespace Orions.Systems.CrossModules.Components
 			await OnApply.InvokeAsync(Vm.DesignData);
 		}
 
+		[JSInvokable]
+		public void OpenPropertyGrid(string id)
+		{
+			Vm.ShowPropertyGrid(id);
+
+			StateHasChanged();
+		}
+
+		[JSInvokable]
+		public void CreateNode(string desingComponentJson)
+		{
+			Vm.CreateNode(desingComponentJson);
+
+			StateHasChanged();
+		}
+
 		public async Task ToggleMainMenu() 
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ToggleMainMenu");
