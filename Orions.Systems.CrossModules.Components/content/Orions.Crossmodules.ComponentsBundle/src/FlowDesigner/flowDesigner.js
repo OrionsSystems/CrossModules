@@ -311,6 +311,7 @@
 
 	window.Orions.FlowDesigner.ToggleCommonMenu = ToggleCommonMenu;
 
+	window.Orions.FlowDesigner.Settings = function (el) { operation.designer.settings(el); };
 	window.Orions.FlowDesigner.Copy = function (el) { operation.designer.copy(el); };
 	window.Orions.FlowDesigner.Paste = function (el) { operation.designer.paste(el); };
 	window.Orions.FlowDesigner.Duplicate = function (el) { operation.designer.duplicate(el); };
@@ -2373,7 +2374,7 @@
 
 					var clone = function (component, callback) {
 
-						var obj = Object.assign({}, component); 
+						var obj = Object.assign({}, component);
 						var org = component.$component;
 						obj.title = org.title;
 						obj.output = org.output;
@@ -2415,6 +2416,15 @@
 						flow.clipboard = null;
 						on.designer.selectable(flow.selected);
 					});
+				},
+				settings: function (el) {
+					el = $(el);
+					if (el.hasClass('disabled'))
+						return;
+
+					debugger;
+					var idconnection = selected.attr('data-id');
+					on.designer.settings(idconnection);
 				}
 			}
 		};

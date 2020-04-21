@@ -106,6 +106,12 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Paste", new object[] { thisReference });
 		}
 
+		public async Task SettingsElement() 
+		{
+			thisReference = DotNetObjectReference.Create(this);
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Settings", new object[] { thisReference });
+		}
+
 		public async Task DuplicateElement()
 		{
 			thisReference = DotNetObjectReference.Create(this);
