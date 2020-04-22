@@ -5,11 +5,15 @@
     <RootNamespace>Orions.Systems.CrossModules.Desi</RootNamespace>
     <AssemblyName>Orions.Systems.CrossModules.Desi</AssemblyName>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.518" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Blazored.LocalStorage" Version="2.1.1" />
-    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.518" />
     <PackageReference Include="SkiaSharp" Version="1.68.1.1" />
+	<PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
   </ItemGroup>
 
   <ItemGroup>
