@@ -20,9 +20,7 @@
 		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
 		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\src\WorkflowDesigner\workflowDesigner.js">
-		  <LogicalName>blazor:js:%(RecursiveDir)%(Filename)%(Extension)</LogicalName>
-		</EmbeddedResource>
+		
 		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<!--<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
