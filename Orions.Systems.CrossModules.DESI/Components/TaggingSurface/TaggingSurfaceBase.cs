@@ -17,6 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model.Rectangle;
 using System.Reactive.Concurrency;
+using Wintellect.PowerCollections;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -36,6 +37,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private ITagsStore _tagsStore;
 		private ITaskDataStore _taskDataStore;
 		private bool _initializationDone;
+		private byte[] _lastFrameRendered;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
@@ -173,14 +175,22 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (!_frameRenderedTaskTcs.Task.IsCompleted)
 			{
 				_frameRenderedTaskTcs.SetResult(true);
+				_lastFrameRendered = MediaDataStore?.Data?.MediaInstances[0].CurrentPositionFrameImage;
 			}
 		}
 
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
-			_frameRenderedTaskTcs = new TaskCompletionSource<bool>();
+			if(!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, MediaDataStore?.Data?.MediaInstances[0].CurrentPositionFrameImage))
+			{
+				if (!_frameRenderedTaskTcs.Task.IsCompleted)
+				{
+					_frameRenderedTaskTcs.SetResult(true);
+				}
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage");
+			}
+
 			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { 1 });
-			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage");
 			UpdateRectangles();
 		}
 

@@ -75,12 +75,16 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		frameImage = document.getElementsByClassName('frame-img')[0];
 
 		if (frameImage.src != '') {
-			if (!raster) {
+			if (raster == null) {
 				raster = new paper.Raster(frameImage);
-
-				window.rasterDebug = raster;
 			}
-			raster.image = frameImage
+			else {
+				raster.source = frameImage.src
+			}
+			window.rasterDebug = raster;
+
+			console.log(raster.loaded);
+
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
 			raster.position = self.scope.view.center
 

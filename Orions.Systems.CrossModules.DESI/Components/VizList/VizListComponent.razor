@@ -51,7 +51,7 @@
                     {
                         var stringKey = KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode + 1);
                         var keys = MapKeyCodeToKeys(stringKey);
-                        keys.Foreach(k => sub.AddShortcut(k, () => SelectTagonomyNode(tagonomyNode)));
+                        keys.Foreach(k => sub.AddShortcut(k, () => { SelectTagonomyNode(tagonomyNode); UpdateState(); }));
 
                         <button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode(tagonomyNode) ">
                             <div class="key node">@stringKey</div>
