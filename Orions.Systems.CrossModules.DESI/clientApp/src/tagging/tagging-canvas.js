@@ -24,9 +24,11 @@ function stickToCanvasBounds(coords, containerRectangle) {
 }
 
 window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, componentId) {
+	window.taggingSurfaceDebug = this;
+
 	let self = this;
 	self.componentRef = componentRef;
-	self.scope = new paper.PaperScope
+	self.scope = new paper.PaperScope()
 	self.canvas = document.querySelector(`#${componentId} .tagging-canvas`);
 	self.items = [];
 
@@ -51,7 +53,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 				}
 				else {
 					self.scope.view.zoom = minZoom;
-					self.scope.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
+					self.scope.view.center = new paper.Point(self.scope.view.bounds.width / 2, self.scope.view.bounds.height / 2)
 				}
 			}
 			else {
@@ -75,14 +77,16 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		if (frameImage.src != '') {
 			if (!raster) {
 				raster = new paper.Raster(frameImage);
+
+				window.rasterDebug = raster;
 			}
 			raster.image = frameImage
 			raster.size = new paper.Size(frameImage.width, frameImage.height);
 			raster.position = self.scope.view.center
 
 			raster.onLoad = function () {
-				raster.position = self.scope.view.center
 				raster.size = new paper.Size(frameImage.width, frameImage.height);
+				raster.position = self.scope.view.center
 
 				componentRef.invokeMethodAsync("FrameImageRendered")
 			}
@@ -312,11 +316,15 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 
 	}
 
-	window.Orions.TaggingSurface.zoom = function (zoomValue) {
+	window.Orions.TaggingSurface.resetZoom = function () {
 		if (isDefined(self.scope.view)) {
-			self.scope.view.zoom = zoomValue;
-			self.scope.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
+			self.scope.view.zoom = 1;
+			self.scope.view.center = new paper.Point(self.scope.view.bounds.width / 2, self.scope.view.bounds.height / 2)
 		}
+	}
+
+	window.Orions.TaggingSurface.updateFrameImage = function () {
+		updateFrameImageOnCanvas();
 	}
 
 	window.Orions.TaggingSurface.dispose = function () {

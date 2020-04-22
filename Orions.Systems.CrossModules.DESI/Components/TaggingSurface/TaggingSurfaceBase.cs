@@ -62,7 +62,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 								_subscriptions.Add(
 									value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
 									{
-										UpdateRectangles();
+										OnCurrentPositionFrameImageChanged();
 									}));
 							}
 						}));
@@ -72,7 +72,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					_subscriptions.Add(
 						value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
 						{
-							UpdateRectangles();
+							OnCurrentPositionFrameImageChanged();
 						}));
 				});
 		}
@@ -176,6 +176,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
+		private async Task OnCurrentPositionFrameImageChanged()
+		{
+			_frameRenderedTaskTcs = new TaskCompletionSource<bool>();
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { 1 });
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage");
+			UpdateRectangles();
+		}
+
+
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
 			await _initializationSemaphore.WaitAsync();
@@ -199,10 +208,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private void OnCurrentTaskChanged()
+		private async Task OnCurrentTaskChanged()
 		{
+			await _frameRenderedTaskTcs.Task;
 			UpdateRectangles();
-			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.zoom", new object[] { 1 });
 		}
 
 		private void UpdateRectangles() => Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags ?? Enumerable.Empty<TagModel>());

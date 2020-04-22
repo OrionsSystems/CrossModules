@@ -56,15 +56,22 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{ 
 			get
 			{
-				var markers = TagsStore.Data.CurrentTaskTags.GroupBy(t => t.TagHyperId).Select(g => 
-					new Model.TimelineMarker
-					{
-						Id = g.Key.SliceId.ToString(),
-						PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(g.Key) / (double)_taskPlaybackInfo.TotalFrames * 100
-					})
-					.ToList();
+				if(_taskPlaybackInfo != null)
+				{
+					var markers = TagsStore.Data.CurrentTaskTags.GroupBy(t => t.TagHyperId).Select(g => 
+						new Model.TimelineMarker
+						{
+							Id = g.Key.SliceId.ToString(),
+							PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(g.Key) / (double)_taskPlaybackInfo.TotalFrames * 100
+						})
+						.ToList();
 
-				return markers;
+					return markers;
+				}
+				else
+				{
+					return new List<Model.TimelineMarker>();
+				}
 			} 
 		}
 
