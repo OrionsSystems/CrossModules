@@ -199,6 +199,12 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 		if (event.event.buttons == 2) {
 			if (self.scope.view.zoom > 1) {
 				self.scope.view.center = self.scope.view.center.add(event.downPoint.subtract(event.point));
+
+				// restrict going to far top or bottom
+				if (self.scope.view.bounds.top < 0
+					|| self.scope.project.activeLayer.bounds.bottom < self.scope.view.bounds.bottom) {
+					self.scope.view.center = self.scope.view.center.subtract(event.downPoint.subtract(event.point));
+				}
 			}
 		}
 		else if (isDefined(mouseDownAt)) {
@@ -309,6 +315,7 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.zoom = function (zoomValue) {
 		if (isDefined(self.scope.view)) {
 			self.scope.view.zoom = zoomValue;
+			self.scope.view.center = new paper.Point(self.canvas.width / 2, self.canvas.height / 2)
 		}
 	}
 
