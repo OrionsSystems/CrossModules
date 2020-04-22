@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+	<metadata>
+		<id>Orions.Systems.CrossModules.Desi</id>
+		<version>1.0.0</version>
+		<authors>OrionsWave LLC</authors>
+		<owners>OrionsWave LLC</owners>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Orions Systems Desi Package</description>
+		<copyright>© 2020 Orionswave LLC</copyright>
+		<language>en-US</language>
+	</metadata>
+	<files>
+		<file src="bin\published-app\**\*.*" />
+	</files>
+</package>
