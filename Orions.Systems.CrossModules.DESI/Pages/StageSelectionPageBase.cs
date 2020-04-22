@@ -27,6 +27,9 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetMissionsExploitationSystem(),
 				DependencyResolver.GetNavigationService()
 			);
+
+			this.Vm.MissionsData.CurrentWorkflow.Stages = new List<PhaseModel>(); // refactor this
+			this.Vm.StartUpdateMissionStages();
 		}
 
 		public void Switch_Toggled(PhaseModel phase)
