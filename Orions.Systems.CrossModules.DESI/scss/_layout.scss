@@ -59,8 +59,8 @@ body{
 	display: flex;
 	align-items: stretch;
 	flex: 1;
-	overflow:hidden;
-	max-height:100%;
+	overflow: hidden;
+	max-height: 100%;
 
 	.side-bar {
 		width: 66px;
@@ -71,7 +71,7 @@ body{
 
 	.body-container {
 		flex: 1;
-		overflow:hidden;
+		overflow: hidden;
 	}
 
 	.page-content {
@@ -106,6 +106,14 @@ body{
 				.map-items-column {
 					padding: 10px;
 				}
+			}
+
+			.app-version {
+				color: #7e7e7e;
+				align-items: flex-end;
+				flex-direction: row;
+				display: flex;
+				padding: 10px;
 			}
 
 			.logout {

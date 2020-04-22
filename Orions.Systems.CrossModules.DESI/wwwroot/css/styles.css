@@ -74,6 +74,12 @@ body {
         flex: 1; }
         .content .page-content .footer .site-map .map-items-column {
           padding: 10px; }
+      .content .page-content .footer .app-version {
+        color: #7e7e7e;
+        align-items: flex-end;
+        flex-direction: row;
+        display: flex;
+        padding: 10px; }
       .content .page-content .footer .logout {
         margin: 15px; }
 

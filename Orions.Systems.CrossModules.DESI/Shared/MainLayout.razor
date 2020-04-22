@@ -3,6 +3,7 @@
 @using Orions.Systems.Desi.Common.Authentication;
 @using System.Reactive.Linq;
 @using Orions.Systems.CrossModules.Desi.Pages;
+@using Orions.Common; 
 @inherits LayoutComponentBase
 
 <div class="main">
@@ -40,6 +41,11 @@
 						</div><div>
 							<a href="#" @onclick:preventDefault="true">Contacts</a>
 						</div>
+					</div>
+				</div>
+				<div class="app-version">
+					<div>
+						App version: @ReflectionHelper.Instance.SDKVersion
 					</div>
 				</div>
 				<div class="logout">
