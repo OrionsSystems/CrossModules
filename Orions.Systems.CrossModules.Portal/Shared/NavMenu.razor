@@ -1,12 +1,25 @@
 ﻿
+@inherits BaseOrionsComponent
+
+@inject NavigationManager navManager
+
 <MatNavMenu Class="mat-nav">
 	@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>*@
-	<MatNavItem Href="/"> <MatIcon Icon="@MatIconNames.Home"></MatIcon></MatNavItem>
+	<MatNavItem OnClick="@(ev => ForceNavigation())"> <MatIcon Icon="@MatIconNames.Home"></MatIcon></MatNavItem>
 	@*<MatNavItem Href="/default"> <MatIcon Icon="list_alt"></MatIcon></MatNavItem>*@
-	<MatNavItem Href="/dashboards"> <MatIcon Icon="@MatIconNames.View_module"></MatIcon></MatNavItem>
+	<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))"> <MatIcon Icon="@MatIconNames.View_module"></MatIcon></MatNavItem>
 	@*<MatNavItem Href="/visit"> <MatIcon Icon="directions"></MatIcon></MatNavItem>*@
-	<MatNavItem Href="/themes"> <MatIcon Icon="@MatIconNames.Color_lens"></MatIcon></MatNavItem>
-	<MatNavItem Href="/wizzard"> <MatIcon Icon="@MatIconNames.Widgets"></MatIcon></MatNavItem>
-	<MatNavItem Href="/workflows"> <MatIcon Icon="@MatIconNames.Desktop_mac"></MatIcon></MatNavItem>
+	<MatNavItem OnClick="@(ev => ForceNavigation("themes"))"> <MatIcon Icon="@MatIconNames.Color_lens"></MatIcon></MatNavItem>
+	<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))"> <MatIcon Icon="@MatIconNames.Widgets"></MatIcon></MatNavItem>
+	<MatNavItem  OnClick="@(ev => ForceNavigation("workflows"))"> <MatIcon Icon="@MatIconNames.Desktop_mac"></MatIcon></MatNavItem>
 </MatNavMenu>
 
+@code{
+
+	private void ForceNavigation(string address = "")
+	{
+		var url = $"{navManager.BaseUri}{address}";
+		navManager.NavigateTo(url, true);
+	}
+
+}
