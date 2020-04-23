@@ -1,4 +1,6 @@
 ﻿window.Orions.TaggingPage = {
+	init: function () {
+	},
 	tagonomyInfoInit: function (selector, componentRef) {
 		let el = document.querySelector(selector)
 		el.style.visibility = 'visible'

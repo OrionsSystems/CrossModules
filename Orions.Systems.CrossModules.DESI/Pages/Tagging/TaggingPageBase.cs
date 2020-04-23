@@ -11,6 +11,7 @@ using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System.Collections.Generic;
 using Orions.Systems.CrossModules.Desi.Services;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
@@ -88,6 +89,11 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		protected override void OnAfterRenderSafe(bool firstRender)
 		{
+			if (firstRender)
+			{
+				this.JSRuntime.InvokeVoidAsync("Orions.TaggingPage.init");
+			}
+
 			lock (_afterRenderTasks)
 			{
 				foreach(var t in _afterRenderTasks)

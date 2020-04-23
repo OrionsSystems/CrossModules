@@ -36,7 +36,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
 		private ITaskDataStore _taskDataStore;
-		private bool _initializationDone;
 		private byte[] _lastFrameRendered;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
@@ -198,10 +197,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
 			await _initializationSemaphore.WaitAsync();
-			if (!_initializationDone && MediaDataStore.Data.MediaInstances?.Any() == true)
+			if (!_initializationTaskTcs.Task.IsCompleted && MediaDataStore.Data.MediaInstances?.Any() == true)
 			{
 				await InitializeClientJs();
-				_initializationDone = true;
 				_initializationTaskTcs.SetResult(true);
 			}
 			_initializationSemaphore.Release();
