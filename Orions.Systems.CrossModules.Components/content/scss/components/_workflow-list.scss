@@ -38,32 +38,31 @@
 
 		table {
 			margin-bottom: 0px !important;
-		}
 
-		.list-name {
-			cursor: pointer;
-		}
-
-
-		.list-cmd-label {
-			font-size: 11px;
-		}
-
-		.cmd-container {
-			a {
+			.list-name {
 				cursor: pointer;
-				opacity: 0.5;
-				transition: 0.5s;
+			}
 
-				&:hover {
-					opacity: 1;
+			.list-cmd-container {
+				a {
+					cursor: pointer;
+					opacity: 0.5;
 					transition: 0.5s;
+
+					&:hover {
+						opacity: 1;
+						transition: 0.5s;
+					}
+
+					.list-cmd-label {
+						font-size: 11px;
+					}
+
+					.list-cmd-delete {
+						color: red !important;
+					}
 				}
 			}
-		}
-
-		.list-cmd-delete {
-			color: red !important;
 		}
 	}
 }
