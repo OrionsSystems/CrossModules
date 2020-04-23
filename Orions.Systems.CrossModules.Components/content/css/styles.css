@@ -7609,6 +7609,12 @@ i.ui-intro-button {
       opacity: 1;
       transition: 0.5s; }
 
+.workflow-container .header-title {
+  font-size: 17px;
+  padding: 0 0 8px 26px;
+  padding: 0 0 8px 26px;
+  letter-spacing: 2px; }
+
 .workflow-container .list-table table {
   margin-bottom: 0px !important; }
   .workflow-container .list-table table .list-name {
@@ -7623,4 +7629,43 @@ i.ui-intro-button {
     .workflow-container .list-table table .list-cmd-container a .list-cmd-label {
       font-size: 11px; }
     .workflow-container .list-table table .list-cmd-container a .list-cmd-delete {
+      color: red !important; }
+
+.mission-container .mission-list-header .header-filter .list-search button {
+  display: inherit; }
+
+.mission-container .mission-list-header .header-filter .list-search span {
+  /*display: none;*/
+  padding: 0px 10px 0px 9px;
+  letter-spacing: 2px; }
+
+.mission-container .mission-list-header .header-actions {
+  text-align: right; }
+  .mission-container .mission-list-header .header-actions a {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.5s; }
+    .mission-container .mission-list-header .header-actions a:hover {
+      opacity: 1;
+      transition: 0.5s; }
+
+.mission-container .header-title {
+  font-size: 17px;
+  padding: 0 0 8px 26px;
+  letter-spacing: 2px; }
+
+.mission-container .list-table table {
+  margin-bottom: 0px !important; }
+  .mission-container .list-table table .list-name {
+    cursor: pointer; }
+  .mission-container .list-table table .list-cmd-container a {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.5s; }
+    .mission-container .list-table table .list-cmd-container a:hover {
+      opacity: 1;
+      transition: 0.5s; }
+    .mission-container .list-table table .list-cmd-container a .list-cmd-label {
+      font-size: 11px; }
+    .mission-container .list-table table .list-cmd-container a .list-cmd-delete {
       color: red !important; }

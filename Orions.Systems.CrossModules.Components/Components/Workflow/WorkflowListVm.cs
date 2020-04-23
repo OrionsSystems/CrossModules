@@ -90,7 +90,7 @@ namespace Orions.Systems.CrossModules.Components
 			//TODO
 		}
 
-		public async Task CreateNewWorkflow()
+		public async Task CreateNew()
 		{
 			//TODO
 		}
