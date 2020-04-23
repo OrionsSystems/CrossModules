@@ -169,16 +169,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public IKeyboardListener KeyboardListener { get; set; }
 
 		[JSInvokable]
-		public async Task OnPauseJsCallback(double positionInSeconds)
-		{
-			Debug.WriteLine($"Entered {nameof(OnPauseJsCallback)}");
-
-			Paused = true;
-			await UpdateFrameImageByCurrentPosition();
-			await OnPaused.InvokeAsync(null);
-		}
-
-		[JSInvokable]
 		public async Task GoToNextFrame()
 		{
 			if (!IsVideoLoading && !CurrentFrameIsLoading)
@@ -232,6 +222,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			if (!IsVideoLoading && !CurrentFrameIsLoading)
 			{
+				ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
+
 				Paused = false;
 				await JSRuntime.InvokeVoidAsync("Orions.Player.play", new object[] { });
 				await OnPlay.InvokeAsync(null);
@@ -240,6 +232,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Pause()
 		{
+			ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
 			Paused = true;
 			await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
 		}
@@ -356,6 +349,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			IsVideoLoading = false;
 			Paused = true;
+			ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
+
 			await OnLoaded.InvokeAsync(null);
 			await OnPaused.InvokeAsync(null);
 			UpdateState();

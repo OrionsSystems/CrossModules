@@ -13,7 +13,7 @@
 							ActionDispatcher="@ActionDispatcher"
 							TaskDataStore="@TaskDataStore"
 							TagsStore="@TagsStore"
-							OnMediaPaused="async () => { _mediaPaused = true; this.OverlayMediaWithCanvas(true); }"
+							OnMediaPaused="async () => { await OnMediaPaused(); }"
 							OnMediaPlay="async () => { _mediaPaused = false; this.OverlayMediaWithCanvas(false); }"
 							OnMediaLoading="async () => { if (!_mediaPaused) this.OverlayMediaWithCanvas(false); }"
 							OnMediaLoaded="async () => this.OverlayMediaWithCanvas(true)"/>

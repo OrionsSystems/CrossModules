@@ -359,6 +359,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await this.JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { ".tagging-canvas, .tagging-surface-child-content", new { visibility = overlay ? "visible" : "hidden" } });
 		}
 
+		protected async Task OnMediaPaused()
+		{
+			_mediaPaused = true; 
+			this.OverlayMediaWithCanvas(true);
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose");
