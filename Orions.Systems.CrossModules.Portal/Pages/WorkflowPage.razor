@@ -16,13 +16,15 @@
 		await base.OnInitializedAsync();
 	}
 
-	private void OnManageWorkflow(HyperWorkflow wf)
+	private async Task OnManageWorkflow(HyperWorkflow wf)
 	{
 
 		if(wf == null) return;
 
 		var url = $"{navManager.BaseUri}workflow-designer/{wf.Id}";
-		navManager.NavigateTo(url, true);
+		//navManager.NavigateTo(url, true);
+
+		await NavigateToUrlAsync(url, true);
 	}
 
 }
