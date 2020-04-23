@@ -8,7 +8,6 @@
 
 	var common = {};
 	common.touches = false;
-	common.localComponents = [];
 	common.components = [];
 	common.theme = 'dark';
 	common.callbacks = {};
@@ -144,8 +143,6 @@
 
 	function createComponentMenu(remoteCommonComponents) {
 
-		if (!common.localComponents) return;
-
 		var groupMap = {};
 
 		if (remoteCommonComponents && remoteCommonComponents instanceof Array) {
@@ -153,22 +150,6 @@
 			let defGroup = "Default Group";
 
 			$.each(remoteCommonComponents, function (index, element) {
-
-				var findLocalComponent = common.localComponents.find(function (localElement) {
-					return localElement.id === element.id;
-				});
-
-				if (findLocalComponent) {
-
-					element.author = element.author || findLocalComponent.author;
-					element.color = element.color || findLocalComponent.color;
-					element.group = element.group || findLocalComponent.group;
-					element.html = element.html || findLocalComponent.html;
-					element.icon = element.icon || findLocalComponent.icon;
-					element.readme = element.readme || findLocalComponent.readme;
-				}
-
-				//console.log(index + ' | '+ element.id + ' | ' +element.typeFull);
 
 				element.group = element.group || defGroup;
 
@@ -182,20 +163,7 @@
 				groupMap[element.group] = _menuData;
 			});
 
-		} else {
-
-			$.each(common.localComponents, function (index, element) {
-
-				var _menuData = [];
-
-				if (groupMap[element.group]) {
-					_menuData = groupMap[element.group];
-				}
-
-				_menuData.push(element);
-				groupMap[element.group] = _menuData;
-			});
-		}
+		} 
 
 		// create menu
 		var c = $('.components');
@@ -212,40 +180,9 @@
 			});
 
 			$.each(group, function (index, element) {
+				element.icon = element.icon || 'fa fa-square';
 				element.color = element.color || '#e3e3e8';
-				c.append('<li draggable="true" class="component" data-id="' + element.id + '"><div><i class="fa fa-square" style="color:' + element.color + '"></i> ' + element.title + '</div></li>')
-			});
-		});
-	}
-
-	function copySettingsFromOriginalNode(original) {
-
-		original.x += 50;
-		original.y += 50;
-		var desingComponent = JSON.stringify(original);
-		var originalNodeConfigId = original.id;
-		return new Promise(function (resolve, reject) {
-
-			var data = {
-				'workflowId': _workflowId,
-				'nodeId': _nodeId,
-				'originalNodeConfigId': originalNodeConfigId,
-				'desingComponentJson': desingComponent
-			};
-
-			$.post(_duplicateNodeAddress, data).done(function (response) {
-				var res = JSON.parse(response);
-
-				res.$component = component;
-
-				res.output = res.output || component.output;
-				res.input = res.input || component.input;
-
-				resolve(res);
-			}).fail(function (jqxhr, textStatus, error) {
-				loading.hide();
-				Error(error);
-				reject();
+				c.append('<li draggable="true" class="component" data-id="' + element.id + '"><div><i class="' + element.icon + '" style="color:' + element.color + '"></i> ' + element.title + '</div></li>')
 			});
 		});
 	}
@@ -2568,9 +2505,7 @@
 						$.each(jsonConfigurations.defComponents, function (index, element) {
 							common.components.push(element);
 						});
-					} else {
-						common.components = common.localComponents;
-					}
+					} 
 
 					if (jsonConfigurations && jsonConfigurations.defComponents) {
 						createComponentMenu(jsonConfigurations.defComponents);
