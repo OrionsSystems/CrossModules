@@ -1,0 +1,21 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/missions"
+
+@using Orions.Infrastructure.HyperMedia
+
+@inherits PortalBaseComponent
+
+@inject NavigationManager navManager
+
+<MissionList HyperStore="HyperStore"></MissionList>
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+}
+
+
+

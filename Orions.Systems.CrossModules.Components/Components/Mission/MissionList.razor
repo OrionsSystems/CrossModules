@@ -1,11 +1,11 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 
-@inherits WorkflowListBase
+@inherits MissionListBase
 
-	<div class="workflow-container">
+	<div class="mission-container">
 
-		<div class="row workflow-list-header">
+		<div class="row mission-list-header">
 			<div class="header-filter col-lg-7">
 				<div class="input-group mt-3">
 					<input type="text" class="form-control" @bind="@Vm.SearchInput" placeholder="Search" aria-label="Search" aria-describedby="basic-search">
@@ -30,7 +30,7 @@
 			var rowIndex = 0;
 
 			<div class="row">
-				<div class="col-lg-12 header-title">Workflow Configurations</div>
+				<div class="col-lg-12 header-title">Missions</div>
 			</div>
 
 			<div class="table-responsive list-table">
@@ -57,10 +57,6 @@
 									<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
 										<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
 										<div class="list-cmd-label">Properties</div>
-									</a>
-									<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageWorkflowAsync(item); })">
-										<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
-										<div class="list-cmd-label">Manage</div>
 									</a>
 								</td>
 							</tr>
