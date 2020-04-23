@@ -21,6 +21,12 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
+		public string WorkflowId { get => Vm.WorkflowId; set => Vm.WorkflowId = value; }
+
+		[Parameter]
+		public string WorkflowInstanceId { get => Vm.WorkflowInstanceId; set => Vm.WorkflowInstanceId = value; }
+
+		[Parameter]
 		public EventCallback<IFlowDesignData> OnApply { get; set; }
 
 		PropertyGrid _propGrid;
@@ -48,6 +54,7 @@ namespace Orions.Systems.CrossModules.Components
 		protected override async Task OnFirstAfterRenderAsync()
 		{
 			await Vm.Init();
+
 			var jsonData = Vm.GetJesonDesignData();
 
 			thisReference = DotNetObjectReference.Create(this);

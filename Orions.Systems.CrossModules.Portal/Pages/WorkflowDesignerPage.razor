@@ -1,13 +1,16 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
-@page "/workflow-designer"
+@page "/workflow-designer/{WorkflowId}"
 
 @inherits PortalBaseComponent
 
 @using Orions.Infrastructure.HyperMedia
 
-<FlowDesigner HyperStore="HyperStore"></FlowDesigner>
+<FlowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId"></FlowDesigner>
 
 @code{
+
+	[Parameter]
+	public string WorkflowId { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{

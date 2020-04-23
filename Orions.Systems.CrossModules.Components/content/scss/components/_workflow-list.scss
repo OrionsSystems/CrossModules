@@ -1,0 +1,69 @@
+﻿
+.workflow-container {
+	.workflow-list-header {
+		.header-filter {
+			.list-search {
+				button {
+					display: inherit;
+				}
+
+				span {
+					/*display: none;*/
+					padding: 0px 10px 0px 9px;
+					letter-spacing: 2px;
+				}
+			}
+		}
+
+		.header-actions {
+			text-align: right;
+
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.header-cmd-label {
+			}
+		}
+	}
+
+	.list-table {
+
+		table {
+			margin-bottom: 0px !important;
+		}
+
+		.list-name {
+			cursor: pointer;
+		}
+
+
+		.list-cmd-label {
+			font-size: 11px;
+		}
+
+		.cmd-container {
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+		}
+
+		.list-cmd-delete {
+			color: red !important;
+		}
+	}
+}

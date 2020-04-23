@@ -7590,3 +7590,41 @@ i.ui-intro-button {
   display: inherit;
   left: 0px;
   right: 0px; }
+
+.workflow-container .workflow-list-header .header-filter .list-search button {
+  display: inherit; }
+
+.workflow-container .workflow-list-header .header-filter .list-search span {
+  /*display: none;*/
+  padding: 0px 10px 0px 9px;
+  letter-spacing: 2px; }
+
+.workflow-container .workflow-list-header .header-actions {
+  text-align: right; }
+  .workflow-container .workflow-list-header .header-actions a {
+    cursor: pointer;
+    opacity: 0.5;
+    transition: 0.5s; }
+    .workflow-container .workflow-list-header .header-actions a:hover {
+      opacity: 1;
+      transition: 0.5s; }
+
+.workflow-container .list-table table {
+  margin-bottom: 0px !important; }
+
+.workflow-container .list-table .list-name {
+  cursor: pointer; }
+
+.workflow-container .list-table .list-cmd-label {
+  font-size: 11px; }
+
+.workflow-container .list-table .cmd-container a {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.5s; }
+  .workflow-container .list-table .cmd-container a:hover {
+    opacity: 1;
+    transition: 0.5s; }
+
+.workflow-container .list-table .list-cmd-delete {
+  color: red !important; }
