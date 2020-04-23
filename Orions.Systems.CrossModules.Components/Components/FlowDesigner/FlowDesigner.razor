@@ -78,22 +78,22 @@
 		<section class="tabs tabs-controls">
 			<nav>
 				<a href="#" id="applyFlowDesignId" class="exec highlight" @onclick="@OnClickApply"><i class="fa fa-play-circle"></i>APPLY</a>
-				<a href="#" title="Settings" class="exec onlyicon br" data-toggle="modal" data-target="#workflowDesignerSettings"><i class="fa fa-cogs"></i></a>
+				@*<a href="#" title="Settings" class="exec onlyicon br" data-toggle="modal" data-target="#workflowDesignerSettings"><i class="fa fa-cogs"></i></a>
 				<a href="#" class="exec onlyicon nb" style="float:right;padding-left:0">
 					<i class="fa fa-chevron-left"></i>
-				</a>
+				</a>*@
 			</nav>
 		</section>
 
-		<div class="components-search-padding">
+		@*<div class="components-search-padding">
 			<div data---="textbox__common.search__placeholder:Search components ...;type:search" data-jc-compile="0" class="ui-textbox ui-textbox-container">
 				<div class="ui-textbox-input"><input type="text" placeholder="Search components ..." data-jc-bind="" name="input1587037883441" autocomplete="new-password"></div><div class="ui-textbox-control"><span class="fa fa-search ui-textbox-control-icon"></span></div>
 			</div>
-		</div>
+		</div>*@
 
 		<div>
 			<div class="components-container">
-				<div class="scroller">
+				<div class="noscrollbar">
 					<ul class="components"></ul>
 				</div>
 			</div>
@@ -232,11 +232,16 @@
 <style>
 
 
-	.header {
-		display: none;
+	html {
+		height: 100%;
+		overflow: hidden;
 	}
 
-	.e-sidebar.e-left.e-close.e-dock {
-		background-color: #1b1a1d !important;
+	body {
+		height: 100%;
+		overflow: hidden;
+		background-color: #E6E9ED;
+		font-smoothing: antialiased;
 	}
+
 </style>

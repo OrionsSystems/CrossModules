@@ -2658,13 +2658,15 @@
 
 			}
 
-
 			initComponents();
 
 			// UI style part
 			$('body').attr('class', 'touch');
 			$('body').attr('class', 'themedark');
 
+			ToggleMainMenu();
+			ToggleCommonMenu();
+			
 			//Auto collapes the navigation bar ot the left
 			//$("body").toggleClass("mainmenu-hidden");
 			//$(".nav-header").attr("onclick", "$('body').toggleClass('mini-navbar')")
@@ -2677,6 +2679,8 @@
 			//$('#mycp').colorpicker({ useAlpha: false }); // TODO 
 
 			//$('.colorpicker-alpha').remove();
+
+			ToggleCommonMenu();
 
 			//set modal designer settings on open
 			$('#workflowDesignerSettings').on('shown.bs.modal', function () {

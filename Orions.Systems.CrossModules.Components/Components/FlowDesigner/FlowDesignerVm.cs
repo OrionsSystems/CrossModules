@@ -18,6 +18,9 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public HyperWorkflow Source { get; set; }
 
+		public string WorkflowId { get; set; }
+		public string WorkflowInstanceId { get; set; }
+
 		public FlowDesignData DesignData { get; private set; } = new FlowDesignData();
 
 		/// <summary>
@@ -42,11 +45,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public virtual async Task Init()
 		{
-			var workflowId = "f4a66ad3-b538-4bcd-8e09-739e4b37e016";
-			var workflowInstanceId = "";
+			if (HyperStore == null) return;
 
-			await PopulateWorkflow(workflowId);
-			await PopulateWorkflowStatuses(workflowInstanceId);
+			await PopulateWorkflow(WorkflowId);
+
+			await PopulateWorkflowStatuses(WorkflowInstanceId);
 
 			PopulateDesignerData();
 		}
@@ -170,8 +173,6 @@ namespace Orions.Systems.CrossModules.Components
 		private void PopulateDesignerData()
 		{
 			var design = new FlowDesignData();
-
-			//var types = GetHyperWorkflowNodeDataTypes();
 
 			var nodeDataGroupTypes = GroupingNodeDataTypes();
 
@@ -416,13 +417,15 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 
-		class FlowMenuItem {
-
+		class FlowMenuItem 
+		{
 			public string Name { get; set; }
 
 			public Type Type { get; set; }
 
 			public string Group { get; set; }
+
+			public string Icon { get; set; }
 		}
 
 	}

@@ -1,14 +1,26 @@
 ﻿@page "/"
 
+@using Orions.Node.Common
+@using Orions.Infrastructure.HyperMedia
+
 @inherits BaseBlazorComponent
 
-<FlowDesigner></FlowDesigner>
+<FlowDesigner HyperStore="@HyperStore"></FlowDesigner>
 
 @code{
+
+	[Parameter]
+	public IHyperArgsSink HyperStore { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		try {
+			HyperStore = await NetStore.ConnectAsyncThrows("http://usnbods01wan.orionscloud.com:8600/Execute");
+		} catch {
+			Console.WriteLine("Cannot connect to node...");
+		}
 	}
 
 }

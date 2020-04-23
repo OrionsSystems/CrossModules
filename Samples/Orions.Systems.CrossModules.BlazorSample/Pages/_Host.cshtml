@@ -5,27 +5,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   <meta charset="utf-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>BlazorApp1</title>
-   <base href="~/" />
-   <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-   <link href="css/site.css" rel="stylesheet" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>BlazorApp1</title>
+	<base href="~/" />
+	<link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+	<link href="css/site.css" rel="stylesheet" />
 </head>
 <body>
-    <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.Server))
-    </app>
+	<app>
+		@(await Html.RenderComponentAsync<App>(RenderMode.Server))
+	</app>
 
-    <script src="/EmbeddedBlazorFile/jwplayer.js"></script>
-    <script src="/EmbeddedBlazorFile/provider.hlsjs.js"></script>
-    <script src="/EmbeddedBlazorFile/provider.html5.js"></script>
-    <script src="/EmbeddedBlazorFile/common.js"></script>
-    <script src="/EmbeddedBlazorFile/svgMapEditor.js"></script>
-    <script src="/js/svgjs/svg.js"></script>
-    <script src="/js/svgjs/svg.draw.js"></script>
-    <script src="_framework/blazor.server.js"></script>
-    <script src="_content/MatBlazor/dist/matBlazor.js"></script>
-    <script src="https://kendo.cdn.telerik.com/blazor/2.1.1/telerik-blazor.min.js" defer></script>
+	<script src="/EmbeddedBlazorFile/jwplayer.js"></script>
+	<script src="/EmbeddedBlazorFile/provider.hlsjs.js"></script>
+	<script src="/EmbeddedBlazorFile/provider.html5.js"></script>
+	<script src="/EmbeddedBlazorFile/common.js"></script>
+	<script src="/EmbeddedBlazorFile/svgMapEditor.js"></script>
+	<script src="/js/svgjs/svg.js"></script>
+	<script src="/js/svgjs/svg.draw.js"></script>
+	<script src="_framework/blazor.server.js"></script>
+	<script src="_content/MatBlazor/dist/matBlazor.js"></script>
+	<link href="_content/MatBlazor/dist/matBlazor.css" rel="stylesheet" />
+	<script src="https://kendo.cdn.telerik.com/blazor/2.1.1/telerik-blazor.min.js" defer></script>
 </body>
 </html>

@@ -1,0 +1,33 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/workflows"
+
+@using Orions.Infrastructure.HyperMedia
+
+@inherits PortalBaseComponent
+
+@inject NavigationManager navManager
+
+<WorkflowList HyperStore="HyperStore" OnManageWorkflow="@OnManageWorkflow"></WorkflowList>
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+	private async Task OnManageWorkflow(HyperWorkflow wf)
+	{
+
+		if(wf == null) return;
+
+		var url = $"{navManager.BaseUri}workflow-designer/{wf.Id}";
+		//navManager.NavigateTo(url, true);
+
+		await NavigateToUrlAsync(url, true);
+	}
+
+}
+
+
+

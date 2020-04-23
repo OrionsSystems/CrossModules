@@ -1,13 +1,16 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
-@page "/workflow-designer"
+@page "/workflow-designer/{WorkflowId}"
 
 @inherits PortalBaseComponent
 
 @using Orions.Infrastructure.HyperMedia
 
-<FlowDesigner HyperStore="HyperStore"></FlowDesigner>
+<FlowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId"></FlowDesigner>
 
 @code{
+
+	[Parameter]
+	public string WorkflowId { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -15,6 +18,34 @@
 	}
 
 }
+
+<style>
+
+	.header {
+		display: none;
+	}
+
+	.mainmenu-hidden .body {
+		margin-left: 60px !important;
+	}
+
+	.e-sidebar.e-left.e-close.e-dock {
+		background-color: #1b1a1d !important;
+	}
+
+	.mainmenu-hidden .body-designer {
+		left: 0 !important;
+	}
+
+	.body-designer {
+		left: 60px !important;
+	}
+
+	.e-sidebar-context {
+		overflow: hidden !important;
+	}
+
+</style>
 
 
 
