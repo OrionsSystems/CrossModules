@@ -171,8 +171,6 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var design = new FlowDesignData();
 
-			//var types = GetHyperWorkflowNodeDataTypes();
-
 			var nodeDataGroupTypes = GroupingNodeDataTypes();
 
 			foreach (var nodeGroupType in nodeDataGroupTypes)
@@ -416,13 +414,15 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 
-		class FlowMenuItem {
-
+		class FlowMenuItem 
+		{
 			public string Name { get; set; }
 
 			public Type Type { get; set; }
 
 			public string Group { get; set; }
+
+			public string Icon { get; set; }
 		}
 
 	}
