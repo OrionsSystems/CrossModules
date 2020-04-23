@@ -176,6 +176,8 @@ namespace Orions.Systems.CrossModules.Components
 
 			var nodeDataGroupTypes = GroupingNodeDataTypes();
 
+			nodeDataGroupTypes = MappingMenuColorAndIcons(nodeDataGroupTypes);
+
 			foreach (var nodeGroupType in nodeDataGroupTypes)
 			{
 				var nodeType = nodeGroupType.Type;
@@ -197,11 +199,10 @@ namespace Orions.Systems.CrossModules.Components
 					Title = nodeName,
 					Input = inputCount,
 					Output = outputCount,
-					Group = nodeGroupType.Group
+					Group = nodeGroupType.Group,
+					Color = nodeGroupType.Color,
+					Icon = nodeGroupType.Icon
 				};
-
-				if (!string.IsNullOrEmpty(color)) designNodeConfiguration.Color = color;
-
 
 				design.NodeConfigurations.Add(designNodeConfiguration);
 			}
@@ -347,6 +348,21 @@ namespace Orions.Systems.CrossModules.Components
 			return result;
 		}
 
+		private List<FlowMenuItem> MappingMenuColorAndIcons(List<FlowMenuItem> data)
+		{
+			foreach (var item in data)
+			{
+				var tempItem = _templateMenuItems.Where(it => it.Group == item.Group).FirstOrDefault();
+				if (tempItem != null) {
+					item.Icon = tempItem.Icon;
+					item.Color = tempItem.Color;
+				}
+
+			}
+
+			return data;
+		}
+
 		private string GetComponentNameForContextMenu(Type configType)
 		{
 			var truncatedName = configType.Name.Replace("HyperWorkflowNodeData", string.Empty)
@@ -416,8 +432,17 @@ namespace Orions.Systems.CrossModules.Components
 			return new UniColor(0, r, g, b);
 		}
 
+		private List<FlowMenuItem> _templateMenuItems = new List<FlowMenuItem> {
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server",Color="#5D9CEC" },
+			new FlowMenuItem(){ Group="Ingest", Icon="fa fa-cloud-upload",Color="#F6BB42" },
+			new FlowMenuItem(){ Group="Filter", Icon="fa fa-sign-in",Color="#888600" },
+			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D" },
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51" },
+			new FlowMenuItem(){ Group="Control", Icon="fa fa-code", Color="#8CC152" },
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff" }
+		};
 
-		class FlowMenuItem 
+		class FlowMenuItem
 		{
 			public string Name { get; set; }
 
@@ -426,6 +451,8 @@ namespace Orions.Systems.CrossModules.Components
 			public string Group { get; set; }
 
 			public string Icon { get; set; }
+
+			public string Color { get; set; }
 		}
 
 	}
