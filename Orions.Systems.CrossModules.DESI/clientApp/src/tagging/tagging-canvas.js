@@ -96,23 +96,23 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 			}
 		}
 	}
-	updateFrameImageOnCanvas();
+	//updateFrameImageOnCanvas();
 
-	let frameImageObserver = new MutationObserver((mutations) => {
-		for (var i in mutations) {
-			let mutation = mutations[i]
-			if (mutation.type == 'attributes' && mutation.attributeName == 'src') {
-				updateFrameImageOnCanvas()
-			}
-		}
-	});
-	frameImageObserver.observe(frameImage, {
-		attributes: true
-	})
+	//let frameImageObserver = new MutationObserver((mutations) => {
+	//	for (var i in mutations) {
+	//		let mutation = mutations[i]
+	//		if (mutation.type == 'attributes' && mutation.attributeName == 'src') {
+	//			updateFrameImageOnCanvas()
+	//		}
+	//	}
+	//});
+	//frameImageObserver.observe(frameImage, {
+	//	attributes: true
+	//})
 
-	frameImage.addEventListener('resize', function (e) {
-		updateFrameImageOnCanvas()
-	})
+	//frameImage.addEventListener('resize', function (e) {
+	//	updateFrameImageOnCanvas()
+	//})
 
 	let getProportionalRectangle = function (coords, containerRectangle) {
 		let width = (coords.bottomRight.x - coords.topLeft.x) / containerRectangle.width;
@@ -334,6 +334,8 @@ window.Orions.TaggingSurface.setupTaggingSurface = function (componentRef, compo
 	window.Orions.TaggingSurface.dispose = function () {
 		self.items = [];
 		self.scope.remove();
+		raster.remove();
+		raster = null;
 		tool.remove();
 	}
 }
