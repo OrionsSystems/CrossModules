@@ -119,8 +119,9 @@ export default class BaseVisual {
 		var bottom_right = new paper.Point(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
 
 		// Enforce minimum sizes.
-		if (bottom_right.x - top_left.x < this.min_size)
+		if (bottom_right.x - top_left.x < this.min_size) {
 			bottom_right.x = top_left.x + this.min_size;
+		}
 
 		if (bottom_right.y - top_left.y < this.min_size)
 			bottom_right.y = top_left.y + this.min_size;

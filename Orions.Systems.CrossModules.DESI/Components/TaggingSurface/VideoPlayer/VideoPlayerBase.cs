@@ -405,5 +405,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				//await OnPaused.InvokeAsync(null);
 			}
 		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_subscriptions.ForEach(i => i.Dispose());
+				_subscriptions.Clear();
+			}
+
+			base.Dispose(disposing);
+		}
 	}
 }

@@ -49,15 +49,21 @@ export default class TagVisual extends BaseVisual {
 			var p1 = this.get_topLeft();
 			var p2 = this.get_bottomRight();
 
-			var element = new AdornerElement(self.containerRectangle)
-			element.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
-
-			element.on('moved_inner', (el) => this.adorner_moved(el));
-			element.on('moved', function () {
+			let adornerMovedInnerHandler = (el) => this.adorner_moved(el);
+			let adornerMovedHandler = function () {
 				self.fire('resized');
-			})
+			}
+			let rightBottomAdorner = new AdornerElement(self.containerRectangle, 'bottomRight')
+			rightBottomAdorner.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
+			rightBottomAdorner.on('moved_inner', adornerMovedInnerHandler);
+			rightBottomAdorner.on('moved', adornerMovedHandler)
+			this.elements.push(rightBottomAdorner);
 
-			this.elements.push(element);
+			let topLeftAdorner = new AdornerElement(self.containerRectangle, 'topLeft')
+			topLeftAdorner.create(new paper.Point(p1.x - this.adornerSize / 2, p1.y - this.adornerSize / 2), new paper.Point(p1.x + this.adornerSize / 2, p1.y + this.adornerSize / 2));
+			topLeftAdorner.on('moved_inner', adornerMovedInnerHandler);
+			topLeftAdorner.on('moved', adornerMovedHandler)
+			this.elements.push(topLeftAdorner);
 		}
 
 		if (this.label != null) {
@@ -104,10 +110,21 @@ export default class TagVisual extends BaseVisual {
 	adorner_moved(element) {
 		var center = element.get_center();
 
-		var t = this.get_topLeft();
-		var t2 = center;
+		let topLeft;
+		let bottomRight;
 
-		this.create(t, t2);
+		switch (element.positionName) {
+			case 'bottomRight':
+				topLeft = this.get_topLeft();
+				bottomRight = center;
+				break;
+			case 'topLeft':
+				topLeft = center;
+				bottomRight = this.get_bottomRight();
+				break;
+		}
+
+		this.create(topLeft, bottomRight);
 		this.updateElements();
 	}
 }
