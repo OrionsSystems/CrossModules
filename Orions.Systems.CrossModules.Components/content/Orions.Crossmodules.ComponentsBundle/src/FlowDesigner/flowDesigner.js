@@ -12,14 +12,18 @@
 	common.theme = 'dark';
 	common.callbacks = {};
 	common.statics = {}; // cache for static content
+	common.changes = {};
+	common.changedtabs = false;
 
 	var flow = {};
 	flow.components = [];
 	flow.connections = [];
 	flow.designer = [];
 	flow.loaded = false;
-	flow.workflow = {};
 	flow.isReadOnly = false;
+
+	var flownotifications = [];
+	var flownotified = false;
 
 	var mdraggable = {};
 
@@ -163,7 +167,7 @@
 				groupMap[element.group] = _menuData;
 			});
 
-		} 
+		}
 
 		// create menu
 		var c = $('.components');
@@ -189,23 +193,7 @@
 
 	function saveRemoteJsonConfiguration(flowJson) {
 
-		if (!_saveWorkflowDesignData) return Error('Missing save address..');
-		if (!_workflowId) return Error('workflowId');
-		if (!_nodeId) return Error('nodeId')
-
-		if (!flow.workflow) return Error('workflow')
-
-		return new Promise(function (resolve, reject) {
-
-			var data = { 'workflowId': _workflowId, 'nodeId': _nodeId, json: flowJson };
-
-			$.post(_saveWorkflowDesignData, data).done(function (response) {
-				resolve(response);
-			}).fail(function (jqxhr, textStatus, error) {
-				Error(error);
-				reject();
-			});
-		});
+		// TODO 
 	}
 
 	function ToggleMainMenu() {
@@ -242,6 +230,57 @@
 		settings.isCommonMinimized.toggle();
 	}
 
+	function shownotifications(force) {
+		var el = $('#panel-notification');
+		if (force) {
+			var msg = flownotifications.shift();
+			if (msg) {
+				el.find('div').html(msg);
+				setTimeout(function () {
+					shownotifications(true);
+				}, 3000);
+				if (!flownotified) {
+					el.aclass('panel-notified');
+					flownotified = true;
+				}
+			} else if (flownotified) {
+				el.rclass('panel-notified');
+				flownotified = false;
+			}
+		} else if (!el.hclass('panel-notified'))
+			shownotifications(true);
+	}
+
+	function getIcons() {
+		var classes = document.styleSheets[0].rules || document.styleSheets[0].cssRules;
+		var icons = {};
+		for (var x = 0; x < classes.length; x++) {
+			var cls = classes[x];
+			var sel = cls.selectorText;
+
+			if (sel && sel.substring(0, 4) == '.fa-') {
+				sel = sel.split(',');
+				var val = cls.cssText ? cls.cssText : cls.cssText.style.cssText;
+				var a = val.match(/[^\x00-\x7F]+/);
+				if (a)
+					sel.forEach(function (s) {
+						s = s.trim();
+						s = s.substring(4, s.indexOf(':')).trim();
+						icons[s] = a.toString();
+					});
+			}
+		}
+		return icons;
+	}
+
+	function getSize(el) {
+		var size = {};
+		el = $(el);
+		size.width = el.width();
+		size.height = el.height();
+		return size;
+	}
+
 	window.Orions.FlowDesigner = {};
 
 	window.Orions.FlowDesigner.ToggleMainMenu = ToggleMainMenu;
@@ -261,6 +300,15 @@
 
 	window.Orions.FlowDesigner.Init = function (componentInstance, designData) {
 
+		var panel = $('.panel');
+		var noscrollbar = panel.find('.noscrollbar');
+		var body = $('.body');
+		var min = 340;
+
+
+		$(document).on('click', '#panel-notification', function () {
+			shownotifications(true);
+		});
 
 		// Hybrid devices
 		$(document).on('touchstart', checktouches);
@@ -466,7 +514,34 @@
 		})();
 
 		$(window).on('keydown', function (e) {
-			e.keyCode === 13 && (e.ctrlKey || e.metaKey) && operation.flow.apply();
+
+			debugger;
+
+			if (e.target.tagName === 'BODY' && !common.form) {
+
+				e.keyCode === 13 && (e.ctrlKey || e.metaKey) && operation.flow.apply();
+
+				if (flow.selected && flow.selected.length) {
+					// ctrl+d
+					if (e.keyCode === 68 && (e.ctrlKey || e.metaKey)) {
+						e.preventDefault();
+						designer.duplicate();
+						return;
+					}
+					// ctrl+c
+					if (e.keyCode === 67 && (e.ctrlKey || e.metaKey)) {
+						e.preventDefault();
+						designer.copy(e.shiftKey);
+						return;
+					}
+				}
+				// ctrl+v
+				if (flow.clipboard && e.keyCode === 86 && (e.ctrlKey || e.metaKey)) {
+					e.preventDefault();
+					designer.paste()
+				}
+
+			}
 		});
 
 		var formSettingsComponet;
@@ -630,6 +705,7 @@
 		});
 
 		$(document).on('click', '#saveNodeUpdateChanges', function (e) {
+
 			var el = $(e.target);
 
 			var nodeConfigId = $("input[name=nodeConfigId]").val();
@@ -677,30 +753,8 @@
 
 		function loadNodeStatuses() {
 
-			if (!_workflowInstanceId) return Error('workflowInstanceId');
-			if (!_workflowId) return Error('workflowId');
-			if (!_nodeId) return Error('nodeId');
-			if (!_loadWorkflowStatus) return Error('Wrong loading address');
+			// TODO
 
-			var spinnerEl = $('.workflowRefreshTrafic');
-			spinnerEl.removeClass('hidden');
-			return new Promise(function (resolve, reject) {
-
-				var data = {
-					'workflowInstanceId': _workflowInstanceId,
-					'workflowId': _workflowId,
-					'nodeId': _nodeId
-				};
-
-				$.post(_loadWorkflowStatus, data).done(function (response) {
-					setTimeout(function () { spinnerEl.addClass('hidden'); }, 500);
-					resolve(JSON.parse(response));
-				}).fail(function (jqxhr, textStatus, error) {
-					spinnerEl.addClass('hidden');
-					Error(error);
-					reject();
-				});
-			});
 		}
 
 		function refreshTraffic() {
@@ -762,6 +816,8 @@
 			if (!common.touches)
 				return;
 
+			debugger;
+
 			var el = $(e.target);
 			var target = el.hasClass('component') ? el : el.closest('.component');
 			var val = target.length ? common.components.findItem('id', target.attr('data-id')) : null;
@@ -782,8 +838,7 @@
 			clone.css({ position: 'absolute', left: t.pageX, top: t.pageY, 'z-index': 5 });
 			mdraggable.el = clone;
 
-			//val && SETTER('designer', 'dragdrop', val);
-
+			val && designer.dragdrop(val);
 			e.stopPropagation();
 
 		});
@@ -792,6 +847,8 @@
 
 			if (!common.touches)
 				return;
+
+			debugger;
 
 			if (mdraggable.drag) {
 				var t = e.originalEvent.touches[0];
@@ -808,6 +865,8 @@
 			if (!common.touches || !mdraggable.drag)
 				return;
 
+			debugger;
+
 			e.stopPropagation();
 			mdraggable.drag = false;
 			$('#tmpclone').empty();
@@ -815,7 +874,7 @@
 			if (mdraggable.x < 280)
 				return;
 
-			var d = FIND('designer');
+			var d = designerComponet; // TODO Check me !
 			var el = d.element;
 			var off = el.offset();
 			var x = mdraggable.x - off.left;
@@ -824,7 +883,7 @@
 			y += el.prop('scrollTop');
 			var zoom = d.getZoom();
 
-			//EMIT('designer.add', mdraggable.component, (x - 50) / zoom, (y - 30) / zoom, false);
+			on.designer.add(mdraggable.component, (x - 50) / zoom, (y - 30) / zoom, false);
 		});
 
 		$(document).on('dragstart', function (ev) {
@@ -1035,9 +1094,15 @@
 		var connection;
 		var drag = {};
 		var skip = false;
-		var data, selected, dragdrop, container, lines, main, scroller, touch;
-		var move = { x: 0, y: 0, drag: false, node: null, offsetX: 0, offsetY: 0, type: 0, scrollX: 0, scrollY: 0 };
+		var data, selected, dragdrop, container, lines, main, scroller, touch, anim;
+		var move = { x: 0, y: 0, drag: false, node: null, offsetX: 0, offsetY: 0, type: 0, scrollX: 0, scrollY: 0, moveby: { x: 0, y: 0 } };
+		var select = { x: 0, y: 0, active: false, origin: { x: 0, y: 0 }, items: [] };
+		var selector;
 		var zoom = 1;
+		var animcache = {};
+		var animrunning = {};
+		var animtoken = 0;
+		//var icons = getIcons();
 
 		var designerComponet;
 		designer = {
@@ -1068,8 +1133,8 @@
 
 				scroller = self.parent();
 				self.aclass('ui-designer');
-				//self.append('<div class="ui-designer-grid"><svg width="3000" height="3000"></svg></div>');
-				self.append('<div class="ui-designer-grid"><svg width="6000" height="6000"><defs><filter id="svgshadow" x="0" y="0" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="2" dy="2" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.20"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><pattern patternUnits="userSpaceOnUse" id="svggrid" x="0" y="0" width="150" height="150"><image width="150" height="150" xlink:href="images/flowDesigner/themedark.png" /></pattern></defs><g class="svggrid"><rect id="svggridbg" width="15000" height="15000" fill="url(#svggrid)" /></g></svg></div>');
+				self.append('<div class="ui-designer-grid"><svg width="3000" height="3000"></svg></div>');
+				//self.append('<div class="ui-designer-grid"><svg width="6000" height="6000"><defs><filter id="svgshadow" x="0" y="0" width="180%" height="180%"><feGaussianBlur in="SourceAlpha" stdDeviation="5"/><feOffset dx="2" dy="2" result="offsetblur"/><feComponentTransfer><feFuncA type="linear" slope="0.20"/></feComponentTransfer><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter><pattern patternUnits="userSpaceOnUse" id="svggrid" x="0" y="0" width="150" height="150"><image width="150" height="150" xlink:href="images/flowDesigner/themedark.png" /></pattern></defs><g class="svggrid"><rect id="svggridbg" width="15000" height="15000" fill="url(#svggrid)" /></g></svg></div>');
 
 				var tmp = self.find('svg');
 
@@ -1081,8 +1146,7 @@
 
 				//anim = svg.asvg('g').attr('class', 'animations');
 				//selector = svg.asvg('rect').attr('class', 'selector').attr('opacity', 0).attr('rx', 5).attr('ry', 5);
-
-				designer.resize();
+				self.resize();
 
 				tmp.on('mouseleave', function (e) {
 					if (!common.touches && move.drag)
@@ -1094,6 +1158,12 @@
 					if (common.touches)
 						return;
 
+					if (select.active && !(e.ctrlKey || e.metaKey)) {
+						select.active = false;
+						selector.attr('height', 0).attr('width', 0).attr('opacity', 0);
+						return;
+					}
+
 					var offset;
 
 					if (e.type === 'mousemove') {
@@ -1101,11 +1171,16 @@
 							offset = offsetter(e);
 							self.mmove(e.pageX, e.pageY, offset.x, offset.y, e);
 						}
+						if ((e.ctrlKey || e.metaKey) && select.active) {
+							self.selectormove(e);
+						}
 					} else {
 						offset = offsetter(e);
-						if (e.type === 'mouseup')
+						if (e.type === 'mouseup') {
+							if ((e.ctrlKey || e.metaKey) && select.active)
+								return self.selectorup(e);
 							self.mup(e.pageX, e.pageY, offset.x, offset.y, e);
-						else
+						} else
 							self.mdown(e.pageX, e.pageY, offset.x, offset.y, e);
 					}
 				});
@@ -1545,7 +1620,16 @@
 				g.attr('class', 'node node_unbinded selectable' + (err.length ? ' node_errors' : '') + ' node_' + item.id + (item.isnew ? ' node_new' : ''));
 				g.attr('data-id', item.id);
 				var rect = g.asvg('rect');
-				g.asvg('text').attr('class', 'node_status node_status_' + item.id).attr('transform', 'translate(2,-8)').text((item.state ? item.state.text : '') || '').attr('fill', (item.state ? item.state.color : '') || 'gray');
+				//g.asvg('text').attr('class', 'node_status node_status_' + item.id).attr('transform', 'translate(2,-8)').text((item.state ? item.state.text : '') || '').attr('fill', (item.state ? item.state.color : '') || 'gray');
+
+
+				var icon = null;
+
+				//if (item.$component && item.$component.icon) {
+				//	icon = item.$component.icon;
+				//	if (icon)
+				//		icon = icons[icon];
+				//}
 
 				var body = g.asvg('g');
 				var label = (item.name || item.reference) ? body.asvg('text').html((item.reference ? '<tspan>{0}</tspan> | '.format(item.reference) : '') + item.name || '').attr('class', 'node_label') : null;
@@ -1583,6 +1667,10 @@
 				} else
 					output = item.$component.output;
 
+
+				var padding = 18;
+				var radius = 7;
+
 				var count = Math.max(output || 1, input || 1);
 				var height = (count > 1 ? 16 : 30) + count * 22;
 				var width = (Math.max(label ? label.get(0).getComputedTextLength() : 0, text.get(0).getComputedTextLength()) + 30) >> 0;
@@ -1590,11 +1678,22 @@
 				body.attr('transform', 'translate(15, ' + ((height / 2) - 2) + ')'); //format((height / 2) - 2)
 				rect.attr('width', width).attr('height', height).attr('rx', 4).attr('ry', 4).attr('fill', (item.state ? item.state.color : '') || 'gray').attr('class', 'rect');
 
+				if (icon)
+					width += 34;
+
+				if (icon) {
+					//g.asvg('text').attr('class', 'icon').attr('text-anchor', 'middle').text(icon).attr('transform', 'translate(20,' + ((height / 2) >> 0) + 6) + ')';
+					g.asvg('line').attr('x1', 40).attr('x2', 40).attr('y1', 0).attr('y2', height).attr('class', 'iconline');
+				}
+
+				//rect.attr('width', width).attr('height', height).attr('rx', 4).attr('ry', 4).attr('fill', (item.state ? item.state.color : '') || 'gray').attr('class', 'rect');
+
 				g.attr('data-width', width);
 				g.attr('data-height', height);
 
 				var points = g.asvg('g');
-				var top = ((height / 2) - ((item.$component.input * 22) / 2)) + 10;
+				var top = ((height / 2) - ((item.$component.input * padding) / 2)) + 10;
+
 
 				top = ((height / 2) - ((input * 22) / 2)) + 10;
 				for (var i = 0; i < input; i++) {
@@ -1889,6 +1988,11 @@
 						break;
 				}
 				main.attr('transform', 'scale(' + zoom + ')');
+			},
+
+			animclear: function () {
+				animcache = {};
+				animrunning = {};
 			}
 		};
 
@@ -1933,7 +2037,7 @@
 					obj.connections = {};
 					//obj.id = Date.now().toString();
 					obj.id = component.id;
-					obj.isnew = true; //TODO !?
+					obj.isnew = true;
 					obj.typeFull = component.typeFull;
 
 					if (typeof (component.state) === 'object' && component.state)
@@ -2121,13 +2225,54 @@
 			},
 
 			resize: function () {
-				$('.scroller').each(function () {
-					var el = $(this);
-					var top = el.offset().top;
-					var h = el.closest('.panel,.mainmenu').height();
-					el.css('height', h - top);
-				});
-			}
+
+				//TODO fix me !!!!
+				//$('.noscrollbar').each(function () {
+				//	var el = $(this);
+				//	var top = el.offset().top;
+				//	var h = el.closest('.panel,.mainmenu').height();
+				//	el.css('height', h - top);
+				//});
+
+			},
+
+			changed: function (action, id) {
+
+				debugger;
+
+				id && (common.changes[id] = common.changes[id] || []);
+				var changes = common.changes;
+				switch (action) {
+					case 'add':
+						changes[id].push(action);
+						break;
+					case 'mov':
+						// don't care if it's new component or already moved
+						if (!~changes[id].indexOf('add') && !~changes[id].indexOf('mov'))
+							changes[id].push(action);
+						setTimeout2('change.move', function () {
+							saveMoved();
+						}, 1000);
+						break;
+					case 'rem':
+						if (~changes[id].indexOf('add'))
+							changes[id] = undefined; // remove if not on server yet
+						else
+							changes[id].push(action);
+						break;
+					case 'add.connection':
+					case 'rem.connection':
+						if (!~changes[id].indexOf('add')) // don't care if it's new component, it's taken care of above
+							changes[id].push('conn');
+						break;
+					case 'tabs':
+						common.changedtabs = true;
+						break;
+					case 'flow.clear':
+						common.changedtabs = true;
+						break;
+				};
+			},
 		};
 
 		operation = {
@@ -2283,7 +2428,7 @@
 					designerComponet.remove();
 				},
 				unselect: function () {
-					SETTER('designer', 'select', null);//TODO
+					designer.select(null);
 				},
 				duplicate: function (el) {
 					el = $(el);
@@ -2505,7 +2650,7 @@
 						$.each(jsonConfigurations.defComponents, function (index, element) {
 							common.components.push(element);
 						});
-					} 
+					}
 
 					if (jsonConfigurations && jsonConfigurations.defComponents) {
 						createComponentMenu(jsonConfigurations.defComponents);
@@ -2601,7 +2746,7 @@
 
 			ToggleMainMenu();
 			ToggleCommonMenu();
-			
+
 			//Auto collapes the navigation bar ot the left
 			//$("body").toggleClass("mainmenu-hidden");
 			//$(".nav-header").attr("onclick", "$('body').toggleClass('mini-navbar')")
