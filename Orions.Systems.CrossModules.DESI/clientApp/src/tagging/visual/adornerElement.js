@@ -2,10 +2,11 @@
 import BaseVisual from './baseVisual'
 
 export default class AdornerElement extends BaseVisual {
-	constructor(containerRectangle, opts = {}) {
+	constructor(containerRectangle, adornerPositionName, opts = {}) {
 		super(containerRectangle, opts);
 		this.fillColor = 'white';
 		this.strokeColor = 'black';
+		this.positionName = adornerPositionName;
 	}
 
 

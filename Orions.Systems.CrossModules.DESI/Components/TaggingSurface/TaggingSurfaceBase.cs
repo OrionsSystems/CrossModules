@@ -135,7 +135,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
 
-		protected string ComponentId { get { return $"tagging-surface-{this._componentId}"; } }
+		protected string ComponentIdHtml { get { return $"tagging-surface-{this._componentId}"; } }
 
 		public TaggingSurfaceBase()
 		{
@@ -165,7 +165,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await _frameRenderedTaskTcs.Task;
 			if (this.Rectangles.Any(r => r.Id == rectangleId))
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { rectangleId, elementSelector });
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.attachElementPositionToTag", new object[] { _componentId, rectangleId, elementSelector });
 			}
 		}
 
@@ -185,11 +185,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
 			await _initializationTaskTcs.Task;
-			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { 1 });
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { _componentId });
 
-			if(!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, MediaDataStore?.Data?.MediaInstances[0].CurrentPositionFrameImage))
+			if(!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage)
+				&& MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage != null)
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage");
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId });
 				if (!_frameRenderedTaskTcs.Task.IsCompleted)
 				{
 					_frameRenderedTaskTcs.SetResult(true);
@@ -289,7 +290,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task InitializeClientJs()
 		{
-			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, ComponentId });
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, _componentId });
 		}
 
 		private HyperId GetCurrentPosition()
@@ -316,7 +317,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
 					if (oldTag != null && !oldTag.Equals(newTag))
 					{
-						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { newTag });
+						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
 					}
 				}
 
@@ -329,7 +330,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					}
 					else
 					{
-						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { oldTag });
+						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
 					}
 				}
 
@@ -342,7 +343,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					}
 					else
 					{
-						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { newTag });
+						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
 					}
 				}
 			}
@@ -367,7 +368,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected override void Dispose(bool disposing)
 		{
-			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose");
+			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose", new object[] { _componentId });
 
 			if (disposing)
 			{
