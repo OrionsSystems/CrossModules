@@ -5,6 +5,7 @@
 <div class="tagging-video-player-container">
 	<video id="@_videoElementId"
 		   preload="auto"
+		   @onclick="() => this.Pause()"
 		   class="video-player">
 		<p>
 			To view this video please enable JavaScript, and consider upgrading to a
@@ -40,8 +41,4 @@
 			<DotsLoader CssClass="video-overlay-dots-loader"/>
 		</div>
 	}
-</div>
-
-<div class="centered-container">
-	<img src="@this.PausedFrameBase64" class="frame-img" />
 </div>

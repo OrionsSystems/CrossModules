@@ -60,10 +60,10 @@ window.Orions.TaggingSurface = {
 			surface.resetZoom();
 		}
 	},
-	updateFrameImage: function (componentId) {
+	updateFrameImage: function (componentId, imageBase64) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
-			surface.updateFrameImage();
+			surface.updateFrameImage(imageBase64);
 		}
 	},
 	dispose: function (componentId) {
@@ -134,48 +134,32 @@ class TaggingSurface {
 
 		let raster;
 		let frameImage = document.getElementsByClassName('frame-img')[0]
-		let updateFrameImageOnCanvas = function () {
-			frameImage = document.getElementsByClassName('frame-img')[0];
+		let updateFrameImageOnCanvas = function (imageBase64) {
+			if (raster == null) {
+				raster = new paper.Raster(imageBase64);
+			}
+			else {
+				raster.source = imageBase64
+			}
 
-			if (frameImage.src != '') {
-				if (raster == null) {
-					raster = new paper.Raster(frameImage);
-				}
-				else {
-					raster.source = frameImage.src
-				}
-				window.rasterDebug = raster;
-
-				console.log(raster.loaded);
-
-				raster.size = new paper.Size(frameImage.width, frameImage.height);
+			raster.onLoad = function () {
 				raster.position = self.scope.view.center
 
-				raster.onLoad = function () {
-					raster.size = new paper.Size(frameImage.width, frameImage.height);
-					raster.position = self.scope.view.center
+				let viewAspectRation = self.scope.view.bounds.width / self.scope.view.bounds.height
+				let imageAspectRation = raster.width / raster.height
 
-					self.componentRef.invokeMethodAsync("FrameImageRendered")
+				if (viewAspectRation < imageAspectRation) {
+					raster.size.width = self.scope.view.bounds.width
+					raster.size.height = raster.size.width / imageAspectRation;
 				}
+				else {
+					raster.size.height = self.scope.view.bounds.height
+					raster.size.width = raster.size.height * imageAspectRation;
+				}
+
+				self.componentRef.invokeMethodAsync("FrameImageRendered")
 			}
 		}
-		//updateFrameImageOnCanvas();
-
-		//let frameImageObserver = new MutationObserver((mutations) => {
-		//	for (var i in mutations) {
-		//		let mutation = mutations[i]
-		//		if (mutation.type == 'attributes' && mutation.attributeName == 'src') {
-		//			updateFrameImageOnCanvas()
-		//		}
-		//	}
-		//});
-		//frameImageObserver.observe(frameImage, {
-		//	attributes: true
-		//})
-
-		//frameImage.addEventListener('resize', function (e) {
-		//	updateFrameImageOnCanvas()
-		//})
 
 		let getProportionalRectangle = function (coords, containerRectangle) {
 			let width = (coords.bottomRight.x - coords.topLeft.x) / containerRectangle.width;
@@ -390,8 +374,8 @@ class TaggingSurface {
 			}
 		}
 
-		self.updateFrameImage = function () {
-			updateFrameImageOnCanvas();
+		self.updateFrameImage = function (imageBase64) {
+			updateFrameImageOnCanvas(imageBase64);
 		}
 
 		self.dispose = function () {

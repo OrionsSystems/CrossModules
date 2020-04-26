@@ -220,22 +220,6 @@
 		align-items: center;
 		position: relative;
 
-		.centered-container {
-			display: flex;
-			max-width: 100%;
-			max-height: calc(100% - #{$player-control-bar-height});
-			position: relative;
-			z-index: -1; // set to -1 to enable events of overlaying elements (for example videoplayer click)
-			& > * {
-				max-height: 100%;
-				max-width: 100%;
-			}
-
-			.frame-img {
-				visibility: hidden;
-			}
-		}
-
 		.tagging-canvas {
 			position: absolute;
 			width: 100%;

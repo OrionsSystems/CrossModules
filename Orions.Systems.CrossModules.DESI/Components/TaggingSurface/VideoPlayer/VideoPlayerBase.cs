@@ -33,6 +33,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		
 		protected string _videoElementId = $"videoplayer-{Guid.NewGuid().ToString()}";
+		private bool _lockPositionUpdate = false;
 		protected bool CurrentFrameIsLoading { get; set; } = false;
 		protected bool IsVideoLoading { get; set; } = true;
 		protected bool Paused { get; private set; } = true;
@@ -147,10 +148,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							.SelectedTagsUpdated
 							.Subscribe(_ =>
 							{
-								if (Paused)
-								{
+								//if (Paused)
+								//{
 									GoToSelectedTagFrame();
-								}
+								//}
 							}));
 						_subscriptions.Add(_tagsStore.Data
 							.CurrentTaskTags
@@ -193,12 +194,23 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
+		public async Task OnVideoEndJs()
+		{
+			await OnPositionUpdate(_taskPlaybackInfo.TotalDuration.TotalSeconds);
+		}
+
+		[JSInvokable]
 		public async Task OnPositionUpdate(double positionInSeconds)
 		{
-			CurrentPosition = TimeSpan.FromMilliseconds(positionInSeconds * 1000);
+			if (_lockPositionUpdate)
+			{
+				return;
+			}
+
+			CurrentPosition = TimeSpan.FromSeconds(positionInSeconds);
 			CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(CurrentPosition);
 
-			if(CurrentPosition >= _taskPlaybackInfo.TotalDuration)
+			if (CurrentPosition >= _taskPlaybackInfo.TotalDuration)
 			{
 				await Pause();
 			}
@@ -206,6 +218,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (Paused)
 			{
 				await UpdateFrameImageByCurrentPosition();
+			}
+			else
+			{
+				ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
 			}
 
 			UpdateState();
@@ -232,9 +248,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Pause()
 		{
-			ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
-			Paused = true;
-			await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
+			if (!Paused)
+			{
+				ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
+				Paused = true;
+				await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
+				await OnPaused.InvokeAsync(null);
+			}
 		}
 
 		public async Task ChangeVolumeLevel(double value)
@@ -282,8 +302,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task UpdateFrameImageByCurrentPosition()
 		{
-			OnLoading.InvokeAsync(null);
-
 			var loaderDelayTask = Task.Delay(300);
 
 			var hyperId = _taskPlaybackInfo.GetPositionHyperId(CurrentFrameIndex);
@@ -296,6 +314,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await Task.WhenAny(loaderDelayTask, frameLoadTask);
 			if (!frameLoadTask.IsCompleted)
 			{
+				OnLoading.InvokeAsync(null);
 				CurrentFrameIsLoading = true;
 				UpdateState();
 				await frameLoadTask;
@@ -336,23 +355,23 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task UpdateCurrentTaskData()
 		{
 			await _initializationTaskTcs.Task;
+
+			await Pause(); // Pause if current task video is being played
+
 			await OnLoading.InvokeAsync(null);
 
 			IsVideoLoading = true;
 			var assetTuple = await InitTaskPlaybackAsync();
 
+			Paused = false; // set Paused to false to prevent triggering PositionChanged js callback
 			await InitMP4PayloadAsync(assetTuple.track, assetTuple.fragment);
-			if (!TagsStore.Data.SelectedTags.Any())
-			{
-				await UpdateFrameImageByCurrentPosition();
-			}
-
 			IsVideoLoading = false;
-			Paused = true;
-			ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
 
 			await OnLoaded.InvokeAsync(null);
-			await OnPaused.InvokeAsync(null);
+			await OnPlay.InvokeAsync(null);
+			//ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
+			await Play();
+
 			UpdateState();
 		}
 
@@ -398,12 +417,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task GoToSelectedTagFrame()
 		{
+			_lockPositionUpdate = true;
+
 			var tagFrameToGoTo = TagsStore?.Data?.SelectedTags?.Min(i => i.TagHyperId.SliceId);
 			if (tagFrameToGoTo != null)
 			{
+				await Pause();
 				await GoToFrame(tagFrameToGoTo.Value.Index);
 				//await OnPaused.InvokeAsync(null);
 			}
+
+			_lockPositionUpdate = false;
 		}
 
 		protected override void Dispose(bool disposing)

@@ -19,7 +19,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
 
-		public ILoggerService Logger { get => DependencyResolver.GetLoggerService(); }
+		[Inject]
+		public ILoggerService Logger { get; set; }
 
 		#region Lifecycle methods overrides
 		protected sealed override void OnAfterRender(bool firstRender)
@@ -154,7 +155,11 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		private void LogException(Exception e)
 		{
-			Logger.LogException("Exception", e);
+			try
+			{
+				Logger.LogException("Exception", e);
+			}
+			catch { }
 		}
 
 		protected bool SetProperty<T>(ref T storage,

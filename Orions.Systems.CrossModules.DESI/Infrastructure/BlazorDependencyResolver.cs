@@ -80,7 +80,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override ILoggerService GetLoggerService()
 		{
-			return new BlazorLoggerService();
+			return new BlazorLoggerService(this);
 		}
 
 		public INavigationService GetNavigationService()

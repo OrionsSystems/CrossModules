@@ -11,6 +11,8 @@ window.Orions.Player = {
         video.addEventListener('timeupdate', function () {
             if (!video.doNotProcessPositionChanged) {
                 vmInstance.invokeMethodAsync("OnPositionUpdate", video.currentTime);
+
+                console.log(video.currentTime);
             }
 
             video.doNotProcessPositionChanged = false;
@@ -18,6 +20,10 @@ window.Orions.Player = {
 
         video.addEventListener('loadeddata', function () {
             vmInstance.invokeMethodAsync("OnPlayerDataLoaded");
+        });
+
+        video.addEventListener('ended', function () {
+            vmInstance.invokeMethodAsync("OnVideoEndJs");
         });
 
         this.video = video;

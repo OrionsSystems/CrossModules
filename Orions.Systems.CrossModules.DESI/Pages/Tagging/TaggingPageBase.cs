@@ -60,6 +60,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				DependencyResolver.GetDispatcher(),
 				DependencyResolver.GetLoggerService(),
 				DependencyResolver.GetDeviceClipboardService());
+			this.Vm.SlicePositionBiasHalfRange = 5;
 
 			_subscriptions.Add(
 				_taggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState())

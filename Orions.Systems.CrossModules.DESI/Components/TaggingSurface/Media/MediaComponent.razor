@@ -9,9 +9,6 @@
     switch (Media.MediaSource)
     {
         case MemoryImagePlaylistEntry memoryImage:
-            <div class="centered-container">
-                <img src="@UniImage.ConvertByteArrayToBase64Url(memoryImage.Handle)" class="frame-img"/>
-            </div>
             break;
 
         case HyperAssetPlaylistEntry hyperAsset:

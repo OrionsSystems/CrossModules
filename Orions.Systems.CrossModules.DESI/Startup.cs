@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
@@ -19,6 +20,7 @@ using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
+using Serilog.Extensions.Logging;
 using Syncfusion.EJ2.Blazor;
 
 namespace Orions.Systems.CrossModules.Desi
@@ -44,11 +46,12 @@ namespace Orions.Systems.CrossModules.Desi
 				.AddScoped<BlazorDependencyResolver>()
 				.AddScoped<IKeyboardListener, KeyboardListener>();
 
-
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 			services.AddSyncfusionBlazor();
 			var syncfusionLicense = Configuration.GetValue<string>("SyncfusionLicense");
 			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
+
+			services.AddScoped<ILoggerService, BlazorLoggerService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

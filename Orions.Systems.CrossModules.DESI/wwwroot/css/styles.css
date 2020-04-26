@@ -1031,17 +1031,6 @@ body {
     overflow: hidden;
     align-items: center;
     position: relative; }
-    .tagging-page-container .tagging-surface-container .centered-container {
-      display: flex;
-      max-width: 100%;
-      max-height: calc(100% - 60px);
-      position: relative;
-      z-index: -1; }
-      .tagging-page-container .tagging-surface-container .centered-container > * {
-        max-height: 100%;
-        max-width: 100%; }
-      .tagging-page-container .tagging-surface-container .centered-container .frame-img {
-        visibility: hidden; }
     .tagging-page-container .tagging-surface-container .tagging-canvas {
       position: absolute;
       width: 100%;
