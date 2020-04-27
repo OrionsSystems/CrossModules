@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WorkflowListBase : BaseBlazorComponent<WorkflowListVm>, IDisposable
+	public class WorkflowInstanceHistoryListBase : BaseBlazorComponent<WorkflowInstanceHistoryListVm>, IDisposable
 	{
 		IDisposable thisReference;
 
@@ -19,33 +19,15 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
-		public EventCallback<HyperWorkflow> OnManageWorkflow
+		public string WorkflowId
 		{
-			get => Vm.OnManageWorkflow;
-			set => Vm.OnManageWorkflow = value;
-		}
-
-		[Parameter]
-		public EventCallback<HyperWorkflow> OnOpenWorkflowInstances
-		{
-			get => Vm.OnOpenWorkflowInstances;
-			set => Vm.OnOpenWorkflowInstances = value;
-		}
-
-		PropertyGrid _propGrid;
-		PropertyGrid propGrid
-		{
-			get => _propGrid;
-			set
-			{
-				_propGrid = value;
-				Vm.PropertyGridVm = value.Vm;
-			}
+			get => Vm.WorkflowId;
+			set => Vm.WorkflowId = value;
 		}
 
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
-		public WorkflowListBase()
+		public WorkflowInstanceHistoryListBase()
 		{
 
 		}

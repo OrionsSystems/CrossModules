@@ -7619,6 +7619,16 @@ i.ui-intro-button {
   margin-bottom: 0px !important; }
   .workflow-container .list-table table .list-name {
     cursor: pointer; }
+  .workflow-container .list-table table .name-container {
+    display: flex;
+    min-height: 55px; }
+  .workflow-container .list-table table .workflow-status {
+    height: 30px;
+    width: 50px;
+    margin: auto 10px; }
+  .workflow-container .list-table table .workflow-name {
+    flex-grow: 1;
+    margin: auto 0; }
   .workflow-container .list-table table .list-cmd-container a {
     cursor: pointer;
     opacity: 0.5;

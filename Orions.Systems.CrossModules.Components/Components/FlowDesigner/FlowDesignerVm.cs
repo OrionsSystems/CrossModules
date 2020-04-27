@@ -23,11 +23,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public FlowDesignData DesignData { get; private set; } = new FlowDesignData();
 
-		/// <summary>
-		/// Statuses for this view model.
-		/// </summary>
 		public HyperWorkflowStatus[] WorkflowStatuses { get; set; }
-
 
 		public bool IsShowDesignerSetting { get; set; }
 		public bool IsShowProperty { get; set; }
@@ -49,7 +45,7 @@ namespace Orions.Systems.CrossModules.Components
 
 			await PopulateWorkflow(WorkflowId);
 
-			await PopulateWorkflowStatuses(WorkflowInstanceId);
+			await LoadWorkflowStatuses();
 
 			PopulateDesignerData();
 		}
@@ -118,7 +114,6 @@ namespace Orions.Systems.CrossModules.Components
 			var nodeConfigJson = JsonConvert.SerializeObject(nodeConfig, FlowDesignConverter.Settings);
 
 			return nodeConfigJson;
-
 		}
 
 		public string DuplicateNode(string originalNodeConfigId, string desingComponentJson)
@@ -264,11 +259,59 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
-		public void LoadWorkflowStatuses(string workflowId, string workflowInstanceId)
+		public async Task<string> LoadWorkflowStatusesJson() 
 		{
-			throw new NotImplementedException();
+			var result = await LoadWorkflowStatuses();
+
+			var jsonResult = JsonConvert.SerializeObject(result, FlowDesignConverter.Settings);
+
+			return jsonResult;
 		}
 
+		public async Task<List<FlowDesignNodeStatus>> LoadWorkflowStatuses()
+		{
+			var result = new List<FlowDesignNodeStatus>();
+
+			if (HyperStore == null || string.IsNullOrWhiteSpace(WorkflowId) || string.IsNullOrWhiteSpace(WorkflowInstanceId)) return result;
+
+			var args = new RetrieveHyperWorkflowsStatusesArgs();
+
+			var statsArgs = new RetrieveHyperWorkflowsStatusesArgs
+			{
+				WorkflowConfigurationIds = new string[] { WorkflowId },
+				WorkflowInstancesIds = new string[] { WorkflowInstanceId }
+			};
+
+			var statuses = await HyperStore.ExecuteAsync(statsArgs);
+
+			if (statuses != null && statuses.Any())
+			{
+				var workflowStatuses = statuses.OrderBy(it => it.PrintTitle).ToList();
+				foreach (var wfStatus in workflowStatuses)
+				{
+
+					foreach (var status in wfStatus.NodeStatuses)
+					{
+						var state = status.OperationalState == Common.UniOperationalStates.Operational ? "OK" : status.OperationalState.ToString();
+
+						var designNodeStatus = new FlowDesignNodeStatus()
+						{
+							NodeId = status.NodeId,
+							StatusMessage = status.StatusMessage,
+							SystemStatusMessage = status.SystemStatusMessage,
+							DefaultStatusMessage = status.GenerateDefaultStatusMessage(),
+							LoggerStatusMessage = status.GenerateLoggerStatusMessage(),
+							IsActive = status.IsActive,
+							State = state
+						};
+
+						result.Add(designNodeStatus);
+					}
+				}
+			}
+
+			return result;
+		}
 
 		public void SaveNodeDesignData(string workflowId, string json)
 		{
@@ -357,7 +400,6 @@ namespace Orions.Systems.CrossModules.Components
 					item.Icon = tempItem.Icon;
 					item.Color = tempItem.Color;
 				}
-
 			}
 
 			return data;
@@ -379,7 +421,6 @@ namespace Orions.Systems.CrossModules.Components
 
 			return types;
 		}
-
 
 		private void SaveHyperWorkflowInSession(HyperWorkflow hyperWorkflow)
 		{

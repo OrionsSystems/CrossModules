@@ -1,36 +1,16 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
 
-@inherits WorkflowListBase
+@inherits WorkflowInstanceListBase
 
 <div class="workflow-container">
-
-	<div class="row workflow-list-header">
-		<div class="header-filter col-lg-7">
-			<div class="input-group mt-3">
-				<input type="text" class="form-control" @bind="@Vm.SearchInput" placeholder="Search" aria-label="Search" aria-describedby="basic-search">
-				<div class="input-group-append list-search">
-					<button @onclick="@Vm.OnSearchBtnClick" class="btn btn-outline-secondary" type="button">
-						<MatIcon Class="dashoboard-list-search-icon" Icon="@MatIconNames.Search"></MatIcon>
-						<span>Search</span>
-					</button>
-				</div>
-			</div>
-		</div>
-		<div class="header-actions col-lg-5">
-			<a class="btn" @onclick="@(async ev => { await Vm.CreateNew(); })">
-				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
-				<div class="header-cmd-label">Create</div>
-			</a>
-		</div>
-	</div>
 
 	@if (Vm.Items.Any() && Vm.IsLoadedData)
 	{
 		var rowIndex = 0;
 
 		<div class="row">
-			<div class="col-lg-12 header-title">Workflow Configurations</div>
+			<div class="col-lg-12 header-title">Workflow Instaces</div>
 		</div>
 
 		<div class="table-responsive list-table">
@@ -39,7 +19,6 @@
 				<thead>
 					<tr>
 						<th width="1%" class="nowrap center"></th>
-						<th width="5%" class="nowrap center">Group</th>
 						<th>Name</th>
 						<th width="20%" class="nowrap center"></th>
 					</tr>
@@ -49,11 +28,8 @@
 					{
 						rowIndex++;
 
-						@if (item.Source == null) continue;
-
-						<tr @key="item.Source.Id">
+						<tr>
 							<td class="center nowrap">@rowIndex</td>
-							<td>@item.Source.Group</td>
 							<td>
 								<div class="name-container">
 									<div class="workflow-status" style="background-color: @item.StatusBackground;"></div>
@@ -67,13 +43,13 @@
 									<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
 									<div class="list-cmd-label">Properties</div>
 								</a>
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenWorkflowHistoryAsync(item); })">
+									<MatIcon Icon="@MatIconNames.History"></MatIcon>
+									<div class="list-cmd-label">History</div>
+								</a>
 								<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageWorkflowAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
 									<div class="list-cmd-label">Manage</div>
-								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.OpenWorkflowInstancesAsync(item); })">
-									<MatIcon Icon="@MatIconNames.Dashboard"></MatIcon>
-									<div class="list-cmd-label">Intances</div>
 								</a>
 							</td>
 						</tr>

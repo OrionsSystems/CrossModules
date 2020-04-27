@@ -50,6 +50,22 @@
 				cursor: pointer;
 			}
 
+			.name-container {
+				display: flex;
+				min-height: 55px;
+			}
+
+			.workflow-status {
+				height: 30px;
+				width: 50px;
+				margin: auto 10px;
+			}
+
+			.workflow-name {
+				flex-grow: 1;
+				margin: auto 0;
+			}
+
 			.list-cmd-container {
 				a {
 					cursor: pointer;

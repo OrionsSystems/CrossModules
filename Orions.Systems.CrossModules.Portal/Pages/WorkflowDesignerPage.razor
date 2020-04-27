@@ -1,16 +1,22 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/workflow-designer/{WorkflowId}"
+@page "/workflow-designer/{WorkflowId}/instance/{WorkflowInstanceId}"
 
 @inherits PortalBaseComponent
 
 @using Orions.Infrastructure.HyperMedia
 
-<FlowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId"></FlowDesigner>
+<FlowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId" WorkflowInstanceId="@WorkflowInstanceId"></FlowDesigner>
 
 @code{
 
 	[Parameter]
 	public string WorkflowId { get; set; }
+
+	[Parameter]
+	public string WorkflowInstanceId { get; set; }
+
+	//public bool IsReadOnlyMode { get { return string.IsNullOrWhiteSpace(WorkflowInstanceId); } }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -57,7 +63,6 @@
 		position: absolute;
 		height: 100%;
 	}
-
 </style>
 
 

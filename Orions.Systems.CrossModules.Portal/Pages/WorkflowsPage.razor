@@ -1,5 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/workflows"
+@page "/workflow/{WorkflowId}/instances"
+@page "/workflow/{WorkflowStatusId}/history"
 
 @using Orions.Infrastructure.HyperMedia
 
@@ -7,9 +9,38 @@
 
 @inject NavigationManager navManager
 
-<WorkflowList HyperStore="HyperStore" OnManageWorkflow="@OnManageWorkflow"></WorkflowList>
+
+@if (IsInstanceMode)
+{
+	<WorkflowInstanceList HyperStore="@HyperStore"
+								 WorkflowId="@WorkflowId"
+								 OnManageWorkflowInstance="@OnManageWorkflowInstance"
+								 OnOpenWorkflowHistory="@OnOpenWorkflowHistory">
+	</WorkflowInstanceList>
+}
+else if (IsHistoryMode)
+{
+	<WorkflowInstanceHistoryList HyperStore="@HyperStore"  
+										  WorkflowId="@WorkflowStatusId"></WorkflowInstanceHistoryList>
+}
+else
+{
+	<WorkflowList HyperStore="@HyperStore"
+					  OnOpenWorkflowInstances="@OnOpenWorkflowInstances"
+					  OnManageWorkflow="@OnManageWorkflow"></WorkflowList>
+}
 
 @code{
+
+	[Parameter]
+	public string WorkflowId { get; set; }
+
+	[Parameter]
+	public string WorkflowStatusId { get; set; }
+
+	private bool IsInstanceMode { get { return string.IsNullOrWhiteSpace(WorkflowId) == false; } }
+
+	private bool IsHistoryMode { get { return string.IsNullOrWhiteSpace(WorkflowStatusId) == false; } }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -18,13 +49,35 @@
 
 	private async Task OnManageWorkflow(HyperWorkflow wf)
 	{
-
-		if(wf == null) return;
+		if (wf == null) return;
 
 		var url = $"{navManager.BaseUri}workflow-designer/{wf.Id}";
-		//navManager.NavigateTo(url, true);
 
 		await NavigateToUrlAsync(url, true);
+	}
+
+	private async Task OnOpenWorkflowInstances(HyperWorkflow wf)
+	{
+		if (wf == null) return;
+
+		var url = $"{navManager.BaseUri}workflow/{wf.Id}/instances";
+		await NavigateToUrlAsync(url, false);
+	}
+
+	private async Task OnManageWorkflowInstance(HyperWorkflowStatus status)
+	{
+		if (status == null) return;
+
+		var url = $"{navManager.BaseUri}workflow-designer/{status.Configuration.Id}/instance/{status.WorkflowInstanceId}";
+		await NavigateToUrlAsync(url, false);
+	}
+
+	private async Task OnOpenWorkflowHistory(HyperWorkflowStatus status)
+	{
+		if (status == null) return;
+
+		var url = $"{navManager.BaseUri}workflow/{status.Configuration.Id}/history";
+		await NavigateToUrlAsync(url, false);
 	}
 
 }

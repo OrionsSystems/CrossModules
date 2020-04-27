@@ -21,16 +21,19 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsShowProperty { get; set; }
 
-		public List<HyperWorkflow> Items { get; set; } = new List<HyperWorkflow>();
+		public List<WorkflowConfigurationVm> Items { get; set; } = new List<WorkflowConfigurationVm>();
 
-		public HyperWorkflow SelectedItem { get; set; }
+		public WorkflowConfigurationVm SelectedItem { get; set; }
 
 		public string SearchInput { get; set; }
 
 		public EventCallback<HyperWorkflow> OnManageWorkflow { get; set; }
 
+		public EventCallback<HyperWorkflow> OnOpenWorkflowInstances { get; set; }
+
 		public WorkflowListVm()
 		{
+
 		}
 
 		public async Task Init()
@@ -42,9 +45,14 @@ namespace Orions.Systems.CrossModules.Components
 			IsLoadedData = true;
 		}
 
-		public async Task ManageWorkflowAsync(HyperWorkflow item)
+		public async Task ManageWorkflowAsync(WorkflowConfigurationVm item)
 		{
-			await OnManageWorkflow.InvokeAsync(item);
+			await OnManageWorkflow.InvokeAsync(item.Source);
+		}
+
+		public async Task OpenWorkflowInstancesAsync(WorkflowConfigurationVm item)
+		{
+			await OnOpenWorkflowInstances.InvokeAsync(item.Source);
 		}
 
 		private async Task PopulateWorkflows()
@@ -59,13 +67,13 @@ namespace Orions.Systems.CrossModules.Components
 			if (workflows == null || !workflows.Any())
 				return;
 
-			//var statsArgs = new RetrieveHyperWorkflowsStatusesArgs();
-			//var statuses = await HyperStore.ExecuteAsync(statsArgs);
+			var statsArgs = new RetrieveHyperWorkflowsStatusesArgs();
+			var statuses = await HyperStore.ExecuteAsync(statsArgs);
 
-			//if (statuses == null)
-			//{
-			//	statuses = new HyperWorkflowStatus[] { };
-			//}
+			if (statuses == null)
+			{
+				statuses = new HyperWorkflowStatus[] { };
+			}
 
 			foreach (var workflow in workflows)
 			{
@@ -76,10 +84,13 @@ namespace Orions.Systems.CrossModules.Components
 					continue;
 				}
 
-				Items.Add(configuration);
+				var wfVm = new WorkflowConfigurationVm
+				{
+					Source = configuration,
+					WorkflowStatuses = statuses.Where(it => it.Configuration.Id == configuration.Id).ToArray()
+				};
 
-				//var workflowStatuses = statuses.Where(it => it.Configuration.Id == configuration.Id).ToArray()
-
+				Items.Add(wfVm);
 			}
 
 			IsLoadedData = true;
@@ -95,7 +106,7 @@ namespace Orions.Systems.CrossModules.Components
 			//TODO
 		}
 
-		public void ShowPropertyGrid(HyperWorkflow item)
+		public void ShowPropertyGrid(WorkflowConfigurationVm item)
 		{
 			SelectedItem = item;
 			IsShowProperty = true;
@@ -103,7 +114,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public Task<object> LoadPropertyGrid()
 		{
-			return Task.FromResult<object>(SelectedItem);
+			return Task.FromResult<object>(SelectedItem.Source);
 		}
 
 		public void OnCancelProperty()
