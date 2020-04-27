@@ -20,7 +20,7 @@
 	flow.connections = [];
 	flow.designer = [];
 	flow.loaded = false;
-	flow.isReadOnly = false;
+	flow.isReadOnly = 1;
 
 	var flownotifications = [];
 	var flownotified = false;
@@ -751,17 +751,17 @@
 			$('#workflowDesignerSettings').modal('hide');
 		});
 
-		function loadNodeStatuses() {
-
-			// TODO
-
-		}
-
 		function refreshTraffic() {
 
-			return loadNodeStatuses().then(function (statuses) {
+			var spinnerEl = $('.flowRefreshTrafic');
+         spinnerEl.removeClass('hidden');
 
-				//console.log('Status result.. : ' + JSON.stringify(statuses));
+			componentInstance.invokeMethodAsync('LoadStatuses').then(function (data) {
+
+				//console.log('Status result.. : ' + data);
+
+				statuses = JSON.parse(data);
+				setTimeout(function(){ spinnerEl.addClass('hidden'); }, 500);
 
 				if (!statuses) return;
 
@@ -805,7 +805,13 @@
 						rect.attr('width', p);
 					}
 				});
+
+
+			}, function (err) {
+				debugger;
+				loading.hide();
 			});
+
 		}
 
 		var MESSAGES = {};
@@ -997,50 +1003,13 @@
 		confirm.confirm = confirm.show;
 
 		var _jsonConfiguration,
-			_loadWorkflowDesignData,
-			_saveWorkflowDesignData,
-			_loadWorkflowStatus,
-			_nodeProperty,
-			_workflowId,
-			_workflowInstanceId,
-			_nodeId,
 			_refreshNodeStatusInMilisecond,
 			_isMinimizeMainMenu = false,
-			_isCommonMinimized = false,
-			_createNodeAddress,
-			_duplicateNodeAddress;
+			_isCommonMinimized = false;
 		settings = {
 			jsonConfiguration: {
 				get: function () { return _jsonConfiguration; },
 				set: function (value) { _jsonConfiguration = value; }
-			},
-			loadWorkflowDesignData: {
-				get: function () { return _loadWorkflowDesignData; },
-				set: function (value) { _loadWorkflowDesignData = value; }
-			},
-			saveWorkflowDesignData: {
-				get: function () { return _saveWorkflowDesignData; },
-				set: function (value) { _saveWorkflowDesignData = value; }
-			},
-			loadWorkflowStatus: {
-				get: function () { return _loadWorkflowStatus; },
-				set: function (value) { _loadWorkflowStatus = value; }
-			},
-			nodeProperty: {
-				get: function () { return _nodeProperty; },
-				set: function (value) { _nodeProperty = value; }
-			},
-			workflowId: {
-				get: function () { return _workflowId; },
-				set: function (value) { _workflowId = value; }
-			},
-			workflowInstanceId: {
-				get: function () { return _workflowInstanceId; },
-				set: function (value) { _workflowInstanceId = value; }
-			},
-			nodeId: {
-				get: function () { return _nodeId; },
-				set: function (value) { _nodeId = value; }
 			},
 			refreshNodeStatusInMilisecond: {
 				get: function () {
@@ -1080,14 +1049,6 @@
 				set: function (value) { _isCommonMinimized = value; },
 				toggle: function () { _isCommonMinimized = !_isCommonMinimized; }
 			},
-			createNodeAddress: {
-				get: function () { return _createNodeAddress; },
-				set: function (value) { _createNodeAddress = value; }
-			},
-			duplicateNodeAddress: {
-				get: function () { return _duplicateNodeAddress; },
-				set: function (value) { _duplicateNodeAddress = value; }
-			}
 		};
 
 		var svg;
@@ -1713,7 +1674,7 @@
 						o.attr('fill', common.theme === 'dark' ? 'white' : 'black');
 				}
 
-				if (flow.isReadOnly) {
+				if (flow.isReadOnly === 0) {
 
 					// 1 Line - Operational Status
 
@@ -2238,7 +2199,7 @@
 
 			changed: function (action, id) {
 
-				debugger;
+				//debugger;
 
 				id && (common.changes[id] = common.changes[id] || []);
 				var changes = common.changes;
@@ -2644,7 +2605,11 @@
 
 				return new Promise(function (resolve, reject) {
 
+					debugger;
+
 					jsonConfigurations = JSON.parse(designData);
+
+					flow.isReadOnly = jsonConfigurations.isReadOnly;
 
 					if (jsonConfigurations && jsonConfigurations.defComponents && jsonConfigurations.defComponents instanceof Array) {
 						$.each(jsonConfigurations.defComponents, function (index, element) {
@@ -2677,11 +2642,6 @@
 						$('body').addClass('mainmenu-hidden');
 					}
 
-					if (_workflowInstanceId) {
-						flow.isReadOnly = true;
-						HideComponentsInReadOnlyMode();
-					}
-
 					if (!data.components || !data.components.length) {
 						loading.hide();
 						$('.ui-loading').removeClass('ui-loading-firstload');
@@ -2699,13 +2659,12 @@
 						//item.name =  item.$component.title;
 
 						if (item.$component) {
-
 							item.$component.name = item.$component.title;
-							item.$component.traffic = !flow.isReadOnly;
+							item.$component.traffic = flow.isReadOnly !== 1;
 						} else {
 							item.$component = {}
 							item.$component.name = 'Test';
-							item.$component.traffic = !flow.isReadOnly;
+							item.$component.traffic = flow.isReadOnly !== 1;
 						}
 
 						item.state = item.state || {};
@@ -2728,7 +2687,7 @@
 					loading.hide();
 					$('.ui-loading').removeClass('ui-loading-firstload');
 
-					if (flow.isReadOnly) {
+					if (flow.isReadOnly === 0) {
 						$('#saveNodeUpdateChanges').remove();
 						refreshTraffic();
 						var ref = window.setInterval(refreshTraffic, settings.refreshNodeStatusInMilisecond.get());

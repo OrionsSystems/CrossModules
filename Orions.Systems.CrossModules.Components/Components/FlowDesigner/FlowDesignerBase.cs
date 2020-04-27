@@ -77,6 +77,12 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[JSInvokable]
+		public async Task<string> LoadStatuses()
+		{
+			return await Vm.LoadWorkflowStatusesJson();
+		}
+
+		[JSInvokable]
 		public void OpenPropertyGrid(string id)
 		{
 			Vm.ShowPropertyGrid(id);

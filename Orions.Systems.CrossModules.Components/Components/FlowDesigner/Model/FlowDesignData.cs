@@ -41,6 +41,9 @@ namespace Orions.Systems.CrossModules.Components.Model
 		[JsonProperty("defComponents")]
 		public List<FlowDesignNodeConfiguration> NodeConfigurations { get; set; }
 
+		[JsonProperty("isReadOnly")]
+		public int IsReadOnly { get; set; } = 1;
+
 		public FlowDesignData()
 		{
 			Tabs = new List<FlowTab>();
@@ -51,7 +54,7 @@ namespace Orions.Systems.CrossModules.Components.Model
 			NodeConfigurations = new List<FlowDesignNodeConfiguration>();
 		}
 
-		//public static WorkflowDesignData FromJson(string json) => JsonConvert.DeserializeObject<WorkflowDesignData>(json, Converter.Settings);
+		//public static FlowDesignData FromJson(string json) => JsonConvert.DeserializeObject<FlowDesignData>(json, Converter.Settings);
 	}
 
 	public class FlowDesignComponent

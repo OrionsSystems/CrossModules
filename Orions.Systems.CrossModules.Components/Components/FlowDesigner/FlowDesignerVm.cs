@@ -43,11 +43,11 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			if (HyperStore == null) return;
 
-			await PopulateWorkflow(WorkflowId);
-
-			await LoadWorkflowStatuses();
+			await PopulateData();
 
 			PopulateDesignerData();
+
+			await LoadWorkflowStatuses();
 		}
 
 		public string GetJesonDesignData()
@@ -169,6 +169,10 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			var design = new FlowDesignData();
 
+			if (Source == null) throw new Exception("Missing source!");
+
+			design.IsReadOnly = string.IsNullOrWhiteSpace(WorkflowInstanceId) ? 1 : 0;
+
 			var nodeDataGroupTypes = GroupingNodeDataTypes();
 
 			nodeDataGroupTypes = MappingMenuColorAndIcons(nodeDataGroupTypes);
@@ -201,8 +205,6 @@ namespace Orions.Systems.CrossModules.Components
 
 				design.NodeConfigurations.Add(designNodeConfiguration);
 			}
-
-			// TODO : Save data in session !!!
 
 			design.FlowName = Source.Name;
 			design.FlowId = Source.Id;
@@ -318,11 +320,11 @@ namespace Orions.Systems.CrossModules.Components
 			throw new NotImplementedException();
 		}
 
-		private async Task PopulateWorkflow(string workflowId)
+		private async Task PopulateData()
 		{
-			if (HyperStore == null) return;
+			if (HyperStore == null || string.IsNullOrWhiteSpace(WorkflowId)) return;
 
-			var documentId = HyperDocumentId.Create<HyperWorkflow>(workflowId);
+			var documentId = HyperDocumentId.Create<HyperWorkflow>(WorkflowId);
 			var args = new RetrieveHyperDocumentArgs(documentId);
 			var doc = await HyperStore.ExecuteAsync(args);
 

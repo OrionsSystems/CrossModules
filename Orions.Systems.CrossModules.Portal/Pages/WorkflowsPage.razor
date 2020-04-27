@@ -69,7 +69,7 @@ else
 		if (status == null) return;
 
 		var url = $"{navManager.BaseUri}workflow-designer/{status.Configuration.Id}/instance/{status.WorkflowInstanceId}";
-		await NavigateToUrlAsync(url, false);
+		await NavigateToUrlAsync(url, true);
 	}
 
 	private async Task OnOpenWorkflowHistory(HyperWorkflowStatus status)
