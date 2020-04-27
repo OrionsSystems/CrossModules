@@ -40,7 +40,7 @@
 				{
 					tagIsSelectedClass = tag.IsSelected ? "active" : "";
 				}
-				<div class="tag-container @tagIsSelectedClass" @onclick="() => this.SelectItem(tag)">
+				<div data-tag-id="@tag.Id.ToString()" class="tag-container @tagIsSelectedClass" @onclick="() => this.SelectItem(tag)">
 					<div class="tagonomy-info">
 						<div class="left-column">
 							@if (tag.TagKind != Systems.Desi.Common.Models.TagKind.NA)

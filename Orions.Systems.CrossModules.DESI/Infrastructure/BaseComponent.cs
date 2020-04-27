@@ -10,6 +10,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
 	public abstract class BaseComponent : ComponentBase, IDisposable
 	{
+		protected List<IDisposable> _dataStoreSubscriptions = new List<IDisposable>();
+
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
 
@@ -196,7 +198,17 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 				// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
 				// TODO: set large fields to null.
 
+				CleanupDataStoreSubscriptions();
+
 				IsDisposed = true;
+			}
+		}
+
+		private void CleanupDataStoreSubscriptions()
+		{
+			foreach(var sub in _dataStoreSubscriptions)
+			{
+				sub.Dispose();
 			}
 		}
 

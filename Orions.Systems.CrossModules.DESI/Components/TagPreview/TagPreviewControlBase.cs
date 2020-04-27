@@ -13,6 +13,9 @@ using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Core.General;
 using Orions.Systems.Desi.Common.Extensions;
 using System.Reactive.Linq;
+using Orions.Systems.Desi.Common.Collections;
+using System.Collections.Specialized;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 {
@@ -27,16 +30,18 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 		public ITagsStore TagsStore
 		{
 			get { return _tagsStore; }
-			set 
+			set
 			{
 				SetProperty(ref _tagsStore, value, () =>
 				{
-					value.DataChanged.Subscribe(_ => UpdateState());
-					value.Data?.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-						.Subscribe(_ => {
+					_dataStoreSubscriptions.Add(value.DataChanged.Subscribe(_ => UpdateState()));
+					_dataStoreSubscriptions.Add(
+						value.Data?.GetPropertyChangedObservable()
+							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+							.Subscribe(_ =>
+							{
 								value.Data?.CurrentTaskTags.GetCollectionChangedObservable()
-									.Subscribe(e => 
+									.Subscribe(e =>
 									{
 										e.EventArgs.NewItems.Foreach(t =>
 										{
@@ -46,27 +51,34 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 										UpdateState();
 									});
 								UpdateState();
-							});
+							}));
 
-					value.Data?.CurrentTaskTags.GetCollectionChangedObservable()
-						.Subscribe(_ => UpdateState());
+					_dataStoreSubscriptions.Add(
+						value.Data?.CurrentTaskTags.GetCollectionChangedObservable()
+							.Subscribe(_ => UpdateState()));
+
 
 					value.Data?.CurrentTaskTags.Foreach(t =>
 					{
-						t.GetPropertyChangedObservable()
-							.Subscribe(_ => UpdateState());
+						_dataStoreSubscriptions.Add(
+							t.GetPropertyChangedObservable()
+								.Subscribe(_ => UpdateState()));
 					});
+
+					_dataStoreSubscriptions.Add(
+					value.Data.SelectedTags?.GetCollectionChangedObservable()
+						.Subscribe(OnSelectedTagsCollectionChanged));
 				});
 			}
 		}
 
 		private ITaskDataStore _taskDataStore;
-		
+
 		[Parameter]
 		public ITaskDataStore TaskDataStore
 		{
 			get { return _taskDataStore; }
-			set 
+			set
 			{
 				SetProperty(ref _taskDataStore, value, () =>
 				{
@@ -90,6 +102,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 		public void SelectItem(TagModel tag)
 		{
 			ActionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tag));
+		}
+
+		private void OnSelectedTagsCollectionChanged((ReadOnlyObservableCollectionEx<TagModel> Source, NotifyCollectionChangedEventArgs EventArgs) obj)
+		{
+			if (obj.Source.Any())
+			{
+				JSRuntime.InvokeVoidAsync("Orions.TagPreviewControl.scrollToTag", new object[] { obj.Source.First().Id.ToString() }) ;
+			}
 		}
 	}
 }
