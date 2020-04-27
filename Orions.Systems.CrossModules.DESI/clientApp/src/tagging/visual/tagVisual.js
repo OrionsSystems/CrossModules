@@ -12,14 +12,6 @@ export default class TagVisual extends BaseVisual {
 		this.label = isDefined(opts.label) ? opts.label : null;
 	}
 
-	path_onMouseDown(event) {
-		super.path_onMouseDown(event);
-	}
-
-	path_onMouseLeave(event) {
-		super.path_onMouseLeave(event);
-	}
-
 	update(tag) {
 		const { x, y, width, height, isSelected } = tag;
 
@@ -73,8 +65,8 @@ export default class TagVisual extends BaseVisual {
 				this.labelItem = new paper.PointText(labelPos);
 			}
 			else {
-				this.labelItem.position.top = labelPos.y;
-				this.labelItem.position.left = labelPos.x;
+				this.labelItem.position.y = labelPos.y;
+				this.labelItem.position.x = labelPos.x;
 			}
 
 			this.labelItem.fillColor = 'white';
@@ -95,6 +87,7 @@ export default class TagVisual extends BaseVisual {
 		let newTopLeftY = event.delta.y + topLeft.y;
 		let newBottomRightX = event.delta.x + bottomRight.x;
 		let newBottomRightY = event.delta.y + bottomRight.y;
+
 		if (newTopLeftX < 0 + containerRectangle.x
 			|| newTopLeftY < 0 + containerRectangle.y
 			|| newBottomRightX > containerRectangle.x + containerRectangle.width
@@ -104,7 +97,39 @@ export default class TagVisual extends BaseVisual {
 			return;
 		}
 
+		if (isDefined(this.owner.path) && this.owner.path.hitTest(event.point) == null) {
+			event.stopPropagation();
+			return;
+		}
+
 		super.path_onMouseDrag(event);
+	}
+
+	path_onMouseUp(event) {
+		if (isDefined(this.owner.path) && this.owner.path.hitTest(event.point) == null) {
+			event.stopPropagation();
+			return;
+		}
+
+		super.path_onMouseUp(event);
+	}
+
+	path_onMouseDown(event) {
+		if (isDefined(this.owner.path) && this.owner.path.hitTest(event.point) == null) {
+			event.stopPropagation();
+			return;
+		}
+
+		super.path_onMouseDown(event);
+	}
+
+	path_onMouseLeave(event) {
+		if (isDefined(this.owner.path) && this.owner.path.hitTest(event.point) == null) {
+			event.stopPropagation();
+			return;
+		}
+
+		super.path_onMouseLeave(event);
 	}
 
 	adorner_moved(element) {

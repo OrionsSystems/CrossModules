@@ -133,7 +133,6 @@ class TaggingSurface {
 		})
 
 		let raster;
-		let frameImage = document.getElementsByClassName('frame-img')[0]
 		let updateFrameImageOnCanvas = function (imageBase64) {
 			if (raster == null) {
 				raster = new paper.Raster(imageBase64);
