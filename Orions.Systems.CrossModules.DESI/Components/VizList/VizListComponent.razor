@@ -115,7 +115,7 @@
                     {
                         var stringKey = KeyCodeHelper.GetStringKey(property.KeyCodeDelta + 1);
                         var keys = MapKeyCodeToKeys(stringKey);
-                        keys.Foreach(k => sub.AddShortcut(k, KeyModifiers.Shift, () => SelectTagonomyProperty(property)));
+                        keys.Foreach(k => sub.AddShortcut(k, KeyModifiers.Shift, () => SelectTagonomyProperty(property), KeyboardEventType.KeyDown));
 
                         <button class="viz-btn nodes" @onclick="_ => SelectTagonomyProperty(property)">
                             <div class="key property">

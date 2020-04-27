@@ -31,7 +31,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private IFrameCacheService CacheService;
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
-		
+		private AsyncManualResetEvent _currenVideoSourceLoadedOnClient = new AsyncManualResetEvent(false);
+
 		protected string _videoElementId = $"videoplayer-{Guid.NewGuid().ToString()}";
 		private bool _lockPositionUpdate = false;
 		protected bool CurrentFrameIsLoading { get; set; } = false;
@@ -238,6 +239,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			if (!IsVideoLoading && !CurrentFrameIsLoading)
 			{
+				await _currenVideoSourceLoadedOnClient.WaitAsync();
+
 				ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
 
 				Paused = false;
@@ -272,7 +275,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task OnPlayerDataLoaded()
 		{
-			await GoToSelectedTagFrame();
+			_currenVideoSourceLoadedOnClient.Set();
 		}
 
 		#region Component lifecycle hook overrides
@@ -411,8 +414,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			PayLoad = outputStream.ToArray();
 
-			await this.JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", PayLoad, _componentReference, new { totalFrames = _taskPlaybackInfo.TotalFrames });
+			await SetPlayerSrcOnClient(PayLoad);
 			await this.JSRuntime.InvokeVoidAsync("Orions.Player.setSpeed", PlaybackSpeed);
+		}
+
+		private async Task SetPlayerSrcOnClient(byte[] payLoad)
+		{
+			_currenVideoSourceLoadedOnClient.Reset();
+			await this.JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", payLoad, _componentReference);
 		}
 
 		private async Task GoToSelectedTagFrame()

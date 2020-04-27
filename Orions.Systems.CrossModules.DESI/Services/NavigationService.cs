@@ -65,17 +65,5 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 			return Task.CompletedTask;
 		}
-		public async Task<bool> GoToTagsActionConfirmation(IEnumerable<TagModel> tagModel)
-		{
-			var result = await this._popupService.ShowConfirmation("Tag removal", "Do you really want to remove this tag?");
-
-			return result;
-		}
-		public async Task<bool> ShowSessionIsOverPopup(TimeSpan timeout) 
-		{
-			var result = await this._popupService.ShowSessionIsOver((int)(timeout.TotalSeconds));
-
-			return result;
-		}
 	}
 }

@@ -28,7 +28,7 @@ window.Orions.Player = {
 
         this.video = video;
     },
-    setSrc: function (payload, vmInstance, options) {
+    setSrc: function (payload, vmInstance) {
         let self = this;
 
         var blob = new Blob([Base64ToByteArray(payload)], { type: "video/mp4" });

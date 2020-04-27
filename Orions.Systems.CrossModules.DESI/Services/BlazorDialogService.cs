@@ -1,7 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
+using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Services
@@ -13,6 +16,13 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		public BlazorDialogService(PopupService popupService)
 		{
 			_popupService = popupService;
+		}
+
+		public async Task<bool> ConfirmTagsDeletion(IEnumerable<TagModel> tagModel)
+		{
+			var result = await this._popupService.ShowConfirmation("Tag removal", "Do you really want to remove this tag?");
+
+			return result;
 		}
 
 		public async Task<bool> DisplayAlertAsync(string title, string message, string okBtnCaption, string cancelButton)
@@ -35,6 +45,13 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		{
 			Debug.WriteLine($"BlazorDialogService message: {title} : {message}");
 			return Task.FromResult(true);
+		}
+
+		public async Task<bool> DisplaySessionContinuationOptions(TimeSpan timeout)
+		{
+			var result = await this._popupService.ShowSessionIsOver((int)(timeout.TotalSeconds));
+
+			return result;
 		}
 	}
 }

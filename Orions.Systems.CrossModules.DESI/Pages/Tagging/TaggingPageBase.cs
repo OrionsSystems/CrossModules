@@ -17,7 +17,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : BaseViewModelComponent<TaggingViewModel>
 	{
-		protected TaggingSystem _taggingSystem;
+		protected ITaggingSystem _taggingSystem;
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		protected TaggingSurface TaggingSurface;
 		private SessionIsOverPopup _sessionIsOverPopup;
@@ -39,7 +39,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		protected override async Task OnInitializedAsyncSafe()
 		{
 			var navigationService = DependencyResolver.GetNavigationService();
-			_taggingSystem = DependencyResolver.GetTaggingSystem(navigationService);
+			_taggingSystem = DependencyResolver.GetTaggingSystem();
 			var authSystem = DependencyResolver.GetAuthenticationSystem();
 
 			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
