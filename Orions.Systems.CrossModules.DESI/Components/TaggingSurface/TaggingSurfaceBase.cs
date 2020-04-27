@@ -19,6 +19,9 @@ using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Mod
 using System.Reactive.Concurrency;
 using Wintellect.PowerCollections;
 using Orions.Common;
+using Orions.Systems.CrossModules.Desi.Services;
+using System.Workflow.ComponentModelEx;
+using Syncfusion.EJ2.Blazor.Charts;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -32,7 +35,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private readonly string UntaggedUnselectedMarkerBoundsColor = "#FFFF00";
 
 		private string _componentId { get; set; }
-		private readonly List<IDisposable> _subscriptions = new List<IDisposable>();
 		private List<Rectangle> _rectangles = new List<Rectangle>();
 		private IMediaDataStore _mediaDataStore;
 		private ITagsStore _tagsStore;
@@ -41,11 +43,26 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
-		//private TaskCompletionSource<bool> _frameRenderedTaskTcs = new TaskCompletionSource<bool>();
 		protected bool _mediaPaused = true;
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
-
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
+
+		private IKeyboardListener _keyboardListener;
+		[Inject]
+		public IKeyboardListener KeyboardListener
+		{
+			get { return _keyboardListener; }
+			set
+			{
+				SetProperty(ref _keyboardListener, value, () =>
+				{
+					_dataStoreSubscriptions.Add(KeyboardListener.CreateSubscription()
+						.AddShortcut(Key.Shift, KeyModifiers.Shift, () => SetSelectionMode(TagsSelectionMode.Multiple), KeyboardEventType.KeyDown)
+						.AddShortcut(Key.Shift, KeyModifiers.None, () => SetSelectionMode(TagsSelectionMode.Single), KeyboardEventType.KeyUp)
+						);
+				});
+			}
+		}
 
 		[Parameter]
 		public IMediaDataStore MediaDataStore
@@ -55,7 +72,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				value,
 				() =>
 				{
-					_subscriptions.Add(
+					_dataStoreSubscriptions.Add(
 						value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances)).Subscribe(_ =>
 						{
 							if (value?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
@@ -69,13 +86,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 							if (value?.Data?.MediaInstances != null)
 							{
-								_subscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ => 
+								_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ => 
 								{
 									_currentPositionFrameRendered.Reset();
 									UpdateRectangles(); 
 								}));
 
-								_subscriptions.Add(
+								_dataStoreSubscriptions.Add(
 									value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
 									{
 										OnCurrentPositionFrameImageChanged();
@@ -83,13 +100,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							}
 						}));
 
-					_subscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
+					_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
 						{
 							_currentPositionFrameRendered.Reset();
 							UpdateRectangles();
 						}));
 
-					_subscriptions.Add(
+					_dataStoreSubscriptions.Add(
 						value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
 						{
 							OnCurrentPositionFrameImageChanged();
@@ -120,7 +137,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					.ObserveOn(Scheduler.Default)
 					.Subscribe(_ => UpdateRectangles());
 
-					_subscriptions.AddItem(aggregatedSub);
+					_dataStoreSubscriptions.AddItem(aggregatedSub);
 
 					UpdateRectangles();
 				});
@@ -137,6 +154,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		private object _rectanglesSetterLock = new object();
+
 		private List<Rectangle> Rectangles
 		{
 			get => _rectangles;
@@ -373,6 +391,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
+		private void SetSelectionMode(TagsSelectionMode mode)
+		{
+			ActionDispatcher.Dispatch(SetTagsSelectionModeAction.Create(mode));
+		}
+
 		protected async Task OverlayMediaWithCanvas(bool overlay)
 		{
 			await _initializationTaskTcs.Task;
@@ -389,11 +412,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose", new object[] { _componentId });
 
-			if (disposing)
-			{
-				_subscriptions.ForEach(i => i.Dispose());
-				_subscriptions.Clear();
-			}
 			base.Dispose(disposing);
 		}
 	}

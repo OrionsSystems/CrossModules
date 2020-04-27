@@ -22,9 +22,9 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		[JSInvokable]
-		public Task OnKeyEvent(Key key, KeyModifiers modifiers)
+		public Task OnKeyEvent(Key key, KeyModifiers modifiers, KeyboardEventType type)
 		{
-			_keyEventSubject.OnNext(new KeyboardEventData(key, modifiers));
+			_keyEventSubject.OnNext(new KeyboardEventData(key, modifiers, type));
 			return Task.FromResult(true);
 		}
 
@@ -54,16 +54,16 @@ namespace Orions.Systems.CrossModules.Desi.Services
 				.Where(i => i.EventData.Equals(keyboardEventData))
 				.ForEach(i => i.Handler());
 
-			public IKeyboardEventSubscription AddShortcut(Key key, Action handler) => AddShortcut(key, KeyModifiers.None, handler);
+			public IKeyboardEventSubscription AddShortcut(Key key, Action handler) => AddShortcut(key, KeyModifiers.None, handler, KeyboardEventType.KeyDown);
 
-			public IKeyboardEventSubscription AddShortcut(Key key, KeyModifiers modifiers, Action handler)
+			public IKeyboardEventSubscription AddShortcut(Key key, KeyModifiers modifiers, Action handler, KeyboardEventType type)
 			{
 				if (handler == null)
 				{
 					throw new ArgumentNullException($"{nameof(handler)} can not be null.");
 				}
 
-				_shortcuts.Add((new KeyboardEventData(key, modifiers), handler));
+				_shortcuts.Add((new KeyboardEventData(key, modifiers, type), handler));
 				return this;
 			}
 		}
@@ -71,20 +71,22 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 	public struct KeyboardEventData
 	{
-		public KeyboardEventData(Key key) : this(key, KeyModifiers.None) { }
+		public KeyboardEventData(Key key) : this(key, KeyModifiers.None, KeyboardEventType.KeyDown) { }
 
-		public KeyboardEventData(Key key, KeyModifiers keyModifiers)
+		public KeyboardEventData(Key key, KeyModifiers keyModifiers, KeyboardEventType type)
 		{
 			Key = key;
 			Modifiers = keyModifiers;
+			KeyboardEventType = type;
 		}
 
 		public Key Key { get; }
 		public KeyModifiers Modifiers { get; }
+		public KeyboardEventType KeyboardEventType { get; }
 
 		public override bool Equals(object obj)
 		{
-			return obj is KeyboardEventData other ? Key.Equals(other.Key) && Modifiers.Equals(other.Modifiers) : false;
+			return obj is KeyboardEventData other ? Key.Equals(other.Key) && Modifiers.Equals(other.Modifiers) && KeyboardEventType.Equals(other.KeyboardEventType): false;
 		}
 
 		public override int GetHashCode() => Key.GetHashCode() * Modifiers.GetHashCode();
@@ -103,6 +105,12 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		Shift = 0x01,
 		Ctrl = 0x02,
 		Alt = 0x04
+	}
+
+	public enum KeyboardEventType
+	{
+		KeyDown = 0,
+		KeyUp = 1
 	}
 
 	public enum Key
