@@ -43,14 +43,16 @@ li.sidebar-item.filterHover {
     display: none;
 }
 
-#dockSidebar li {
-    list-style-type: none;
-    cursor: pointer;
-    /*padding: 5px;*/
+#dockSidebar ul {
+   padding: 3px;
 }
 
-#dockSidebar ul {
-    padding: 0px;
+#dockSidebar li {
+   list-style-type: none;
+   cursor: pointer;
+   padding: 5px;
+   margin: 2px 0;
+   height:60px;
 }
 
 span.e-icons {
@@ -135,6 +137,26 @@ body.highcontrast #dockSidebar {
 
 :not(.mdc-list--non-interactive) > :not(.mdc-list-item--disabled).mdc-list-item:hover::before {
     border-left: 4px solid #057ece !important;
+}
+
+.mat-nav .mdc-nav-item .material-icons {
+   width: 49px;
+   position: absolute;
+   top: 7px;
+   left: 3px;
+}
+
+.mat-nav .mdc-nav-item li {
+   margin: 2px 0;
+}
+
+.mat-nav .mdc-nav-item .nav-label {
+   display: block;
+   position: absolute;
+   top: 35px;
+   left: 0;
+   width: 100%;
+   font-size: 11px;
 }
 
 
