@@ -44,15 +44,15 @@ li.sidebar-item.filterHover {
 }
 
 #dockSidebar ul {
-   padding: 3px;
+   padding: 0;
 }
 
 #dockSidebar li {
    list-style-type: none;
    cursor: pointer;
    padding: 5px;
-   margin: 2px 0;
-   height:60px;
+   margin: 0;
+   height:55px;
 }
 
 span.e-icons {
@@ -69,15 +69,15 @@ span.e-icons {
 .menu {
     display: inline-block;
     position: absolute;
-    width: 60px;
+    width: 70px;
     height: 55px;
 }
 
-    .menu img {
-        height: 45px;
-        margin-left: 7px;
-        margin-top: 5px;
-    }
+   .menu img {
+      height: 34px;
+      margin-left: 12px;
+      margin-top: 10px;
+   }
 
 .right-content div {
     display: inline-block;
@@ -139,11 +139,15 @@ body.highcontrast #dockSidebar {
     border-left: 4px solid #057ece !important;
 }
 
-.mat-nav .mdc-nav-item .material-icons {
+.mdc-nav-item .material-icons {
    width: 49px;
    position: absolute;
    top: 7px;
-   left: 3px;
+   left: 8px;
+}
+
+.mdc-list-item--selected .material-icons {
+   left: 6px;
 }
 
 .mat-nav .mdc-nav-item li {
@@ -157,6 +161,10 @@ body.highcontrast #dockSidebar {
    left: 0;
    width: 100%;
    font-size: 11px;
+}
+
+.mdc-list-item--selected .nav-label {
+   left: -2px;
 }
 
 

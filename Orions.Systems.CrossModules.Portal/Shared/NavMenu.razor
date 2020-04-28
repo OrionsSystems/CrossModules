@@ -5,33 +5,48 @@
 
 <MatNavMenu Class="mat-nav">
 	@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>*@
-	<MatNavItem OnClick="@(ev => ForceNavigation())">
+	<MatNavItem OnClick="@(ev => ForceNavigation())" NavLinkMatch="NavLinkMatch.All" Selected="@IsSelected("properties")">
 		<MatIcon Icon="@MatIconNames.Home"></MatIcon>
 		<div class="nav-label">Home</div>
 	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))">
+	<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))" Selected="@IsSelected("dashboard")">
 		<MatIcon Icon="@MatIconNames.View_module">
-		</MatIcon><div class="nav-label">Home</div>
+		</MatIcon><div class="nav-label">Dashboards</div>
 	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("themes"))">
+	<MatNavItem OnClick="@(ev => ForceNavigation("themes"))" Selected="@IsSelected("themes")">
 		<MatIcon Icon="@MatIconNames.Color_lens"></MatIcon>
 		<div class="nav-label">Themes</div>
 	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))">
+	<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))" Selected="@IsSelected("wizzard")">
 		<MatIcon Icon="@MatIconNames.Widgets"></MatIcon>
 		<div class="nav-label">Wizzard</div>
 	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("missions"))">
+	<MatNavItem OnClick="@(ev => ForceNavigation("missions"))" Selected="@IsSelected("missions")">
 		<MatIcon Icon="@MatIconNames.Slideshow"></MatIcon>
 		<div class="nav-label">Missions</div>
 	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("workflows"))">
+	<MatNavItem OnClick="@(ev => ForceNavigation("workflows"))" Selected="@IsSelected("workflows")">
 		<MatIcon Icon="@MatIconNames.Library_books"></MatIcon>
 		<div class="nav-label">Workflows</div>
 	</MatNavItem>
 </MatNavMenu>
 
 @code{
+
+	private string CurrentLocation { get { return navManager.ToBaseRelativePath(navManager.Uri).ToString(); } }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+	}
+
+	private bool IsSelected(string place)
+	{
+		if (CurrentLocation.Contains(place)) return true;
+
+		return false;
+	}
+
 
 	private void ForceNavigation(string address = "")
 	{
