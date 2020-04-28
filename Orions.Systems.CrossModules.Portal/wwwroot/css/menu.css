@@ -167,6 +167,10 @@ body.highcontrast #dockSidebar {
    left: -2px;
 }
 
+.mdc-list-item--selected, .mdc-list-item--activated {
+   color: #057ece !important;
+}
+
 
 /* SIDEBAR  */
 .sidebar-content.e-content-animation {

@@ -82,7 +82,7 @@
 				@foreach (var data in groupData)
 				{
 					<div class="row pgrid-row">
-						<div class="col-md-4 @GetVisualiaseClass(data)">
+						<div class="col-md-4 pgrid-info @GetVisualiaseClass(data)">
 							<div class="prop-grid-header-display" title="@data.DataProp.Value.TooltipDisplay">
 								@data.DataProp.Value.HeaderDisplay
 
@@ -170,7 +170,7 @@
 						</div>
 						@if (data.DataProp.Value.CanDelete)
 						{
-							<div class="col-md-1">
+							<div class="col-md-1 pgrid-action">
 								<button class="btn btn-outline-dark" @onclick="@(ev => { OnDeleteCmd(data.DataProp.Value, ev); })">Delete</button>
 							</div>
 						}

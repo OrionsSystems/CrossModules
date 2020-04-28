@@ -15,22 +15,33 @@
 			<!-- Nav tabs -->
 			<nav>
 				@*<a href="#" class="exec onlyicon"><i class="fa fa-chevron-right"></i></a>*@
-				<a href="#" class="exec"><i class="fa fa-cogs"></i>Settings</a>
-				<a href="#" class="exec"><i class="fa fa-history"></i>Console</a>
-				<a href="#" class="exec"><i class="fa fa-history"></i>Debug</a>
-				@*<a href="#" class="exec"><i class="fa fa-info-circle"></i>Info</a>
-					<a href="#" class="exec"><i class="fa fa-bug"></i>Errors</a>
-					<a href="#" class="exec"><i class="fa fa-tasks"></i>Traffic</a>*@
+				<a class="exec" @onclick="@SettingsElement"><i class="fa fa-cogs"></i>Properties</a>
+				<a class="exec"><i class="fa fa-history"></i>Log</a>
+				@*<a href="#" class="exec"><i class="fa fa-history"></i>Debug</a>
+					<a href="#" class="exec"><i class="fa fa-info-circle"></i>Info</a>
+						<a href="#" class="exec"><i class="fa fa-bug"></i>Errors</a>
+						<a href="#" class="exec"><i class="fa fa-tasks"></i>Traffic</a>*@
 			</nav>
 		</section>
-		<div class="hidden body-settings">
-			<div style="padding:15px 15px 0">
-				<span class="link red fs11 exec" style="float:right;margin-top:2px"><i class="fa fa-times mr5"></i>Settings</span>
-				<div data---="checkbox__common.beautify">Settings</div>
-				<hr class="nmb" style="margin-top:15px" />
+		@if (Vm.IsShowProperty)
+		{
+			<div class="body-settings">
+				<div style="padding:15px 15px 0">
+					<div class="flow-properties-container">
+						<PropertyGrid Vm="Vm.PropertyGridVm"
+										  Loader="Vm.LoadPropertyGridData"
+										  CancelVisible="true"
+										  HyperStore="Vm.HyperStore"
+										  OKVisible="true"
+										  CancelCommand="Vm.OnCancelProperty"
+										  OkCommand="Vm.OnCancelProperty">
+						</PropertyGrid>
+					</div>
+				</div>
+				<div id="body-debug-output" class="noscrollbar"></div>
 			</div>
-			<div id="body-debug-output" class="noscrollbar"></div>
-		</div>
+		}
+
 		<div class="hidden body-console">
 			<div style="padding:15px 15px 0">
 				<span class="link red fs11 exec" style="float:right;margin-top:2px"><i class="fa fa-times mr5"></i>Console</span>
@@ -166,27 +177,27 @@
 </div>
 
 
-@if (Vm.IsShowProperty)
-{
-	<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
-		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-			<div class="modal-content">
-				<div class="modal-body">
-					<PropertyGrid Vm="Vm.PropertyGridVm"
-									  Loader="Vm.LoadPropertyGridData"
-									  CancelVisible="true"
-									  HyperStore="Vm.HyperStore"
-									  OKVisible="true"
-									  CancelCommand="Vm.OnCancelProperty"
-									  OkCommand="Vm.OnCancelProperty">
-					</PropertyGrid>
+@*@if (Vm.IsShowProperty)
+	{
+		<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+			<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+				<div class="modal-content">
+					<div class="modal-body">
+						<PropertyGrid Vm="Vm.PropertyGridVm"
+										  Loader="Vm.LoadPropertyGridData"
+										  CancelVisible="true"
+										  HyperStore="Vm.HyperStore"
+										  OKVisible="true"
+										  CancelCommand="Vm.OnCancelProperty"
+										  OkCommand="Vm.OnCancelProperty">
+						</PropertyGrid>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 
-	<div class="modal-backdrop fade show"></div>
-}
+		<div class="modal-backdrop fade show"></div>
+	}*@
 
 @if (Vm.IsShowDesignerSetting)
 {
