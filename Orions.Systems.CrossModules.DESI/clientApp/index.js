@@ -1,6 +1,7 @@
 export * from './src/tagging/tagging-canvas'
 export * from './src/tagging/tagging-page'
 export * from './src/tagging/tag-preview-control'
+export * from './src/tagging/minimap'
 export * from './src/player'
 export * from './src/login'
 export * from './src/utils/keyboardListener'

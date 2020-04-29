@@ -1,0 +1,8 @@
+﻿@inherits MinimapControlBase
+
+@*<div class="minimap" style="display:@(CurrentFrameImage != null ? "block" : "none")">*@
+<div class="minimap" style="display:none">
+	<img class="frame-image" src="@(CurrentFrameImage != null ? Orions.Common.UniImage.ConvertByteArrayToBase64Url(CurrentFrameImage):"")"/>
+	<div class="current-region">
+	</div>
+</div>

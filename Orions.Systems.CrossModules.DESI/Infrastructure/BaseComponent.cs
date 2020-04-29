@@ -204,11 +204,11 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			}
 		}
 
-		private void CleanupDataStoreSubscriptions()
+		protected void CleanupDataStoreSubscriptions()
 		{
 			foreach(var sub in _dataStoreSubscriptions)
 			{
-				sub.Dispose();
+				sub?.Dispose();
 			}
 		}
 

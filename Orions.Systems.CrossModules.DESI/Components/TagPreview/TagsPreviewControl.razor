@@ -49,7 +49,7 @@
 									Current tagonomy
 								</div>
 								<TagonomyExecutionResultView Label="@tag.LabelValue"
-															 TagonomyExecutionResult="tag.TagonomyExecutionResult"/>
+															 TagonomyExecutionResult="tag.TagonomyExecutionResult" />
 							}
 							@if (!string.IsNullOrEmpty(tag.PreviousLabelValue))
 							{
@@ -57,17 +57,17 @@
 									Previous tagonomy/label
 								</div>
 								<TagonomyExecutionResultView Label="@tag.PreviousLabelValue"
-															 TagonomyExecutionResult="tag.PreviousTagonomyExecutionResult"/>
+															 TagonomyExecutionResult="tag.PreviousTagonomyExecutionResult" />
 							}
 						</div>
 						<div class="right-column">
 							<div class="info-button">
-								@{ 
-									if(this.CurrentTagonomyInfoShown == tag.Id && this.TaskDataStore.Data.CurrentTask != null)
+								@{
+									if (this.CurrentTagonomyInfoShown == tag.Id && this.TaskDataStore.Data.CurrentTask != null)
 									{
-										<TagonomyInfoPopup TaskInfo="this.TaskDataStore.Data.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null"/>
+										<TagonomyInfoPopup TaskInfo="this.TaskDataStore.Data.CurrentTask.TaskInfo" OnClose="() => CurrentTagonomyInfoShown = null" />
 									}
-									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id" @onclick:stopPropagation="true"/>
+									<img src="images/outline_info_white_24dp.png" @onclick="() => CurrentTagonomyInfoShown = tag.Id" @onclick:stopPropagation="true" />
 								}
 							</div>
 						</div>

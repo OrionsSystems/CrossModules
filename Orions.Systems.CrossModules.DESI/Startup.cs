@@ -17,6 +17,7 @@ using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.Desi.Common.Authentication;
+using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
@@ -44,7 +45,12 @@ namespace Orions.Systems.CrossModules.Desi
 
 			services.AddScoped<ILocalStorageService, LocalStorageService>()
 				.AddScoped<BlazorDependencyResolver>()
-				.AddScoped<IKeyboardListener, KeyboardListener>();
+				.AddScoped<IKeyboardListener, KeyboardListener>()
+				.AddScoped<IMediaDataStore>(serviceProvider =>
+				{
+					var depResolver = serviceProvider.GetService<BlazorDependencyResolver>();
+					return depResolver.GetTaggingSystem().MediaDataStore;
+				});
 
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
 			services.AddSyncfusionBlazor();
