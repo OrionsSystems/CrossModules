@@ -21,6 +21,8 @@ namespace Orions.Systems.CrossModules.Components
 		public string WorkflowId { get; set; }
 		public string WorkflowInstanceId { get; set; }
 
+		public bool IsReadOnlyMode { get { return string.IsNullOrWhiteSpace(WorkflowInstanceId); } }
+
 		public FlowDesignData DesignData { get; private set; } = new FlowDesignData();
 
 		public HyperWorkflowStatus[] WorkflowStatuses { get; set; }
@@ -58,6 +60,7 @@ namespace Orions.Systems.CrossModules.Components
 		public void ShowPropertyGrid(string nodeConfigId)
 		{
 			// load node configuration
+			PropertyGridVm.CleanSourceCache();
 
 			var nodeConfiguration = Source.Nodes.FirstOrDefault(it => it.Id == nodeConfigId);
 

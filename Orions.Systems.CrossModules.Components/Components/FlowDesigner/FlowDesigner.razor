@@ -32,9 +32,9 @@
 										  Loader="Vm.LoadPropertyGridData"
 										  CancelVisible="true"
 										  HyperStore="Vm.HyperStore"
-										  OKVisible="true"
-										  CancelCommand="Vm.OnCancelProperty"
-										  OkCommand="Vm.OnCancelProperty">
+										  OKVisible="Vm.IsReadOnlyMode"
+										  CancelCommand="OnCancelProperty"
+										  OkCommand="OnCancelProperty">
 						</PropertyGrid>
 					</div>
 				</div>

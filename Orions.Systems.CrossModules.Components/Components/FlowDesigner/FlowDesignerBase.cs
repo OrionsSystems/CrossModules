@@ -68,6 +68,16 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ToggleCommonMenu");
 		}
 
+		public async Task HideCommonMenu()
+		{
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.HideCommonMenu");
+		}
+
+		public async Task ShowCommonMenu()
+		{
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ShowCommonMenu");
+		}
+
 		[JSInvokable]
 		public async  Task OnClickApply()
 		{
@@ -83,11 +93,18 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[JSInvokable]
-		public void OpenPropertyGrid(string id)
+		public async Task OpenPropertyGrid(string id)
 		{
 			Vm.ShowPropertyGrid(id);
 
+			await ShowCommonMenu();
+
 			StateHasChanged();
+		}
+
+		public async Task OnCancelProperty() {
+			Vm.OnCancelProperty();
+			await HideCommonMenu();
 		}
 
 		[JSInvokable]
