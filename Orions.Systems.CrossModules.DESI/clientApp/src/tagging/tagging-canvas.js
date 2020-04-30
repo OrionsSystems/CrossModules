@@ -161,21 +161,24 @@ class TaggingSurface {
 				self.raster.source = imageBase64
 			}
 
+			self.raster.visible = false;
+
 			self.raster.onLoad = function () {
 				self.raster.position = self.scope.view.center
 
-				let viewAspectRation = self.scope.view.bounds.width / self.scope.view.bounds.height
-				let imageAspectRation = self.raster.width / self.raster.height
+				let viewAspectRatio = self.scope.view.bounds.width / self.scope.view.bounds.height
+				let imageAspectRatio = self.raster.width / self.raster.height
 
-				if (viewAspectRation < imageAspectRation) {
+				if (viewAspectRatio < imageAspectRatio) {
 					self.raster.size.width = self.scope.view.bounds.width
-					self.raster.size.height = self.raster.size.width / imageAspectRation;
+					self.raster.size.height = self.raster.size.width / imageAspectRatio;
 				}
 				else {
 					self.raster.size.height = self.scope.view.bounds.height
-					self.raster.size.width = self.raster.size.height * imageAspectRation;
+					self.raster.size.width = self.raster.size.height * imageAspectRatio;
 				}
 
+				self.raster.visible = true;
 				self.componentRef.invokeMethodAsync("FrameImageRendered")
 			}
 		}

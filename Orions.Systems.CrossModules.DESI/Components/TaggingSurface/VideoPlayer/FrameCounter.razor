@@ -1,0 +1,34 @@
+﻿@namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
+@inherits BaseComponent
+
+<div class="frame-couner-container">
+	<div class="go-to-previous-frame-btn" @onclick="OnGoToPreviousFrame">
+		<img src="images/ic_keyboard_arrow_left_white.png" />
+	</div>
+	<div class="frame-info">
+		Frame @CurrentFrame of @TotalFrames (@CurrentPosition.ToString(@"mm\:ss\.fffff")), (@CurrentPositionHyperId.FragmentIdSimple:@CurrentPositionHyperId.SliceIdSimple)
+	</div>
+	<div class="go-to-next-frame-btn" @onclick="OnGoToNextFrame">
+		<img src="images/ic_keyboard_arrow_right_white.png" />
+	</div>
+</div>
+
+@code{
+	[Parameter]
+	public int CurrentFrame { get; set; }
+
+	[Parameter]
+	public int TotalFrames { get; set; }
+	
+	[Parameter]
+	public TimeSpan CurrentPosition { get; set; }
+
+	[Parameter]
+	public Orions.Node.Common.HyperId CurrentPositionHyperId { get; set; }
+
+	[Parameter]
+	public EventCallback OnGoToPreviousFrame { get; set; }
+	
+	[Parameter]
+	public EventCallback OnGoToNextFrame { get; set; }
+}
