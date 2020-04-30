@@ -388,7 +388,6 @@ function raiseResizeEvent() {
 	DotNet.invokeMethodAsync(namespace, method, Math.floor(window.innerWidth), Math.floor(window.innerHeight));
 }
 
-//throttle resize event, taken from https://stackoverflow.com/a/668185/812369
 var timeout = false;
 window.addEventListener("resize", function () {
 	if (timeout !== false)
