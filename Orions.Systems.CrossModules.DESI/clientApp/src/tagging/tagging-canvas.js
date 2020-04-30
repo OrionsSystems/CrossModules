@@ -24,6 +24,8 @@ function stickToCanvasBounds(coords, containerRectangle) {
 }
 
 window.Orions.TaggingSurface = {
+	canvasViewPositionUpdatedListeners: [],
+	surfaceRegisteredListeners: [],
 	surfaces: {},
 	setupTaggingSurface: function (componentRef, componentId) {
 		let newSufrace = new TaggingSurface(componentRef, componentId);
@@ -87,6 +89,7 @@ class TaggingSurface {
 		self.scope = new paper.PaperScope()
 		self.canvas = document.querySelector(`#tagging-surface-${self.componentId} .tagging-canvas`);
 		self.items = [];
+		self.raster = null;
 
 		let tool = new self.scope.Tool();
 		let mouseDownAt;
@@ -96,32 +99,20 @@ class TaggingSurface {
 		self.scope.setup(self.canvas);
 		let crosshair = new CanvasCrosshair(self.scope);
 
+		function notifyViewPositionUpdate() {
+			for (let listener of Orions.TaggingSurface.canvasViewPositionUpdatedListeners) {
+				listener(self.raster, self.scope.view)
+			}
+		}
+
 		self.canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); e.stopPropagation(); }, false);
 
 		self.canvas.addEventListener('wheel', function (e) {
 			if (e.shiftKey) {
 				let mousePosPaper = self.scope.view.viewToProject({ x: e.offsetX, y: e.offsetY })
 
-				let step = 0.2;
-				let maxZoom = 3;
-				let minZoom = 1;
-				if (e.deltaY > 0) {
-					if (self.scope.view.zoom - step >= minZoom) {
-						self.scope.view.zoom -= step;
-					}
-					else {
-						self.scope.view.zoom = minZoom;
-						self.scope.view.center = new paper.Point(self.scope.view.bounds.width / 2, self.scope.view.bounds.height / 2)
-					}
-				}
-				else {
-					if (self.scope.view.zoom + step < 3) {
-						self.scope.view.zoom += step;
-					}
-					else {
-						self.scope.view.zoom = maxZoom;
-					}
-				}
+				let zoomOut = e.deltaY > 0
+				self.zoomOneStep(zoomOut, false);
 
 				let mousePosPaperNew = self.scope.view.viewToProject({ x: e.offsetX, y: e.offsetY })
 
@@ -129,31 +120,60 @@ class TaggingSurface {
 					self.scope.view.center = self.scope.view.center.add(mousePosPaper.subtract(mousePosPaperNew));
 				}
 				crosshair.move(mousePosPaper)
+
+				notifyViewPositionUpdate();
 			}
 		})
 
-		let raster;
-		let updateFrameImageOnCanvas = function (imageBase64) {
-			if (raster == null) {
-				raster = new paper.Raster(imageBase64);
-			}
-			else {
-				raster.source = imageBase64
-			}
+		self.zoomOneStep = function (zoomOut, notify = false) {
+			let step = 0.2;
+			let maxZoom = 3;
+			let minZoom = 1;
 
-			raster.onLoad = function () {
-				raster.position = self.scope.view.center
-
-				let viewAspectRation = self.scope.view.bounds.width / self.scope.view.bounds.height
-				let imageAspectRation = raster.width / raster.height
-
-				if (viewAspectRation < imageAspectRation) {
-					raster.size.width = self.scope.view.bounds.width
-					raster.size.height = raster.size.width / imageAspectRation;
+			if (zoomOut) {
+				if (self.scope.view.zoom - step > minZoom) {
+					self.scope.view.zoom -= step;
 				}
 				else {
-					raster.size.height = self.scope.view.bounds.height
-					raster.size.width = raster.size.height * imageAspectRation;
+					self.scope.view.zoom = minZoom;
+					self.scope.view.center = new paper.Point(self.scope.view.bounds.width / 2, self.scope.view.bounds.height / 2)
+				}
+			}
+			else {
+				if (self.scope.view.zoom + step < 3) {
+					self.scope.view.zoom += step;
+				}
+				else {
+					self.scope.view.zoom = maxZoom;
+				}
+			}
+
+			if (notify) {
+				notifyViewPositionUpdate();
+			}
+		}
+
+		let updateFrameImageOnCanvas = function (imageBase64) {
+			if (self.raster == null) {
+				self.raster = new paper.Raster(imageBase64);
+			}
+			else {
+				self.raster.source = imageBase64
+			}
+
+			self.raster.onLoad = function () {
+				self.raster.position = self.scope.view.center
+
+				let viewAspectRation = self.scope.view.bounds.width / self.scope.view.bounds.height
+				let imageAspectRation = self.raster.width / self.raster.height
+
+				if (viewAspectRation < imageAspectRation) {
+					self.raster.size.width = self.scope.view.bounds.width
+					self.raster.size.height = self.raster.size.width / imageAspectRation;
+				}
+				else {
+					self.raster.size.height = self.scope.view.bounds.height
+					self.raster.size.width = self.raster.size.height * imageAspectRation;
 				}
 
 				self.componentRef.invokeMethodAsync("FrameImageRendered")
@@ -192,10 +212,10 @@ class TaggingSurface {
 				return;
 			}
 
-			if (event.point.x < raster.strokeBounds.x
-				|| event.point.x > raster.strokeBounds.x + raster.strokeBounds.width
-				|| event.point.y < raster.strokeBounds.y
-				|| event.point.y > raster.strokeBounds.y + raster.strokeBounds.height) {
+			if (event.point.x < self.raster.strokeBounds.x
+				|| event.point.x > self.raster.strokeBounds.x + self.raster.strokeBounds.width
+				|| event.point.y < self.raster.strokeBounds.y
+				|| event.point.y > self.raster.strokeBounds.y + self.raster.strokeBounds.height) {
 				return;
 			}
 
@@ -238,9 +258,9 @@ class TaggingSurface {
 				bottomRight: { x: Math.max(mouseDownAt.x, event.point.x), y: Math.max(mouseDownAt.y, event.point.y) }
 			}
 
-			stickToCanvasBounds(rectCoords, raster.strokeBounds);
+			stickToCanvasBounds(rectCoords, self.raster.strokeBounds);
 
-			let rect = getProportionalRectangle(rectCoords, raster.strokeBounds);
+			let rect = getProportionalRectangle(rectCoords, self.raster.strokeBounds);
 			self.componentRef.invokeMethodAsync("TagAdded", rect);
 
 			mouseDownAt = undefined;
@@ -254,11 +274,7 @@ class TaggingSurface {
 				if (self.scope.view.zoom > 1) {
 					self.scope.view.center = self.scope.view.center.add(event.downPoint.subtract(event.point));
 
-					// restrict going to far top or bottom
-					if (self.scope.view.bounds.top < 0
-						|| self.scope.project.activeLayer.bounds.bottom < self.scope.view.bounds.bottom) {
-						self.scope.view.center = self.scope.view.center.subtract(event.downPoint.subtract(event.point));
-					}
+					notifyViewPositionUpdate();
 				}
 			}
 			else if (isDefined(mouseDownAt)) {
@@ -278,8 +294,8 @@ class TaggingSurface {
 		}
 
 		self.addTag = function (tag) {
-			var newTagVisual = new TagVisual(raster.strokeBounds, tag);
-			var tagCoords = getRectangleRealFromProportional(tag, raster.strokeBounds);
+			var newTagVisual = new TagVisual(self.raster.strokeBounds, tag);
+			var tagCoords = getRectangleRealFromProportional(tag, self.raster.strokeBounds);
 
 			newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
 			newTagVisual.id = tag.id;
@@ -300,7 +316,7 @@ class TaggingSurface {
 					bottomRight: visual.get_bottomRight()
 				};
 
-				let rect = getProportionalRectangle(rectCoords, raster.strokeBounds);
+				let rect = getProportionalRectangle(rectCoords, self.raster.strokeBounds);
 				rect.id = visual.id;
 				rect.isSelected = visual.is_selected
 
@@ -370,6 +386,8 @@ class TaggingSurface {
 			if (isDefined(self.scope.view)) {
 				self.scope.view.zoom = 1;
 				self.scope.view.center = new paper.Point(self.scope.view.bounds.width / 2, self.scope.view.bounds.height / 2)
+
+				notifyViewPositionUpdate();
 			}
 		}
 
@@ -377,12 +395,24 @@ class TaggingSurface {
 			updateFrameImageOnCanvas(imageBase64);
 		}
 
+		self.setViewPosition = function (relativeX, relativeY) {
+			let rasterX = self.raster.width * relativeX + self.raster.position.x - self.raster.width / 2;
+			let rasterY = self.raster.height * relativeY + self.raster.position.y - self.raster.height / 2;
+			self.scope.view.center = new paper.Point(rasterX, rasterY)
+
+			notifyViewPositionUpdate();
+		}
+
 		self.dispose = function () {
 			self.items = [];
 			self.scope.remove();
-			raster.remove();
-			raster = null;
+			self.raster.remove();
+			self.raster = null;
 			tool.remove();
+		}
+
+		for (let listener of Orions.TaggingSurface.surfaceRegisteredListeners) {
+			listener(this);
 		}
 	}
 }

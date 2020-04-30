@@ -1,0 +1,20 @@
+﻿.minimap {
+	width: 100%;
+	position: relative;
+
+	.frame-image {
+		object-fit: contain;
+		width: 100%;
+		height: 100%;
+		user-select: none;
+	}
+
+	.current-region {
+		position: absolute;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: #eeeeee;
+		opacity: 0.25;
+	}
+}

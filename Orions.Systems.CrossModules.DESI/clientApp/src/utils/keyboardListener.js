@@ -2,8 +2,6 @@
 
     init: function (dotNetHandle) {
         let keyEventHandler = function (event) {
-            console.log(event)
-
             if (event.defaultPrevented || event.target.tagName.toLowerCase() === "input" || event.repeat) {
                 return;
             }
