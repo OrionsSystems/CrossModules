@@ -3,6 +3,14 @@
 @inherits VideoPlayerBase
 
 <div class="tagging-video-player-container">
+	<FrameCounter 
+				  CurrentFrame="@CurrentFrameIndex"
+				  CurrentPosition="CurrentPosition"
+				  TotalFrames="TotalFrames"
+				  CurrentPositionHyperId="MediaInstance.CurrentPosition"
+				  OnGoToPreviousFrame="GoToPreviousFrame"
+				  OnGoToNextFrame="GoToNextFrame"
+				  />
 	<video id="@_videoElementId"
 		   preload="auto"
 		   @onclick="() => this.Pause()"

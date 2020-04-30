@@ -225,8 +225,8 @@
 		.tagging-canvas {
 			position: absolute;
 			width: 100%;
-			height: calc(100% - #{$player-control-bar-height});
-			top: 0;
+			height: calc(100% - #{$player-control-bar-height} - #{$player-frame-counter-height});
+			top: $player-frame-counter-height;
 			background: black;
 		}
 	}

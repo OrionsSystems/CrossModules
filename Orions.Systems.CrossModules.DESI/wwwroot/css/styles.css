@@ -238,8 +238,23 @@ body {
   height: 100%;
   width: 100%;
   position: absolute; }
+  .tagging-video-player-container .frame-couner-container {
+    height: 60px;
+    display: flex; }
+    .tagging-video-player-container .frame-couner-container .go-to-previous-frame-btn, .tagging-video-player-container .frame-couner-container .go-to-next-frame-btn {
+      height: 100%;
+      cursor: pointer; }
+      .tagging-video-player-container .frame-couner-container .go-to-previous-frame-btn img, .tagging-video-player-container .frame-couner-container .go-to-next-frame-btn img {
+        height: 100%; }
+    .tagging-video-player-container .frame-couner-container .frame-info {
+      height: 100%;
+      flex: 1;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center; }
   .tagging-video-player-container .video-player {
-    height: calc(100% - 60px);
+    height: calc(100% - 60px - 60px);
     width: 100%;
     display: block;
     background-color: black; }
@@ -392,10 +407,10 @@ body {
             transform: translateX(-3.5px) rotate(45deg); }
   .tagging-video-player-container .video-player-overlay {
     position: absolute !important;
-    top: 0;
+    top: 60px;
     left: 0;
     width: 100%;
-    height: calc(100% - 60px);
+    height: calc(100% - 60px - 60px);
     z-index: 9999;
     background: rgba(242, 242, 242, 0.2);
     color: white;
@@ -693,7 +708,8 @@ body {
 
 .minimap {
   width: 100%;
-  position: relative; }
+  position: relative;
+  cursor: pointer; }
   .minimap .frame-image {
     object-fit: contain;
     width: 100%;
@@ -1052,8 +1068,8 @@ body {
     .tagging-page-container .tagging-surface-container .tagging-canvas {
       position: absolute;
       width: 100%;
-      height: calc(100% - 60px);
-      top: 0;
+      height: calc(100% - 60px - 60px);
+      top: 60px;
       background: black; }
 
 .tagonomy-info-popup-container {

@@ -61,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Microsoft.Azure.Kinect.Sens
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extra", "Extra", "{645F1D2A-C5F1-4EE1-BCA3-357CCC9E25F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orions.Systems.CrossModules.FlowDesigner", "Orions.Systems.CrossModules.FlowDesigner\Orions.Systems.CrossModules.FlowDesigner.csproj", "{7D03607F-05F3-4EB1-8EEC-F278AD6BFD21}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orions.Systems.CrossModules.FlowDesigner", "Orions.Systems.CrossModules.FlowDesigner\Orions.Systems.CrossModules.FlowDesigner.csproj", "{7D03607F-05F3-4EB1-8EEC-F278AD6BFD21}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

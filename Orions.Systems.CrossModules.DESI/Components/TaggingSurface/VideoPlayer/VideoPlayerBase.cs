@@ -52,6 +52,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				return _taskPlaybackInfo?.TotalDuration ?? TimeSpan.Zero;
 			}
 		}
+		protected int TotalFrames
+		{
+			get
+			{
+				return _taskPlaybackInfo?.TotalFrames ?? 0;
+			}
+		}
 		protected double PlaybackSpeed { get; set; } = 1;
 		protected double VolumeLevel { get; set; } = 100;
 		protected List<Model.TimelineMarker> TimelineMarkers 
@@ -173,7 +180,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task GoToNextFrame()
 		{
-			if (!IsVideoLoading && !CurrentFrameIsLoading)
+			if (!IsVideoLoading && !CurrentFrameIsLoading && Paused)
 			{
 				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) + 1;
 				if (newFrameIndex > _taskPlaybackInfo.TotalFrames - 1) newFrameIndex = _taskPlaybackInfo.TotalFrames - 1;
@@ -185,7 +192,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task GoToPreviousFrame()
 		{
-			if (!IsVideoLoading && !CurrentFrameIsLoading)
+			if (!IsVideoLoading && !CurrentFrameIsLoading && Paused)
 			{
 				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) - 1;
 				if (newFrameIndex < 0) newFrameIndex = 0;
