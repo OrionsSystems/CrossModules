@@ -1,7 +1,6 @@
 ﻿//import $ from 'jquery';
 //import 'bootstrap-colorpicker';
 
-
 (function () {
 
 	let defaultRefreshNodeStatusInMilisecond = 30000; //default is 30 sec
@@ -196,7 +195,7 @@
 		// TODO 
 	}
 
-	function ToggleMainMenu() {
+	function toggleMainMenu() {
 
 		$(document.body).toggleClass('mainmenu-hidden', settings.isMinimizeMainMenu.get());
 
@@ -211,23 +210,37 @@
 		settings.isMinimizeMainMenu.toggle();
 	}
 
-	function ToggleCommonMenu() {
+	function toggleCommonMenu() {
 
 		if (settings.isCommonMinimized.get() == true) {
-			$('.panel').css('margin-right', -($('.panel').width()));
-			$('.body').css('margin-right', 0);
-
-			$('#commonMenuBtnId i').removeClass('fa-chevron-right');
-			$('#commonMenuBtnId i').addClass('fa-chevron-left');
+			hideCommonMenu();
 		} else {
-			$('.panel').css('margin-right', 0);
-			$('.body').css('margin-right', $('.panel').width());
-
-			$('#commonMenuBtnId i').removeClass('fa-chevron-left');
-			$('#commonMenuBtnId i').addClass('fa-chevron-right');
+			showCommonMenu();
 		}
 
 		settings.isCommonMinimized.toggle();
+	}
+
+	function hideCommonMenu() {
+
+		$('.panel').css('margin-right', -($('.panel').width()));
+		$('.body').css('margin-right', 0);
+
+		$('#commonMenuBtnId i').removeClass('fa-chevron-right');
+		$('#commonMenuBtnId i').addClass('fa-chevron-left');
+
+		settings.isCommonMinimized.set(true);
+	}
+
+	function showCommonMenu() {
+
+		$('.panel').css('margin-right', 0);
+		$('.body').css('margin-right', $('.panel').width());
+
+		$('#commonMenuBtnId i').removeClass('fa-chevron-left');
+		$('#commonMenuBtnId i').addClass('fa-chevron-right');
+
+		settings.isCommonMinimized.set(false);
 	}
 
 	function shownotifications(force) {
@@ -283,9 +296,11 @@
 
 	window.Orions.FlowDesigner = {};
 
-	window.Orions.FlowDesigner.ToggleMainMenu = ToggleMainMenu;
+	window.Orions.FlowDesigner.ToggleMainMenu = toggleMainMenu;
 
-	window.Orions.FlowDesigner.ToggleCommonMenu = ToggleCommonMenu;
+	window.Orions.FlowDesigner.ToggleCommonMenu = toggleCommonMenu;
+	window.Orions.FlowDesigner.HideCommonMenu = hideCommonMenu;
+	window.Orions.FlowDesigner.ShowCommonMenu = showCommonMenu;
 
 	window.Orions.FlowDesigner.Settings = function (el) { operation.designer.settings(el); };
 	window.Orions.FlowDesigner.Copy = function (el) { operation.designer.copy(el); };
@@ -297,13 +312,95 @@
 	window.Orions.FlowDesigner.ZoomReset = function () { operation.designer.zoomreset(); };
 	window.Orions.FlowDesigner.ZoomOut = function () { operation.designer.zoomout(); };
 
-
 	window.Orions.FlowDesigner.Init = function (componentInstance, designData) {
 
+		var events = {};
 		var panel = $('.panel');
+		var offsetX = 0;
 		var noscrollbar = panel.find('.noscrollbar');
 		var body = $('.body');
 		var min = 340;
+		var ssw = 0; // scrollbar width
+		var old = 0;
+
+		function setPanelWidth(w) 
+		{
+
+			if (w !== old) {
+				old = w;
+
+				if (w < min) w = min;
+				panel.width(w);
+				body.css('margin-right', w);
+				//noscrollbar.width(w + ssw);
+			}
+		}
+
+		events.mup = function (e) {
+
+			e.stopPropagation();
+			e.preventDefault();
+
+			var w = $(window);
+			w.off('mousemove', events.mm);
+			w.off('touchmove', events.tm);
+			w.off('mouseup', events.mup);
+			w.off('touchend', events.mup);
+			var width = panel.width();
+			setPanelWidth(width);
+		};
+
+		events.mm = function (e) { //mousemove
+			e.stopPropagation();
+			e.preventDefault();
+			events.resize(e.pageX);
+		};
+
+		events.tm = function (e) {
+			e.stopPropagation();
+			e.preventDefault();
+			events.resize(e.touches[0].pageX);
+		};
+
+		events.resize = function (pageX, touch) {
+
+			var WW = window.innerWidth; // flow designer screen width 
+			//var pW = panel.width();
+			//var x = ((pageX - (WW - pW)) + pW) >> 0;
+
+			var x = (WW - pageX - offsetX) >> 0;
+
+			//var max = (WW / 1.85) >> 0;
+			//var x = (WW - pageX - offsetX) >> 0;
+
+			//var x = WW - designerWidth - mainMenuWidth 
+
+			//if (x > max) x = max;
+			if (x < min) x = min;
+
+			setPanelWidth(x);
+		};
+
+		$('.panel-resize-handle').on('mousedown touchstart', function (e) {
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			var w = $(window);
+			w.on('mousemove', events.mm);
+			w.on('touchmove', events.tm);
+			w.on('touchend', events.mup);
+			w.on('mouseup', events.mup);
+
+
+			if (e.touches && e.touches[0])
+				offsetX = $(this).offset().left - e.touches[0].pageX;
+			else
+				offsetX = e.offsetX;
+
+			//body.css('margin-right', panel.width());
+
+		});
 
 
 		$(document).on('click', '#panel-notification', function () {
@@ -754,14 +851,14 @@
 		function refreshTraffic() {
 
 			var spinnerEl = $('.flowRefreshTrafic');
-         spinnerEl.removeClass('hidden');
+			spinnerEl.removeClass('hidden');
 
 			componentInstance.invokeMethodAsync('LoadStatuses').then(function (data) {
 
 				//console.log('Status result.. : ' + data);
 
 				statuses = JSON.parse(data);
-				setTimeout(function(){ spinnerEl.addClass('hidden'); }, 500);
+				setTimeout(function () { spinnerEl.addClass('hidden'); }, 500);
 
 				if (!statuses) return;
 
@@ -805,11 +902,8 @@
 						rect.attr('width', p);
 					}
 				});
-
-
 			}, function (err) {
-				debugger;
-				loading.hide();
+				spinnerEl.addClass('hidden');
 			});
 
 		}
@@ -821,8 +915,6 @@
 
 			if (!common.touches)
 				return;
-
-			debugger;
 
 			var el = $(e.target);
 			var target = el.hasClass('component') ? el : el.closest('.component');
@@ -854,8 +946,6 @@
 			if (!common.touches)
 				return;
 
-			debugger;
-
 			if (mdraggable.drag) {
 				var t = e.originalEvent.touches[0];
 				mdraggable.x = t.pageX;
@@ -870,8 +960,6 @@
 
 			if (!common.touches || !mdraggable.drag)
 				return;
-
-			debugger;
 
 			e.stopPropagation();
 			mdraggable.drag = false;
@@ -2199,8 +2287,6 @@
 
 			changed: function (action, id) {
 
-				//debugger;
-
 				id && (common.changes[id] = common.changes[id] || []);
 				var changes = common.changes;
 				switch (action) {
@@ -2465,7 +2551,6 @@
 					if (el.hasClass('disabled'))
 						return;
 
-					debugger;
 					var idconnection = selected.attr('data-id');
 					on.designer.settings(idconnection);
 				}
@@ -2605,8 +2690,6 @@
 
 				return new Promise(function (resolve, reject) {
 
-					debugger;
-
 					jsonConfigurations = JSON.parse(designData);
 
 					flow.isReadOnly = jsonConfigurations.isReadOnly;
@@ -2703,8 +2786,8 @@
 			$('body').attr('class', 'touch');
 			$('body').attr('class', 'themedark');
 
-			ToggleMainMenu();
-			ToggleCommonMenu();
+			toggleMainMenu();
+			toggleCommonMenu();
 
 			//Auto collapes the navigation bar ot the left
 			//$("body").toggleClass("mainmenu-hidden");
@@ -2719,7 +2802,7 @@
 
 			//$('.colorpicker-alpha').remove();
 
-			ToggleCommonMenu();
+			toggleCommonMenu();
 
 			//set modal designer settings on open
 			$('#workflowDesignerSettings').on('shown.bs.modal', function () {
