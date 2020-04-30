@@ -184,6 +184,7 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				var nodeType = nodeGroupType.Type;
 
+
 				var nodeName = nodeGroupType.Name;
 				var nodeConfigId = nodeType.Name;
 
@@ -203,7 +204,8 @@ namespace Orions.Systems.CrossModules.Components
 					Output = outputCount,
 					Group = nodeGroupType.Group,
 					Color = nodeGroupType.Color,
-					Icon = nodeGroupType.Icon
+					Icon = nodeGroupType.Icon,
+					Html = nodeGroupType.Html
 				};
 
 				design.NodeConfigurations.Add(designNodeConfiguration);
@@ -264,7 +266,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
-		public async Task<string> LoadWorkflowStatusesJson() 
+		public async Task<string> LoadWorkflowStatusesJson()
 		{
 			var result = await LoadWorkflowStatuses();
 
@@ -400,10 +402,16 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			foreach (var item in data)
 			{
-				var tempItem = _templateMenuItems.Where(it => it.Group == item.Group).FirstOrDefault();
-				if (tempItem != null) {
+				var tempItem = _templateMenuItems.Where(it => it.Group == item.Group && it.Name.Trim() == item.Name).FirstOrDefault();
+
+				if(tempItem == null)
+					tempItem = _templateMenuItems.Where(it => it.Group == item.Group).FirstOrDefault();
+
+				if (tempItem != null)
+				{
 					item.Icon = tempItem.Icon;
 					item.Color = tempItem.Color;
+					item.Html = tempItem.Html;
 				}
 			}
 
@@ -479,13 +487,46 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		private List<FlowMenuItem> _templateMenuItems = new List<FlowMenuItem> {
-			new FlowMenuItem(){ Group="Source", Icon="fa fa-server",Color="#5D9CEC" },
-			new FlowMenuItem(){ Group="Ingest", Icon="fa fa-cloud-upload",Color="#F6BB42" },
-			new FlowMenuItem(){ Group="Filter", Icon="fa fa-sign-in",Color="#888600" },
-			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D" },
-			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51" },
-			new FlowMenuItem(){ Group="Control", Icon="fa fa-code", Color="#8CC152" },
-			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff" }
+
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5D9CEC", Name="Asset  Source", Html=""},
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5D9CEC", Name="Content", Html=""},
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5D9CEC", Name="Source", Html=""},
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5D9CEC", Name="File Source", Html=""},
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5D9CEC", Name="Metadata Set Source", Html="Sources Fragments (as FragmentActionResults) from asset(s) into the workflow. Main entry point."},
+			new FlowMenuItem(){ Group="Source", Icon="fa fa-server", Color="#5CB36D", Name="Semantic Asset Source", Html="Asset source for the hyper workflow, that uses a Semantic query to evaluate what assets to include."},
+
+			new FlowMenuItem(){ Group="Ingest", Icon="fa fa-cloud-upload", Color="#F6BB42", Name="File Ingestor", Html=""},
+
+			new FlowMenuItem(){ Group="Filter", Icon="fa fa-sign-in", Color="#888600", Name="Document Filter", Html="Filter tasks based on queries to the document system."},
+			new FlowMenuItem(){ Group="Filter", Icon="fa fa-sign-in", Color="#888600", Name="Semantic Filter", Html=""},
+			new FlowMenuItem(){ Group="Filter", Icon="fa fa-sign-in", Color="#888600", Name="Tag Filter", Html="Filter Tags based on labels, matching the asset of the passing item"},
+
+			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D", Name="Cache Generator", Html="Configuration for the IMage Generator Hyper Workflow Node"},
+			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D", Name="Hyper Pipeline", Html=""},
+			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D", Name="Image Generator", Html="Configuration for the IMage Generator Hyper Workflow Node"},
+			new FlowMenuItem(){ Group="Processing", Icon="fa fa-exchange", Color="#5CB36D", Name="Video Recoding", Html=""},
+
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Asset Tagging", Html=""},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Comparative Tagging", Html=""},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Expanding OOITagging", Html="Expanding OOI Tagging"},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Hyper Block Tagging", Html="Tagging a HyperBlock - Asset or Fragment level."},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Image Tagging Sink", Html=""},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="OOITagging", Html="The data for the OOI tagging node, where the vast majority of our manual tagging operations are performed."},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Redundancy Tagging Filter", Html=""},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Tag Recovery", Html=""},
+			new FlowMenuItem(){ Group="Tagging", Icon="fa fa-map-marker", Color="#FC6E51", Name="Tagging Sink", Html=""},
+
+			new FlowMenuItem(){ Group="Control", Icon="fa fa-code", Color="#8CC152", Name="Entry", Html=""},
+			new FlowMenuItem(){ Group="Control", Icon="fa fa-code", Color="#8CC152", Name="Exit", Html=""},
+			new FlowMenuItem(){ Group="Control", Icon="fa fa-code", Color="#8CC152", Name="Master Workflow", Html=""},
+
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-map-marker", Color="#FC6E51", Name="Advanced Metadata Filter", Html=""},
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff", Name="Asset Filter", Html=""},
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff", Name="Callback", Html=""},
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff", Name="OCR", Html=""},
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff", Name="Progress Report", Html=" A monitor node will receive notifications about results, that have it's Id in their MonitorNode[] array."},
+			new FlowMenuItem(){ Group="Other", Icon="fa fa-braille", Color="#97c5ff", Name="Runtime Preview", Html=""}
+
 		};
 
 		class FlowMenuItem
@@ -499,6 +540,10 @@ namespace Orions.Systems.CrossModules.Components
 			public string Icon { get; set; }
 
 			public string Color { get; set; }
+
+			public string Html { get; set; }
+
+			public string Readme { get; set; }
 		}
 
 	}

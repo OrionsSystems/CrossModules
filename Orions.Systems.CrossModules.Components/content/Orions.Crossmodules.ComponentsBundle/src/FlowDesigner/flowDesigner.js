@@ -323,8 +323,7 @@
 		var ssw = 0; // scrollbar width
 		var old = 0;
 
-		function setPanelWidth(w) 
-		{
+		function setPanelWidth(w) {
 
 			if (w !== old) {
 				old = w;
@@ -381,6 +380,8 @@
 			setPanelWidth(x);
 		};
 
+
+
 		$('.panel-resize-handle').on('mousedown touchstart', function (e) {
 
 			e.preventDefault();
@@ -397,8 +398,6 @@
 				offsetX = $(this).offset().left - e.touches[0].pageX;
 			else
 				offsetX = e.offsetX;
-
-			//body.css('margin-right', panel.width());
 
 		});
 
@@ -910,6 +909,29 @@
 
 		var MESSAGES = {};
 		MESSAGES.apply = '<i class="fa fa-info-circle blue mr5"></i>You have to click the &quot;<b>APPLY</b>&quot; button to apply all changes.';
+
+		$(document).on('click dblclick', '.component', function (e) {
+
+			var self = $(e.target).parent();
+
+			var component;
+			if (self.length) {
+				var componentId = self.data("id");
+				component = common.components.find(function (el) {
+					return el.id === componentId
+				});
+			}
+
+			var htmlContent = 'No info!';
+			if (component && component.html && component.html.length > 0) {
+				htmlContent = component.html;
+			}
+
+			confirm.show(htmlContent, ['OK'], function (index) {
+				return;
+			});
+
+		});
 
 		$(document).on('touchstart', '[draggable]', function (e) {
 
@@ -2805,13 +2827,13 @@
 			toggleCommonMenu();
 
 			//set modal designer settings on open
-			$('#workflowDesignerSettings').on('shown.bs.modal', function () {
+			//$('#workflowDesignerSettings').on('shown.bs.modal', function () {
 
-				$('#isClosedLeftMenu').prop('checked', (settings.isMinimizeMainMenu.get() == 'true' ? true : false));
-				$('#isClosedRightMenu').prop('checked', settings.isCommonMinimized.get() == 'true' ? true : false);
+			//	$('#isClosedLeftMenu').prop('checked', (settings.isMinimizeMainMenu.get() == 'true' ? true : false));
+			//	$('#isClosedRightMenu').prop('checked', settings.isCommonMinimized.get() == 'true' ? true : false);
 
-				$('#refreshNodeStatuses').val(settings.refreshNodeStatusInMilisecond.get());
-			});
+			//	$('#refreshNodeStatuses').val(settings.refreshNodeStatusInMilisecond.get());
+			//});
 
 			$("#nodeUpdateNameId").keypress(function (e) {
 				if (e.which != 13) return;
@@ -2822,18 +2844,6 @@
 				on.resize();
 			});
 		});
-
-		function HideComponentsInReadOnlyMode() {
-
-			//debugger;
-			$('#applyFlowDesignId').addClass('hidden');
-			$('nav#designerbuttons').addClass('hidden');
-			$(document.body).toggleClass('mainmenu-hidden', true);
-			settings.isMinimizeMainMenu.set(true);
-			$(document.body).toggleClass('panel-minized', true);
-			settings.isCommonMinimized.set(true);
-		}
-
 	}
 
 })();
