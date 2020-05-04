@@ -10,7 +10,6 @@
     "build-dev": "webpack --config webpack.dev.config.js"
   },
   "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.9.0",
     "@babel/preset-env": "^7.9.0",
