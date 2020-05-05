@@ -2,11 +2,14 @@
 
 @inherits PropertyGridComponent
 
-@using Orions.Infrastructure.Common;
-@using Orions.Node.Common;
-@using Orions.Common;
+@using Orions.Infrastructure.Common
+@using Orions.Node.Common
+@using Orions.Common
 @using System.IO
-@using System.Text.RegularExpressions;
+@using System.Text.RegularExpressions
+
+@using Syncfusion.EJ2.Blazor.Inputs
+@using Newtonsoft.Json.Linq
 
 <div class="prop-grid-container">
 
@@ -126,14 +129,8 @@
 											var rgbColor = $"rgba({uniColor.R},{uniColor.G},{uniColor.B},{uniColor.A})";
 										}
 
-										<VanillaColorPicker ParentId="customId"
-																  Class="form-control popup-parent"
-																  Color="@rgbColor"
-																  Popup="bottom"
-																  Value="@rgbColor"
-																  OnDone="(color => ChangeColor(data.DataProp.Value, color))"
-																  EditorFormat="rgb">
-										</VanillaColorPicker>
+
+										<EjsColorPicker @ref="colorPicker" CssClass="form-control" Value="@rgbColor" Mode="ColorPickerMode.Picker" ValueChange="(args => ChangeColor(data.DataProp.Value, args))"></EjsColorPicker>
 									</a>
 									break;
 								case PropertyGridItemUtilityData.EditableModes.Dropdown:
@@ -197,7 +194,7 @@
 </div>
 
 @code {
-
+	private EjsColorPicker colorPicker;
 
 	[Parameter] public Func<Task<object>> Loader { get; set; }
 
@@ -272,7 +269,7 @@
 		if (selectedOption != null) data.SelectedValueOption = selectedOption;
 	}
 
-	private void OnCreatorItemSelect(ChangeEventArgs e)
+	private void OnCreatorItemSelect(Microsoft.AspNetCore.Components.ChangeEventArgs e)
 	{
 		foreach (var item in Vm.Utility.CreatorItems)
 		{
@@ -302,12 +299,19 @@
 		}
 	}
 
-	private void ChangeColor(PropertyGridItemUtilityData data, string color)
+	private void ChangeColor(PropertyGridItemUtilityData data, ColorPickerEventArgs args)
 	{
-		if (string.IsNullOrEmpty(color)) return;
+		var colorValue = ((JObject)args.CurrentValue).ToObject<GetCurrentValue>();
 
-		var regex = new Regex("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
-		var m = regex.Match(color);
+		if (colorValue == null || string.IsNullOrWhiteSpace(colorValue.rgba)) return;
+
+		//String rgba_color_regex = "(#([\\da-f]{3}){1,2}|(rgb|hsl)a\\((\\d{1,3}%?,\\s?){3}(1|0?\\.\\d+)\\)|(rgb|hsl)\\(\\d{1,3}%?(,\\s?\\d{1,3}%?){2}\\))";
+
+		var rgba = colorValue.rgba.Trim().Replace(" ", "");
+
+		//var regex = new Regex(rgba_color_regex);
+		var regex = new Regex("rgba*\\(*([0-9]+),*([0-9]+),*([0-9]+),*([.0-9]+)*\\)");
+		var m = regex.Match(rgba);
 
 		if (m.Success)
 		{
@@ -341,6 +345,13 @@
 		var data = (byte[])input;
 
 		return $"data:image/jpg;base64,{Convert.ToBase64String(data)}";
+	}
+
+
+	public class GetCurrentValue
+	{
+		public string hex { get; set; }
+		public string rgba { get; set; }
 	}
 }
 

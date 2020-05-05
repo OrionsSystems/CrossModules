@@ -1,9 +1,8 @@
 ﻿import './scss/styles.scss';
 
-if (typeof window.Orions == "undefined") {
-   debugger;
-   window.Orions = {};
-}
+//if (!window.Orions) {
+//	window.Orions = {};
+//}
 
 export * from './src/EditableMap/svgMapEditor';
 export * from './src/TagReviewComponent/index';

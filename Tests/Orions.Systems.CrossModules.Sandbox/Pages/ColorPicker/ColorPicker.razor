@@ -1,76 +1,53 @@
 ﻿@namespace Orions.Systems.CrossModules.Pages
 @page "/color-picker"
+
 @inherits BaseOrionsComponent
+
+@using Syncfusion.EJ2.Blazor.Inputs
+@using Newtonsoft.Json.Linq
 
 <h3>Color Picker</h3>
 
 <hr>
 <h5>RGB Color</h5>
 
-<VanillaColorPicker ParentId="picker1"
-                    Value="@RgbColor"
-                    Color="@RgbColor"
-                    Class="btn popup-parent"
-                    OnDone="HandleColor"
-                    EditorFormat="rgb">
-</VanillaColorPicker>
-
-<hr>
-<h5>Hex Color</h5>
-<VanillaColorPicker ParentId="picker2"
-                    Value="@HexColor"
-                    Color="@HexColor"
-                    Class="btn popup-parent"
-                    OnDone="HandleColor"
-                    EditorFormat="hex">
-</VanillaColorPicker>
-
-<hr>
-<h5>Hsl Color</h5>
-<VanillaColorPicker ParentId="picker3"
-                    Value="@HlsColor"
-                    Color="@HlsColor"
-                    Class="btn popup-parent"
-                    OnDone="HandleColor"
-                    EditorFormat="hsl">
-</VanillaColorPicker>
+<EjsColorPicker @ref="colorPicker" CssClass="form-control" Value="@Color" Mode="ColorPickerMode.Picker" ValueChange="HandleColor"></EjsColorPicker>
 
 <hr>
 
-@if (string.IsNullOrWhiteSpace(SelectedColor))
-{
-    <div>
-        Last selected Color is: @SelectedColor
-    </div>
-
-}
+<div>
+	Selected Hex Color is: @ColorValue.hex
+</div>
+<div>
+	Selected RGB Color is: @ColorValue.rgba
+</div>
 
 @code{
 
-    public string SelectedColor { get; set; }
+	private EjsColorPicker colorPicker;
 
-    public string RgbColor { get; set; } = "rgb(11, 69, 84)";
+	public string Color { get; set; } = "000";
 
-    public string HexColor { get; set; } = "#2c6737ff";
+	public GetCurrentValue ColorValue { get; set; } = new GetCurrentValue();
 
-    public string HlsColor { get; set; } = "hsl(100, 100%, 50%)";
 
-    public void HandleColor(string color)
-    {
-        SelectedColor = color;
-    }
+	public void HandleColor(ColorPickerEventArgs args)
+	{
+
+		ColorValue = ((JObject)args.CurrentValue).ToObject<GetCurrentValue>();
+
+		//HexColor = color;
+		//var t = await colorPicker.GetValue(color);
+
+		//var d = colorPicker.Value;
+
+		this.StateHasChanged();
+	}
+
+	public class GetCurrentValue
+	{
+		public string hex { get; set; }
+		public string rgba { get; set; }
+	}
 
 }
-
-<style>
-
-    .popup-parent {
-        color: white;
-        padding: 10px 16px;
-        width: 300px;
-        font-family: sans-serif;
-        font-weight: 100;
-        font-size: 20px;
-        text-align: center;
-    }
-</style>
