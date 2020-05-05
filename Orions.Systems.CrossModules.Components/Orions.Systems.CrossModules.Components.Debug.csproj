@@ -16,9 +16,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-
-		<!--<EmbeddedResource Include="WebPack\dist\orions-bundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
-
 		<EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
@@ -26,7 +23,6 @@
 		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\css\styles.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
 		<EmbeddedResource Include="content\codemirror\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\codemirror\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
@@ -40,7 +36,6 @@
 		<None Remove="content\kendo\*" />
 		<None Remove="content\scripts\common.js" />
 		<None Remove="content\scripts\kendoComponents.js" />
-		<None Remove="content\css\styles.css" />
 		<None Remove="content\codemirror\*" />
 	</ItemGroup>
 
