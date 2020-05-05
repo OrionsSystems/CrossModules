@@ -7683,6 +7683,16 @@ i.ui-intro-button {
     .workflow-container .list-table table .list-cmd-container a .list-cmd-delete {
       color: red !important; }
 
+.workflow-container .no-data-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: center; }
+  .workflow-container .no-data-container .no-data-text {
+    font-size: 22px; }
+
 .mission-container .mission-list-header .header-filter .list-search button {
   display: inherit; }
 

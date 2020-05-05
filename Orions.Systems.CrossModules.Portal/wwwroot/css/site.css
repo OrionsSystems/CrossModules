@@ -370,3 +370,8 @@ app {
 	}
 
 /* End Property page*/
+
+.workflow-container .no-data-container {
+	height: calc(100% - 75px) !important;
+	width: calc(100% - 92px) !important;
+}
