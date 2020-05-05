@@ -3,7 +3,10 @@
 	"version": "1.0.0",
 	"description": "",
 	"private": true,
-	"scripts": {},
+	"scripts": {
+		"watch": "webpack --watch",
+		"build": "webpack"
+	},
 	"author": "",
 	"devDependencies": {
 		"@babel/core": "^7.9.0",
