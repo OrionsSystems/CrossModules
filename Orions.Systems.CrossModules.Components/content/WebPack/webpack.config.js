@@ -1,8 +1,8 @@
 const path = require('path');
 
 module.exports = {
-	//mode: 'development',
-	mode: 'production',
+	mode: 'development',
+	//mode: 'production',
 	entry: './index.js',
 	output: {
 		filename: 'orions.bundle.js',
@@ -12,7 +12,7 @@ module.exports = {
 		rules: [
 			{
 				test: /\.m?js$/,
-				exclude: /(node_modules|bower_components)/,
+				exclude: /(node_modules|bower_components|thirdparty)/,
 				use: {
 					loader: 'babel-loader',
 					options: {

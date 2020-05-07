@@ -1,9 +1,5 @@
 ﻿import './scss/styles.scss';
 
-//if (!window.Orions) {
-//	window.Orions = {};
-//}
-
 export * from './src/EditableMap/svgMapEditor';
 export * from './src/TagReviewComponent/index';
 export * from './src/Carousel/carousel';
