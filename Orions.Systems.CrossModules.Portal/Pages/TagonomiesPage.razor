@@ -1,0 +1,24 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+@page "/tagonomies"
+
+@using Orions.Infrastructure.HyperMedia
+
+@inherits PortalBaseComponent
+
+@inject NavigationManager navManager
+
+
+	<TagonomyList HyperStore="@HyperStore">
+	</TagonomyList>
+
+@code{
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+
+}
+
+
+

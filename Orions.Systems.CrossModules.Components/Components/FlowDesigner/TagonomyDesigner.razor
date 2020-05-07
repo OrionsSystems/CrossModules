@@ -1,0 +1,163 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits TagonomyDesignerBase
+
+<div class="workflow-designer-container">
+
+	<div id="confirm"></div>
+	<div id="loading" class="ui-loading ui-loading-firstload"></div>
+	<div id="success"><span class="fa fa-refresh fa-spin"></span></div>
+
+	<!-- Settings -->
+	<div class="panel">
+		<div class="panel-resize-handle"></div>
+		<section class="tabs tabs-panel">
+			<!-- Nav tabs -->
+			<nav>
+				@*<a href="#" class="exec onlyicon"><i class="fa fa-chevron-right"></i></a>*@
+				<a class="exec" @onclick="@SettingsElement"><i class="fa fa-cogs"></i>Properties</a>
+				<a class="exec"><i class="fa fa-history"></i>Log</a>
+				@*<a href="#" class="exec"><i class="fa fa-history"></i>Debug</a>
+					<a href="#" class="exec"><i class="fa fa-info-circle"></i>Info</a>
+						<a href="#" class="exec"><i class="fa fa-bug"></i>Errors</a>
+						<a href="#" class="exec"><i class="fa fa-tasks"></i>Traffic</a>*@
+			</nav>
+		</section>
+		@if (Vm.IsShowProperty)
+		{
+			<div class="body-settings">
+				<div style="padding:15px 15px 0">
+					<div class="flow-properties-container">
+						<PropertyGrid Vm="Vm.PropertyGridVm"
+										  Loader="Vm.LoadPropertyGridData"
+										  CancelVisible="true"
+										  HyperStore="Vm.HyperStore"
+										  OKVisible="true"
+										  CancelCommand="OnCancelProperty"
+										  OkCommand="OnCancelProperty">
+						</PropertyGrid>
+					</div>
+				</div>
+				<div id="body-debug-output" class="noscrollbar"></div>
+			</div>
+		}
+
+		<div class="hidden body-console">
+			<div style="padding:15px 15px 0">
+				<span class="link red fs11 exec" style="float:right;margin-top:2px"><i class="fa fa-times mr5"></i>Console</span>
+				<div data---="checkbox__common.beautify">Console</div>
+				<hr class="nmb" style="margin-top:15px" />
+			</div>
+			<div id="body-debug-output" class="noscrollbar"></div>
+		</div>
+		<div class="hidden body-debug">
+			<div style="padding:15px 15px 0">
+				<span class="link red fs11 exec" style="float:right;margin-top:2px"><i class="fa fa-times mr5"></i>Settings</span>
+				<div data---="checkbox__common.beautify">Settings</div>
+				<hr class="nmb" style="margin-top:15px" />
+			</div>
+			<div id="body-debug-output" class="noscrollbar"></div>
+		</div>
+	</div>
+
+
+	<div class="mainmenu body-components">
+		<section class="tabs tabs-controls">
+			<nav>
+				<a href="#" id="applyFlowDesignId" class="exec highlight" @onclick="@OnClickApply"><i class="fa fa-play-circle"></i>APPLY</a>
+			</nav>
+		</section>
+
+		@*<div class="components-search-padding">
+				<div data---="textbox__common.search__placeholder:Search components ...;type:search" data-jc-compile="0" class="ui-textbox ui-textbox-container">
+					<div class="ui-textbox-input"><input type="text" placeholder="Search components ..." data-jc-bind="" name="input1587037883441" autocomplete="new-password"></div><div class="ui-textbox-control"><span class="fa fa-search ui-textbox-control-icon"></span></div>
+				</div>
+			</div>*@
+
+		<div>
+			<div class="components-container">
+				<div class="noscrollbar">
+					<ul class="components"></ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="body body-designer" style="margin-right: 340px;">
+		<div class="tabs-tools">
+			@*<button class="exec green" data-exec="#tabs.add" title="New tab"><i class="fa fa-plus"></i></button>
+				<button class="exec" data-exec="showhelp" title="Help"><i class="fa fa-question-circle"></i></button>
+				<button class="exec" data-exec="themechanger" title="Change theme"><i class="fa fa-paint-brush"></i></button>*@
+			<button class="exec scrolling hidden" data-exec="tabscrolling" data-value="-200" title="Scroll tabs to right"><i class="fa fa-chevron-left"></i></button>
+			<button class="exec scrolling hidden" data-exec="tabscrolling" data-value="200" title="Scroll tabs to left"><i class="fa fa-chevron-right"></i></button>
+		</div>
+		<div class="hidetools">
+			<button id="commonMenuBtnId" @onclick="ToggleCommonMenu" class="exec">
+				<i class="fa fa-chevron-right"></i>
+			</button>
+			<button id="mainMenuBtnId" @onclick="@ToggleMainMenu" class="exec">
+				<i class="fa fa-chevron-left"></i>
+			</button>
+		</div>
+		<section class="tabs">
+			<a href="#" class="flowTabName"><i class="fa fa-plus"></i></a>
+			<a href="#" class="flowRefreshTrafic hidden"><i class="fa fa-spinner fa-spin" style="font-size:20px"></i></a>
+		</section>
+		<div class="designer-container">
+			<div id="designerstate"></div>
+			<nav id="designerbuttons">
+				<button class="exec disabled" title="Settings" @onclick="@SettingsElement">
+					<i class="fa fa-cog"></i>
+				</button>
+				<button class="exec disabled" title="Copy component" @onclick="@CopyElement">
+					<i class="fa fa-file"></i>
+				</button>
+				<button class="exec disabled" name="paste" title="Paste component" @onclick="@PasteElement">
+					<i class="fa fa-paste"></i>
+				</button>
+				<button class="exec disabled" title="Duplicate component" @onclick="@DuplicateElement">
+					<i class="fa fa-copy"></i>
+				</button>
+				<button class="exec disabled designerbuttons-remove" title="Remove selection" @onclick="@RemoveElement">
+					<i class="fa fa-trash"></i>
+				</button>
+			</nav>
+			<div id="designerzoom">
+				<button class="exec" title="Zoom in" @onclick="@ZoomIn"><i class="fa fa-search-plus"></i></button>
+				<button class="exec" title="Reset zoom" @onclick="@ZoomReset">
+					<i class="fa fa-sort"></i>
+				</button>
+				<button class="exec" title="Zoom out" @onclick="@ZoomOut">
+					<i class="fa fa-search-minus"></i>
+				</button>
+			</div>
+			<div class="designer-scrollbar">
+				<div class="designer-shadow-top"></div>
+				<div class="designer-shadow-right"></div>
+				<div class="designer-shadow-bottom"></div>
+				<div class="designer-shadow-left"></div>
+				<div class="ui-designer" data-jc="designer" data-jc-path="flow.designer"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="flowsettings"></div>
+
+	<div id="tmpclone"></div>
+
+</div>
+
+
+<style>
+	html {
+		height: 100%;
+		overflow: hidden;
+	}
+
+	body {
+		height: 100%;
+		overflow: hidden;
+		background-color: #E6E9ED;
+		font-smoothing: antialiased;
+	}
+</style>

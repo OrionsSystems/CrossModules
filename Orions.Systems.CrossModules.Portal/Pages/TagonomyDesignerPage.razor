@@ -1,20 +1,16 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
-@page "/workflow-designer/{WorkflowId}"
-@page "/workflow-designer/{WorkflowId}/instance/{WorkflowInstanceId}"
+@page "/tagonomy-designer/{TagonomyId}"
 
 @inherits PortalBaseComponent
 
 @using Orions.Infrastructure.HyperMedia
 
-<WorkflowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId" WorkflowInstanceId="@WorkflowInstanceId"></WorkflowDesigner>
+<TagonomyDesigner HyperStore="HyperStore"></TagonomyDesigner>
 
 @code{
 
 	[Parameter]
-	public string WorkflowId { get; set; }
-
-	[Parameter]
-	public string WorkflowInstanceId { get; set; }
+	public string TagonomyId { get; set; }
 
 	//public bool IsReadOnlyMode { get { return string.IsNullOrWhiteSpace(WorkflowInstanceId); } }
 

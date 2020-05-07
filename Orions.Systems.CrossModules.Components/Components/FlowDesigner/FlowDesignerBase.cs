@@ -1,69 +1,41 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
-using Orions.Node.Common;
+using Orions.Systems.CrossModules.Components.Model;
 
 using System;
 using System.Threading.Tasks;
-using Orions.Systems.CrossModules.Components.Model;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class FlowDesignerBase : BaseBlazorComponent<FlowDesignerVm>, IDisposable
+	public class FlowDesignerBase<VmType> : BaseBlazorComponent<VmType>, IDisposable
+		where VmType : FlowDesignerVm, new()
 	{
-		IDisposable thisReference;
-
-		[Parameter]
-		public IHyperArgsSink HyperStore
-		{
-			get => Vm.HyperStore;
-			set => Vm.HyperStore = value;
-		}
-
-		[Parameter]
-		public string WorkflowId { get => Vm.WorkflowId; set => Vm.WorkflowId = value; }
-
-		[Parameter]
-		public string WorkflowInstanceId { get => Vm.WorkflowInstanceId; set => Vm.WorkflowInstanceId = value; }
+		protected IDisposable thisReference;
 
 		[Parameter]
 		public EventCallback<IFlowDesignData> OnApply { get; set; }
-
-		PropertyGrid _propGrid;
-		PropertyGrid propGrid
-		{
-			get => _propGrid;
-			set
-			{
-				_propGrid = value;
-				Vm.PropertyGridVm = value.Vm;
-			}
-		}
 
 		public FlowDesignerBase()
 		{
 
 		}
 
+		[JSInvokable]
+		public async Task OnClickApply()
+		{
+			//TODO
+
+			await OnApply.InvokeAsync(Vm.DesignData);
+		}
+
+
 		protected override async Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
-
 		}
 
-		protected override async Task OnFirstAfterRenderAsync()
-		{
-			await Vm.Init();
-
-			var jsonData = Vm.GetJesonDesignData();
-
-			thisReference = DotNetObjectReference.Create(this);
-
-			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference, jsonData });
-
-		}
-
-		public async Task ToggleCommonMenu() 
+		public async Task ToggleCommonMenu()
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ToggleCommonMenu");
 		}
@@ -79,20 +51,6 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[JSInvokable]
-		public async  Task OnClickApply()
-		{
-			//TODO
-
-			await OnApply.InvokeAsync(Vm.DesignData);
-		}
-
-		[JSInvokable]
-		public async Task<string> LoadStatuses()
-		{
-			return await Vm.LoadWorkflowStatusesJson();
-		}
-
-		[JSInvokable]
 		public async Task OpenPropertyGrid(string id)
 		{
 			Vm.ShowPropertyGrid(id);
@@ -102,7 +60,8 @@ namespace Orions.Systems.CrossModules.Components
 			StateHasChanged();
 		}
 
-		public async Task OnCancelProperty() {
+		public async Task OnCancelProperty()
+		{
 			Vm.OnCancelProperty();
 			await HideCommonMenu();
 		}
@@ -119,7 +78,7 @@ namespace Orions.Systems.CrossModules.Components
 			return Vm.DuplicateNode(originalNodeConfigId, desingComponentJson);
 		}
 
-		public async Task ToggleMainMenu() 
+		public async Task ToggleMainMenu()
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ToggleMainMenu");
 		}
@@ -136,7 +95,7 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Paste", new object[] { thisReference });
 		}
 
-		public async Task SettingsElement() 
+		public async Task SettingsElement()
 		{
 			thisReference = DotNetObjectReference.Create(this);
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Settings", new object[] { thisReference });
@@ -159,12 +118,12 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ZoomIn");
 		}
 
-		public async Task ZoomReset() 
+		public async Task ZoomReset()
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ZoomReset");
 		}
 
-		public async Task ZoomOut() 
+		public async Task ZoomOut()
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ZoomOut");
 		}

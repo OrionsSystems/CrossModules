@@ -3,33 +3,37 @@
 
 @inject NavigationManager navManager
 
-<MatNavMenu Class="mat-nav">
-	@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>*@
-	<MatNavItem OnClick="@(ev => ForceNavigation())" NavLinkMatch="NavLinkMatch.All" Selected="@IsSelected("properties")">
-		<MatIcon Icon="@MatIconNames.Home"></MatIcon>
-		<div class="nav-label">Home</div>
-	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))" Selected="@IsSelected("dashboard")">
-		<MatIcon Icon="@MatIconNames.View_module">
-		</MatIcon><div class="nav-label">Dashboards</div>
-	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("themes"))" Selected="@IsSelected("themes")">
-		<MatIcon Icon="@MatIconNames.Color_lens"></MatIcon>
-		<div class="nav-label">Themes</div>
-	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))" Selected="@IsSelected("wizzard")">
-		<MatIcon Icon="@MatIconNames.Widgets"></MatIcon>
-		<div class="nav-label">Wizzard</div>
-	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("missions"))" Selected="@IsSelected("missions")">
-		<MatIcon Icon="@MatIconNames.Slideshow"></MatIcon>
-		<div class="nav-label">Missions</div>
-	</MatNavItem>
-	<MatNavItem OnClick="@(ev => ForceNavigation("workflows"))" Selected="@IsSelected("workflow")">
-		<MatIcon Icon="@MatIconNames.Library_books"></MatIcon>
-		<div class="nav-label">Workflows</div>
-	</MatNavItem>
-</MatNavMenu>
+	<MatNavMenu Class="mat-nav">
+		@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>*@
+		<MatNavItem OnClick="@(ev => ForceNavigation())" NavLinkMatch="NavLinkMatch.All" Selected="@IsSelected("properties")">
+			<MatIcon Icon="@MatIconNames.Home"></MatIcon>
+			<div class="nav-label">Home</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))" Selected="@IsSelected("dashboard")">
+			<MatIcon Icon="@MatIconNames.View_module">
+			</MatIcon><div class="nav-label">Dashboards</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("themes"))" Selected="@IsSelected("themes")">
+			<MatIcon Icon="@MatIconNames.Color_lens"></MatIcon>
+			<div class="nav-label">Themes</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))" Selected="@IsSelected("wizzard")">
+			<MatIcon Icon="@MatIconNames.Widgets"></MatIcon>
+			<div class="nav-label">Wizzard</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("missions"))" Selected="@IsSelected("missions")">
+			<MatIcon Icon="@MatIconNames.Slideshow"></MatIcon>
+			<div class="nav-label">Missions</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("workflows"))" Selected="@IsSelected("workflow")">
+			<MatIcon Icon="@MatIconNames.Library_books"></MatIcon>
+			<div class="nav-label">Workflows</div>
+		</MatNavItem>
+		<MatNavItem OnClick="@(ev => ForceNavigation("tagonomies"))" Selected="@IsSelected("tagonomies")">
+			<MatIcon Icon="@MatIconNames.Extension"></MatIcon>
+			<div class="nav-label">Tagonomies</div>
+		</MatNavItem>
+	</MatNavMenu>
 
 @code{
 
