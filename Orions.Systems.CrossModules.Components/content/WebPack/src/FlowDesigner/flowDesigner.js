@@ -200,25 +200,41 @@
 		$(document.body).toggleClass('mainmenu-hidden', settings.isMinimizeMainMenu.get());
 
 		if (settings.isMinimizeMainMenu.get() == true) {
-			$('#mainMenuBtnId i').removeClass('fa-chevron-left');
-			$('#mainMenuBtnId i').addClass('fa-chevron-right');
+			hideMainMenu();
+			
 		} else {
-			$('#mainMenuBtnId i').removeClass('fa-chevron-right');
-			$('#mainMenuBtnId i').addClass('fa-chevron-left');
+			showMainMenu();
+			
 		}
 
 		settings.isMinimizeMainMenu.toggle();
 	}
 
+	function hideMainMenu() {
+
+		$('#mainMenuBtnId i').removeClass('fa-chevron-left');
+		$('#mainMenuBtnId i').addClass('fa-chevron-right');
+
+		settings.isMinimizeMainMenu.set(true);
+	}
+
+	function showMainMenu() {
+
+		$('#mainMenuBtnId i').removeClass('fa-chevron-right');
+		$('#mainMenuBtnId i').addClass('fa-chevron-left');
+
+		settings.isMinimizeMainMenu.set(false);
+	}
+
 	function toggleCommonMenu() {
 
 		if (settings.isCommonMinimized.get() == true) {
-			hideCommonMenu();
-		} else {
 			showCommonMenu();
+		} else {
+			hideCommonMenu();
 		}
 
-		settings.isCommonMinimized.toggle();
+		//settings.isCommonMinimized.toggle();
 	}
 
 	function hideCommonMenu() {
@@ -297,6 +313,8 @@
 	window.Orions.FlowDesigner = {};
 
 	window.Orions.FlowDesigner.ToggleMainMenu = toggleMainMenu;
+	window.Orions.FlowDesigner.HideMainMenu = hideMainMenu;
+	window.Orions.FlowDesigner.ShowMainMenu = showMainMenu;
 
 	window.Orions.FlowDesigner.ToggleCommonMenu = toggleCommonMenu;
 	window.Orions.FlowDesigner.HideCommonMenu = hideCommonMenu;
@@ -1143,8 +1161,8 @@
 			},
 			isMinimizeMainMenu: {
 				get: function () {
-					var showMainMenu = cookie.getCookie(cookie.names.isClosedLeftMenuCookieName);
-					if (showMainMenu) _isMinimizeMainMenu = showMainMenu;
+					var isShowMainMenu = cookie.getCookie(cookie.names.isClosedLeftMenuCookieName);
+					if (isShowMainMenu) _isMinimizeMainMenu = isShowMainMenu;
 					return _isMinimizeMainMenu;
 				},
 				set: function (value) { _isMinimizeMainMenu = value; },
@@ -2768,7 +2786,7 @@
 							item.$component.traffic = flow.isReadOnly !== 1;
 						} else {
 							item.$component = {}
-							item.$component.name = 'Test';
+							item.$component.name = item.component ?? 'Test';
 							item.$component.traffic = flow.isReadOnly !== 1;
 						}
 
@@ -2823,8 +2841,6 @@
 			//$('#mycp').colorpicker({ useAlpha: false }); // TODO 
 
 			//$('.colorpicker-alpha').remove();
-
-			toggleCommonMenu();
 
 			//set modal designer settings on open
 			//$('#workflowDesignerSettings').on('shown.bs.modal', function () {

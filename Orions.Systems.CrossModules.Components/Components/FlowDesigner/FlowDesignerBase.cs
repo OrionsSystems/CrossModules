@@ -50,6 +50,16 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ShowCommonMenu");
 		}
 
+		public async Task HidMainMenu()
+		{
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.HideMainMenu");
+		}
+
+		public async Task ShowMainMenu()
+		{
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ShowMainMenu");
+		}
+
 		[JSInvokable]
 		public async Task OpenPropertyGrid(string id)
 		{
