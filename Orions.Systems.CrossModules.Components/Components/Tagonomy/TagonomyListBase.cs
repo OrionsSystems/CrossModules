@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
+using Orions.Infrastructure.HyperSemantic;
 
 using System;
 using System.Threading.Tasks;
@@ -16,6 +17,13 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			get => Vm.HyperStore;
 			set => Vm.HyperStore = value;
+		}
+
+		[Parameter]
+		public EventCallback<Tagonomy> OnManage
+		{
+			get => Vm.OnManage;
+			set => Vm.OnManage = value;
 		}
 
 

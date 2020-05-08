@@ -3,16 +3,13 @@
 
 @inherits PortalBaseComponent
 
-@using Orions.Infrastructure.HyperMedia
-
-<TagonomyDesigner HyperStore="HyperStore"></TagonomyDesigner>
+<TagonomyDesigner HyperStore="@HyperStore" TagonomyId="@TagonomyId"></TagonomyDesigner>
 
 @code{
 
 	[Parameter]
 	public string TagonomyId { get; set; }
 
-	//public bool IsReadOnlyMode { get { return string.IsNullOrWhiteSpace(WorkflowInstanceId); } }
 
 	protected override async Task OnInitializedAsync()
 	{

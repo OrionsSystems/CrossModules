@@ -1,21 +1,31 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/tagonomies"
 
-@using Orions.Infrastructure.HyperMedia
+@using Orions.Infrastructure.HyperSemantic
 
 @inherits PortalBaseComponent
 
 @inject NavigationManager navManager
 
 
-	<TagonomyList HyperStore="@HyperStore">
-	</TagonomyList>
+<TagonomyList HyperStore="@HyperStore" OnManage="@OnManage">
+</TagonomyList>
 
 @code{
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+	}
+
+	private async Task OnManage(Tagonomy tagonomy)
+	{
+		if (tagonomy == null) return;
+
+		var url = $"{navManager.BaseUri}tagonomy-designer/{tagonomy.Id}";
+
+		await NavigateToUrlAsync(url, true);
+
 	}
 
 }

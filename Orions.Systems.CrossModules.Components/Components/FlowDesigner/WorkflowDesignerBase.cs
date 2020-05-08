@@ -3,9 +3,7 @@ using Microsoft.JSInterop;
 
 using Orions.Node.Common;
 
-using System;
 using System.Threading.Tasks;
-using Orions.Systems.CrossModules.Components.Model;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -49,7 +47,6 @@ namespace Orions.Systems.CrossModules.Components
 			thisReference = DotNetObjectReference.Create(this);
 
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference, jsonData });
-
 		}
 
 		[JSInvokable]
@@ -57,8 +54,5 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			return await Vm.LoadWorkflowStatusesJson();
 		}
-
-	
-
 	}
 }
