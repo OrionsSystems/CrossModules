@@ -41,14 +41,13 @@ namespace Orions.Systems.CrossModules.Components
 			PopulateDesignerData();
 		}
 
-		public override void ShowPropertyGrid(string nodeConfigId)
+		public override void ShowPropertyGrid(string tagonomyId)
 		{
-			// load node configuration
 			PropertyGridVm.CleanSourceCache();
 
-			//var nodeConfiguration = Source.Nodes.FirstOrDefault(it => it.Id == nodeConfigId);
-			//SelectedNode = (HyperWorkflowNodeData)nodeConfiguration.CreateNodeInstance(true);
-			//IsShowProperty = true;
+			Selected = _allTagonomies.FirstOrDefault(it => it.Id == tagonomyId);
+
+			IsShowProperty = true;
 		}
 
 		public Task<object> LoadPropertyGridData()
