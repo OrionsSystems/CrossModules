@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Orions.Infrastructure.HyperMedia;
+
 using Orions.Node.Common;
-using Orions.Infrastructure.HyperSemantic;
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class TagonomyListBase : BaseBlazorComponent<TagonomyListVm>, IDisposable
+	public class TagonomyEditorBase : BaseBlazorComponent<TagonomyEditorVm>, IDisposable
 	{
 		IDisposable thisReference;
 
@@ -20,34 +20,15 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
-		public EventCallback<Tagonomy> OnManage
+		public string TagonomyId
 		{
-			get => Vm.OnManage;
-			set => Vm.OnManage = value;
-		}
-
-		[Parameter]
-		public EventCallback<Tagonomy> OnEdit
-		{
-			get => Vm.OnEdit;
-			set => Vm.OnEdit = value;
-		}
-
-
-		PropertyGrid _propGrid;
-		PropertyGrid propGrid
-		{
-			get => _propGrid;
-			set
-			{
-				_propGrid = value;
-				Vm.PropertyGridVm = value.Vm;
-			}
+			get => Vm.TagonomyId;
+			set => Vm.TagonomyId = value;
 		}
 
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
-		public TagonomyListBase()
+		public TagonomyEditorBase()
 		{
 
 		}
@@ -57,6 +38,7 @@ namespace Orions.Systems.CrossModules.Components
 			await base.OnInitializedAsync();
 
 			await Vm.Init();
+
 		}
 
 		void IDisposable.Dispose()

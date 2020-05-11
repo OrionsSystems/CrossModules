@@ -1,5 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/tagonomies"
+@page "/tagonomy/{TagonomyId}/edit"
 
 @using Orions.Infrastructure.HyperSemantic
 
@@ -7,11 +8,22 @@
 
 @inject NavigationManager navManager
 
-
-<TagonomyList HyperStore="@HyperStore" OnManage="@OnManage">
-</TagonomyList>
+@if (IsEditMode)
+{
+	<TagonomyEditor HyperStore="@HyperStore" TagonomyId="@TagonomyId"></TagonomyEditor>
+}
+else
+{
+	<TagonomyList HyperStore="@HyperStore" OnManage="@OnManage" OnEdit="@OnEdit">
+	</TagonomyList>
+}
 
 @code{
+
+	[Parameter]
+	public string TagonomyId { get; set; }
+
+	private bool IsEditMode { get { return string.IsNullOrWhiteSpace(TagonomyId) == false; } }
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -23,6 +35,16 @@
 		if (tagonomy == null) return;
 
 		var url = $"{navManager.BaseUri}tagonomy-designer/{tagonomy.Id}";
+
+		await NavigateToUrlAsync(url, true);
+
+	}
+
+	private async Task OnEdit(Tagonomy tagonomy)
+	{
+		if (tagonomy == null) return;
+
+		var url = $"{navManager.BaseUri}tagonomy/{tagonomy.Id}/edit";
 
 		await NavigateToUrlAsync(url, true);
 

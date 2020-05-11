@@ -1,0 +1,41 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits TagonomyNodeControlBase
+
+<div class="container tagonomy-node-container mt-3">
+	@if (Vm.Node != null)
+	{
+		<div class="form-group row">
+			<label for="tagonmyNodeId" class="col-sm-2 col-form-label">Id</label>
+			<div class="col-sm-10">
+				<input type="text" readonly class="form-control" id="tagonmyNodeId" value="@Vm.Node.Id">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="tagonmyNodeName" class="col-sm-2 col-form-label">Name</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="tagonmyNodeName" value="@Vm.Node.Name">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="tagonmyNodeAlias" class="col-sm-2 col-form-label">#Alias (Semantic)</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="tagonmyNodeAlias" value="@Vm.SemanticAlias">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="tagonmyNodeNamespace" class="col-sm-2 col-form-label">#Namespace (Semantic)</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="tagonmyNodeNamespace" value="@Vm.SemanticNamespace">
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="tagonmyNodeGroups" class="col-sm-2 col-form-label">#Groups (Semantic)</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="tagonmyNodeGroups" value="@Vm.SemanticGroups">
+			</div>
+		</div>
+	}
+</div>
+
+

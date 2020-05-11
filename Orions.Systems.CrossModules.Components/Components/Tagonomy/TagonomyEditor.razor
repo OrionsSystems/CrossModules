@@ -1,0 +1,80 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+@inherits TagonomyEditorBase
+
+@using Syncfusion.EJ2.Blazor.Layouts
+@using Syncfusion.EJ2.Blazor.Navigations
+
+<div class="tagonomy-editor-container">
+
+	<div class="row list-header">
+		<div class="header-actions col-lg-7">
+			<a class="btn" @onclick="@(async ev => { await Vm.CreateTagonomy(); })">
+				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
+				<div class="header-cmd-label">Create</div>
+			</a>
+
+			<a class="btn" @onclick="@(async ev => { await Vm.DeleteTagonomy(); })">
+				<MatIcon Icon="@MatIconNames.Delete_outline"></MatIcon>
+				<div class="header-cmd-label">Delete</div>
+			</a>
+
+			<a class="btn" @onclick="@(async ev => { await Vm.TagonomyUp(); })">
+				<MatIcon Icon="@MatIconNames.Arrow_upward"></MatIcon>
+				<div class="header-cmd-label">Up</div>
+			</a>
+
+			<a class="btn" @onclick="@(async ev => { await Vm.TagonomyDown(); })">
+				<MatIcon Icon="@MatIconNames.Arrow_downward"></MatIcon>
+				<div class="header-cmd-label">Down</div>
+			</a>
+			<a class="btn" @onclick="@(async ev => { await Vm.Refresh(); })">
+				<MatIcon Icon="@MatIconNames.Refresh"></MatIcon>
+				<div class="header-cmd-label">Refresh</div>
+			</a>
+		</div>
+		<div class="header-actions col-lg-5">
+
+		</div>
+	</div>
+
+	@if (Vm.IsLoadedData)
+	{
+
+		<EjsSplitter Width="100%" Orientation="Syncfusion.EJ2.Blazor.Layouts.Orientation.Horizontal">
+			<SplitterPanes>
+				<SplitterPane Size="30%" Min="20%" Max="80%" >
+					<ContentTemplate>
+						<EjsTreeView TValue="TagonomyNodeNavigationItem"
+										 AllowDragAndDrop="true">
+							<TreeViewFieldsSettings TValue="TagonomyNodeNavigationItem"
+															Id="Id"
+															DataSource="@Vm.TagonomyNav"
+															Text="Name"
+															ParentID="ParentId"
+															HasChildren="HasSubFolders"
+															Selected="Selected"
+															Expanded="Expanded">
+							</TreeViewFieldsSettings>
+							<TreeViewEvents TValue="TagonomyNodeNavigationItem" NodeSelected="Vm.OnSelect"></TreeViewEvents>
+						</EjsTreeView>
+					</ContentTemplate>
+				</SplitterPane>
+				<SplitterPane Size="70%" Collapsible="true">
+					<ContentTemplate>
+						<TagonomyNodeControl HyperStore="@Vm.HyperStore" SelectedTagonomyNode="@Vm.SelectedTagonomyNode"></TagonomyNodeControl>
+					</ContentTemplate>
+				</SplitterPane>
+			</SplitterPanes>
+		</EjsSplitter>
+	}
+
+
+	@if (!Vm.IsLoadedData)
+	{
+		<Loader Settings="@LoaderSetting"></Loader>
+	}
+
+</div>
+
+

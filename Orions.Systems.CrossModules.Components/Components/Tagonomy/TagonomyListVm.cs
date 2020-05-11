@@ -30,6 +30,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public EventCallback<Tagonomy> OnManage { get; set; }
 
+		public EventCallback<Tagonomy> OnEdit { get; set; }
+
 		public TagonomyListVm()
 		{
 
@@ -45,6 +47,11 @@ namespace Orions.Systems.CrossModules.Components
 		public async Task ManageAsync(Tagonomy item)
 		{
 			await OnManage.InvokeAsync(item);
+		}
+
+		public async Task EditAsync(Tagonomy item)
+		{
+			await OnEdit.InvokeAsync(item);
 		}
 
 		private async Task Populate()

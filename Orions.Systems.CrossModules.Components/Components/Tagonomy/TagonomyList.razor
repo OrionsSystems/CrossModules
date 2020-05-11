@@ -65,9 +65,13 @@
 									<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
 									<div class="list-cmd-label">Properties</div>
 								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.EditAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
-									<div class="list-cmd-label">Manage</div>
+									<div class="list-cmd-label">Edit</div>
+								</a>
+								<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
+									<MatIcon Icon="@MatIconNames.Insert_chart_outlined"></MatIcon>
+									<div class="list-cmd-label">Visualize</div>
 								</a>
 							</td>
 						</tr>
