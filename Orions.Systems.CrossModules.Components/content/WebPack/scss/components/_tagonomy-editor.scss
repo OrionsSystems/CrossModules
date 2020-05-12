@@ -1,0 +1,77 @@
+﻿.tagonomy-editor-container {
+	.list-header {
+		.header-actions {
+
+			.cmd-create, .cmd-up, .cmd-down, .cmd-delete, .cmd-refresh {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-delete {
+				.material-icons, .cmd-label {
+					color: #b00020;
+				}
+			}
+
+			.cmd-label {
+				font-size: 12px;
+			}
+		}
+	}
+
+	.tagonomy-node-container {
+
+		.create-element-container {
+			.cmd-create {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-label {
+				font-size: 11px;
+			}
+		}
+
+		.element-container {
+			.element-name {
+				display: inline-block;
+				font-size: 14px;
+				letter-spacing: 1.5px;
+				margin: auto 5px;
+			}
+
+			.cmd-edit, .cmd-up, .cmd-down, .cmd-delete {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-delete {
+				.material-icons, .cmd-label {
+					color: #b00020;
+				}
+			}
+
+			.cmd-label {
+				font-size: 11px;
+			}
+		}
+	}
+}

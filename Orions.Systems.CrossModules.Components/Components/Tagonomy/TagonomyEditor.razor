@@ -9,28 +9,28 @@
 
 	<div class="row list-header">
 		<div class="header-actions col-lg-7">
-			<a class="btn" @onclick="@(async ev => { await Vm.CreateTagonomy(); })">
+			<a class="btn cmd-create" @onclick="@(async ev => { await Vm.CreateTagonomy(); })">
 				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
-				<div class="header-cmd-label">Create</div>
+				<div class="cmd-label">Create</div>
 			</a>
 
-			<a class="btn" @onclick="@(async ev => { await Vm.DeleteTagonomy(); })">
+			<a class="btn cmd-delete" @onclick="@(async ev => { await Vm.DeleteTagonomy(); })">
 				<MatIcon Icon="@MatIconNames.Delete_outline"></MatIcon>
-				<div class="header-cmd-label">Delete</div>
+				<div class="cmd-label">Delete</div>
 			</a>
 
-			<a class="btn" @onclick="@(async ev => { await Vm.TagonomyUp(); })">
+			<a class="btn cmd-up" @onclick="@(async ev => { await Vm.TagonomyUp(); })">
 				<MatIcon Icon="@MatIconNames.Arrow_upward"></MatIcon>
-				<div class="header-cmd-label">Up</div>
+				<div class="cmd-label">Up</div>
 			</a>
 
-			<a class="btn" @onclick="@(async ev => { await Vm.TagonomyDown(); })">
+			<a class="btn cmd-down" @onclick="@(async ev => { await Vm.TagonomyDown(); })">
 				<MatIcon Icon="@MatIconNames.Arrow_downward"></MatIcon>
-				<div class="header-cmd-label">Down</div>
+				<div class="cmd-label">Down</div>
 			</a>
-			<a class="btn" @onclick="@(async ev => { await Vm.Refresh(); })">
+			<a class="btn cmd-refresh" @onclick="@(async ev => { await Vm.Refresh(); })">
 				<MatIcon Icon="@MatIconNames.Refresh"></MatIcon>
-				<div class="header-cmd-label">Refresh</div>
+				<div class="cmd-label">Refresh</div>
 			</a>
 		</div>
 		<div class="header-actions col-lg-5">
@@ -56,7 +56,7 @@
 															Selected="Selected"
 															Expanded="Expanded">
 							</TreeViewFieldsSettings>
-							<TreeViewEvents TValue="TagonomyNodeNavigationItem" NodeSelected="Vm.OnSelect"></TreeViewEvents>
+							<TreeViewEvents TValue="TagonomyNodeNavigationItem" NodeSelected="@OnSelect"></TreeViewEvents>
 						</EjsTreeView>
 					</ContentTemplate>
 				</SplitterPane>

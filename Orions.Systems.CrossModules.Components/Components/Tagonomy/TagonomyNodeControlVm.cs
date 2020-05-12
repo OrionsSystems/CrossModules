@@ -17,11 +17,28 @@ namespace Orions.Systems.CrossModules.Components
 	{
 		public IHyperArgsSink HyperStore { get; set; }
 
-		public TagonomyNode Node { get; set; }
+		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
+
+		public TagonomyNodeElement SelectedNodeElement { get; set; }
+
+		public bool IsShowProperty { get; set; }
+
+		private TagonomyNode _node;
+		public TagonomyNode Node
+		{
+			get { return _node; }
+			set
+			{
+				_node = value;
+				LoadTagonomyElements();
+			}
+		}
 
 		public List<string> ComboBoxElements { get; set; }
 
 		public string SelectedTagonomyAddElement { get; set; }
+
+		public List<TagonomyNodeElement> Elements { get; set; } = new List<TagonomyNodeElement>();
 
 		public TagonomyNodeControlVm()
 		{
@@ -136,10 +153,59 @@ namespace Orions.Systems.CrossModules.Components
 			Node.AddElement(element);
 		}
 
+		public void DeleteTagonomyNodeElement(TagonomyNodeElement element)
+		{
+			if (Node != null && element != null)
+				Node.RemoveElement(element);
+		}
+
+		public void UpTagonomyNodeElement(TagonomyNodeElement element)
+		{
+			if (Node != null && element != null)
+				Node.MoveElement(element, true);
+		}
+
+		public void DownTagonomyNodeElement(TagonomyNodeElement element)
+		{
+			if (Node != null && element != null)
+				Node.MoveElement(element, false);
+		}
+
+		public void ShowPropertyGrid(TagonomyNodeElement item)
+		{
+			SelectedNodeElement = item;
+			IsShowProperty = true;
+		}
+
+		public Task<object> LoadPropertyGrid()
+		{
+			return Task.FromResult<object>(SelectedNodeElement);
+		}
+
+		public void OnCancelProperty()
+		{
+			PropertyGridVm.CleanSourceCache();
+			IsShowProperty = false;
+		}
+
 		private async Task PopulateData()
 		{
 			ComboBoxElements = TagonomyNodeElement.ElementTypes.Select(it => it.Name).Select(it => it.Replace("Orions.Infrastructure.HyperSemantic", string.Empty)).OrderBy(it => it).ToList();
 
+			LoadTagonomyElements();
+
+		}
+
+		private void LoadTagonomyElements()
+		{
+			if (Node == null) return;
+
+			Elements.Clear();
+
+			foreach (var element in Node.ElementsArray.Where(it => it != null))
+			{
+				Elements.Add(element);
+			}
 		}
 
 	}

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-
+using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
-
+using Syncfusion.EJ2.Blazor.Navigations;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -26,11 +26,19 @@ namespace Orions.Systems.CrossModules.Components
 			set => Vm.TagonomyId = value;
 		}
 
+
+
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
 		public TagonomyEditorBase()
 		{
 
+		}
+
+		public void OnSelect(NodeSelectEventArgs args)
+		{
+			Vm.OnSelect(args);
+			StateHasChanged();
 		}
 
 		protected override async Task OnInitializedAsync()
