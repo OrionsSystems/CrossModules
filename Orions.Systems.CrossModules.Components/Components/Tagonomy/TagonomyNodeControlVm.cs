@@ -19,6 +19,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		public TagonomyNode Node { get; set; }
 
+		public List<string> ComboBoxElements { get; set; }
+
+		public string SelectedTagonomyAddElement { get; set; }
+
 		public TagonomyNodeControlVm()
 		{
 
@@ -120,9 +124,22 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public void AddTagonomyElement()
+		{
+			if (string.IsNullOrWhiteSpace(SelectedTagonomyAddElement)) return;
+
+			if (Node == null) return;
+
+			Type type = TagonomyNodeElement.ElementTypes.Where(it => it.Name == SelectedTagonomyAddElement).First();
+
+			TagonomyNodeElement element = (TagonomyNodeElement)Activator.CreateInstance(type);
+			Node.AddElement(element);
+		}
+
 		private async Task PopulateData()
-		{ 
-		
+		{
+			ComboBoxElements = TagonomyNodeElement.ElementTypes.Select(it => it.Name).Select(it => it.Replace("Orions.Infrastructure.HyperSemantic", string.Empty)).OrderBy(it => it).ToList();
+
 		}
 
 	}

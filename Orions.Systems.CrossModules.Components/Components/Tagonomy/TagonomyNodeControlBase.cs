@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Orions.Infrastructure.HyperSemantic;
+using System.Linq;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -29,6 +30,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public TagonomyNodeControlBase()
 		{
+			
 
 		}
 
