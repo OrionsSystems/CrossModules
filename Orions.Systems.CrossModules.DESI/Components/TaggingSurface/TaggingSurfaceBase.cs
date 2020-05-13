@@ -86,10 +86,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 							if (value?.Data?.MediaInstances != null)
 							{
-								_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ => 
+								_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
 								{
 									_currentPositionFrameRendered.Reset();
-									UpdateRectangles(); 
+									UpdateRectangles();
 								}));
 
 								_dataStoreSubscriptions.Add(
@@ -267,7 +267,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateRectangles();
 		}
 
-		private void UpdateRectangles() => Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags ?? Enumerable.Empty<TagModel>());
+		private void UpdateRectangles()
+		{
+			Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags.ToList() ?? Enumerable.Empty<TagModel>());
+		}
 
 		protected List<Rectangle> CurrentPositionRectanglesSelector(IEnumerable<TagModel> tags)
 		{
