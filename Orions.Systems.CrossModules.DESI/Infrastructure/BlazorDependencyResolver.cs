@@ -3,11 +3,7 @@ using Microsoft.JSInterop;
 using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.Desi.Common.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
-using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
 using Microsoft.Extensions.Configuration;
 
@@ -97,5 +93,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		{
 			return this._popupService;
 		}
+
+		public override ITrackerFactory GetTrackerFactory() => new TrackerFactory();
 	}
 }
