@@ -1,57 +1,72 @@
-import videojs from 'video.js';
-
 window.Orions.Player = {
-    init: function (vmInstance, videoElementId) {
-        let video = document.getElementById(videoElementId)
+    init: function (vmInstance, videoElementId, file) {
+        window.jwplayer.key = '0cEcLfyR+RBLPh2z3KkWfFzX1U/w/2AtglS1xoT4xl8=';
 
-        video.addEventListener('keydown', function (e) {
-            e.preventDefault();
-        })
+        let config = {
+            "file": file,
+            controls: false
+        }
 
-        video.addEventListener('timeupdate', function () {
+        let video = window.jwplayer(videoElementId).setup(config);
+        video.isPaused = true;
+
+        video.on('time', function (e) {
             if (!video.doNotProcessPositionChanged) {
-                vmInstance.invokeMethodAsync("OnPositionUpdate", video.currentTime);
-
-                console.log(video.currentTime);
+                vmInstance.invokeMethodAsync("OnPositionUpdate", e.currentTime);
             }
 
             video.doNotProcessPositionChanged = false;
         });
 
-        video.addEventListener('loadeddata', function () {
+        video.on('ready', function () {
+            if (this.getState() == 'idle') {
+                this.isPaused = true;
+            }
+            else {
+                this.isPaused = false;
+            }
+
             vmInstance.invokeMethodAsync("OnPlayerDataLoaded");
         });
 
-        video.addEventListener('ended', function () {
+        video.on('complete', function () {
             vmInstance.invokeMethodAsync("OnVideoEndJs");
         });
 
+
+        video.on('seeked', function (e) {
+            if (this.isPaused) {
+                this.pause();
+            }
+        })
+
         this.video = video;
     },
-    setSrc: function (payload, vmInstance) {
+    setSrc: function (url, vmInstance) {
         let self = this;
 
-        var blob = new Blob([Base64ToByteArray(payload)], { type: "video/mp4" });
-
-        var url = URL.createObjectURL(blob);
-
-        self.video.src = url;
+        self.video.load({
+            file: url
+		})
     },
+
     setPosition: function (position) {
         this.video.doNotProcessPositionChanged = true;
-        this.video.currentTime = position;
+        this.video.seek(position);
     },
     setVolumeLevel: function (volLevel) {
-        this.video.volume = volLevel / 100;
+        this.video.setVolume(volLevel);
     },
     setSpeed: function (speed) {
-        this.video.playbackRate = speed;
+        this.video.setPlaybackRate(speed);
     },
     play: function () {
         this.video.play();
+        this.video.isPaused = false;
     },
     pause: function () {
         this.video.pause();
+        this.video.isPaused = true;
     },
 
     playbackControl: {

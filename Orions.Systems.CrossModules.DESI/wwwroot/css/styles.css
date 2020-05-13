@@ -255,9 +255,12 @@ body {
       align-items: center; }
   .tagging-video-player-container .video-player {
     height: calc(100% - 60px - 60px);
-    width: 100%;
-    display: block;
-    background-color: black; }
+    width: 100%; }
+    .tagging-video-player-container .video-player .jwplayer {
+      height: 100% !important;
+      width: 100% !important;
+      display: block;
+      background-color: black; }
   .tagging-video-player-container .video-control-bar {
     height: 60px;
     width: 100%;
