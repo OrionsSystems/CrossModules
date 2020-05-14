@@ -22,6 +22,7 @@ using Orions.Common;
 using Orions.Systems.CrossModules.Desi.Services;
 using System.Workflow.ComponentModelEx;
 using Syncfusion.EJ2.Blazor.Charts;
+using System.Diagnostics;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -268,6 +269,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private void UpdateRectangles()
 		{
+			Debug.WriteLine($"UpdateRectangles thread: {Thread.CurrentThread.ManagedThreadId}");
 			Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags.ToList() ?? Enumerable.Empty<TagModel>());
 		}
 

@@ -8,7 +8,7 @@
   
   <ItemGroup>
     <PackageReference Include="Emgu.CV.runtime.windows-CR" Version="4.2.0.3662" />
-    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.518" />
+    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.706" />
   </ItemGroup>
 
   <ItemGroup>

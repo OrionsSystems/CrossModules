@@ -22,9 +22,9 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="Orions.Common" Version="2.42.0-preview.*" />
-    <PackageReference Include="Orions.Node" Version="2.42.0-preview.*" />
-    <PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.*" />
+    <PackageReference Include="Orions.Common" Version="2.42.0-preview.706" />
+    <PackageReference Include="Orions.Node" Version="2.42.0-preview.706" />
+    <PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.706" />
   </ItemGroup>
   
   <ItemGroup>
