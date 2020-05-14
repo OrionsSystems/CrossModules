@@ -238,7 +238,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateRectangles();
 		}
 
-
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
 			await _initializationSemaphore.WaitAsync();

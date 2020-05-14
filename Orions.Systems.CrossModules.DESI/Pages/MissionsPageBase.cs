@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Core.ViewModels;
@@ -23,15 +21,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				await navigationService.GoToLoginPage();
 				return;
 			}
-
-			var missionSystem = DependencyResolver.GetMissionsExploitationSystem();
-			this.Vm = new MissionsViewModel(
-					navigationService,
-					DependencyResolver.GetApiHelper(),
-					DependencyResolver.GetDialogService(),
-					DependencyResolver.GetAuthenticationSystem(),
-					missionSystem
-				);
 
 			this.Vm.FetchMissionsCommand?.Execute(null);
 		}

@@ -1,27 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
-using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
-using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.Media;
-using Orions.Systems.Desi.Common.MissionsExploitation;
 using Orions.Systems.Desi.Common.Services;
-using Orions.Systems.Desi.Core.ViewModels;
-using Serilog.Extensions.Logging;
+using Orions.Systems.Desi.Core;
 using Syncfusion.EJ2.Blazor;
 
 namespace Orions.Systems.CrossModules.Desi
@@ -46,6 +33,11 @@ namespace Orions.Systems.CrossModules.Desi
 			services.AddScoped<ILocalStorageService, LocalStorageService>()
 				.AddScoped<BlazorDependencyResolver>()
 				.AddScoped<IKeyboardListener, KeyboardListener>()
+				.AddScoped<ViewModelLocator>()
+				.AddScoped(s => s.GetService<ViewModelLocator>().GetAuthenticationViewModel())
+				.AddScoped(s => s.GetService<ViewModelLocator>().GetMissionsViewModel())
+				.AddScoped(s => s.GetService<ViewModelLocator>().GetStageSelectionViewModel())
+				.AddScoped(s => s.GetService<ViewModelLocator>().GetTaggingViewModel())
 				.AddScoped<IMediaDataStore>(serviceProvider =>
 				{
 					var depResolver = serviceProvider.GetService<BlazorDependencyResolver>();

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
+﻿using System.Threading.Tasks;
 using Microsoft.JSInterop;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Services;
@@ -11,14 +9,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class LoginPageBase : BaseViewModelComponent<AuthenticationViewModel>
 	{
-		[Inject]
-		public IJSRuntime JSRuntime { get; set; }
-
 		protected ISettingsStorage SettingsStorage { get; set; }
-
-		public LoginPageBase()
-		{
-		}
 
 		[JSInvokable]
 		public void Login()
@@ -31,11 +22,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		{
 			SettingsStorage = DependencyResolver.GetSettingsStorage();
 			var authenticationSystem = DependencyResolver.GetAuthenticationSystem();
-			var navigationService = DependencyResolver.GetNavigationService();
-
-			Vm = new AuthenticationViewModel(authenticationSystem, navigationService)
-			{
-			};
 
 			if(Vm.AuthenticationData.AuthenticationStatus == AuthenticationStatus.LoggedIn)
 			{
