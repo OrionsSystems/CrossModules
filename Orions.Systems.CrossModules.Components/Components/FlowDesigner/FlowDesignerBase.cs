@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class FlowDesignerBase<VmType> : BaseBlazorComponent<VmType>, IDisposable
+	public abstract class FlowDesignerBase<VmType> : BaseBlazorComponent<VmType>, IDisposable
 		where VmType : FlowDesignerVm, new()
 	{
 		protected IDisposable thisReference;
@@ -21,18 +21,28 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
+		protected override async Task OnInitializedAsync()
+		{
+			await base.OnInitializedAsync();
+		}
+
+		protected override async Task OnFirstAfterRenderAsync()
+		{
+			await Vm.Init();
+
+			var jsonData = Vm.GetJesonDesignData();
+
+			thisReference = DotNetObjectReference.Create(this);
+
+			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference, jsonData });
+		}
+
 		[JSInvokable]
 		public async Task OnClickApply()
 		{
 			//TODO
 
 			await OnApply.InvokeAsync(Vm.DesignData);
-		}
-
-
-		protected override async Task OnInitializedAsync()
-		{
-			await base.OnInitializedAsync();
 		}
 
 		public async Task ToggleCommonMenu()
@@ -50,7 +60,7 @@ namespace Orions.Systems.CrossModules.Components
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.ShowCommonMenu");
 		}
 
-		public async Task HidMainMenu()
+		public async Task HideMainMenu()
 		{
 			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.HideMainMenu");
 		}

@@ -38,17 +38,6 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
-		protected override async Task OnFirstAfterRenderAsync()
-		{
-			await Vm.Init();
-
-			var jsonData = Vm.GetJesonDesignData();
-
-			thisReference = DotNetObjectReference.Create(this);
-
-			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference, jsonData });
-		}
-
 		[JSInvokable]
 		public async Task<string> LoadStatuses()
 		{

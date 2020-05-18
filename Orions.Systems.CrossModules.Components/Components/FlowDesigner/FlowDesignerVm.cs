@@ -4,6 +4,7 @@ using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Model;
 
 using System;
+using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -23,7 +24,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
+		public abstract Task Init();
+
 		public abstract void ShowPropertyGrid(string id);
+
+		public abstract Task<object> LoadPropertyGridData();
 
 		public abstract string CreateNode(string json);
 

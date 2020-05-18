@@ -215,6 +215,8 @@
 		$('#mainMenuBtnId i').removeClass('fa-chevron-left');
 		$('#mainMenuBtnId i').addClass('fa-chevron-right');
 
+		$(document.body).addClass('mainmenu-hidden');
+
 		settings.isMinimizeMainMenu.set(true);
 	}
 
@@ -222,6 +224,8 @@
 
 		$('#mainMenuBtnId i').removeClass('fa-chevron-right');
 		$('#mainMenuBtnId i').addClass('fa-chevron-left');
+
+		$(document.body).removeClass('mainmenu-hidden');
 
 		settings.isMinimizeMainMenu.set(false);
 	}

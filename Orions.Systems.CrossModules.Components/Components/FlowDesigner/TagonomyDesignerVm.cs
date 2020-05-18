@@ -32,7 +32,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		}
 
-		public virtual async Task Init()
+		public override async Task Init()
 		{
 			if (HyperStore == null) return;
 
@@ -50,7 +50,7 @@ namespace Orions.Systems.CrossModules.Components
 			IsShowProperty = true;
 		}
 
-		public Task<object> LoadPropertyGridData()
+		public override Task<object> LoadPropertyGridData()
 		{
 			return Task.FromResult<object>(Selected);
 		}

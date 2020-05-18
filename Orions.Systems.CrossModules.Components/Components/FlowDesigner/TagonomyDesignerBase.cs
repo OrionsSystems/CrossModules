@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 using Orions.Node.Common;
 
-using System;
 using System.Threading.Tasks;
-using Orions.Systems.CrossModules.Components.Model;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -39,15 +36,10 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected override async Task OnFirstAfterRenderAsync()
 		{
-			await Vm.Init();
+			await base.OnFirstAfterRenderAsync();
 
-			var jsonData = Vm.GetJesonDesignData();
+			await HideMainMenu();
 
-			thisReference = DotNetObjectReference.Create(this);
-
-			await JsInterop.InvokeAsync<object>("Orions.FlowDesigner.Init", new object[] { thisReference, jsonData });
-
-		}	
-
+		}
 	}
 }
