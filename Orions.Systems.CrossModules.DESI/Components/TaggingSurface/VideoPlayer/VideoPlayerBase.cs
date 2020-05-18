@@ -156,14 +156,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							.SelectedTagsUpdated
 							.Subscribe(_ =>
 							{
-								//if (Paused)
-								//{
-									GoToSelectedTagFrame();
-								//}
+
+								GoToSelectedTagFrame();
 							}));
 						_subscriptions.Add(_tagsStore.Data
-							.CurrentTaskTags
-							.GetCollectionChangedObservable()
+							.GetPropertyChangedObservable()
+							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 							.Subscribe(_ =>
 							{
 								UpdateState();

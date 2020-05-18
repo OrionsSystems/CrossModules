@@ -1,0 +1,38 @@
+﻿@inherits BaseComponent
+@using Orions.Systems.Desi.Common.TagonomyExecution; 
+
+@{ 
+	var tagonomyNodeId = $"node-id-{Node.Id}";
+}
+
+<div role="tooltip" class="popper-node-ui-element-popup" id="@ComponentId">
+	@if (Node.GuiNodeElement.PopUpImageData != null)
+	{
+		<img class="node-popup" src="@Orions.Common.UniImage.ConvertByteArrayToBase64Url(Node.GuiNodeElement.PopUpImageData)" />
+	}
+	else if (!string.IsNullOrEmpty(Node.GuiNodeElement.PopUpImageUrl))
+	{
+		<img class="node-popup" src="@Node.GuiNodeElement.PopUpImageUrl" />
+	}
+	@if (!string.IsNullOrWhiteSpace(Node.GuiNodeElement.PopUpDescription))
+	{
+		<div class="description">
+			@Node.GuiNodeElement.PopUpDescription
+		</div>
+	}
+</div>
+
+@code{ 
+	[Parameter]
+	public TagonomyNodeModel Node { get; set; }
+
+	[Parameter]
+	public string ReferenceElementId { get; set; }
+
+	public string ComponentId { get; } = $"VizListNodeGuiElementPopper-{Guid.NewGuid().ToString()}";
+
+	protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
+	{
+		await JSRuntime.InvokeVoidAsync("Orions.Vizlist.initPopover", ReferenceElementId, ComponentId);
+	}
+}

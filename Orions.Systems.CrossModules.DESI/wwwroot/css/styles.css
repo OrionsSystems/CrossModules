@@ -425,6 +425,17 @@ body {
     .tagging-video-player-container .video-player-overlay .video-overlay-dots-loader .sk-flow-dot {
       background-color: #de0000; }
 
+.popper-node-ui-element-popup {
+  display: none;
+  padding: 10px;
+  background: whitesmoke;
+  z-index: 99999;
+  border: 1px solid #cccccc; }
+  .popper-node-ui-element-popup img {
+    max-width: 700px; }
+  .popper-node-ui-element-popup .description {
+    width: 100%; }
+
 .vizlist-main-container {
   display: flex; }
   .vizlist-main-container .viz-container {
