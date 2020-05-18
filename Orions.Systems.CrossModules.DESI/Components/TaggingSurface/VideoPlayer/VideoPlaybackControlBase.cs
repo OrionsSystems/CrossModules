@@ -61,7 +61,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		[Parameter]
 		public double PlaybackSpeed { get; set; } = 1;
-		protected double[] PlaybackSpeedOptions = new double[] { 0.5, 1, 1.5, 2, 5, 10 };
+		protected double[] PlaybackSpeedOptions = new double[] { 0.25, 0.5, 1, 2, 4 };
 
 		[Parameter]
 		public EventCallback<double> OnPlaybackSpeedChanged { get; set; }

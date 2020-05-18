@@ -11,16 +11,15 @@
 				  OnGoToPreviousFrame="GoToPreviousFrame"
 				  OnGoToNextFrame="GoToNextFrame"
 				  />
-	<video id="@_videoElementId"
-		   preload="auto"
-		   @onclick="() => this.Pause()"
-		   class="video-player">
-		<p>
-			To view this video please enable JavaScript, and consider upgrading to a
-			web browser that
-			<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-		</p>
-	</video>
+	<div @onclick="() => this.Pause()" class="video-player">
+		<video id="@_videoElementId">
+			<p>
+				To view this video please enable JavaScript, and consider upgrading to a
+				web browser that
+				<a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+			</p>
+		</video>
+	</div>
 	<VideoPlaybackControl
 						  OnPlay="this.Play"
 						  OnPause="this.Pause"

@@ -7,14 +7,14 @@
 
 	.frame-couner-container {
 		height: $player-frame-counter-height;
-		display:flex;
+		display: flex;
 
-		.go-to-previous-frame-btn, .go-to-next-frame-btn{
-			height:100%;
-			cursor:pointer;
+		.go-to-previous-frame-btn, .go-to-next-frame-btn {
+			height: 100%;
+			cursor: pointer;
 
-			img{
-				height:100%;
+			img {
+				height: 100%;
 			}
 		}
 
@@ -31,8 +31,13 @@
 	.video-player {
 		height: calc(100% - #{$player-control-bar-height} - #{$player-frame-counter-height});
 		width: 100%;
-		display: block;
-		background-color: black;
+
+		.jwplayer {
+			height:100% !important;
+			width: 100% !important;
+			display: block;
+			background-color: black;
+		}
 	}
 
 	.video-control-bar {

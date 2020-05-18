@@ -1,9 +1,12 @@
-﻿import { createPopper } from '@popperjs/core';
+import { createPopper } from '@popperjs/core';
+import { isDefined } from '../utils/index'
 
 window.Orions.Vizlist = {
 	init: function (elementId) {
 		let element = $(`#${elementId}`);
-		element.draggable();
+		if (isDefined(element) && isDefined(element.draggable)) {
+			element.draggable();
+		}
 	},
 
 	initPopover: function (referenceElId, targetElId) {
