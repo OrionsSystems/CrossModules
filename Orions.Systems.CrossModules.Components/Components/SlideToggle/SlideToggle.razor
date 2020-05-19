@@ -3,7 +3,6 @@
 @using Microsoft.JSInterop
 
 @inherits BaseBlazorComponent
-@implements IDisposable
 
 
 <div style="@Style" class="orions-component-switch @(_checked ?"orions-component-switch--checked":"") @Class">
@@ -22,7 +21,6 @@
 
 @code{
 
-    IDisposable thisReference;
     private bool _checked;
 
     protected void OnChangedHandler(ChangeEventArgs e)
@@ -51,21 +49,6 @@
                 CheckedChanged.InvokeAsync(value);
             }
         }
-    }
-
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            thisReference = DotNetObjectReference.Create(this);
-            await JsInterop.InvokeAsync<object>("SlideToggle.init", new object[] { thisReference });
-        }
-    }
-
-    void IDisposable.Dispose()
-    {
-        thisReference?.Dispose();
     }
 }
 
