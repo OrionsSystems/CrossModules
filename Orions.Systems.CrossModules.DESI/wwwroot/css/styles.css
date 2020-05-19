@@ -255,9 +255,12 @@ body {
       align-items: center; }
   .tagging-video-player-container .video-player {
     height: calc(100% - 60px - 60px);
-    width: 100%;
-    display: block;
-    background-color: black; }
+    width: 100%; }
+    .tagging-video-player-container .video-player .jwplayer {
+      height: 100% !important;
+      width: 100% !important;
+      display: block;
+      background-color: black; }
   .tagging-video-player-container .video-control-bar {
     height: 60px;
     width: 100%;
@@ -424,6 +427,17 @@ body {
       font-weight: 500; }
     .tagging-video-player-container .video-player-overlay .video-overlay-dots-loader .sk-flow-dot {
       background-color: #de0000; }
+
+.popper-node-ui-element-popup {
+  display: none;
+  padding: 10px;
+  background: whitesmoke;
+  z-index: 99999;
+  border: 1px solid #cccccc; }
+  .popper-node-ui-element-popup img {
+    max-width: 700px; }
+  .popper-node-ui-element-popup .description {
+    width: 100%; }
 
 .vizlist-main-container {
   display: flex; }

@@ -1,0 +1,8 @@
+﻿@inherits PopperServiceComponentBase
+
+@using Orions.Systems.CrossModules.Desi.Components.VizList; 
+
+@foreach(var node in TagonomyNodes)
+{
+	<VizListNodeGuiElementPopper Node="@node.Node" ReferenceElementId="@node.ReferenceElId"/>
+}

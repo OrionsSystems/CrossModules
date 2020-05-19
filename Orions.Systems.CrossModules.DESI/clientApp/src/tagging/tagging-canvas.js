@@ -297,6 +297,12 @@ class TaggingSurface {
 		}
 
 		self.addTag = function (tag) {
+			let tagwithSameId = self.items.find(t => t.id == tag.id)
+			if (isDefined(tagwithSameId)) {
+				tagwithSameId.remove();
+				self.items.splice(self.items.indexOf(tagwithSameId), 1);
+			}
+
 			var newTagVisual = new TagVisual(self.raster.strokeBounds, tag);
 			var tagCoords = getRectangleRealFromProportional(tag, self.raster.strokeBounds);
 

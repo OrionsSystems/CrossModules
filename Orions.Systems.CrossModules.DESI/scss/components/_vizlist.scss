@@ -1,5 +1,21 @@
 ﻿@import "../_variables.scss";
 
+.popper-node-ui-element-popup {
+    display: none;
+    padding: 10px;
+    background: rgb(245, 245, 245);
+    z-index: 99999;
+    border: 1px solid rgb(204, 204, 204);
+
+    img {
+        max-width: 700px;
+    }
+
+    .description {
+        width: 100%;
+    }
+}
+
 .vizlist-main-container {
     display: flex;
 

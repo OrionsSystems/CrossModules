@@ -14,21 +14,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
 
-		public string OkCaption { get; set; } = "Yes";
-		public string CancelCaption { get; set; } = "No";
+		public string OkCaption { get; set; }
+		public string CancelCaption { get; set; }
 		public string Title { get; set; }
 		public string Message { get; set; }
 
 		public bool IsDisplayed { get; set; }
 
 		public bool OnlyOkMode { get; set; }
-
-		protected override async Task OnInitializedAsyncSafe()
-		{
-			var popupService = new PopupService(this);
-
-			DependencyResolver.SetPopupService(popupService);
-		}
 
 		private TaskCompletionSource<bool> _tcs;
 		public async Task<bool> ShowYesNoModal()

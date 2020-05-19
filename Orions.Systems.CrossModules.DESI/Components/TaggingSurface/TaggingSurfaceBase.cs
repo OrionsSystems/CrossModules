@@ -88,8 +88,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							{
 								_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
 								{
-									_currentPositionFrameRendered.Reset();
-									UpdateRectangles();
+									if (value.Data.FrameModeEnabled)
+									{
+										_currentPositionFrameRendered.Reset();
+										UpdateRectangles(); 
+									}
 								}));
 
 								_dataStoreSubscriptions.Add(
@@ -117,6 +120,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						_currentPositionFrameRendered.Reset();
 						OnCurrentPositionFrameImageChanged();
 					};
+
+					_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
+						.Where(i => i.EventArgs.PropertyName == nameof(MediaData.DefaultMediaInstance))
+						.Subscribe(_ => OnDefaultMediaInstanceChanged()));
 				});
 		}
 
@@ -409,6 +416,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			_mediaPaused = true;
 			this.OverlayMediaWithCanvas(true);
+		}
+
+		private async Task OnDefaultMediaInstanceChanged()
+		{
+			UpdateRectangles();
+			UpdateState();
 		}
 
 		protected override void Dispose(bool disposing)

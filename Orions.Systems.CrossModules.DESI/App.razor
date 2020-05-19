@@ -1,23 +1,25 @@
 @namespace Orions.Systems.CrossModules.Desi
 @using Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
+@using Orions.Systems.CrossModules.Desi.Components.Popper
 
 @inherits AppComponentBase
 
 @if (this.IsSettingsInitialized)
 {
-    <Router AppAssembly="@typeof(Program).Assembly">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        </Found>
-        <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-    <Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup.ConfiramtionPopup/>
+	<Router AppAssembly="@typeof(Program).Assembly">
+		<Found Context="routeData">
+			<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+		</Found>
+		<NotFound>
+			<LayoutView Layout="@typeof(MainLayout)">
+				<p>Sorry, there's nothing at this address.</p>
+			</LayoutView>
+		</NotFound>
+	</Router>
+	<Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup.ConfiramtionPopup @ref="ConfirmationPopupComponent"/>
+	<PopperServiceComponent @ref="PopperServiceComponent"/>
 }
 else
 {
-    <div>Loading...</div>
+	<div>Loading...</div>
 }

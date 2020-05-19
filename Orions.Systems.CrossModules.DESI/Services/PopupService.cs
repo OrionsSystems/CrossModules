@@ -1,4 +1,5 @@
 ﻿using Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup;
+using Orions.Systems.CrossModules.Desi.Components.Popper;
 using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System;
 using System.Collections.Generic;
@@ -9,41 +10,43 @@ namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class PopupService
 	{
-		private ConfirmationPopupBase _popupComponent;
+		public ConfirmationPopupBase ConfirmationPopupComponent { get; set; }
+		public PopperServiceComponentBase PopperServiceComponent { get; set; }
 
 		public SessionIsOverPopup SessionIsOverPopup { get; set; }
 
-		public PopupService(ConfirmationPopupBase popupComponent)
+		public PopupService()
 		{
-			this._popupComponent = popupComponent;
 		}
 
 		public async Task<bool> ShowConfirmation(string title, string question)
 		{
-			_popupComponent.Title = title;
-			_popupComponent.Message = question;
-			var result = await _popupComponent.ShowYesNoModal();
+			ConfirmationPopupComponent.OkCaption = "Yes";
+			ConfirmationPopupComponent.CancelCaption = "No";
+			ConfirmationPopupComponent.Title = title;
+			ConfirmationPopupComponent.Message = question;
+			var result = await ConfirmationPopupComponent.ShowYesNoModal();
 
 			return result;
 		}
 
 		public async Task ShowAlert(string title, string question)
 		{
-			_popupComponent.Title = title;
-			_popupComponent.Message = question;
-			await _popupComponent.ShowOkModal();
+			ConfirmationPopupComponent.Title = title;
+			ConfirmationPopupComponent.Message = question;
+			await ConfirmationPopupComponent.ShowOkModal();
 		}
 
 		public async Task ShowAlert(string title, string question, string okBtnCaption)
 		{
-			_popupComponent.OkCaption = okBtnCaption;
+			ConfirmationPopupComponent.OkCaption = okBtnCaption;
 			await this.ShowAlert(title, question);
 		}
 
 		public async Task<bool> ShowConfirmation(string title, string question, string okBtnCaption, string cancelBtnCaption)
 		{
-			_popupComponent.OkCaption = okBtnCaption;
-			_popupComponent.CancelCaption = cancelBtnCaption;
+			ConfirmationPopupComponent.OkCaption = okBtnCaption;
+			ConfirmationPopupComponent.CancelCaption = cancelBtnCaption;
 			return await this.ShowConfirmation(title, question);
 		}
 

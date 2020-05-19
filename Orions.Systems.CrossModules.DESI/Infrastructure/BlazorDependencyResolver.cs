@@ -15,7 +15,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		private readonly NavigationManager _navigationManager;
 		private readonly IJSRuntime _jSRuntime;
 		private readonly IConfiguration _appConfig;
-		private PopupService _popupService;
+		private PopupService _popupService = new PopupService();
 
 		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime, IConfiguration appConfig)
 		{
@@ -84,16 +84,19 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			return new NavigationService(_navigationManager, _jSRuntime, _popupService);
 		}
 
-		public void SetPopupService(PopupService service)
-		{
-			this._popupService = service;
-		}
-
 		public PopupService GetPopupService()
 		{
 			return this._popupService;
 		}
 
 		public override ITrackerFactory GetTrackerFactory() => new TrackerFactory();
+
+		public override IPlaylistItemFactory GetPlaylistItemFactory()
+		{
+			var factory = base.GetPlaylistItemFactory();
+			factory.UseSecureDash = true;
+
+			return factory;
+		}
 	}
 }

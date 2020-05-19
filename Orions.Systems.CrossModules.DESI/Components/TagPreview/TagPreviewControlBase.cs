@@ -40,22 +40,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 							.Subscribe(_ =>
 							{
-								value.Data?.CurrentTaskTags.GetCollectionChangedObservable()
-									.Subscribe(e =>
-									{
-										e.EventArgs.NewItems.Foreach(t =>
-										{
-											(t as TagModel).GetPropertyChangedObservable().Subscribe(_ => UpdateState());
-										});
+								value.Data.CurrentTaskTags.Foreach(t =>
+								{
+									t.GetPropertyChangedObservable().Subscribe(_ => UpdateState());
+								});
 
-										UpdateState();
-									});
 								UpdateState();
 							}));
-
-					_dataStoreSubscriptions.Add(
-						value.Data?.CurrentTaskTags.GetCollectionChangedObservable()
-							.Subscribe(_ => UpdateState()));
 
 
 					value.Data?.CurrentTaskTags.Foreach(t =>
