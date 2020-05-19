@@ -31,8 +31,10 @@ namespace Orions.Systems.CrossModules.Desi
 			services.AddBlazoredLocalStorage();
 
 			services.AddScoped<ILocalStorageService, LocalStorageService>()
-				.AddScoped<BlazorDependencyResolver>()
 				.AddScoped<IKeyboardListener, KeyboardListener>()
+				.AddScoped<BlazorDependencyResolver>()
+				.AddScoped<IDependencyResolver>(s => s.GetService<BlazorDependencyResolver>())
+				.AddScoped<INavigationService>(s => s.GetService<BlazorDependencyResolver>().GetNavigationService())
 				.AddScoped<ViewModelLocator>()
 				.AddScoped(s => s.GetService<ViewModelLocator>().GetAuthenticationViewModel())
 				.AddScoped(s => s.GetService<ViewModelLocator>().GetMissionsViewModel())
