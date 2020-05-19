@@ -1,0 +1,12 @@
+﻿[
+   {
+      "outputFile": "content/WebPack/dist/orions.bundle.css",
+      "inputFile": "content/WebPack/scss/styles.scss",
+      "minify": {
+         "enabled": false
+      },
+      "options": {
+         "sourceMap": false
+      }
+   }
+]
