@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
@@ -22,11 +20,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 				return;
 			}
-
-			this.Vm = new StageSelectionViewModel(
-				DependencyResolver.GetMissionsExploitationSystem(),
-				DependencyResolver.GetNavigationService()
-			);
 
 			this.Vm.MissionsData.CurrentWorkflow.Stages = new List<PhaseModel>(); // refactor this
 			this.Vm.StartUpdateMissionStages();

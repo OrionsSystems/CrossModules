@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.Desi.Core.ViewModels.Abstract;
-using System.Collections.Specialized;
-using System.Collections;
-using System.ComponentModel;
-using Orions.Systems.Desi.Common.General;
-using System.Collections.Generic;
+using Orions.Systems.Desi.Common.Util;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {
@@ -14,19 +9,18 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		where VmType : ViewModelBase
 	{
 		private VmType _vm;
+		private IDisposable _propertyChangedTracker;
 
-		[Parameter]
+		[Inject]
 		public VmType Vm
 		{
-			get
-			{
-				return _vm;
-			}
+			get => _vm;
 			set
 			{
 				if (value != null && value != _vm && AutoWirePropertyChangedListener)
 				{
-					AddVmDataPropertyChangedHandlers(value);
+					_propertyChangedTracker?.Dispose();
+					_propertyChangedTracker = value.CreatePropertyChangedTracker(UpdateState);
 				}
 				_vm = value;
 			}
@@ -34,16 +28,25 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		protected virtual bool AutoWirePropertyChangedListener { get; } = true;
 
-		public BaseViewModelComponent()
+		protected override void Dispose(bool disposing)
 		{
+			if (disposing)
+			{
+				_propertyChangedTracker?.Dispose();
+				_propertyChangedTracker = null;
+			}
+			base.Dispose(disposing);
 		}
 
 		// This method adds StateHasChanged method call to every event fired on any Vm property that implements either INotifyPropertyChanged or
 		// INotifyCollectionChanged interface
+		// Replace it with PropertyTracker
+		/*
 		protected void AddVmDataPropertyChangedHandlers(object vm)
 		{
-			PropertyChangedEventHandler propChangedHandler = (s, e) => {
-				if(e != null && e.PropertyName != null)
+			PropertyChangedEventHandler propChangedHandler = (s, e) =>
+			{
+				if (e != null && e.PropertyName != null)
 				{
 					var prop = s.GetType().GetProperty(e.PropertyName);
 					if (prop != null)
@@ -56,11 +59,11 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 					};
 				}
 
-				if(e?.PropertyName != null)
+				if (e?.PropertyName != null)
 				{
 					var newPropValue = s.GetType().GetProperty(e.PropertyName)?.GetValue(s);
 
-					if(newPropValue != null)
+					if (newPropValue != null)
 					{
 						AddVmDataPropertyChangedHandlers(newPropValue);
 					}
@@ -72,7 +75,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			{
 				if (e.NewItems != null && (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Replace))
 				{
-					foreach(var item in e.NewItems)
+					foreach (var item in e.NewItems)
 					{
 						AddVmDataPropertyChangedHandlers(item);
 					}
@@ -116,6 +119,6 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 					AddVmDataPropertyChangedHandlers(item);
 				}
 			}
-		}
+		}*/
 	}
 }

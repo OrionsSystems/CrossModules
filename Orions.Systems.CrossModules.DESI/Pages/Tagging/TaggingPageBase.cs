@@ -28,8 +28,8 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		public SessionIsOverPopup SessionIsOverPopup
 		{
 			get { return _sessionIsOverPopup; }
-			set 
-			{ 
+			set
+			{
 				_sessionIsOverPopup = value;
 				var popupService = DependencyResolver.GetPopupService();
 				popupService.SessionIsOverPopup = _sessionIsOverPopup;
@@ -49,17 +49,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				return;
 			}
 
-			this.Vm = new TaggingViewModel(
-				DependencyResolver.GetMissionsExploitationSystem(),
-				navigationService,
-				DependencyResolver.GetDialogService(),
-				DependencyResolver.GetImageService(),
-				DependencyResolver.GetClipboardService(),
-				DependencyResolver.GetNetStoreProvider(),
-				_taggingSystem,
-				DependencyResolver.GetDispatcher(),
-				DependencyResolver.GetLoggerService(),
-				DependencyResolver.GetDeviceClipboardService());
 			this.Vm.SlicePositionBiasHalfRange = 5;
 
 			_subscriptions.Add(
