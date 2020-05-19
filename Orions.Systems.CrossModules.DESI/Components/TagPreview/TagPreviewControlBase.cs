@@ -2,20 +2,16 @@
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Models;
-using Orions.Systems.Desi.Common.Tagging;
 using Orions.Systems.Desi.Common.TagsExploitation;
-using Orions.Systems.Desi.Core.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Core.General;
 using Orions.Systems.Desi.Common.Extensions;
 using System.Reactive.Linq;
-using Orions.Systems.Desi.Common.Collections;
 using System.Collections.Specialized;
 using Microsoft.JSInterop;
+using System.Collections.Immutable;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 {
@@ -57,7 +53,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 					});
 
 					_dataStoreSubscriptions.Add(
-					value.Data.SelectedTags?.GetCollectionChangedObservable()
+					value.Data.GetPropertyChangedObservable()
+						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags))
+						.Select(i => i.Source.SelectedTags)
 						.Subscribe(OnSelectedTagsCollectionChanged));
 				});
 			}
@@ -71,11 +69,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 			get { return _taskDataStore; }
 			set
 			{
-				SetProperty(ref _taskDataStore, value, () =>
-				{
-
-					_taskDataStore = value;
-				});
+				SetProperty(ref _taskDataStore, value, () => _taskDataStore = value);
 			}
 		}
 
@@ -95,11 +89,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 			ActionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tag));
 		}
 
-		private void OnSelectedTagsCollectionChanged((ReadOnlyObservableCollectionEx<TagModel> Source, NotifyCollectionChangedEventArgs EventArgs) obj)
+		private void OnSelectedTagsCollectionChanged(ImmutableList<TagModel> tags)
 		{
-			if (obj.Source.Any())
+			if (tags?.Count > 0)
 			{
-				JSRuntime.InvokeVoidAsync("Orions.TagPreviewControl.scrollToTag", new object[] { obj.Source.First().Id.ToString() }) ;
+				JSRuntime.InvokeVoidAsync("Orions.TagPreviewControl.scrollToTag", new object[] { tags.First().Id.ToString() }) ;
 			}
 		}
 	}

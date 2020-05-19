@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reactive.Linq;
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Extensions;
@@ -24,7 +25,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 				() =>
 				{
 					_subscriptions.AddItem(value.CurrentTaskChanged.Subscribe(_ => UpdateState()))
-					.AddItem(value.Data.Tasks.GetCollectionChangedObservable().Subscribe(_ => UpdateState()));
+						.AddItem(value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(TaskExploitationData.Tasks)).Subscribe(_ => UpdateState()));
 				});
 		}
 

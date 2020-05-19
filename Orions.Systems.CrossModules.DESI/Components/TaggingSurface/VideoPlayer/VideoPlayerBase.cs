@@ -154,20 +154,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Parameter]
 		public ITagsStore TagsStore
 		{
-			get { return _tagsStore; }
-			set 
+			get => _tagsStore;
+			set
 			{
 				SetProperty(ref _tagsStore, value, () =>
 				{
 					if (_tagsStore != null)
 					{
-						_subscriptions.Add(_tagsStore.Data
-							.SelectedTagsUpdated
-							.Subscribe(_ =>
-							{
-
-								GoToSelectedTagFrame();
-							}));
+						_subscriptions.Add(_tagsStore.Data.GetPropertyChangedObservable()
+							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags) && i.Source.SelectedTags.IsNotNullOrEmpty())
+							.Select(i => i.Source.SelectedTags.Last())
+							.Subscribe(i => GoToSelectedTagFrame(i)));
 						_subscriptions.Add(_tagsStore.Data
 							.GetPropertyChangedObservable()
 							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
@@ -420,18 +417,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateState();
 		}
 
-		private async Task GoToSelectedTagFrame()
+		private async Task GoToSelectedTagFrame(TagModel tag)
 		{
 			_lockPositionUpdate = true;
 
-			var tagFrameIdToGoTo = TagsStore?.Data?.SelectedTags?.FirstOrDefault();
-
-			if (tagFrameIdToGoTo != null)
-			{
-				var frameIndex = _taskPlaybackInfo.GetFrameIndexByHyperId(tagFrameIdToGoTo.TagHyperId);
-				await Pause();
-				await GoToFrame(frameIndex);
-			}
+			var frameIndex = _taskPlaybackInfo.GetFrameIndexByHyperId(tag.TagHyperId);
+			await Pause();
+			await GoToFrame(frameIndex);
 
 			_lockPositionUpdate = false;
 		}
