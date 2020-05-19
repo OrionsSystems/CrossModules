@@ -16,9 +16,6 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		public BlazorDependencyResolver DependencyResolver { get; set; }
 
 		[Inject]
-		public NavigationManager NavigationManager { get; set; }
-
-		[Inject]
 		public IJSRuntime JSRuntime { get; set; }
 
 		[Inject]

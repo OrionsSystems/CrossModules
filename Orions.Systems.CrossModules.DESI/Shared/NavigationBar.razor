@@ -9,39 +9,43 @@
 </div>
 
 @code {
-	public INavigationService NavigationService { get => DependencyResolver.GetNavigationService(); }
 
-	protected override void OnInitializedSafe()
-	{
-		NavigationManager.LocationChanged += (s, e) =>
-		{
-			UpdateState();
-		};
-	}
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }
 
-	protected void Back()
-	{
-		var currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
-		var missionsSystem = DependencyResolver.GetMissionsExploitationSystem();
+    public INavigationService NavigationService { get => DependencyResolver.GetNavigationService(); }
 
-		switch (currentLocation)
-		{
-			case Routes.Missions:
-				NavigationService.GoToLoginPage();
-				break;
-			case Routes.StageSelection:
-				NavigationService.GoToMissionsPage();
-				break;
-			case Routes.Tagging:
-				if(missionsSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
-				{
-					NavigationService.GoToStageSelection();
-				}
-				else
-				{
-					NavigationService.GoToMissionsPage();
-				}
-				break;
-		}
-	}
+    protected override void OnInitializedSafe()
+    {
+        NavigationManager.LocationChanged += (s, e) =>
+        {
+            UpdateState();
+        };
+    }
+
+    protected void Back()
+    {
+        var currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
+        var missionsSystem = DependencyResolver.GetMissionsExploitationSystem();
+
+        switch (currentLocation)
+        {
+            case Routes.Missions:
+                NavigationService.GoToLoginPage();
+                break;
+            case Routes.StageSelection:
+                NavigationService.GoToMissionsPage();
+                break;
+            case Routes.Tagging:
+                if(missionsSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
+                {
+                    NavigationService.GoToStageSelection();
+                }
+                else
+                {
+                    NavigationService.GoToMissionsPage();
+                }
+                break;
+        }
+    }
 }
