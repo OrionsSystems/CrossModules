@@ -90,11 +90,11 @@ namespace Orions.Systems.CrossModules.Components
 
 			var tagonomies = await HyperStore.ExecuteAsync(findArgs);
 
-			if (tagonomies == null || !tagonomies.Any())
+			if (tagonomies == null || !tagonomies.Any()) {
+				IsLoadedData = true;
 				return;
-
-		
-
+			}
+				
 			foreach (var tagonomy in tagonomies)
 			{
 				var configuration = tagonomy.GetPayload<Tagonomy>();
