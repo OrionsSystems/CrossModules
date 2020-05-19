@@ -30,13 +30,13 @@ else
                     <img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
                 </div>
                 <div class="right-content">
-                    <EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
+                    @*<EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
                         <DropDownButtonEvents ItemSelected="OnThemeSelected"></DropDownButtonEvents>
                         <DropDownButtonItems>
                             <DropDownButtonItem Id="Dark" Text="Dark"></DropDownButtonItem>
                             <DropDownButtonItem Id="White" Text="White"></DropDownButtonItem>
                         </DropDownButtonItems>
-                    </EjsDropDownButton>
+                    </EjsDropDownButton>*@
                     <AuthorizeView>
                         <Authorized>
                             <EjsDropDownButton Content="@context.User.Identity.Name">
