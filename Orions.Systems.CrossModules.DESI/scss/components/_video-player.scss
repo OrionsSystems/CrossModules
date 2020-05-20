@@ -260,7 +260,7 @@
 		width: 100%;
 		height: calc(100% - #{$player-control-bar-height} - #{$player-frame-counter-height});
 		z-index: 9999;
-		background: rgba(242, 242, 242, 0.2);
+		background: rgba(0, 0, 0, 1);
 		color: white;
 		display: flex;
 		align-items: center;

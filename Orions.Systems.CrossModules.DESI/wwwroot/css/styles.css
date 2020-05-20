@@ -415,7 +415,7 @@ body {
     width: 100%;
     height: calc(100% - 60px - 60px);
     z-index: 9999;
-    background: rgba(242, 242, 242, 0.2);
+    background: black;
     color: white;
     display: flex;
     align-items: center;

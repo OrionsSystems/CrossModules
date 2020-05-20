@@ -304,8 +304,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task UpdateFrameImageByCurrentPosition()
 		{
-			var loaderDelayTask = Task.Delay(300);
-
 			var hyperId = _taskPlaybackInfo.GetPositionHyperId(CurrentFrameIndex);
 
 			if (hyperId.SliceId == null)
@@ -313,7 +311,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			var frameLoadTask = CacheService.GetCachedFrameAsync(_store, hyperId, null);
 
-			await Task.WhenAny(loaderDelayTask, frameLoadTask);
 			if (!frameLoadTask.IsCompleted)
 			{
 				OnLoading.InvokeAsync(null);
