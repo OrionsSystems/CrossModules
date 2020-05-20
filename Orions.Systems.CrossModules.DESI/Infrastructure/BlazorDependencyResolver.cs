@@ -15,14 +15,19 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		private readonly NavigationManager _navigationManager;
 		private readonly IJSRuntime _jSRuntime;
 		private readonly IConfiguration _appConfig;
-		private PopupService _popupService = new PopupService();
+		private readonly IPopupService _popupService;
 
-		public BlazorDependencyResolver(ILocalStorageService localStorageService, NavigationManager navigationManager, IJSRuntime jSRuntime, IConfiguration appConfig)
+		public BlazorDependencyResolver(ILocalStorageService localStorageService, 
+			NavigationManager navigationManager,
+			IJSRuntime jSRuntime,
+			IConfiguration appConfig,
+			IPopupService popupService)
 		{
 			_localStorageService = localStorageService;
 			_navigationManager = navigationManager;
 			_jSRuntime = jSRuntime;
 			_appConfig = appConfig;
+			_popupService = popupService;
 		}
 
 		public override IApiHelper GetApiHelper()
@@ -81,12 +86,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public INavigationService GetNavigationService()
 		{
-			return new NavigationService(_navigationManager, _jSRuntime, _popupService);
-		}
-
-		public PopupService GetPopupService()
-		{
-			return this._popupService;
+			return new NavigationService(_navigationManager, _jSRuntime);
 		}
 
 		public override ITrackerFactory GetTrackerFactory() => new TrackerFactory();

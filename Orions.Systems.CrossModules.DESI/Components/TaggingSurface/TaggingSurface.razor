@@ -10,9 +10,6 @@
 	@if (MediaDataStore.Data.MediaInstances?.Count == 1)
 	{
 			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
-							ActionDispatcher="@ActionDispatcher"
-							TaskDataStore="@TaskDataStore"
-							TagsStore="@TagsStore"
 							OnMediaPaused="async () => { await OnMediaPaused(); }"
 							OnMediaPlay="async () => { _mediaPaused = false; this.OverlayMediaWithCanvas(false); }"
 							OnMediaLoading="async () => { if (!_mediaPaused) this.OverlayMediaWithCanvas(false); }"

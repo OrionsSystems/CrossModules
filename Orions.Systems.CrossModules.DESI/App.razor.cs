@@ -1,13 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Orions.Desi.Forms.Core.Services;
 using Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup;
 using Orions.Systems.CrossModules.Desi.Components.Popper;
+using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.CrossModules.Desi.Util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Desi
@@ -16,9 +13,14 @@ namespace Orions.Systems.CrossModules.Desi
 	{
 		protected ConfirmationPopupBase ConfirmationPopupComponent;
 		protected PopperServiceComponentBase PopperServiceComponent;
+		protected SessionIsOverPopup SessionIsOverPopup;
 
 		[Inject]
 		public BlazorDependencyResolver DependencyResolver { get; set; }
+
+		[Inject]
+		public IPopupService PopupService { get; set; }
+
 		public bool IsSettingsInitialized { get; private set; }
 
 		protected override async Task OnInitializedAsyncSafe()
@@ -31,18 +33,11 @@ namespace Orions.Systems.CrossModules.Desi
 
 			var platform = new BlazorPlatform(DependencyResolver.GetInputHelper());
 			System.Platform.Instance = platform;
-		}
 
-		protected override Task OnAfterRenderAsyncSafe(bool firstRender)
-		{
-			if (firstRender)
+			if(PopupService is PopupService popupService)
 			{
-				var popupService = DependencyResolver.GetPopupService();
-				popupService.ConfirmationPopupComponent = ConfirmationPopupComponent;
-				popupService.PopperServiceComponent = PopperServiceComponent;
+				popupService.Init(ConfirmationPopupComponent, PopperServiceComponent, SessionIsOverPopup);
 			}
-
-			return Task.CompletedTask;
 		}
 	}
 }

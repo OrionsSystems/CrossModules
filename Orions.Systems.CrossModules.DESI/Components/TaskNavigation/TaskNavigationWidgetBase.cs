@@ -16,20 +16,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 
 		private ITaskDataStore _store;
 
-		[Parameter]
-		public ITaskDataStore Store
-		{
-			get => _store;
-			set => SetProperty(ref _store,
-				value,
-				() =>
-				{
-					_subscriptions.AddItem(value.CurrentTaskChanged.Subscribe(_ => UpdateState()))
-						.AddItem(value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(TaskExploitationData.Tasks)).Subscribe(_ => UpdateState()));
-				});
-		}
+		[Inject]
+		public ITaskDataStore Store { get; set; }
 
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		protected TaskExploitationData Data => Store.Data;
@@ -37,6 +27,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 		protected void GoToNextTask() => ActionDispatcher.Dispatch(GoToNextTaskAction.Create());
 		protected void GoToPrevTask() => ActionDispatcher.Dispatch(GoToPreviousTaskAction.Create());
 		protected void SetCurrentTask(TaskModel task) => ActionDispatcher.Dispatch(SetCurrentTaskAction.Create(task));
+
+		protected override void OnInitializedSafe()
+		{
+			base.OnInitializedSafe();
+			_subscriptions.AddItem(Store.CurrentTaskChanged.Subscribe(_ => UpdateState()))
+				.AddItem(Store.Data.GetPropertyChangedObservable()
+					.Where(i => i.EventArgs.PropertyName == nameof(TaskExploitationData.Tasks))
+					.Subscribe(_ => UpdateState()));
+		}
 
 		protected override void Dispose(bool disposing)
 		{

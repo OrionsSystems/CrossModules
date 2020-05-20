@@ -4,12 +4,17 @@ using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
 using Orions.Systems.Desi.Common.Authentication;
+using Microsoft.AspNetCore.Components;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class LoginPageBase : BaseViewModelComponent<AuthenticationViewModel>
 	{
-		protected ISettingsStorage SettingsStorage { get; set; }
+		[Inject]
+		public ISettingsStorage SettingsStorage { get; set; }
+
+		[Inject]
+		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
 		[JSInvokable]
 		public void Login()
@@ -20,12 +25,9 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			SettingsStorage = DependencyResolver.GetSettingsStorage();
-			var authenticationSystem = DependencyResolver.GetAuthenticationSystem();
-
 			if(Vm.AuthenticationData.AuthenticationStatus == AuthenticationStatus.LoggedIn)
 			{
-				authenticationSystem.Controller.Dispatch(LogoutAction.Create());
+				AuthenticationSystem.Controller.Dispatch(LogoutAction.Create());
 			}
 		}
 

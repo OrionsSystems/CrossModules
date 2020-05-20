@@ -17,11 +17,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model.Rectangle;
 using System.Reactive.Concurrency;
-using Wintellect.PowerCollections;
 using Orions.Common;
 using Orions.Systems.CrossModules.Desi.Services;
-using System.Workflow.ComponentModelEx;
-using Syncfusion.EJ2.Blazor.Charts;
 using System.Diagnostics;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
@@ -37,9 +34,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private string _componentId { get; set; }
 		private List<Rectangle> _rectangles = new List<Rectangle>();
-		private IMediaDataStore _mediaDataStore;
-		private ITagsStore _tagsStore;
-		private ITaskDataStore _taskDataStore;
 		private byte[] _lastFrameRendered;
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
@@ -48,117 +42,19 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
 
-		private IKeyboardListener _keyboardListener;
 		[Inject]
-		public IKeyboardListener KeyboardListener
-		{
-			get { return _keyboardListener; }
-			set
-			{
-				SetProperty(ref _keyboardListener, value, () =>
-				{
-					_dataStoreSubscriptions.Add(KeyboardListener.CreateSubscription()
-						.AddShortcut(Key.Shift, KeyModifiers.Shift, () => SetSelectionMode(TagsSelectionMode.Multiple), KeyboardEventType.KeyDown)
-						.AddShortcut(Key.Shift, KeyModifiers.None, () => SetSelectionMode(TagsSelectionMode.Single), KeyboardEventType.KeyUp)
-						);
-				});
-			}
-		}
+		public IKeyboardListener KeyboardListener { get; set; }
 
-		[Parameter]
-		public IMediaDataStore MediaDataStore
-		{
-			get => _mediaDataStore;
-			set => SetProperty(ref _mediaDataStore,
-				value,
-				() =>
-				{
-					_dataStoreSubscriptions.Add(
-						value.Data.GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances)).Subscribe(_ =>
-						{
-							if (value?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
-							{
-								_currentPositionFrameRendered.Reset();
+		[Inject]
+		public IMediaDataStore MediaDataStore { get; set; }
 
-								OnCurrentPositionFrameImageChanged();
-							};
+		[Inject]
+		public ITaskDataStore TaskDataStore { get; set; }
 
-							UpdateRectangles();
+		[Inject]
+		public ITagsStore TagsStore { get; set; }
 
-							if (value?.Data?.MediaInstances != null)
-							{
-								_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
-								{
-									if (value.Data.FrameModeEnabled)
-									{
-										_currentPositionFrameRendered.Reset();
-										UpdateRectangles(); 
-									}
-								}));
-
-								_dataStoreSubscriptions.Add(
-									value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
-									{
-										OnCurrentPositionFrameImageChanged();
-									}));
-							}
-						}));
-
-					_dataStoreSubscriptions.Add(value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
-						{
-							_currentPositionFrameRendered.Reset();
-							UpdateRectangles();
-						}));
-
-					_dataStoreSubscriptions.Add(
-						value.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
-						{
-							OnCurrentPositionFrameImageChanged();
-						}));
-
-					if (value?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
-					{
-						_currentPositionFrameRendered.Reset();
-						OnCurrentPositionFrameImageChanged();
-					};
-
-					_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(MediaData.DefaultMediaInstance))
-						.Subscribe(_ => OnDefaultMediaInstanceChanged()));
-				});
-		}
-
-		[Parameter]
-		public ITagsStore TagsStore
-		{
-			get => _tagsStore;
-			set => SetProperty(ref _tagsStore,
-				value,
-				() =>
-				{
-					var aggregatedSub = Observable.Merge(
-						value.CurrentTaskTagsCollectionChanged.Select(_ => true),
-						value.TagPropertyChanged
-							.Where(i => CommonExtensions.IsOneOf(i.PropertyName, nameof(TagModel.Geometry), nameof(TagModel.IsSelected), nameof(TagModel.LabelValue)))
-							.Select(_ => true))
-					.Sample(TimeSpan.FromMilliseconds(UpdateRateMilliseconds))
-					.ObserveOn(Scheduler.Default)
-					.Subscribe(_ => UpdateRectangles());
-
-					_dataStoreSubscriptions.AddItem(aggregatedSub);
-
-					UpdateRectangles();
-				});
-		}
-
-		[Parameter]
-		public ITaskDataStore TaskDataStore
-		{
-			get => _taskDataStore;
-			set => SetProperty(ref _taskDataStore, value, () => _taskDataStore?.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged()));
-		}
-
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		private object _rectanglesSetterLock = new object();
@@ -178,9 +74,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
-
-		[Inject]
-		public IJSRuntime JSRuntime { get; set; }
 
 		protected string ComponentIdHtml { get { return $"tagging-surface-{this._componentId}"; } }
 
@@ -242,6 +135,86 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				_currentPositionFrameRendered.Set();
 			}
+
+			UpdateRectangles();
+		}
+
+		protected override void OnInitializedSafe()
+		{
+			base.OnInitializedSafe();
+
+			_dataStoreSubscriptions.Add(KeyboardListener.CreateSubscription()
+				.AddShortcut(Key.Shift, KeyModifiers.Shift, () => SetSelectionMode(TagsSelectionMode.Multiple), KeyboardEventType.KeyDown)
+				.AddShortcut(Key.Shift, KeyModifiers.None, () => SetSelectionMode(TagsSelectionMode.Single), KeyboardEventType.KeyUp));
+
+			//MediaDataStore subscriptions **
+			///TODO REFACTOR (LEAKING)
+			_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances))
+				.Subscribe(_ =>
+			{
+				if (MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
+				{
+					_currentPositionFrameRendered.Reset();
+					OnCurrentPositionFrameImageChanged();
+				};
+
+				UpdateRectangles();
+
+				if (MediaDataStore?.Data?.MediaInstances != null)
+				{
+					_dataStoreSubscriptions.Add(MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
+					{
+						if (MediaDataStore.Data.FrameModeEnabled)
+						{
+							_currentPositionFrameRendered.Reset();
+							UpdateRectangles();
+						}
+					}));
+
+					_dataStoreSubscriptions.Add(
+						MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
+						{
+							OnCurrentPositionFrameImageChanged();
+						}));
+				}
+			}));
+
+			_dataStoreSubscriptions.Add(MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
+			{
+				_currentPositionFrameRendered.Reset();
+				UpdateRectangles();
+			}));
+
+			_dataStoreSubscriptions.Add(
+				MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
+				{
+					OnCurrentPositionFrameImageChanged();
+				}));
+
+			if (MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
+			{
+				_currentPositionFrameRendered.Reset();
+				OnCurrentPositionFrameImageChanged();
+			};
+
+			_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(MediaData.DefaultMediaInstance))
+				.Subscribe(_ => OnDefaultMediaInstanceChanged()));
+
+
+			_dataStoreSubscriptions.Add(TaskDataStore.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged()));
+
+			var aggregatedSub = Observable.Merge(
+				TagsStore.CurrentTaskTagsCollectionChanged.Select(_ => true),
+				TagsStore.TagPropertyChanged
+					.Where(i => CommonExtensions.IsOneOf(i.PropertyName, nameof(TagModel.Geometry), nameof(TagModel.IsSelected), nameof(TagModel.LabelValue)))
+					.Select(_ => true))
+				.Sample(TimeSpan.FromMilliseconds(UpdateRateMilliseconds))
+				.ObserveOn(Scheduler.Default)
+				.Subscribe(_ => UpdateRectangles());
+
+			_dataStoreSubscriptions.AddItem(aggregatedSub);
 
 			UpdateRectangles();
 		}

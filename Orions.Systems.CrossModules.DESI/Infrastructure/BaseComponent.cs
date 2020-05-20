@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 using Orions.Systems.Desi.Common.Services;
 using System;
 using System.Collections.Generic;
@@ -11,9 +10,6 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 	public abstract class BaseComponent : ComponentBase, IDisposable
 	{
 		protected List<IDisposable> _dataStoreSubscriptions = new List<IDisposable>();
-
-		[Inject]
-		public BlazorDependencyResolver DependencyResolver { get; set; }
 
 		[Inject]
 		public IJSRuntime JSRuntime { get; set; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.Services;
 
@@ -11,9 +10,9 @@ namespace Orions.Systems.CrossModules.Desi.Services
 {
 	public class BlazorDialogService : IDialogService
 	{
-		private readonly PopupService _popupService;
+		private readonly IPopupService _popupService;
 
-		public BlazorDialogService(PopupService popupService)
+		public BlazorDialogService(IPopupService popupService)
 		{
 			_popupService = popupService;
 		}

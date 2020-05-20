@@ -1,22 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.Desi.Common.Authentication;
 using Orions.Systems.Desi.Common.Models;
+using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Core.ViewModels;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class StageSelectionPageBase : BaseViewModelComponent<StageSelectionViewModel>
 	{
+		[Inject]
+		public INavigationService NavigationService { get; set; }
+
+		[Inject]
+		public IAuthenticationSystem AuthenticationSystem { get; set; }
+
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			var authSystem = DependencyResolver.GetAuthenticationSystem();
-			var navigationService = DependencyResolver.GetNavigationService();
 
-			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
+			if (AuthenticationSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
 			{
-				await navigationService.GoToLoginPage();
+				await NavigationService.GoToLoginPage();
 
 				return;
 			}

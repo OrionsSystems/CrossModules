@@ -9,7 +9,6 @@ using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Core.General;
 using Orions.Systems.Desi.Common.Extensions;
 using System.Reactive.Linq;
-using System.Collections.Specialized;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
 
@@ -17,61 +16,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 {
 	public class TagPreviewControlBase : BaseComponent
 	{
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
-		private ITagsStore _tagsStore;
 
-		[Parameter]
-		public ITagsStore TagsStore
-		{
-			get { return _tagsStore; }
-			set
-			{
-				SetProperty(ref _tagsStore, value, () =>
-				{
-					_dataStoreSubscriptions.Add(value.DataChanged.Subscribe(_ => UpdateState()));
-					_dataStoreSubscriptions.Add(
-						value.Data?.GetPropertyChangedObservable()
-							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-							.Subscribe(_ =>
-							{
-								value.Data.CurrentTaskTags.Foreach(t =>
-								{
-									t.GetPropertyChangedObservable().Subscribe(_ => UpdateState());
-								});
+		[Inject]
+		public ITagsStore TagsStore { get; set; }
 
-								UpdateState();
-							}));
-
-
-					value.Data?.CurrentTaskTags.Foreach(t =>
-					{
-						_dataStoreSubscriptions.Add(
-							t.GetPropertyChangedObservable()
-								.Subscribe(_ => UpdateState()));
-					});
-
-					_dataStoreSubscriptions.Add(
-					value.Data.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags))
-						.Select(i => i.Source.SelectedTags)
-						.Subscribe(OnSelectedTagsCollectionChanged));
-				});
-			}
-		}
-
-		private ITaskDataStore _taskDataStore;
-
-		[Parameter]
-		public ITaskDataStore TaskDataStore
-		{
-			get { return _taskDataStore; }
-			set
-			{
-				SetProperty(ref _taskDataStore, value, () => _taskDataStore = value);
-			}
-		}
+		[Inject]
+		public ITaskDataStore TaskDataStore { get; set; }
 
 		[Parameter]
 		public Command EditTagCommand { get; set; }
@@ -79,8 +32,19 @@ namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 		[Parameter]
 		public Command RemoveTagCommand { get; set; }
 
-		public TagsExploitationData TagData { get => _tagsStore.Data; }
+		public TagsExploitationData TagData => TagsStore.Data;
 
+		protected override void OnInitializedSafe()
+		{
+			base.OnInitializedSafe();
+
+			_dataStoreSubscriptions.AddItem(TagsStore.DataChanged.Subscribe(_ => UpdateState()))
+				.AddItem(TagsStore.TagPropertyChanged.Subscribe(_ => UpdateState()))
+				.AddItem(TagsStore.Data.GetPropertyChangedObservable()
+					.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags))
+					.Select(i => i.Source.SelectedTags)
+					.Subscribe(OnSelectedTagsCollectionChanged));
+		}
 
 		protected Guid? CurrentTagonomyInfoShown;
 

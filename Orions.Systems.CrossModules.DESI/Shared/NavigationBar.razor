@@ -1,5 +1,6 @@
 ﻿@inherits BaseComponent
 @using Orions.Systems.Desi.Common.Services;
+@using Orions.Systems.Desi.Common.MissionsExploitation;
 
 <div class="navigation-bar">
 	@if (NavigationManager.ToBaseRelativePath(NavigationManager.Uri) != Routes.Root)
@@ -13,7 +14,11 @@
     [Inject]
     public NavigationManager NavigationManager { get; set; }
 
-    public INavigationService NavigationService { get => DependencyResolver.GetNavigationService(); }
+    [Inject]
+    public INavigationService NavigationService { get; set; }
+
+    [Inject]
+    public IMissionsExploitationSystem MissionsExploitationSystem { get; set; }
 
     protected override void OnInitializedSafe()
     {
@@ -26,7 +31,6 @@
     protected void Back()
     {
         var currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
-        var missionsSystem = DependencyResolver.GetMissionsExploitationSystem();
 
         switch (currentLocation)
         {
@@ -37,7 +41,7 @@
                 NavigationService.GoToMissionsPage();
                 break;
             case Routes.Tagging:
-                if(missionsSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
+                if(MissionsExploitationSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
                 {
                     NavigationService.GoToStageSelection();
                 }

@@ -25,6 +25,7 @@ using Orions.Systems.Desi.Common.TaskExploitation;
 using Syncfusion.EJ2.Blazor.Gantt;
 using Orions.Desi.Forms.Core.Util.Extensions;
 using Orions.SDK.Onvif.DeviceService;
+using Orions.Systems.Desi.Common.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -32,8 +33,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 	{
 		private NetStore _store;
 		private TaskPlaybackInfo _taskPlaybackInfo { get { return CurrentTask.PlaybackInfo; } }
-		private DotNetObjectReference<VideoPlayerBase> _componentReference;
-		private IFrameCacheService CacheService;
+		private DotNetObjectReference<VideoPlayerBase> _componentReference;		
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		private AsyncManualResetEvent _currenVideoSourceLoadedOnClient = new AsyncManualResetEvent(false);
@@ -111,95 +111,55 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Parameter]
 		public TaskModel CurrentTask
 		{
-			get { return _currentTask; }
-			set 
+			get => _currentTask;
+			set => SetProperty(ref _currentTask, value, () =>
 			{
-				SetProperty(ref _currentTask, value, () =>
+				if (_currentTask != null)
 				{
-					if (_currentTask != null)
-					{
-						CurrentPosition = TimeSpan.Zero;
-						CurrentFrameIndex = 0;
-						UpdateState();
-					}
-				});
-			}
+					CurrentPosition = TimeSpan.Zero;
+					CurrentFrameIndex = 0;
+					UpdateState();
+				}
+			});
 		}
 
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		private MediaInstance _mediaInstance;
 		[Parameter]
 		public MediaInstance MediaInstance
 		{
-			get { return _mediaInstance; }
-			set 
+			get => _mediaInstance;
+			set => SetProperty(ref _mediaInstance, value, () =>
 			{
-				SetProperty(ref _mediaInstance, value, () =>
+				if (_mediaInstance != null)
 				{
-					if(_mediaInstance != null)
-					{
-						_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
-							.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition))
-							.Subscribe(_ => UpdateCurrentPositionFrameImage()));
-					}
-
-					OnMediaInstanceChanged();
-				});
-			}
+					_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
+						.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
+						.Select(i => i.Source.CurrentPositionFrameImage)
+						.Subscribe(UpdateCurrentPositionFrameImage));
+				}
+				OnMediaInstanceChanged();
+			});
 		}
 
-		private ITagsStore _tagsStore;
-		[Parameter]
-		public ITagsStore TagsStore
-		{
-			get => _tagsStore;
-			set
-			{
-				SetProperty(ref _tagsStore, value, () =>
-				{
-					if (_tagsStore != null)
-					{
-						_subscriptions.Add(_tagsStore.Data.GetPropertyChangedObservable()
-							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags) && i.Source.SelectedTags.IsNotNullOrEmpty())
-							.Select(i => i.Source.SelectedTags.Last())
-							.Subscribe(i => GoToSelectedTagFrame(i)));
-						_subscriptions.Add(_tagsStore.Data
-							.GetPropertyChangedObservable()
-							.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
-							.Subscribe(_ =>
-							{
-								UpdateState();
-							}));
-					}
-				});
-			}
-		}
-
-		private ITaskDataStore _taskDataStore;
-		[Parameter]
-		public ITaskDataStore TaskDataStore
-		{
-			get { return _taskDataStore; }
-			set
-			{
-				SetProperty(ref _taskDataStore, value, () =>
-				{
-					if(value != null)
-					{
-						_subscriptions.Add(value.CurrentTaskExpandedChanged.Subscribe(_ =>
-						{
-							UpdateState();
-						}));
-					}
-				});
-			}
-		}
 		#endregion // Parameters
 
 		[Inject]
+		public ITagsStore TagsStore { get; set; }
+
+		[Inject]
+		public ITaskDataStore TaskDataStore { get; set; }
+
+		[Inject]
 		public IKeyboardListener KeyboardListener { get; set; }
+
+		[Inject]
+		public IFrameCacheService CacheService { get; set; }
+
+		[Inject]
+		public INetStoreProvider NetStoreProvider { get; set; }
 
 		public async Task GoToNextFrame()
 		{
@@ -309,7 +269,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			VolumeLevel = value;
 			await JSRuntime.InvokeVoidAsync("Orions.Player.setVolumeLevel", new object[] { value });
 		}
-		
+
 		public async Task ChangePlaybackSpeed(double value)
 		{
 			PlaybackSpeed = value;
@@ -321,13 +281,24 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			await OnLoading.InvokeAsync(null);
 
-			this.CacheService = this.DependencyResolver.GetFrameCacheService();
-			this._store = DependencyResolver.GetNetStoreProvider().CurrentNetStore;
+			_store = NetStoreProvider.CurrentNetStore;
 
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.Space, () => { if (Paused) Play(); else Pause(); })
 				.AddShortcut(Key.ArrowLeft, () => GoToPreviousFrame())
 				.AddShortcut(Key.ArrowRight, () => GoToNextFrame()));
+
+			_subscriptions.Add(TagsStore.Data.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags) && i.Source.SelectedTags.IsNotNullOrEmpty())
+				.Select(i => i.Source.SelectedTags.Last())
+				.Subscribe(i => GoToSelectedTagFrame(i)));
+
+			_subscriptions.Add(TagsStore.Data
+				.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
+				.Subscribe(_ => UpdateState()));
+
+			_subscriptions.Add(TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => UpdateState()));
 		}
 
 		protected async override Task OnAfterRenderAsyncSafe(bool firstRender)
@@ -381,15 +352,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await UpdateFrameImageByCurrentPosition();
 		}
 
-		private async Task UpdateCurrentPositionFrameImage()
-		{
-			var frameImage = await CacheService.GetCachedFrameAsync(_store, MediaInstance.CurrentPosition, null);
-
-			if(frameImage != null)
-			{
-				PausedFrameBase64 = UniImage.ConvertByteArrayToBase64Url(frameImage);
-			}
-		}
+		private void UpdateCurrentPositionFrameImage(byte[] imageData) => PausedFrameBase64 = imageData != null ? UniImage.ConvertByteArrayToBase64Url(imageData) : null;
 
 		private bool _playerInitialized = false;
 		private async Task UpdateCurrentTaskData()

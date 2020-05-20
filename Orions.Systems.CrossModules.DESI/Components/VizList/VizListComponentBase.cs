@@ -6,55 +6,36 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
+using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.TagonomyExecution;
-using Orions.Systems.Desi.Common.TagsExploitation;
 
 namespace Orions.Systems.CrossModules.Desi.Components.VizList
 {
 	public class VizListComponentBase : BaseComponent
 	{
 		private const int UpdateStateTickRateMilliseconds = 30;
-		private ITagonomyExecutionDataStore _store;
 		private IDisposable _dataPropertyChangedSub;
 		private IDisposable _dataChangedSub;
 
 		[Parameter]
 		public string CssClass { get; set; }
 
-		[Parameter]
-		public ITagonomyExecutionDataStore Store
-		{
-			get => _store;
-			set => SetProperty(ref _store,
-				value,
-				() =>
-				{
-					_dataChangedSub?.Dispose();
-					_dataChangedSub = value?.DataChanged.Subscribe(d =>
-					{
-						UpdateState();
-						_dataPropertyChangedSub?.Dispose();
-						_dataPropertyChangedSub = d?
-							.GetPropertyChangedObservable()
-							.Sample(TimeSpan.FromMilliseconds(UpdateStateTickRateMilliseconds))
-							.Subscribe(_ => UpdateState());
-					});
-				});
-		}
+		[Inject]
+		public ITagonomyExecutionDataStore Store { get; set; }
 
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		[Inject]
-		public IJSRuntime JSRuntime { get; set; }
+		public IPopupService PopupService { get; set; }
 
 		[Parameter]
 		public Action VizListRendered { get; set; }
 
 		protected string _componentId = $"vizlist-{Guid.NewGuid().ToString()}";
-		protected TagonomyExecutionData Data => _store.Data;
+		protected TagonomyExecutionData Data => Store.Data;
 
 		protected void SelectTagonomyNode(TagonomyNodeModel tagonomyNodeModel) => ActionDispatcher.Dispatch(SelectTagonomyNodeAction.Create(tagonomyNodeModel));
 		protected void FinishTagonomyExecution() => ActionDispatcher.Dispatch(FinishTagonomyExecutionAction.Create());
@@ -69,21 +50,34 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
-			var popupService = DependencyResolver.GetPopupService();
-
 			if(Data?.TagonomyNodes?.Any() != null)
 			{
 				var nodesWithUIPopper = Data.TagonomyNodes.Where(n => n.GuiNodeElement != null).ToList();
 				foreach(var node in nodesWithUIPopper)
 				{
 					var referenceElementId = GetTagonomyNodeButtonId(node);
-					popupService.PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElementId);
+					PopupService.RegisterTagonomyNodePopper(node, referenceElementId);
 				}
 			}
 
 
 			await this.JSRuntime.InvokeVoidAsync("Orions.Vizlist.init", _componentId);
 			this.VizListRendered.Invoke();
+		}
+
+		protected override void OnInitializedSafe()
+		{
+			base.OnInitializedSafe();
+
+			_dataChangedSub = Store.DataChanged.Subscribe(d =>
+			{
+				UpdateState();
+				_dataPropertyChangedSub?.Dispose();
+				_dataPropertyChangedSub = d?
+					.GetPropertyChangedObservable()
+					.Sample(TimeSpan.FromMilliseconds(UpdateStateTickRateMilliseconds))
+					.Subscribe(_ => UpdateState());
+			});
 		}
 
 		protected string GetTagonomyNodeButtonId(TagonomyNodeModel tagonomyNode)
@@ -95,7 +89,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 		{
 			if (disposing)
 			{
-				_dataChangedSub.Dispose();
+				_dataChangedSub?.Dispose();
 				_dataPropertyChangedSub?.Dispose();
 			}
 			base.Dispose(disposing);

@@ -7,53 +7,43 @@ using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Tagging;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 using System.Reactive.Linq;
-using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
 using System.Collections.Generic;
 using Orions.Systems.CrossModules.Desi.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Orions.Systems.Desi.Common.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : BaseViewModelComponent<TaggingViewModel>
 	{
-		protected ITaggingSystem _taggingSystem;
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		protected TaggingSurface TaggingSurface;
-		private SessionIsOverPopup _sessionIsOverPopup;
 
 		[Inject]
 		public IKeyboardListener KeyboardListener { get; set; }
 
-		public SessionIsOverPopup SessionIsOverPopup
-		{
-			get { return _sessionIsOverPopup; }
-			set
-			{
-				_sessionIsOverPopup = value;
-				var popupService = DependencyResolver.GetPopupService();
-				popupService.SessionIsOverPopup = _sessionIsOverPopup;
-			}
-		}
+		[Inject]
+		public INavigationService NavigationService { get; set; }
+
+		[Inject]
+		public ITaggingSystem TaggingSystem { get; set; }
+
+		[Inject]
+		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			var navigationService = DependencyResolver.GetNavigationService();
-			_taggingSystem = DependencyResolver.GetTaggingSystem();
-			var authSystem = DependencyResolver.GetAuthenticationSystem();
-
-			if (authSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
+			if (AuthenticationSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
 			{
-				await navigationService.GoToLoginPage();
+				await NavigationService.GoToLoginPage();
 
 				return;
 			}
 
 			this.Vm.SlicePositionBiasHalfRange = 5;
 
-			_subscriptions.Add(
-				_taggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState())
-				);
+			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));
 
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))

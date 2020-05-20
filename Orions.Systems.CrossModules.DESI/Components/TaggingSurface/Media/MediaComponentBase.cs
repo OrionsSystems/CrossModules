@@ -31,16 +31,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Media
 			set => SetProperty(ref _media, value, UpdateState);
 		}
 
-		[Parameter]
+		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
 
-		[Parameter]
+		[Inject]
 		public ITaskDataStore TaskDataStore { get; set; }
 
-		[Parameter]
+		[Inject]
 		public ITagsStore TagsStore { get; set; }
 
-		public TaskModel CurrentTask { get { return TaskDataStore?.Data?.CurrentTask; } }
+		public TaskModel CurrentTask => TaskDataStore.Data?.CurrentTask;
 
 		protected override void Dispose(bool disposing)
 		{

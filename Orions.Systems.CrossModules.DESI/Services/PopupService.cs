@@ -1,26 +1,33 @@
 ﻿using Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup;
 using Orions.Systems.CrossModules.Desi.Components.Popper;
 using Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup;
+using Orions.Systems.Desi.Common.TagonomyExecution;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Desi.Services
 {
-	public class PopupService
+	public class PopupService : IPopupService
 	{
-		public ConfirmationPopupBase ConfirmationPopupComponent { get; set; }
-		public PopperServiceComponentBase PopperServiceComponent { get; set; }
+		private ConfirmationPopupBase ConfirmationPopupComponent { get; set; }
+		private PopperServiceComponentBase PopperServiceComponent { get; set; }
+		private SessionIsOverPopup SessionIsOverPopup { get; set; }
 
-		public SessionIsOverPopup SessionIsOverPopup { get; set; }
+		private bool _initialized;
 
-		public PopupService()
+		public void Init(ConfirmationPopupBase confirmationPopupBase,
+			PopperServiceComponentBase popperServiceComponentBase,
+			SessionIsOverPopup sessionIsOverPopup)
 		{
+			ConfirmationPopupComponent = confirmationPopupBase;
+			PopperServiceComponent = popperServiceComponentBase;
+			SessionIsOverPopup = sessionIsOverPopup;
+			_initialized = true;
 		}
 
 		public async Task<bool> ShowConfirmation(string title, string question)
 		{
+			CheckInit();
 			ConfirmationPopupComponent.OkCaption = "Yes";
 			ConfirmationPopupComponent.CancelCaption = "No";
 			ConfirmationPopupComponent.Title = title;
@@ -32,6 +39,7 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		public async Task ShowAlert(string title, string question)
 		{
+			CheckInit();
 			ConfirmationPopupComponent.Title = title;
 			ConfirmationPopupComponent.Message = question;
 			await ConfirmationPopupComponent.ShowOkModal();
@@ -39,12 +47,14 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		public async Task ShowAlert(string title, string question, string okBtnCaption)
 		{
+			CheckInit();
 			ConfirmationPopupComponent.OkCaption = okBtnCaption;
 			await this.ShowAlert(title, question);
 		}
 
 		public async Task<bool> ShowConfirmation(string title, string question, string okBtnCaption, string cancelBtnCaption)
 		{
+			CheckInit();
 			ConfirmationPopupComponent.OkCaption = okBtnCaption;
 			ConfirmationPopupComponent.CancelCaption = cancelBtnCaption;
 			return await this.ShowConfirmation(title, question);
@@ -52,15 +62,16 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		public async Task<bool> ShowSessionIsOver(int secondsToTimeout)
 		{
-			if(SessionIsOverPopup != null)
-			{
-				var result = await SessionIsOverPopup.Show(secondsToTimeout);
+			return await SessionIsOverPopup.Show(secondsToTimeout);
+		}
 
-				return result;
-			}
-			else
+		public void RegisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElId);
+
+		private void CheckInit()
+		{
+			if (!_initialized)
 			{
-				throw new Exception($"{nameof(SessionIsOverPopup)} property must be set on {nameof(PopupService)} before using {nameof(ShowSessionIsOver)} method");
+				throw new InvalidOperationException($"You should call {nameof(Init)} method first in order to use {nameof(PopupService)}.");
 			}
 		}
 	}
