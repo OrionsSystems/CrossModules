@@ -11,6 +11,7 @@ using Orions.Systems.Desi.Common.Extensions;
 using System.Reactive.Linq;
 using Microsoft.JSInterop;
 using System.Collections.Immutable;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TagPreview
 {

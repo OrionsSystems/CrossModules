@@ -7,6 +7,7 @@ using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TaskExploitation;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaskNavigation
 {

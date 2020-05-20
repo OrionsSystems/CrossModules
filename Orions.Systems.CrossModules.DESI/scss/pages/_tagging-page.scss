@@ -112,6 +112,10 @@
 		overflow-y: auto;
 		height: 100%;
 
+		*{
+			user-select:none;
+		}
+
 		.user-manual {
 			padding: 20px;
 			color: $gray-500;

@@ -1,6 +1,7 @@
 ﻿@inherits BaseComponent
 @using Orions.Systems.Desi.Common.Services;
 @using Orions.Systems.Desi.Common.MissionsExploitation;
+@using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 <div class="navigation-bar">
 	@if (NavigationManager.ToBaseRelativePath(NavigationManager.Uri) != Routes.Root)
@@ -11,45 +12,45 @@
 
 @code {
 
-    [Inject]
-    public NavigationManager NavigationManager { get; set; }
+	[Inject]
+	public NavigationManager NavigationManager { get; set; }
 
-    [Inject]
-    public INavigationService NavigationService { get; set; }
+	[Inject]
+	public INavigationService NavigationService { get; set; }
 
-    [Inject]
-    public IMissionsExploitationSystem MissionsExploitationSystem { get; set; }
+	[Inject]
+	public IMissionsExploitationSystem MissionsExploitationSystem { get; set; }
 
-    protected override void OnInitializedSafe()
-    {
-        NavigationManager.LocationChanged += (s, e) =>
-        {
-            UpdateState();
-        };
-    }
+	protected override void OnInitializedSafe()
+	{
+		NavigationManager.LocationChanged += (s, e) =>
+		{
+			UpdateState();
+		};
+	}
 
-    protected void Back()
-    {
-        var currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
+	protected void Back()
+	{
+		var currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
 
-        switch (currentLocation)
-        {
-            case Routes.Missions:
-                NavigationService.GoToLoginPage();
-                break;
-            case Routes.StageSelection:
-                NavigationService.GoToMissionsPage();
-                break;
-            case Routes.Tagging:
-                if(MissionsExploitationSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
-                {
-                    NavigationService.GoToStageSelection();
-                }
-                else
-                {
-                    NavigationService.GoToMissionsPage();
-                }
-                break;
-        }
-    }
+		switch (currentLocation)
+		{
+			case Routes.Missions:
+				NavigationService.GoToLoginPage();
+				break;
+			case Routes.StageSelection:
+				NavigationService.GoToMissionsPage();
+				break;
+			case Routes.Tagging:
+				if (MissionsExploitationSystem.Store?.Data?.CurrentWorkflow.Stages.Count > 1)
+				{
+					NavigationService.GoToStageSelection();
+				}
+				else
+				{
+					NavigationService.GoToMissionsPage();
+				}
+				break;
+		}
+	}
 }

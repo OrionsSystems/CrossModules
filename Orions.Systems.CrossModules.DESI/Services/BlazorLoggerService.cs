@@ -21,6 +21,7 @@ namespace Orions.Systems.CrossModules.Desi.Services
 			this._logger = new LoggerConfiguration()
 				.Enrich.FromLogContext()
 				.WriteTo.File(logFileName, rollingInterval: RollingInterval.Day)
+				.WriteTo.Console()
 				.CreateLogger();
 			this.dependencyResolver = dependencyResolver;
 		}

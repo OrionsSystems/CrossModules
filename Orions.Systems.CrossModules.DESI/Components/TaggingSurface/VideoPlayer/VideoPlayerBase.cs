@@ -18,6 +18,7 @@ using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Common.Util;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {

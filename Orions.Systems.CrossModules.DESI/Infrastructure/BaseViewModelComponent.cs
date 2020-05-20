@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.Desi.Core.ViewModels.Abstract;
 using Orions.Systems.Desi.Common.Util;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {

@@ -21,6 +21,7 @@ using Orions.Common;
 using System.Diagnostics;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Util;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -369,7 +370,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					}
 				}
 			}
-			catch { }
+			catch(Exception e)
+			{
+				Logger.LogException("Exception occured while trying to update tags on the canvas", e);
+				throw;
+			}
 			finally
 			{
 				_updateTagsClientSemaphore.Release();

@@ -7,6 +7,8 @@ using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.CrossModules.Desi.Util;
 using System.Threading.Tasks;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Desi
 {
@@ -49,6 +51,8 @@ namespace Orions.Systems.CrossModules.Desi
 				{
 					popupService.Init(ConfirmationPopupComponent, PopperServiceComponent, SessionIsOverPopup);
 				}
+
+				JSRuntime.InvokeVoidAsync("Orions.DesiApp.initialize");
 			}
 		}
 	}

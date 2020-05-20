@@ -1014,6 +1014,8 @@ body {
     flex-direction: column;
     overflow-y: auto;
     height: 100%; }
+    .tagging-page-container .tag-preview-control-container * {
+      user-select: none; }
     .tagging-page-container .tag-preview-control-container .user-manual {
       padding: 20px;
       color: #adb5bd; }

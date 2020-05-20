@@ -346,7 +346,7 @@ class TaggingSurface {
 		self.removeTag = function (tag) {
 			let tagToRemove = self.items.find(i => i.id == tag.id);
 
-			if (tagToRemove) {
+			if (isDefined(tagToRemove)) {
 				tagToRemove.remove();
 
 				self.items.splice(self.items.indexOf(tagToRemove), 1);

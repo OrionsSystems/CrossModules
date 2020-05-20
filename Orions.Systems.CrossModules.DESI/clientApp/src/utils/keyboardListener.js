@@ -12,7 +12,7 @@
                 (event.ctrlKey ? 0x02 : 0) +
                 (event.altKey ? 0x04 : 0) +
                 (event.metaKey ? 0x08 : 0);
-            let handled = false;
+            let handled = true;
             dotNetHandle.invokeMethodAsync('OnKeyEvent', keyCode, modKeys, event.type == 'keydown'? 0 : 1);
 
             if (handled) {

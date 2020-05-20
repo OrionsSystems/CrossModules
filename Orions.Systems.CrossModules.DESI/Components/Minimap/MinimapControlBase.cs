@@ -6,6 +6,7 @@ using Orions.Systems.Desi.Common.Media;
 using System;
 using System.Linq;
 using System.Reactive.Linq;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 
 namespace Orions.Systems.CrossModules.Desi.Components.Minimap
 {
