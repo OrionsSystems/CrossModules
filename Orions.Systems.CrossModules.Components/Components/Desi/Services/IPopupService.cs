@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.TagonomyExecution;
 
-namespace Orions.Systems.CrossModules.Desi.Services
+namespace Orions.Systems.CrossModules.Components.Desi.Services
 {
 	public interface IPopupService
 	{

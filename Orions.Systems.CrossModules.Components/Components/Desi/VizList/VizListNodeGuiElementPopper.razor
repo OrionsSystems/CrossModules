@@ -1,7 +1,10 @@
-﻿@inherits BaseComponent
-@using Orions.Systems.Desi.Common.TagonomyExecution; 
+﻿@using Orions.Systems.CrossModules.Components.Desi.Infrastructure
+@using Orions.Systems.Desi.Common.TagonomyExecution;
+@using Microsoft.JSInterop; 
+@namespace Orions.Systems.CrossModules.Components.Desi.VizList
+@inherits BaseComponent
 
-@{ 
+@{
 	var tagonomyNodeId = $"node-id-{Node.Id}";
 }
 
@@ -22,7 +25,7 @@
 	}
 </div>
 
-@code{ 
+@code{
 	[Parameter]
 	public TagonomyNodeModel Node { get; set; }
 

@@ -18,8 +18,9 @@ using System.Threading.Tasks;
 using Rectangle = Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model.Rectangle;
 using System.Reactive.Concurrency;
 using Orions.Common;
-using Orions.Systems.CrossModules.Desi.Services;
 using System.Diagnostics;
+using Orions.Systems.CrossModules.Components.Desi.Services;
+using Orions.Systems.Desi.Common.Util;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {

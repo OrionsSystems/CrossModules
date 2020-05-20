@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperSemantic;
-using Orions.Systems.CrossModules.Desi.Infrastructure;
-using Orions.Systems.CrossModules.Desi.Services;
+using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.TagonomyExecution;
 
-namespace Orions.Systems.CrossModules.Desi.Components.VizList
+namespace Orions.Systems.CrossModules.Components.Desi.VizList
 {
 	public class VizListComponentBase : BaseComponent
 	{
@@ -50,7 +50,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
-			if(Data?.TagonomyNodes?.Any() != null)
+			if(Data?.TagonomyNodes?.Any() != null && PopupService != null)
 			{
 				var nodesWithUIPopper = Data.TagonomyNodes.Where(n => n.GuiNodeElement != null).ToList();
 				foreach(var node in nodesWithUIPopper)
@@ -62,7 +62,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.VizList
 
 
 			await this.JSRuntime.InvokeVoidAsync("Orions.Vizlist.init", _componentId);
-			this.VizListRendered.Invoke();
+			this.VizListRendered?.Invoke();
 		}
 
 		protected override void OnInitializedSafe()

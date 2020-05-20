@@ -6,6 +6,7 @@ using Orions.Systems.CrossModules.Desi.Infrastructure;
 using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.CrossModules.Desi.Util;
 using System.Threading.Tasks;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Desi
 {
@@ -34,9 +35,20 @@ namespace Orions.Systems.CrossModules.Desi
 			var platform = new BlazorPlatform(DependencyResolver.GetInputHelper());
 			System.Platform.Instance = platform;
 
-			if(PopupService is PopupService popupService)
+
+		}
+
+		// popup service initialization is performed after first app render, because required components are not initialized when OnInitializedAsyncSafe is called
+		protected override void OnAfterRenderSafe(bool firstRender)
+		{
+			base.OnAfterRenderSafe(firstRender);
+
+			if (firstRender)
 			{
-				popupService.Init(ConfirmationPopupComponent, PopperServiceComponent, SessionIsOverPopup);
+				if (PopupService is PopupService popupService)
+				{
+					popupService.Init(ConfirmationPopupComponent, PopperServiceComponent, SessionIsOverPopup);
+				}
 			}
 		}
 	}

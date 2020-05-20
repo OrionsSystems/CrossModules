@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Orions.Systems.Desi.Common.Util;
+using System;
 
-namespace Orions.Systems.CrossModules.Desi.Services
+namespace Orions.Systems.CrossModules.Components.Desi.Services
 {
 	public interface IKeyboardListener
 	{

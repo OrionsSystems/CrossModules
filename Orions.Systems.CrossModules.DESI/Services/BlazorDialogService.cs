@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Services
 {

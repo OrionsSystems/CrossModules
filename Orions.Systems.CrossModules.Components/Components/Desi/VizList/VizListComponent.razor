@@ -1,6 +1,7 @@
 ﻿@using Orions.Systems.Desi.Common.Extensions;
-@using Orions.Systems.CrossModules.Desi.Services;
-@using Orions.Systems.CrossModules.Desi.Util;
+@using Orions.Systems.CrossModules.Components.Desi.Services;
+@using Orions.Systems.Desi.Common.Util;
+@namespace Orions.Systems.CrossModules.Components.Desi.VizList
 
 @inherits VizListComponentBase;
 
@@ -43,7 +44,7 @@
             @if (Data.TagonomyNodes != null)
             {
                 _tagonomyNodesShortcutSub?.Dispose();
-                var sub = KeyboardListener.CreateSubscription();
+                var sub = KeyboardListener?.CreateSubscription();
                 _tagonomyNodesShortcutSub = sub;
 
 		<div class="nodes-container">
@@ -106,7 +107,7 @@
         @if (Data.HasProperties)
         {
             _tagonomyPropertiesShortcutSub?.Dispose();
-            var sub = KeyboardListener.CreateSubscription();
+            var sub = KeyboardListener?.CreateSubscription();
             _tagonomyPropertiesShortcutSub = sub;
             <div class="viz-container properties">
                 @foreach (var propertyGroup in Data.Properties)
@@ -152,7 +153,7 @@ else
 
     protected override void OnInitializedSafe()
     {
-        _shortcutsSub = KeyboardListener.CreateSubscription()
+        _shortcutsSub = KeyboardListener?.CreateSubscription()
             .AddShortcut(Key.C, () => TryFinishExecution())
             .AddShortcut(Key.F, () => TryFinishCurrentPath())
             .AddShortcut(Key.S, () => TrySkipCurrentPath())

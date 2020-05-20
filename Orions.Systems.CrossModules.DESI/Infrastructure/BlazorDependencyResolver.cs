@@ -6,6 +6,7 @@ using System;
 using Microsoft.AspNetCore.Components;
 using Orions.Systems.CrossModules.Desi.Services;
 using Microsoft.Extensions.Configuration;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Infrastructure
 {

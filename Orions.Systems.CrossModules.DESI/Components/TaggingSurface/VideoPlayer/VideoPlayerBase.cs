@@ -1,31 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
-using NReco.VideoConverter;
 using Orions.Common;
 using Orions.Desi.Forms.Core.Services;
 using Orions.Infrastructure.HyperMedia;
-using Orions.Infrastructure.Media.Codecs.H264;
-using Orions.Node.Common;
 using Orions.Systems.CrossModules.Desi.Infrastructure;
-using Orions.Systems.CrossModules.Desi.Services;
 using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Media;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
-using System.Diagnostics;
-using Orions.Desi.Forms.Core.Util.Extensions;
 using Orions.Systems.Desi.Common.TaskExploitation;
-using Syncfusion.EJ2.Blazor.Gantt;
-using Orions.Desi.Forms.Core.Util.Extensions;
-using Orions.SDK.Onvif.DeviceService;
 using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.Desi.Common.Util;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {

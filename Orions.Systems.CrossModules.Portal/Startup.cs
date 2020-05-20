@@ -13,6 +13,11 @@ using Blazored.LocalStorage;
 using Orions.Common;
 using ReactNOW.ML;
 using ReactNOW.Integration;
+using Orions.Systems.Desi.Common.General;
+using Orions.Systems.CrossModules.Portal.Domain.Desi;
+using Orions.Systems.Desi.Common.TagonomyExecution;
+using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -56,6 +61,20 @@ namespace Orions.Systems.CrossModules.Portal
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 			services.AddScoped<CustomSettingsProvider>();
+
+			AddVizlistServices(services);
+		}
+
+		private void AddVizlistServices(IServiceCollection services)
+		{
+			services.AddScoped<TagonomyExecutionDataStore>();
+			services.AddScoped<ITagonomyExecutionDataStore>(serviceProvider => serviceProvider.GetService<TagonomyExecutionDataStore>());
+			services.AddScoped<ILoggerService, LoggerServiceStub>();
+			services.AddScoped<IInputHelper, InputHelper>();
+			services.AddScoped<ITagonomyExecutionController, TagonomyExecutionController>();
+			services.AddScoped<IActionDispatcher, PortalDesiActionDispatcher>();
+			services.AddScoped<IKeyboardListener, KeyboardListenerStub>();
+			services.AddScoped<IPopupService, PopupServiceStub>();
 		}
 
 
