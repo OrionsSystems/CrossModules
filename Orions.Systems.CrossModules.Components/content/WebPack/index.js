@@ -11,4 +11,5 @@ export * from './src/Kendo/KendoTreemap';
 export * from './src/Kendo/KendoMediaPlayer';
 export * from './src/MapZone/MapZone';
 export * from './src/Resize/Resize';
+export * from './src/vizlist/index';
 export * from './src/common';

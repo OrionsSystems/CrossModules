@@ -1,5 +1,5 @@
 ﻿import * as paper from 'paper'
-import { isDefined } from '../../utils'
+import { isDefined } from '../../../../../Orions.Systems.CrossModules.Components/content/WebPack/src/utils'
 
 const defaultFillColor = new paper.Color(255, 255, 255, 0.1);
 const defaultSelectedColor = new paper.Color(255, 255, 255, 0.1);

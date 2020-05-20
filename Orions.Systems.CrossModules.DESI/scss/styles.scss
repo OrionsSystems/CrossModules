@@ -1,11 +1,11 @@
-﻿@import "variables";
+﻿@import "../../Orions.Systems.CrossModules.Components/content/desi/scss/_variables.scss";
 @import "layout";
 @import "common";
 
 @import "components/windows-switch";
 @import "components/enter-button";
 @import "components/_video-player";
-@import "components/_vizlist.scss";
+@import "../../Orions.Systems.CrossModules.Components/content/desi/scss/components/_vizlist.scss";
 @import "components/_tasknavigation.scss";
 @import "components/_modal-popup.scss";
 @import "components/_minimap.scss";
@@ -14,4 +14,6 @@
 @import "pages/stage-selection";
 @import "pages/tagging-page";
 @import "pages/login";
+
+
 

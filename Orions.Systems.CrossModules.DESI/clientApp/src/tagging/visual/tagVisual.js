@@ -1,7 +1,7 @@
 ﻿import * as paper from 'paper';
 import BaseVisual from './baseVisual'
 import AdornerElement from './adornerElement'
-import { isDefined } from '../../utils';
+import { isDefined } from '../../../../../Orions.Systems.CrossModules.Components/content/WebPack/src/utils'
 
 export default class TagVisual extends BaseVisual {
 
