@@ -1,12 +1,22 @@
 ﻿[
-   {
-      "outputFile": "content/WebPack/dist/orions.bundle.css",
-      "inputFile": "content/WebPack/scss/styles.scss",
-      "minify": {
-         "enabled": false
-      },
-      "options": {
-         "sourceMap": false
-      }
-   }
+  {
+    "outputFile": "content/WebPack/dist/orions.bundle.css",
+    "inputFile": "content/WebPack/scss/styles.scss",
+    "minify": {
+      "enabled": false
+    },
+    "options": {
+      "sourceMap": false
+    }
+  },
+  {
+    "outputFile": "content/desi/orions.desi.components.bundle.css",
+    "inputFile": "content/desi/scss/styles.scss",
+    "minify": {
+      "enabled": false
+    },
+    "options": {
+      "sourceMap": false
+    }
+  }
 ]

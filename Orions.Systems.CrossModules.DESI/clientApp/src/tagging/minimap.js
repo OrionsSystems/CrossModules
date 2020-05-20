@@ -1,4 +1,4 @@
-﻿import { isDefined } from "../utils";
+﻿import { isDefined } from '../../../../Orions.Systems.CrossModules.Components/content/WebPack/src/utils'
 
 class Minimap{
 	constructor() {

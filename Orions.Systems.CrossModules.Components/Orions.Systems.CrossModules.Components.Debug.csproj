@@ -29,6 +29,7 @@
 
 		<EmbeddedResource Include="content\WebPack\dist\orions.bundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<EmbeddedResource Include="content\WebPack\dist\orions.bundle.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\desi\orions.desi.components.bundle.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
 	</ItemGroup>
 

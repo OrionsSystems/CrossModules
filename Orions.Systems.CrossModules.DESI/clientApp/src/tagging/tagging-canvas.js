@@ -1,6 +1,6 @@
 import * as paper from 'paper';
 import CanvasCrosshair from './canvas-crosshair'
-import { isDefined } from '../utils'
+import { isDefined } from '../../../../Orions.Systems.CrossModules.Components/content/WebPack/src/utils'
 import TagVisual from './visual/tagVisual'
 
 window.Orions.TaggingSurface = {}
