@@ -93,10 +93,7 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 
 		public override IPlaylistItemFactory GetPlaylistItemFactory()
 		{
-			var factory = base.GetPlaylistItemFactory();
-			factory.UseSecureDash = true;
-
-			return factory;
+			return base.GetPlaylistItemFactory();
 		}
 	}
 }
