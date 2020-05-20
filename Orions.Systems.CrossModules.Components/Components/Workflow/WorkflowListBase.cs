@@ -43,6 +43,8 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
+		public bool IsTableMode { get; set; }
+
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
 		public WorkflowListBase()

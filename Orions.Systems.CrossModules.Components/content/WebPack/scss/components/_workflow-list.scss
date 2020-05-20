@@ -96,9 +96,23 @@
 		position: fixed;
 		align-items: center;
 		justify-content: center;
-		
-		.no-data-text{
-			font-size:22px;
+
+		.no-data-text {
+			font-size: 22px;
+		}
+	}
+
+	.card-container {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-content: space-between;
+		justify-content: flex-start;
+
+		.card {
+			margin: 5px;
+			flex: 0 0 32.43%;
+			max-width: 32.43%;
 		}
 	}
 }

@@ -7693,6 +7693,17 @@ i.ui-intro-button {
   .workflow-container .no-data-container .no-data-text {
     font-size: 22px; }
 
+.workflow-container .card-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: space-between;
+  justify-content: flex-start; }
+  .workflow-container .card-container .card {
+    margin: 5px;
+    flex: 0 0 32.43%;
+    max-width: 32.43%; }
+
 .mission-container .mission-list-header .header-filter .list-search button {
   display: inherit; }
 
