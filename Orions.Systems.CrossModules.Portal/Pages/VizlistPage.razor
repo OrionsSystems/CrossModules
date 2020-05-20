@@ -1,0 +1,63 @@
+﻿@page "/tagonomy/{TagonomyId}/vizlist"
+
+@using Orions.Infrastructure.HyperSemantic
+@using Orions.Systems.Desi.Common.TagonomyExecution
+@using Orions.Systems.Desi.Common.General
+@using Orions.Infrastructure.HyperMedia
+@using Orions.Node.Common
+
+@inherits PortalBaseComponent
+
+@if (Source != null)
+{
+	<Orions.Systems.CrossModules.Components.Desi.VizList.VizListComponent>
+
+	</Orions.Systems.CrossModules.Components.Desi.VizList.VizListComponent>
+}
+else
+{
+	<Loader Settings="@LoaderSetting"></Loader>
+}
+
+
+@code {
+
+	private Tagonomy Source;
+	private LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
+
+	[Parameter]
+	public string TagonomyId { get; set; }
+
+	[Inject]
+	public IActionDispatcher ActionDispatcher { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+
+		await LoadTagonomy();
+
+		if (Source == null) return;
+
+		var externalTagonomies = new List<Tagonomy>();
+		ActionDispatcher.Dispatch(StartTagonomyExecutionAction.Create(Source, externalTagonomies, true, true));
+
+		StateHasChanged();
+	}
+
+
+	private async Task LoadTagonomy()
+	{
+		if (HyperStore == null || string.IsNullOrWhiteSpace(TagonomyId)) return;
+
+		var documentId = HyperDocumentId.Create<Tagonomy>(TagonomyId);
+		var argTagonomy = new RetrieveHyperDocumentArgs(documentId);
+		var doc = await HyperStore.ExecuteAsync(argTagonomy);
+
+		if (argTagonomy.ExecutionResult.IsNotSuccess)
+			return;
+
+		Source = doc?.GetPayload<Tagonomy>();
+	}
+
+}
