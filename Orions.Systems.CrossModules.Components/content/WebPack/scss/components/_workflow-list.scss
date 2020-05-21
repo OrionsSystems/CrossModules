@@ -102,6 +102,12 @@
 		}
 	}
 
+	.group-title {
+		padding: 10px 15px 5px 25px;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
 	.card-container {
 		display: flex;
 		flex-direction: row;
@@ -113,6 +119,30 @@
 			margin: 5px;
 			flex: 0 0 32.43%;
 			max-width: 32.43%;
+
+			.card-cmd {
+				float: right;
+			}
+
+			a {
+				cursor: pointer;
+				opacity: 0.5;
+				transition: 0.5s;
+
+				&:hover {
+					opacity: 1;
+					transition: 0.5s;
+				}
+
+				.material-icons {
+					font-size: 16px;
+				}
+
+				.list-cmd-label {
+					font-size: 12px;
+					letter-spacing: 0.5px;
+				}
+			}
 		}
 	}
 }

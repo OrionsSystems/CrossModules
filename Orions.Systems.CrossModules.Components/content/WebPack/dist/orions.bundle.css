@@ -7693,6 +7693,11 @@ i.ui-intro-button {
   .workflow-container .no-data-container .no-data-text {
     font-size: 22px; }
 
+.workflow-container .group-title {
+  padding: 10px 15px 5px 25px;
+  font-size: 16px;
+  font-weight: bold; }
+
 .workflow-container .card-container {
   display: flex;
   flex-direction: row;
@@ -7703,6 +7708,20 @@ i.ui-intro-button {
     margin: 5px;
     flex: 0 0 32.43%;
     max-width: 32.43%; }
+    .workflow-container .card-container .card .card-cmd {
+      float: right; }
+    .workflow-container .card-container .card a {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.5s; }
+      .workflow-container .card-container .card a:hover {
+        opacity: 1;
+        transition: 0.5s; }
+      .workflow-container .card-container .card a .material-icons {
+        font-size: 16px; }
+      .workflow-container .card-container .card a .list-cmd-label {
+        font-size: 12px;
+        letter-spacing: 0.5px; }
 
 .mission-container .mission-list-header .header-filter .list-search button {
   display: inherit; }
