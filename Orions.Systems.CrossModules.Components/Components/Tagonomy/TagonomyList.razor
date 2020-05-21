@@ -1,91 +1,108 @@
 ﻿@namespace Orions.Systems.CrossModules.Components
 
+@using Orions.Infrastructure.HyperSemantic
+
 @inherits TagonomyListBase
 
-<div class="workflow-container">
+	<div class="workflow-container">
 
-	<div class="row workflow-list-header">
-		<div class="header-filter col-lg-7">
-			<div class="input-group mt-3">
-				<input type="text" class="form-control" @bind="@Vm.Search" placeholder="Search" aria-label="Search" aria-describedby="basic-search">
-				<div class="input-group-append list-search">
-					<button @onclick="@Vm.OnSearchBtnClick" class="btn btn-outline-secondary" type="button">
-						<MatIcon Class="dashoboard-list-search-icon" Icon="@MatIconNames.Search"></MatIcon>
-						<span>Search</span>
-					</button>
+		<div class="row workflow-list-header">
+			<div class="header-filter col-lg-7">
+				<div class="input-group mt-3">
+					<input type="text" class="form-control" @bind="@Vm.Search" placeholder="Search" aria-label="Search" aria-describedby="basic-search">
+					<div class="input-group-append list-search">
+						<button @onclick="@Vm.OnSearchBtnClick" class="btn btn-outline-secondary" type="button">
+							<MatIcon Class="dashoboard-list-search-icon" Icon="@MatIconNames.Search"></MatIcon>
+							<span>Search</span>
+						</button>
+					</div>
 				</div>
 			</div>
+			<div class="header-actions col-lg-5">
+				<a class="btn" @onclick="@(async ev => { await Vm.CreateNew(); })">
+					<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
+					<div class="header-cmd-label">Create</div>
+				</a>
+			</div>
 		</div>
-		<div class="header-actions col-lg-5">
-			<a class="btn" @onclick="@(async ev => { await Vm.CreateNew(); })">
-				<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
-				<div class="header-cmd-label">Create</div>
-			</a>
-		</div>
+
+		@if (Vm.Items.Any() && Vm.IsLoadedData)
+		{
+
+			var groups = Vm.Items.GroupBy(it => it.Group).ToDictionary(el => el.Key, el => el.ToList());
+
+			<div class="row">
+				<div class="col-lg-12 header-title">Tagonomies</div>
+			</div>
+
+			@foreach (KeyValuePair<string, List<Tagonomy>> entry in groups)
+			{
+				var groupName = entry.Key;
+				var groupData = entry.Value;
+				var rowIndex = 0;
+
+				<div class="row">
+					<div class="col-lg-12 group-title">@groupName</div>
+				</div>
+
+				<div class="table-responsive list-table">
+
+					<table class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th width="1%" class="nowrap center"></th>
+								<th>Name</th>
+								<th width="25%" class="nowrap center"></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var item in groupData)
+							{
+								rowIndex++;
+
+								@if (item == null) continue;
+
+								<tr @key="item.Id">
+									<td class="center nowrap">@rowIndex</td>
+									<td>
+										<div class="workflow-label-container">
+											<div class="workflow-name">
+												<h6>@item.Name</h6>
+											</div>
+											<div class="workflow-id">
+												@($"Id:{item.Id}")
+											</div>
+										</div>
+									</td>
+									<td class="center list-cmd-container">
+										<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
+											<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
+											<div class="list-cmd-label">Properties</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.EditAsync(item); })">
+											<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
+											<div class="list-cmd-label">Edit</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
+											<MatIcon Icon="@MatIconNames.Insert_chart_outlined"></MatIcon>
+											<div class="list-cmd-label">Visualize</div>
+										</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+
+
+		}
+		@if (!Vm.IsLoadedData)
+		{
+			<Loader Settings="@LoaderSetting"></Loader>
+		}
+
 	</div>
-
-	@if (Vm.Items.Any() && Vm.IsLoadedData)
-	{
-		var rowIndex = 0;
-
-		<div class="row">
-			<div class="col-lg-12 header-title">Tagonomies</div>
-		</div>
-
-		<div class="table-responsive list-table">
-
-			<table class="table table-striped table-bordered table-hover">
-				<thead>
-					<tr>
-						<th width="1%" class="nowrap center"></th>
-						<th width="5%" class="nowrap center">Group</th>
-						<th>Name</th>
-						<th width="25%" class="nowrap center"></th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var item in Vm.Items)
-					{
-						rowIndex++;
-
-						@if (item == null) continue;
-
-						<tr @key="item.Id">
-							<td class="center nowrap">@rowIndex</td>
-							<td>@item.Group</td>
-							<td>
-								<div class="name-container">
-									<div class="workflow-name">
-										@item.ToString()
-									</div>
-								</div>
-							</td>
-							<td class="center list-cmd-container">
-								<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
-									<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
-									<div class="list-cmd-label">Properties</div>
-								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.EditAsync(item); })">
-									<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
-									<div class="list-cmd-label">Edit</div>
-								</a>
-								<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
-									<MatIcon Icon="@MatIconNames.Insert_chart_outlined"></MatIcon>
-									<div class="list-cmd-label">Visualize</div>
-								</a>
-							</td>
-						</tr>
-					}
-				</tbody>
-			</table>
-		</div>
-	}
-	@if (!Vm.IsLoadedData)
-	{
-		<Loader Settings="@LoaderSetting"></Loader>
-	}
-
-</div>
 
 @if (Vm.IsShowProperty)
 {
