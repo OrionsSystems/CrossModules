@@ -7743,11 +7743,11 @@ i.ui-intro-button {
     .mission-container .list-table table .list-cmd-container a .list-cmd-delete {
       color: red !important; }
 
-.tagonomy-editor-container .list-header .header-actions .cmd-create, .tagonomy-editor-container .list-header .header-actions .cmd-up, .tagonomy-editor-container .list-header .header-actions .cmd-down, .tagonomy-editor-container .list-header .header-actions .cmd-delete, .tagonomy-editor-container .list-header .header-actions .cmd-refresh {
+.tagonomy-editor-container .list-header .header-actions .cmd-create, .tagonomy-editor-container .list-header .header-actions .cmd-up, .tagonomy-editor-container .list-header .header-actions .cmd-down, .tagonomy-editor-container .list-header .header-actions .cmd-delete, .tagonomy-editor-container .list-header .header-actions .cmd-refresh, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist {
   cursor: pointer;
   opacity: 0.5;
   transition: 0.5s; }
-  .tagonomy-editor-container .list-header .header-actions .cmd-create:hover, .tagonomy-editor-container .list-header .header-actions .cmd-up:hover, .tagonomy-editor-container .list-header .header-actions .cmd-down:hover, .tagonomy-editor-container .list-header .header-actions .cmd-delete:hover, .tagonomy-editor-container .list-header .header-actions .cmd-refresh:hover {
+  .tagonomy-editor-container .list-header .header-actions .cmd-create:hover, .tagonomy-editor-container .list-header .header-actions .cmd-up:hover, .tagonomy-editor-container .list-header .header-actions .cmd-down:hover, .tagonomy-editor-container .list-header .header-actions .cmd-delete:hover, .tagonomy-editor-container .list-header .header-actions .cmd-refresh:hover, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist:hover {
     opacity: 1;
     transition: 0.5s; }
 
