@@ -1,14 +1,12 @@
 ﻿using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
-using System;
-using System.Collections.Generic;
-using System.Text;
+
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public class IndexBlazorComponent<VmType> : BaseBlazorComponent<VmType>
-		where VmType : BaseVm, new()
+		where VmType : BlazorVm, new()
 	{
 		public CrossModuleVisualizationRequest VisualizationRequest { get; set; }
 

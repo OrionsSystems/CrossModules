@@ -1,4 +1,6 @@
-﻿using Orions.Common;
+﻿using Microsoft.AspNetCore.Components;
+
+using Orions.Common;
 
 namespace Orions.Systems.CrossModules.Components
 {
@@ -21,6 +23,8 @@ namespace Orions.Systems.CrossModules.Components
 				SetValue(ref _ownerComponent, value);
 			}
 		}
+
+		public EventCallback<ToastMessage> OnToastMessage { get; set; }
 
 		public BlazorVm()
 		{

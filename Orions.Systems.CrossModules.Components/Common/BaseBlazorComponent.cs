@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
+
 using Orions.Common;
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
 	public class BaseBlazorComponent<VmType> : BaseBlazorComponent
-		where VmType : BaseVm, new()
+		where VmType : BlazorVm, new()
 	{
 		protected virtual bool AutoCreateVm => true;
 
@@ -24,6 +24,13 @@ namespace Orions.Systems.CrossModules.Components
 			{
 				base.DataContext = value;
 			}
+		}
+
+		[Parameter]
+		public EventCallback<ToastMessage> OnToastMessage
+		{
+			get => Vm.OnToastMessage;
+			set => Vm.OnToastMessage = value;
 		}
 
 		[Obsolete("Use Vm instead")]
