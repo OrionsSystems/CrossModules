@@ -15,7 +15,6 @@ using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components.Components.SVGMapEditor.JsModel;
 using Orions.Systems.CrossModules.Components.Helpers;
-using Syncfusion.EJ2.Blazor.Notifications;
 
 namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 {
@@ -137,7 +136,7 @@ namespace Orions.Systems.CrossModules.Components.Components.SVGMapEditor
 		}
 
 		public string CurrentlySelectedZoneId { get; set; }
-		public Toast.Toast Toaster { get; set; }
+		public Toast Toaster { get; set; }
 		public ViewModelProperty<double> PlaybackCacheUpdateProgress { get; set; } = 0;
 		public ViewModelProperty<string> PlaybackCacheUpdateStatus { get; set; } = "";
 

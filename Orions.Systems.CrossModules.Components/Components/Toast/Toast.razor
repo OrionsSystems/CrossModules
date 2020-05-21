@@ -1,7 +1,19 @@
-﻿@using Syncfusion.EJ2.Blazor.Notifications;
-@inherits ComponentBase
+﻿@namespace Orions.Systems.CrossModules.Components
 
-<EjsToast @ref="ToastComponent"></EjsToast>
+@inherits ToastBase
+
+@using Syncfusion.EJ2.Blazor.Notifications;
+
+<EjsToast @ref="ToastComponent"
+			 Title="Notification"
+			 TimeOut="@TimeOut"
+			 Icon="e-meeting"
+			 ShowCloseButton="@ShowCloseButton"
+			 NewestOnTop="@NewestOnTop"
+			 CssClass="e-toast-warning">
+	<ToastPosition X="Right"></ToastPosition>
+</EjsToast>
+
 
 <style>
 	.orions-toast-waring {
@@ -12,69 +24,3 @@
 		background-color: #32a852 !important;
 	}
 </style>
-
-@code{
-	public double TimeOut { get; set; } = 3000;
-
-	public ToastTypeEnum ToastType { get; set; } = Toast.ToastTypeEnum.Warning;
-
-	protected EjsToast ToastComponent { get; set; }
-
-	public void ShowMessage(string message)
-	{
-		var toastModel = new ToastModel
-		{
-			Position = new ToastPositionModel
-			{
-				X = "Right",
-				Y = "Top"
-			},
-			Content = message,
-			TimeOut = TimeOut,
-			CssClass = GetCssClass()
-		};
-
-		ToastComponent.Show(toastModel);
-	}
-
-	public void ShowWarning(string message)
-	{
-		this.ToastType = ToastTypeEnum.Warning;
-
-		this.ShowMessage(message);
-	}
-
-	public void ShowSuccess(string message)
-	{
-		this.ToastType = ToastTypeEnum.Success;
-
-		this.ShowMessage(message);
-	}
-
-	public void ShowInfo(string message)
-	{
-		this.ToastType = ToastTypeEnum.Info;
-
-		this.ShowMessage(message);
-	}
-
-	private string GetCssClass()
-	{
-		switch (ToastType)
-		{
-			case ToastTypeEnum.Warning:
-				return "orions-toast-waring";
-			case ToastTypeEnum.Success:
-				return "orions-toast-success";
-			default:
-				return "";
-		}
-	}
-
-	public enum ToastTypeEnum
-	{
-		Warning = 1,
-		Info = 2,
-		Success = 3
-	}
-}
