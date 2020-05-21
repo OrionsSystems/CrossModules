@@ -1,23 +1,29 @@
+using Blazored.LocalStorage;
+
 using EmbeddedBlazorContent;
+
 using MatBlazor;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Orions.Systems.CrossModules.Components;
-using Orions.Systems.CrossModules.Portal.Providers;
-using Syncfusion.EJ2.Blazor;
-using Blazored.LocalStorage;
+
 using Orions.Common;
-using ReactNOW.ML;
-using ReactNOW.Integration;
-using Orions.Systems.Desi.Common.General;
-using Orions.Systems.CrossModules.Portal.Domain.Desi;
-using Orions.Systems.Desi.Common.TagonomyExecution;
-using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using Orions.Systems.CrossModules.Portal.Domain.Desi;
+using Orions.Systems.CrossModules.Portal.Providers;
+using Orions.Systems.Desi.Common.General;
+using Orions.Systems.Desi.Common.Services;
+using Orions.Systems.Desi.Common.TagonomyExecution;
+
+using ReactNOW.Integration;
+using ReactNOW.ML;
+
+using Syncfusion.EJ2.Blazor;
 
 namespace Orions.Systems.CrossModules.Portal
 {
@@ -34,16 +40,6 @@ namespace Orions.Systems.CrossModules.Portal
 		{
 			services.AddRazorPages();
 
-			services.AddMatToaster(config =>
-			{
-				config.Position = MatToastPosition.TopRight;
-				config.PreventDuplicates = true;
-				config.NewestOnTop = true;
-				config.ShowCloseButton = true;
-				config.MaximumOpacity = 95;
-				config.VisibleStateDuration = 3000;
-			});
-
 			services.AddTelerikBlazor();
 
 			services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; });
@@ -54,7 +50,8 @@ namespace Orions.Systems.CrossModules.Portal
 
 			services.AddBlazoredLocalStorage();
 
-			services.AddSignalR(e => {
+			services.AddSignalR(e =>
+			{
 				e.MaximumReceiveMessageSize = 102400000;
 			});
 
