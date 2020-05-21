@@ -193,7 +193,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			CurrentPosition = TimeSpan.FromSeconds(positionInSeconds);
 			CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(CurrentPosition);
 
-			if (CurrentPosition >= _taskPlaybackInfo.TotalDuration)
+			if (CurrentPosition.TotalMillisecondsLong() >= _taskPlaybackInfo.TotalDuration.TotalMillisecondsLong())
 			{
 				await Pause();
 			}
@@ -236,7 +236,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 				Paused = false;
 
-				if(CurrentPosition >= TotalDuration)
+				if(CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
 				{
 					CurrentPosition = TimeSpan.Zero;
 				}
@@ -397,4 +397,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			base.Dispose(disposing);
 		}
 	}
+
+	public static class TimeSpanExtensions
+	{
+		public static long TotalMillisecondsLong(this TimeSpan timeSpan)
+		{
+			return (long)timeSpan.TotalMilliseconds;
+		}
+	}
 }
+
