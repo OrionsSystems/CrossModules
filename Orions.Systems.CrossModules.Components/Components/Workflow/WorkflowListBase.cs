@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class WorkflowListBase : BaseBlazorComponent<WorkflowListVm>, IDisposable
+	public class WorkflowListBase : BaseBlazorComponent<WorkflowListVm>
 	{
-		IDisposable thisReference;
-
 		[Parameter]
 		public IHyperArgsSink HyperStore
 		{
@@ -43,7 +41,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		public bool IsTableMode { get; set; }
+		public bool IsTableMode { get; set; } = true;
 
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
@@ -57,11 +55,6 @@ namespace Orions.Systems.CrossModules.Components
 			await base.OnInitializedAsync();
 
 			await Vm.Init();
-		}
-
-		void IDisposable.Dispose()
-		{
-			thisReference?.Dispose();
 		}
 	}
 }
