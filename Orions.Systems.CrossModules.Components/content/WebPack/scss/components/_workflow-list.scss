@@ -61,9 +61,17 @@
 				margin: auto 10px;
 			}
 
-			.workflow-name {
+			.workflow-label-container {
 				flex-grow: 1;
-				margin: auto 0;
+				margin: auto 10px;
+
+				.workflow-name {
+				}
+
+				.workflow-id {
+					font-size: 13px;
+					letter-spacing: 0.5px;
+				}
 			}
 
 			.list-cmd-container {
@@ -122,6 +130,7 @@
 
 			.card-cmd {
 				float: right;
+				padding-top: 15px;
 			}
 
 			a {

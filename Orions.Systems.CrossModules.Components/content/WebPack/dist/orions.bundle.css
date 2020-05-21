@@ -7668,9 +7668,12 @@ i.ui-intro-button {
     height: 30px;
     width: 50px;
     margin: auto 10px; }
-  .workflow-container .list-table table .workflow-name {
+  .workflow-container .list-table table .workflow-label-container {
     flex-grow: 1;
-    margin: auto 0; }
+    margin: auto 10px; }
+    .workflow-container .list-table table .workflow-label-container .workflow-id {
+      font-size: 13px;
+      letter-spacing: 0.5px; }
   .workflow-container .list-table table .list-cmd-container a {
     cursor: pointer;
     opacity: 0.5;
@@ -7709,7 +7712,8 @@ i.ui-intro-button {
     flex: 0 0 32.43%;
     max-width: 32.43%; }
     .workflow-container .card-container .card .card-cmd {
-      float: right; }
+      float: right;
+      padding-top: 15px; }
     .workflow-container .card-container .card a {
       cursor: pointer;
       opacity: 0.5;

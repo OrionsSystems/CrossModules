@@ -84,9 +84,15 @@
 										<td>
 											<div class="name-container">
 												<div class="workflow-status" style="background-color: @item.StatusBackground;"></div>
-												<div class="workflow-name">
-													@item.ToString()
+												<div class="workflow-label-container">
+													<div class="workflow-name">
+														<h6>@item.Source.Name</h6>
+													</div>
+													<div class="workflow-id">
+														@($"Id:{item.Source.Id}")
+													</div>
 												</div>
+												
 											</div>
 										</td>
 										<td class="center list-cmd-container">
@@ -120,8 +126,8 @@
 
 							<div @key="item.Source.Id" class="card" style="border-color: @item.StatusBackground;">
 								<div class="card-body">
-									<h5 class="card-title">@item.ToString()</h5>
-
+									<h5 class="card-title">@item.Source.Name</h5>
+									<h7 class="card-description">@($"Id:{item.Source.Id}")</h7>
 									<div class="card-cmd">
 										<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
 											<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
