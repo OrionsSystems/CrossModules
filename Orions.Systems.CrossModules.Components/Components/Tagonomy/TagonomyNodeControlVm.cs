@@ -50,7 +50,6 @@ namespace Orions.Systems.CrossModules.Components
 			if (HyperStore == null) return;
 
 			await PopulateData();
-
 		}
 
 		public string SemanticAlias
@@ -151,24 +150,32 @@ namespace Orions.Systems.CrossModules.Components
 
 			TagonomyNodeElement element = (TagonomyNodeElement)Activator.CreateInstance(type);
 			Node.AddElement(element);
+
+			LoadTagonomyElements();
 		}
 
 		public void DeleteTagonomyNodeElement(TagonomyNodeElement element)
 		{
 			if (Node != null && element != null)
 				Node.RemoveElement(element);
+
+			LoadTagonomyElements();
 		}
 
 		public void UpTagonomyNodeElement(TagonomyNodeElement element)
 		{
 			if (Node != null && element != null)
 				Node.MoveElement(element, true);
+
+			LoadTagonomyElements();
 		}
 
 		public void DownTagonomyNodeElement(TagonomyNodeElement element)
 		{
 			if (Node != null && element != null)
 				Node.MoveElement(element, false);
+
+			LoadTagonomyElements();
 		}
 
 		public void ShowPropertyGrid(TagonomyNodeElement item)
@@ -193,7 +200,6 @@ namespace Orions.Systems.CrossModules.Components
 			ComboBoxElements = TagonomyNodeElement.ElementTypes.Select(it => it.Name).Select(it => it.Replace("Orions.Infrastructure.HyperSemantic", string.Empty)).OrderBy(it => it).ToList();
 
 			LoadTagonomyElements();
-
 		}
 
 		private void LoadTagonomyElements()

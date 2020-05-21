@@ -45,7 +45,7 @@
 			<div class="col-sm-10">
 				<div class="row create-element-container">
 					<div class="col-sm-9">
-						<EjsComboBox TValue="string" Value="@Vm.SelectedTagonomyAddElement" Placeholder="Select element" DataSource="@Vm.ComboBoxElements">
+						<EjsComboBox TValue="string" @bind-Value="@Vm.SelectedTagonomyAddElement" Placeholder="Select element" DataSource="@Vm.ComboBoxElements">
 						</EjsComboBox>
 					</div>
 					<div class="col-sm-3">
