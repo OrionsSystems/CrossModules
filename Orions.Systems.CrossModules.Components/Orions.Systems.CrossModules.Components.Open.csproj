@@ -7,81 +7,55 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 	
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	
 	<ItemGroup>
+		<EmbeddedResource Include="content\thirdparty\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\thirdparty\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
-		<EmbeddedResource Include="content\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-
-		<EmbeddedResource Include="content\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\thirdparty\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
 		<EmbeddedResource Include="content\scripts\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\css\styles.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\vanilla-picker\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<!--<EmbeddedResource Include="content\svgjs\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />-->
-		<EmbeddedResource Include="content\Orions.Crossmodules.ComponentsBundle\dist\Orions.Crossmodules.ComponentsBundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		
-		<!--<EmbeddedResource Include="content\vanilla-picker\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
 
-		<!--<EmbeddedResource Include="content\codemirror\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\codemirror\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
-		<EmbeddedResource Include="content\codemirror\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\codemirror\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
-		
+		<EmbeddedResource Include="content\thirdparty\codemirror\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\thirdparty\jquery\**\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\thirdparty\codemirror\**\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+
+		<EmbeddedResource Include="content\WebPack\dist\orions.bundle.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\WebPack\dist\orions.bundle.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+		<EmbeddedResource Include="content\desi\orions.desi.components.bundle.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
+
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Remove="compilerconfig.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Remove="content\jwplayer\8.4.2\jwplayer.compatibility.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.controls.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.html5.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.html5.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.core.controls.polyfills.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.core.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.flash.swf" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.js" />
-		<None Remove="content\jwplayer\8.4.2\jwplayer.vr.js" />
-		<None Remove="content\jwplayer\8.4.2\polyfills.intersection-observer.js" />
-		<None Remove="content\jwplayer\8.4.2\polyfills.webvtt.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.airplay.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.cast.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.flash.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.hlsjs.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.html5.js" />
-		<None Remove="content\jwplayer\8.4.2\provider.shaka.js" />
-		<None Remove="content\jwplayer\8.4.2\skins\beelden.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\bekle.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\five.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\glow.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\roundster.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\seven.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\six.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\stormtrooper.css" />
-		<None Remove="content\jwplayer\8.4.2\skins\vapor.css" />
-		<None Remove="content\jwplayer\8.4.2\vttparser.js" />
-		<None Remove="content\kendo\jquery.min.js" />
-		<None Remove="content\kendo\kendo.all.min.js" />
-		<None Remove="content\kendo\kendo.common-material.min.css" />
-		<None Remove="content\kendo\kendo.material.min.css" />
-		<None Remove="content\kendo\kendo.material.mobile.min.css" />
+		<None Remove="content\thirdparty\jwplayer\8.4.2\*" />
+		<None Remove="content\thirdparty\kendo\*" />
 		<None Remove="content\scripts\common.js" />
 		<None Remove="content\scripts\kendoComponents.js" />
-		<None Remove="content\css\styles.css" />
-		<None Remove="content\scripts\svgMapEditor.js" />
-		<None Remove="content\scripts\workflowDesigner.js" />
-		<None Remove="content\vanilla-picker\vanilla-picker.js" />
-		<None Remove="content\codemirror\codemirror.css" />
-		<None Remove="content\codemirror\codemirror.js" />
-		<None Remove="content\codemirror\codemirror\theme\material.css" />
-		<None Remove="content\codemirror\codemirror\mode\css.js" />
-		<None Remove="content\codemirror\codemirror\addon\css-hint.js" />
-		<None Remove="content\codemirror\codemirror\addon\javascript-hint.js" />
-		<None Remove="content\codemirror\codemirror\addon\show-hint.js" />
-		<None Remove="content\codemirror\codemirror\addon\show-hint.css" />
+		<None Remove="content\thirdparty\jquery\jquery-ui.js" />
+		<None Remove="content\thirdparty\codemirror\*" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Remove="compilerconfig.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="content\thirdparty\jquery\jquery-ui.js">
+	    <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+	  </Content>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="compilerconfig.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -100,10 +74,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Orions.Common" Version="2.42.0-preview.706" />
-		<PackageReference Include="Orions.Node" Version="2.42.0-preview.706" />
-		<PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.706" />
-		<PackageReference Include="Orions.SDK" Version="2.42.0-preview.706" />
+		<PackageReference Include="Orions.Common" Version="2.42.0-preview.726" />
+		<PackageReference Include="Orions.Node" Version="2.42.0-preview.726" />
+		<PackageReference Include="Orions.Node.Common" Version="2.42.0-preview.726" />
+		<PackageReference Include="Orions.SDK" Version="2.42.0-preview.726" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -114,8 +88,12 @@
 		<None Include="compilerconfig.json" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Common\Orions.Systems.Desi.Common.csproj" />
+	</ItemGroup>
+
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-		<Exec Command="cd $(ProjectDir)/content/Orions.Crossmodules.ComponentsBundle&#xD;&#xA;npx webpack" />
+		<Exec Command="cd $(ProjectDir)/content/WebPack&#xD;&#xA;npx webpack" />
 	</Target>
 
 </Project>
