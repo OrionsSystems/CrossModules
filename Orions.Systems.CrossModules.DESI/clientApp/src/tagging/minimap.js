@@ -84,7 +84,7 @@ class Minimap{
 		currentRegion.style.left = (taggingSurfaceDebug.scope.view.bounds.x - (raster.position.x - raster.width / 2)) / raster.width * 100 > 0 ? (taggingSurfaceDebug.scope.view.bounds.x - (raster.position.x - raster.width / 2)) / raster.width * 100 + '%' : 0
 		currentRegion.style.top = (taggingSurfaceDebug.scope.view.bounds.y - (raster.position.y - raster.height / 2)) / raster.height * 100 > 0 ? (taggingSurfaceDebug.scope.view.bounds.y - (raster.position.y - raster.height / 2)) / raster.height * 100 + '%' : 0
 
-		if (!(regionWidthNormalized >= 1 && regionHeightNormalized >= 1)) {
+		if (view.zoom > 1) {
 			self.minimapContainer.style.display = 'block'
 		}
 		else {

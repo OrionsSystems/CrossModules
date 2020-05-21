@@ -35,6 +35,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private bool _lockPositionUpdate = false;
 		protected bool CurrentFrameIsLoading { get; set; } = false;
 		protected bool IsVideoLoading { get; set; } = true;
+		protected bool IsVideoBuffering { get; set; } = false;
 		protected bool Paused { get; private set; } = true;
 		protected byte[] PayLoad { get; private set; }
 		protected string PausedFrameBase64 
@@ -183,6 +184,22 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
+		public async Task OnVideoBuffering()
+		{
+			this.IsVideoBuffering = true;
+
+			UpdateState();
+		}
+
+		[JSInvokable]
+		public async Task OnVideoBufferingEnded()
+		{
+			this.IsVideoBuffering = false;
+
+			UpdateState();
+		}
+
+		[JSInvokable]
 		public async Task OnPositionUpdate(double positionInSeconds)
 		{
 			if (_lockPositionUpdate)
@@ -252,6 +269,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
 				Paused = true;
+				IsVideoBuffering = false;
 				await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
 				await OnPaused.InvokeAsync(null);
 			}
