@@ -33,7 +33,7 @@
 		width: 100%;
 
 		.jwplayer {
-			height:100% !important;
+			height: 100% !important;
 			width: 100% !important;
 			display: block;
 			background-color: black;
@@ -277,6 +277,10 @@
 
 		.video-overlay-dots-loader .sk-flow-dot {
 			background-color: $red;
+		}
+
+		&.transparent {
+			background: rgba(245, 245, 245, 0.2);
 		}
 	}
 }

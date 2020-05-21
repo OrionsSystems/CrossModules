@@ -36,6 +36,15 @@ window.Orions.Player = {
             this.isPaused = true;
         });
 
+        video.on('buffer', function () {
+            vmInstance.invokeMethodAsync("OnVideoBuffering");
+        });
+
+        video.on('play', function (e) {
+            if (e.oldstate == 'buffering') {
+                vmInstance.invokeMethodAsync("OnVideoBufferingEnded");
+			}
+        });
 
         video.on('seeked', function (e) {
             console.log('seeked')

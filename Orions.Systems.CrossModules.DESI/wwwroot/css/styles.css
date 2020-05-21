@@ -427,6 +427,8 @@ body {
       font-weight: 500; }
     .tagging-video-player-container .video-player-overlay .video-overlay-dots-loader .sk-flow-dot {
       background-color: #de0000; }
+    .tagging-video-player-container .video-player-overlay.transparent {
+      background: rgba(245, 245, 245, 0.2); }
 
 .popper-node-ui-element-popup {
   display: none;
