@@ -8,7 +8,7 @@
   
   <ItemGroup>
     <PackageReference Include="Emgu.CV.runtime.windows-CR" Version="4.2.0.3662" />
-    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.706" />
+    <PackageReference Include="Orions.SDK" Version="2.42.0-preview.726" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,6 +16,7 @@
     <PackageReference Include="Nito.AsyncEx" Version="5.0.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.File" Version="4.1.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
     <PackageReference Include="SkiaSharp" Version="1.68.1.1" />
     <PackageReference Include="Syncfusion.EJ2.Blazor" Version="17.4.0.42" />
   </ItemGroup>
@@ -25,6 +26,7 @@
     <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Common\Orions.Systems.Desi.Common.csproj" />
     <ProjectReference Include="..\..\Orions.Systems.Open\Applications\Desi\Orions.Systems.Desi.Core\Orions.Systems.Desi.Core.csproj" />
     <ProjectReference Include="..\Orions.Systems.CrossModules.Common\Orions.Systems.CrossModules.Common.Open.csproj" />
+    <ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Open.csproj" />
   </ItemGroup>
 
   <ItemGroup>
