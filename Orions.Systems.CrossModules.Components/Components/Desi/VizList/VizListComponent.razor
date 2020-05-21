@@ -153,6 +153,8 @@ else
 
     protected override void OnInitializedSafe()
     {
+        base.OnInitializedSafe();
+
         _shortcutsSub = KeyboardListener?.CreateSubscription()
             .AddShortcut(Key.C, () => TryFinishExecution())
             .AddShortcut(Key.F, () => TryFinishCurrentPath())

@@ -36,6 +36,10 @@
 
 	protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 	{
-		await JSRuntime.InvokeVoidAsync("Orions.Vizlist.initPopover", ReferenceElementId, ComponentId);
+		try
+		{
+			await JSRuntime.InvokeVoidAsync("Orions.Vizlist.initPopover", ReferenceElementId, ComponentId);
+		}
+		catch { }
 	}
 }

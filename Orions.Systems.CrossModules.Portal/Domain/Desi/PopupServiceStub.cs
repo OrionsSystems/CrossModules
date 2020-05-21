@@ -9,6 +9,10 @@ namespace Orions.Systems.CrossModules.Portal.Domain.Desi
 {
 	public class PopupServiceStub : IPopupService
 	{
+		public void ClearTagonomyNodePoppers()
+		{
+		}
+
 		public void RegisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId)
 		{
 		}
@@ -36,6 +40,10 @@ namespace Orions.Systems.CrossModules.Portal.Domain.Desi
 		public Task<bool> ShowSessionIsOver(int secondsToTimeout)
 		{
 			return Task.FromResult(true);
+		}
+
+		public void UnregisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId)
+		{
 		}
 	}
 }

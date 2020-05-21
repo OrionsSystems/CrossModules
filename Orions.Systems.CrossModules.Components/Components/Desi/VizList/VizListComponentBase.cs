@@ -59,7 +59,10 @@ namespace Orions.Systems.CrossModules.Components.Desi.VizList
 					PopupService.RegisterTagonomyNodePopper(node, referenceElementId);
 				}
 			}
-
+			else
+			{
+				PopupService?.ClearTagonomyNodePoppers();
+			}
 
 			await this.JSRuntime.InvokeVoidAsync("Orions.Vizlist.init", _componentId);
 			this.VizListRendered?.Invoke();
@@ -67,7 +70,7 @@ namespace Orions.Systems.CrossModules.Components.Desi.VizList
 
 		protected override void OnInitializedSafe()
 		{
-			base.OnInitializedSafe();
+			
 
 			_dataChangedSub = Store.DataChanged.Subscribe(d =>
 			{

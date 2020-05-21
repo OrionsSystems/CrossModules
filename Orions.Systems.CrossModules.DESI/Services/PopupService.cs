@@ -5,6 +5,8 @@ using Orions.Systems.Desi.Common.TagonomyExecution;
 using System;
 using System.Threading.Tasks;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Orions.Systems.CrossModules.Desi.Services
 {
@@ -67,6 +69,14 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		}
 
 		public void RegisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElId);
+
+		public void UnregisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElId);
+
+		public void ClearTagonomyNodePoppers()
+		{
+			PopperServiceComponent.ClearTagonomyNodePoppers();
+		}
+
 
 		private void CheckInit()
 		{

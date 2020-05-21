@@ -23,5 +23,22 @@ namespace Orions.Systems.CrossModules.Desi.Components.Popper
 
 			UpdateState();
 		}
+
+		public void UnregisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId)
+		{
+			var nodeToRemove = TagonomyNodes.SingleOrDefault(n => n.Node.Id == node.Id);
+			if (TagonomyNodes.Any(n => n.Node.Id == node.Id))
+			{
+				TagonomyNodes.Remove(nodeToRemove);
+			}
+
+			UpdateState();
+		}
+
+		public void ClearTagonomyNodePoppers()
+		{
+			TagonomyNodes.Clear();
+			UpdateState();
+		}
 	}
 }
