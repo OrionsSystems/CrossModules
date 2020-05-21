@@ -3,14 +3,18 @@
 @page "/tagonomy/{TagonomyId}/edit"
 
 @using Orions.Infrastructure.HyperSemantic
+@using Syncfusion.EJ2.Blazor.Notifications
 
 @inherits PortalBaseComponent
 
 @inject NavigationManager navManager
 
+
+<Toast @ref="ToastRef"></Toast>
+
 @if (IsEditMode)
 {
-	<TagonomyEditor HyperStore="@HyperStore" TagonomyId="@TagonomyId"></TagonomyEditor>
+	<TagonomyEditor HyperStore="@HyperStore" TagonomyId="@TagonomyId" OnShowVizList="@ShowVizList" OnToastMessage="OnToastMessage"></TagonomyEditor>
 }
 else
 {
@@ -19,6 +23,9 @@ else
 }
 
 @code{
+
+
+	private Toast ToastRef { get; set; }
 
 	[Parameter]
 	public string TagonomyId { get; set; }
@@ -48,6 +55,21 @@ else
 
 		await NavigateToUrlAsync(url, true);
 
+	}
+
+	private async Task ShowVizList(Tagonomy tagonomy)
+	{
+		if (tagonomy == null) return;
+
+		var url = $"{navManager.BaseUri}vizlist/{tagonomy.Id}";
+
+		await NavigateToUrlAsync(url, true);
+
+	}
+
+	private void OnToastMessage(ToastMessage msg)
+	{
+		ToastRef.Show(msg);
 	}
 
 }

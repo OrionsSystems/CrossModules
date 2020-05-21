@@ -40,7 +40,7 @@
 						<th width="1%" class="nowrap center"></th>
 						<th width="5%" class="nowrap center">Group</th>
 						<th>Name</th>
-						<th width="30%" class="nowrap center"></th>
+						<th width="25%" class="nowrap center"></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -68,10 +68,6 @@
 								<a class="btn btn-sm" @onclick="@(async e => { await Vm.EditAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
 									<div class="list-cmd-label">Edit</div>
-								</a>
-								<a class="btn btn-sm" href="@($"tagonomy/{item.Id}/vizlist")">
-									<MatIcon Icon="@MatIconNames.Vertical_split"></MatIcon>
-									<div class="list-cmd-label">Viz Lizt</div>
 								</a>
 								<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
 									<MatIcon Icon="@MatIconNames.Insert_chart_outlined"></MatIcon>

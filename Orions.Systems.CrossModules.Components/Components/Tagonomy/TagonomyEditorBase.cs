@@ -26,7 +26,12 @@ namespace Orions.Systems.CrossModules.Components
 			set => Vm.TagonomyId = value;
 		}
 
-
+		[Parameter]
+		public EventCallback<Tagonomy> OnShowVizList
+		{
+			get => Vm.OnShowVizList;
+			set => Vm.OnShowVizList = value;
+		}
 
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
