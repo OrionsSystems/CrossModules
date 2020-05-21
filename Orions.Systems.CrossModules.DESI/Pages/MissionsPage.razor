@@ -42,7 +42,7 @@
                     {
                         <DotsLoader />
                     }
-                    else
+                    @if (Vm.MissionsData.Workflows.IsNotNullOrEmpty())
                     {
                         @foreach (var mission in this.Vm.MissionsData.Workflows)
                         {
