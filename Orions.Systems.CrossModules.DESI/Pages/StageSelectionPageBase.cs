@@ -19,14 +19,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		protected override async Task OnInitializedAsyncSafe()
 		{
-
-			if (AuthenticationSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
-			{
-				await NavigationService.GoToLoginPage();
-
-				return;
-			}
-
 			this.Vm.MissionsData.CurrentWorkflow.Stages = new List<PhaseModel>(); // refactor this
 			this.Vm.StartUpdateMissionStages();
 		}

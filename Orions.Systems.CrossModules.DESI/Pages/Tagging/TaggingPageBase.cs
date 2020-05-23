@@ -36,13 +36,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			if (AuthenticationSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
-			{
-				await NavigationService.GoToLoginPage();
-
-				return;
-			}
-
 			this.Vm.SlicePositionBiasHalfRange = 5;
 
 			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));

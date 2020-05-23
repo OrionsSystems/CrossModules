@@ -5,23 +5,24 @@
 
 @inherits AppComponentBase
 
-@if (this.IsSettingsInitialized)
+@if (this.IsSettingsInitialized && LoginPageVisited)
 {
-    <Router AppAssembly="@typeof(Program).Assembly">
-        <Found Context="routeData">
-            <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        </Found>
-        <NotFound>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p>Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-    <ConfiramtionPopup @ref="ConfirmationPopupComponent" />
-    <PopperServiceComponent @ref="PopperServiceComponent" />
-    <SessionIsOverPopup @ref="SessionIsOverPopup" />
+	<Router AppAssembly="@typeof(Program).Assembly">
+		<Found Context="routeData">
+			<RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+		</Found>
+		<NotFound>
+			<LayoutView Layout="@typeof(MainLayout)">
+				<p>Sorry, there's nothing at this address.</p>
+			</LayoutView>
+		</NotFound>
+	</Router>
+
 }
 else
 {
-    <div>Loading...</div>
+	<div>Loading...</div>
 }
+<ConfiramtionPopup @ref="ConfirmationPopupComponent" />
+<PopperServiceComponent @ref="PopperServiceComponent" />
+<SessionIsOverPopup @ref="SessionIsOverPopup" />

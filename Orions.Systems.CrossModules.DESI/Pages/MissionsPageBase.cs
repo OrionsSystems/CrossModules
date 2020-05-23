@@ -21,12 +21,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		public async Task Initialize()
 		{
-			if (AuthenticationSystem.Store.Data.AuthenticationStatus == AuthenticationStatus.LoggedOut)
-			{
-				await NavigationService.GoToLoginPage();
-				return;
-			}
-
 			this.Vm.FetchMissionsCommand?.Execute(null);
 		}
 	}
