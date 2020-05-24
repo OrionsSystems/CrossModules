@@ -30,6 +30,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		private AsyncManualResetEvent _currenVideoSourceLoadedOnClient = new AsyncManualResetEvent(false);
+		private TaskCompletionSource<bool> _playerPauseRequest;
 
 		protected string _videoElementId = $"videoplayer-{Guid.NewGuid().ToString()}";
 		private bool _lockPositionUpdate = false;
@@ -180,6 +181,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task OnVideoEndJs()
 		{
+			await Pause(false);
 			await OnPositionUpdate(_taskPlaybackInfo.TotalDuration.TotalSeconds);
 		}
 
@@ -210,11 +212,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			CurrentPosition = TimeSpan.FromSeconds(positionInSeconds);
 			CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(CurrentPosition);
 
-			if (CurrentPosition.TotalMillisecondsLong() >= _taskPlaybackInfo.TotalDuration.TotalMillisecondsLong())
-			{
-				await Pause();
-			}
-
 			if (Paused)
 			{
 				await UpdateFrameImageByCurrentPosition();
@@ -231,6 +228,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public async Task OnPlayerDataLoaded()
 		{
 			_currenVideoSourceLoadedOnClient.Set();
+		}
+
+		[JSInvokable]
+		public async Task OnVideoPausedCallback()
+		{
+			if (_playerPauseRequest != null) 
+			{
+				_playerPauseRequest.SetResult(true);
+			}
 		}
 
 		public async Task OnPlaybackControlPositionChanged(TimeSpan newPosition)
@@ -263,14 +269,21 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		public async Task Pause()
+		public async Task Pause(bool callJsPause = true)
 		{
 			if (!Paused)
 			{
 				ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
 				Paused = true;
 				IsVideoBuffering = false;
-				await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
+
+				if (callJsPause)
+				{
+					await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
+					_playerPauseRequest = new TaskCompletionSource<bool>();
+					await _playerPauseRequest.Task;
+				}
+
 				await OnPaused.InvokeAsync(null);
 			}
 		}

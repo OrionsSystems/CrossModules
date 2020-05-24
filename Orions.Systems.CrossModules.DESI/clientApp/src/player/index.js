@@ -60,7 +60,13 @@ window.Orions.Player = {
                 this.seek(this.seekAndPlayPos);
                 this.seekAndPlay = false;
 			}
-		})
+        })
+
+        video.on('pause', function (e) {
+            if (e.oldstate != 'buffering') {
+                vmInstance.invokeMethodAsync('OnVideoPausedCallback')
+			}
+        })
 
         this.video = video;
     },

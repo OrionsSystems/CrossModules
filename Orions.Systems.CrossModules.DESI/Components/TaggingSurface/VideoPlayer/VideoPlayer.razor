@@ -22,7 +22,7 @@
 	</div>
 	<VideoPlaybackControl
 						  OnPlay="this.Play"
-						  OnPause="this.Pause"
+						  OnPause="() => this.Pause(true)"
 						  OnPositionChanged="this.OnPlaybackControlPositionChanged"
 						  OnVolumeLevelChanged="this.ChangeVolumeLevel"
 						  OnPlaybackSpeedChanged="this.ChangePlaybackSpeed"

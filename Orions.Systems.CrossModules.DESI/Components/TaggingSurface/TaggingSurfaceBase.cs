@@ -261,7 +261,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private void UpdateRectangles()
 		{
-			Debug.WriteLine($"UpdateRectangles thread: {Thread.CurrentThread.ManagedThreadId}");
 			Rectangles = CurrentPositionRectanglesSelector(TagsStore.Data.CurrentTaskTags.ToList() ?? Enumerable.Empty<TagModel>());
 		}
 
