@@ -779,7 +779,7 @@ body {
       font-weight: bold;
       padding: 8px;
       display: flex; }
-      .missions-widget-container .mission-list-container .misssion-list-header .header-label {
+      .missions-widget-container .mission-list-container .misssion-list-header .loader {
         flex: 1; }
       .missions-widget-container .mission-list-container .misssion-list-header .sorting-orders a {
         font-weight: normal;
