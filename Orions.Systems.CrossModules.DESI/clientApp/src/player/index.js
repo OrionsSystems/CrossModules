@@ -1,81 +1,54 @@
 window.Orions.Player = {
     init: function (vmInstance, videoElementId, file) {
-        window.jwplayer.key = '0cEcLfyR+RBLPh2z3KkWfFzX1U/w/2AtglS1xoT4xl8=';
+        let video = videojs(videoElementId);
+        video.src({ src: file, type: 'application/dash+xml' })
 
-        let config = {
-            "file": file,
-            controls: false
-        }
-
-        let video = window.jwplayer(videoElementId).setup(config);
-        video.isPaused = true;
-
-        video.on('time', function (e) {
-            if (!this.seekAndPlay) {
-                vmInstance.invokeMethodAsync("OnPositionUpdate", e.position);
-			}
+        video.on('timeupdate', function (e) {
+            vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime());
 
             console.log("timeupdate: ")
             console.log(e);
         });
 
-        video.on('ready', function () {
-            if (this.getState() == 'idle') {
-                this.isPaused = true;
-            }
-            else {
-                this.isPaused = false;
-            }
+        video.on('canplay', function (e) {
+            console.log('ready')
+            console.log(e)
 
-            vmInstance.invokeMethodAsync("OnPlayerDataLoaded");
+            vmInstance.invokeMethodAsync("OnPlayerReady");
         });
 
-        video.on('complete', function () {
+        video.on('ended', function () {
             vmInstance.invokeMethodAsync("OnVideoEndJs");
 
             this.isPaused = true;
         });
 
-        video.on('buffer', function () {
+        video.on('waiting', function (e) {
+            console.log('buffer')
+            console.log(e)
             vmInstance.invokeMethodAsync("OnVideoBuffering");
         });
 
-        video.on('play', function (e) {
-            if (e.oldstate == 'buffering') {
-                vmInstance.invokeMethodAsync("OnVideoBufferingEnded");
-			}
+        video.on('playing', function (e) {
+            console.log('play')
+            console.log(e)
+            vmInstance.invokeMethodAsync("OnVideoPlaying");
         });
 
-        video.on('seeked', function (e) {
-            console.log('seeked')
-            if (this.isPaused && !this.seekAndPlay) {
-                this.pause();
-                console.log('pause on seeked')
-            }
-        })
-
-        video.on('firstFrame', function () {
-            console.log('firstFrame')
-            if (this.seekAndPlay) {
-                this.seek(this.seekAndPlayPos);
-                this.seekAndPlay = false;
-			}
-        })
-
         video.on('pause', function (e) {
-            if (e.oldstate != 'buffering') {
-                vmInstance.invokeMethodAsync('OnVideoPausedCallback')
-			}
-        })
+            console.log('pause')
+            console.log(e)
+            vmInstance.invokeMethodAsync("OnVideoPaused");
+        });
 
         this.video = video;
+
+        window.playerDebug = this;
     },
     setSrc: function (url, vmInstance) {
         let self = this;
 
-        self.video.load({
-            file: url
-		})
+        self.video.src({ src: url, type: 'application/dash+xml' })
     },
 
     setPosition: function (position) {
@@ -84,31 +57,22 @@ window.Orions.Player = {
 
     setPositionAndPlay: function (position) {
         console.log('seek request: ' + position)
-        if (this.video.getState() == 'complete') {
-            this.video.play();
-            this.video.seekAndPlay = true;
-            this.video.seekAndPlayPos = position;
-        }
-        else {
-            this.video.seek(position)
-            this.video.play();
-		}
-        this.video.isPaused = false;
+        this.video.currentTime(position);
+        this.video.play();
     },
 
     setVolumeLevel: function (volLevel) {
-        this.video.setVolume(volLevel);
+        this.video.volume(volLevel / 100);
     },
     setSpeed: function (speed) {
-        this.video.setPlaybackRate(speed);
+        this.video.playbackRate(speed);
     },
     play: function () {
         this.video.play();
-        this.video.isPaused = false;
     },
     pause: function () {
+        console.log('pause request')
         this.video.pause();
-        this.video.isPaused = true;
     },
 
     playbackControl: {

@@ -64,4 +64,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\videojs\" />
+  </ItemGroup>
+
 </Project>

@@ -63,7 +63,7 @@ namespace Orions.Systems.CrossModules.Desi
 				.AddScoped(s => s.GetService<ViewModelLocator>().GetAuthenticationViewModel())
 				.AddScoped(s => s.GetService<ViewModelLocator>().GetMissionsViewModel())
 				.AddScoped(s => s.GetService<ViewModelLocator>().GetStageSelectionViewModel())
-				.AddScoped(s => s.GetService<ViewModelLocator>().GetTaggingViewModel())
+				.AddTransient(s => s.GetService<ViewModelLocator>().GetTaggingViewModel())
 				;
 		}
 

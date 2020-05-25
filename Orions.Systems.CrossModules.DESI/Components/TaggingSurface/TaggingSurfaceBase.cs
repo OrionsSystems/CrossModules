@@ -388,7 +388,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							}
 						}
 
-						_updateTagsOnClientQueue.Dequeue();
+						_updateTagsOnClientQueue.TryDequeue(out _);
 						_rectangles = newRectangleCollection;
 					}
 					catch (Exception e)
