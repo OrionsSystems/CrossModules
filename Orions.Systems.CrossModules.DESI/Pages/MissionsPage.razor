@@ -24,6 +24,14 @@
                     <div class="header-label">
                         All projects
                     </div>
+                    @if (Vm.MissionsData.IsBusy)
+                    {
+                        <DotsLoader CssClass="loader" />
+                    }
+                    else
+                    {
+                        <div class="loader"/>
+                    }
                     <div class="sorting-orders">
                         @{
                             var titleSortModeActive = this.Vm.MissionsData.WorkflowSortingMode == SortingMode.ByTitle ? "active" : "";
@@ -38,10 +46,7 @@
                     </div>
                 </div>
                 <div class="mission-list-items-container">
-                    @if (Vm.MissionsData.IsBusy)
-                    {
-                        <DotsLoader />
-                    }
+
                     @if (Vm.MissionsData.Workflows.IsNotNullOrEmpty())
                     {
                         @foreach (var mission in this.Vm.MissionsData.Workflows)
