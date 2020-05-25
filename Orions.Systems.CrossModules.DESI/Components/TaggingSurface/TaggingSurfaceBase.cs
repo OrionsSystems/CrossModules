@@ -159,61 +159,34 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				.AddShortcut(Key.Shift, KeyModifiers.Shift, () => SetSelectionMode(TagsSelectionMode.Multiple), KeyboardEventType.KeyDown)
 				.AddShortcut(Key.Shift, KeyModifiers.None, () => SetSelectionMode(TagsSelectionMode.Single), KeyboardEventType.KeyUp));
 
-			//MediaDataStore subscriptions **
-			///TODO REFACTOR (LEAKING)
-			_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
-				.Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances))
-				.Subscribe(_ =>
+			_dataStoreSubscriptions.Add(MediaDataStore.PositionUpdated.Subscribe(_ =>
 			{
-				if (MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
+				if (MediaDataStore.Data.FrameModeEnabled)
+				{
+					_currentPositionFrameRendered.Reset();
+					UpdateRectangles();
+				}
+			}));
+			_dataStoreSubscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => OnCurrentPositionFrameImageChanged()));
+
+			_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(MediaData.MediaInstances) && i.Source.MediaInstances.IsNotNullOrEmpty())
+				.Subscribe(_ =>
 				{
 					_currentPositionFrameRendered.Reset();
 					OnCurrentPositionFrameImageChanged();
-				};
-
-				UpdateRectangles();
-
-				if (MediaDataStore?.Data?.MediaInstances != null)
-				{
-					_dataStoreSubscriptions.Add(MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
-					{
-						if (MediaDataStore.Data.FrameModeEnabled)
-						{
-							_currentPositionFrameRendered.Reset();
-							UpdateRectangles();
-						}
-					}));
-
-					_dataStoreSubscriptions.Add(
-						MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
-						{
-							OnCurrentPositionFrameImageChanged();
-						}));
-				}
-			}));
-
-			_dataStoreSubscriptions.Add(MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPosition)).Subscribe(_ =>
-			{
-				_currentPositionFrameRendered.Reset();
-				UpdateRectangles();
-			}));
-
-			_dataStoreSubscriptions.Add(
-				MediaDataStore.Data.MediaInstances[0].GetPropertyChangedObservable().Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage)).Subscribe(_ =>
-				{
-					OnCurrentPositionFrameImageChanged();
 				}));
 
-			if (MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPosition != null)
+			if (MediaDataStore?.Data?.MediaInstances?.FirstOrDefault() != null)
 			{
 				_currentPositionFrameRendered.Reset();
 				OnCurrentPositionFrameImageChanged();
+				UpdateRectangles();
 			};
 
 			_dataStoreSubscriptions.Add(MediaDataStore.Data.GetPropertyChangedObservable()
 				.Where(i => i.EventArgs.PropertyName == nameof(MediaData.DefaultMediaInstance))
 				.Subscribe(_ => OnDefaultMediaInstanceChanged()));
-
 
 			_dataStoreSubscriptions.Add(TaskDataStore.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged()));
 
