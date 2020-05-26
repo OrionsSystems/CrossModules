@@ -26,7 +26,7 @@
 						  TotalDuration="this.TotalDuration"
 						  VolumeLevel="VolumeLevel"
 						  TimelineMarkers="TimelineMarkers"/>
-	@if (CurrentFrameIsLoading || IsVideoLoading || IsVideoBuffering)
+	@if (CurrentFrameIsLoading || ((IsVideoLoading || IsVideoBuffering) && !Paused))
 	{
 		var bufferingClass = IsVideoBuffering ? "transparent" : "";
 		<div class="video-player-overlay @bufferingClass">

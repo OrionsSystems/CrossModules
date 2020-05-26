@@ -44,6 +44,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
 
+		[Parameter]
+		public EventCallback<TagModel> OnTagSelected { get; set; }
+
 		[Inject]
 		public IKeyboardListener KeyboardListener { get; set; }
 

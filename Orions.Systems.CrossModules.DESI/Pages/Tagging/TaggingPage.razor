@@ -51,7 +51,8 @@
 					{
 						<TaskNavigationWidget />
 
-						<TaggingSurface @ref="TaggingSurface">
+						<TaggingSurface @ref="TaggingSurface"
+										OnTagSelected="(tagModel) => this.Vm.SelectTagCommand.Execute(tagModel)">
 
 							<VizListComponent CssClass="vizlist-positioned"
 											  VizListRendered="this.OnVizListRendered">

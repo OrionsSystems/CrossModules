@@ -1,41 +1,54 @@
 window.Orions.Player = {
     init: function (vmInstance, videoElementId, file) {
-        let video = videojs(videoElementId);
-        video.src({ src: file, type: 'application/dash+xml' })
+        this.vmInstance = vmInstance;
+        let self = this;
 
-        video.on('timeupdate', function (e) {
-            vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime());
+        let video = document.getElementById(videoElementId)
+        let shakaPlayer = new shaka.Player(video);
+        this.shakaPlayer = shakaPlayer;
+        shakaPlayer.load(file)
+            .then(() => {
+                self.vmInstance.invokeMethodAsync("OnPlayerReady");
+            })
 
-            console.log("timeupdate: ")
+        video.addEventListener('timeupdate', function (e) {
+            vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime);
+
+            console.log("timeupdate: " + this.currentTime)
             console.log(e);
         });
 
-        video.on('canplay', function (e) {
+        video.addEventListener('canplay', function (e) {
             console.log('ready')
             console.log(e)
 
             vmInstance.invokeMethodAsync("OnPlayerReady");
         });
 
-        video.on('ended', function () {
+        video.addEventListener('ended', function () {
             vmInstance.invokeMethodAsync("OnVideoEndJs");
 
             this.isPaused = true;
         });
 
-        video.on('waiting', function (e) {
+        shakaPlayer.addEventListener('buffering', function (e) {
             console.log('buffer')
             console.log(e)
-            vmInstance.invokeMethodAsync("OnVideoBuffering");
+            if (e.buffering) {
+                vmInstance.invokeMethodAsync("OnVideoBuffering", true, this.getMediaElement().paused);
+            }
+            else {
+                vmInstance.invokeMethodAsync("OnVideoBuffering", false, this.getMediaElement().paused);
+			}
         });
 
-        video.on('playing', function (e) {
+        video.addEventListener('playing', function (e) {
             console.log('play')
             console.log(e)
             vmInstance.invokeMethodAsync("OnVideoPlaying");
         });
 
-        video.on('pause', function (e) {
+        video.addEventListener('pause', function (e) {
             console.log('pause')
             console.log(e)
             vmInstance.invokeMethodAsync("OnVideoPaused");
@@ -48,24 +61,33 @@ window.Orions.Player = {
     setSrc: function (url, vmInstance) {
         let self = this;
 
-        self.video.src({ src: url, type: 'application/dash+xml' })
+        self.shakaPlayer.load(url)
+            .then(() => {
+                self.vmInstance.invokeMethodAsync("OnPlayerReady");
+			})
     },
 
     setPosition: function (position) {
-        this.video.seek(position);
-    },
+        this.video.currentTime = position;
+	},
 
     setPositionAndPlay: function (position) {
         console.log('seek request: ' + position)
-        this.video.currentTime(position);
-        this.video.play();
+
+        let self = this;
+
+        this.video.currentTime = position;
+        this.video.play()
+            .then(() => {
+                self.vmInstance.invokeMethodAsync("OnVideoPlaying");
+            });
     },
 
     setVolumeLevel: function (volLevel) {
-        this.video.volume(volLevel / 100);
+        this.video.volume = volLevel / 100;
     },
     setSpeed: function (speed) {
-        this.video.playbackRate(speed);
+        this.video.playbackRate = speed;
     },
     play: function () {
         this.video.play();

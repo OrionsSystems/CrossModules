@@ -218,9 +218,16 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
-		public async Task OnVideoBuffering()
+		public async Task OnVideoBuffering(bool buffering, bool isPaused)
 		{
-			this._playerState = PlayerJsState.Buffering;
+			if (buffering)
+			{
+				this._playerState = PlayerJsState.Buffering;
+			}
+			else
+			{
+				this._playerState = isPaused ? PlayerJsState.Paused : PlayerJsState.Playing;
+			}
 
 			UpdateState();
 		}
@@ -262,18 +269,21 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Play()
 		{
-			await _playerReady.WaitAsync();
-			ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
-			Paused = false;
-
-			if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
+			if (!CurrentFrameIsLoading)
 			{
-				CurrentPosition = TimeSpan.Zero;
-			}
+				await _playerReady.WaitAsync();
+				ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
+				Paused = false;
 
-			await OnPlay.InvokeAsync(null);
-			_playerPlayRequest.Reset();
-			await JSRuntime.InvokeVoidAsync("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
+				if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
+				{
+					CurrentPosition = TimeSpan.Zero;
+				}
+
+				await OnPlay.InvokeAsync(null);
+				_playerPlayRequest.Reset();
+				await JSRuntime.InvokeVoidAsync("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
+			}
 		}
 
 		public async Task Pause(bool callJsPause = true)
@@ -410,6 +420,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", videoDashUrl);
 			}
+			IsVideoLoading = true;
 			_playerReady.Reset();
 
 			await OnLoaded.InvokeAsync(null);

@@ -36,7 +36,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			this.Vm.SlicePositionBiasHalfRange = 5;
+			//this.Vm.SlicePositionBiasHalfRange = 5;
 
 			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));
 

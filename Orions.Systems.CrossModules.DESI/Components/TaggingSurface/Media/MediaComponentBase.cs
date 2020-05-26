@@ -26,6 +26,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Media
 		public EventCallback OnMediaLoaded { get; set; }
 
 		[Parameter]
+		public EventCallback<TagModel> OnTagSelected { get; set; }
+
+		[Parameter]
 		public MediaInstance Media
 		{
 			get => _media;
