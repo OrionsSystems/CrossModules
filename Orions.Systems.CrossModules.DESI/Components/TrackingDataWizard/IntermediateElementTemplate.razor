@@ -1,0 +1,59 @@
+﻿@using Orions.Systems.Desi.Core.ViewModels;
+@using Orions.Systems.Desi.Common.Models;
+@using Orions.Common;
+@using Orions.Systems.Desi.Common.General; 
+@using Orions.Systems.Desi.Common.Tracking; 
+@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent
+
+<div class="intermediate-element-container">
+	<div class="left-side">
+		<div class="title">
+			Position: (@Vm?.Element.HyperId.FragmentIdSimple : @Vm?.Element.HyperId.SliceIdSimple)
+		</div>
+		<div class="thumbnail-container">
+			<img src="@(Vm?.Thumbnail != null ? UniImage.ConvertByteArrayToBase64Url(Vm.Thumbnail) : "")" />
+		</div>
+	</div>
+	<div class="right-side">
+		<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" @onclick="OnRemoveIntermediateElementClicked"/>
+	</div>
+</div>
+
+@code {
+	[Inject]
+	public BlazorDependencyResolver DependencyResolver { get; set; }
+
+	[Inject]
+	public IActionDispatcher ActionDispatcher { get; set; }
+
+	private TrackingSequenceElement _trackingSequenceElement;
+	[Parameter]
+	public TrackingSequenceElement TrackingSequenceElement
+	{
+		get
+		{
+			return _trackingSequenceElement;
+		}
+		set
+		{
+			SetProperty(ref _trackingSequenceElement, value, () =>
+			{
+				if (value != null)
+				{
+					Vm = new TrackingSequenceElementViewModel(TrackingSequenceElement,
+						DependencyResolver.GetFrameCacheService(),
+						DependencyResolver.GetNetStoreProvider(),
+						DependencyResolver.GetImageService());
+				}
+			});
+		}
+	}
+
+	protected TrackingSequenceElementViewModel Vm { get; set; }
+
+
+	private void OnRemoveIntermediateElementClicked()
+	{
+		ActionDispatcher.Dispatch(RemoveIntermediateElementAction.Create(Vm.Element));
+	}
+}

@@ -19,6 +19,7 @@ using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Core;
 using Syncfusion.EJ2.Blazor;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using Orions.Systems.Desi.Common.Tracking;
 
 namespace Orions.Systems.CrossModules.Desi
 {
@@ -94,6 +95,7 @@ namespace Orions.Systems.CrossModules.Desi
 				.AddScoped<ITaskDataStore>(s => s.GetService<ITaggingSystem>().TaskDataStore)
 				.AddScoped<ITagonomyExecutionDataStore>(s => s.GetService<ITaggingSystem>().TagonomyExecutionDataStore)
 				.AddScoped<IMediaDataStore>(s => s.GetService<ITaggingSystem>().MediaDataStore)
+				.AddScoped<ITrackingDataStore>(s => s.GetService<ITaggingSystem>().TrackingDataStore)
 				.AddScoped<IActionDispatcher>(s => s.GetService<ITaggingSystem>().ActionDispatcher)
 				;
 		}

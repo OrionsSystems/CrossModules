@@ -5,6 +5,7 @@
 @using Orions.Systems.CrossModules.Desi.Components.TaggingSurface;
 @using Orions.Systems.CrossModules.Desi.Components;
 @using Orions.Systems.CrossModules.Desi.Components.Minimap;
+@using Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard; 
 
 @attribute [Microsoft.AspNetCore.Components.RouteAttribute(Routes.Tagging)]
 
@@ -37,7 +38,9 @@
 								<TagsPreviewControl EditTagCommand="this.Vm.EditTagCommand"
 													RemoveTagCommand="this.Vm.RemoveTagCommand" />
 							</Tab>
-							<Tab Title="Tracking">Tracking content</Tab>
+							<Tab Title="Tracking">
+								<TrackingDataWizard/>
+							</Tab>
 							<Tab Title="Segmentation">Segmentation content</Tab>
 						</TabSet>
 					</div>

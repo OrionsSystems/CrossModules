@@ -1,0 +1,43 @@
+﻿@using Orions.Systems.Desi.Core.ViewModels;
+@using Orions.Systems.Desi.Common.Models; 
+@using Orions.Common; 
+@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent
+
+<div class="tag-thumbnail-container">
+	<div class="position-label">
+		Position: (@Vm?.Element.HyperId.FragmentIdSimple : @Vm?.Element.HyperId.SliceIdSimple)
+	</div>
+	<div class="tag-thumbnail">
+		<img src="@(Vm?.Thumbnail != null ? UniImage.ConvertByteArrayToBase64Url(Vm.Thumbnail) : "")" class="img-no-error"/>
+	</div>
+</div>
+
+@code {
+	[Inject]
+	public BlazorDependencyResolver DependencyResolver { get; set; }
+
+	private TrackingSequenceElement _trackingSequenceElement;
+	[Parameter]
+	public TrackingSequenceElement TrackingSequenceElement
+	{
+		get
+		{
+			return _trackingSequenceElement;
+		}
+		set
+		{
+			SetProperty(ref _trackingSequenceElement, value, () =>
+			{
+				if(value != null)
+				{
+					Vm = new TrackingSequenceElementViewModel(TrackingSequenceElement,
+						DependencyResolver.GetFrameCacheService(),
+						DependencyResolver.GetNetStoreProvider(),
+						DependencyResolver.GetImageService());
+				}
+			});
+		}
+	}
+
+	protected TrackingSequenceElementViewModel Vm { get; set; }
+}
