@@ -16,8 +16,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="content\thirdparty\jwplayer\8.4.2\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
-		<EmbeddedResource Include="content\thirdparty\jwplayer\8.4.2\skins\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />
 
 		<EmbeddedResource Include="content\thirdparty\kendo\*.js" LogicalName="blazor:js:%(RecursiveDir)%(Filename)%(Extension)" />
 		<!--<EmbeddedResource Include="content\kendo\*.css" LogicalName="blazor:css:%(RecursiveDir)%(Filename)%(Extension)" />-->
@@ -35,7 +33,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Remove="content\thirdparty\jwplayer\8.4.2\*" />
 		<None Remove="content\thirdparty\kendo\*" />
 		<None Remove="content\scripts\common.js" />
 		<None Remove="content\scripts\kendoComponents.js" />

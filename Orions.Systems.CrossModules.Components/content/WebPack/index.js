@@ -6,7 +6,7 @@ export * from './src/FlowDesigner/flowDesigner';
 
 export * from './src/File/FileOperations';
 export * from './src/File/InputFile';
-export * from './src/JwPlayer/JwPlayer';
+export * from './src/ShakaPlayer/ShakaPlayer';
 export * from './src/Kendo/KendoTreemap';
 export * from './src/Kendo/KendoMediaPlayer';
 export * from './src/MapZone/MapZone';

@@ -60,7 +60,7 @@ namespace Orions.Systems.CrossModules.Components
       {
          get
          {
-            return $"Orions.JwPlayer-{HyperTagId.HyperId.AssetId.Value.Guid}";
+            return $"Orions.ShakaPlayer-{HyperTagId.HyperId.AssetId.Value.Guid}";
          }
       }
 

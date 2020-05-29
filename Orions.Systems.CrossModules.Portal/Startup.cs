@@ -55,6 +55,16 @@ namespace Orions.Systems.CrossModules.Portal
 				e.MaximumReceiveMessageSize = 102400000;
 			});
 
+			services.AddMatToaster(config =>
+			{
+				config.Position = MatToastPosition.BottomRight;
+				config.PreventDuplicates = true;
+				config.NewestOnTop = true;
+				config.ShowCloseButton = true;
+				config.MaximumOpacity = 95;
+				config.VisibleStateDuration = 3000;
+			});
+
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 			services.AddScoped<CustomSettingsProvider>();
