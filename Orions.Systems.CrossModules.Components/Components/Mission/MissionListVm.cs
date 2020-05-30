@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Web;
+﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 
+using Orions.Common;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 
@@ -12,16 +14,17 @@ namespace Orions.Systems.CrossModules.Components
 {
 	public class MissionListVm : BlazorVm
 	{
-
 		public bool IsLoadedData { get; set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
 
 		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
 
+		public EventCallback<HyperMission> OnManage { get; set; }
+
 		public bool IsShowProperty { get; set; }
 
-		public List<HyperMission> Items { get; set; } = new List<HyperMission>();
+		public List<MissionItemVm> Items { get; set; } = new List<MissionItemVm>();
 
 		public HyperMission SelectedItem { get; set; }
 
@@ -48,21 +51,28 @@ namespace Orions.Systems.CrossModules.Components
 
 			var findArgs = new FindHyperDocumentsArgs();
 			findArgs.SetDocumentType(typeof(HyperMission));
+			findArgs.DescriptorConditions.Mode = AndOr.Or;
+			findArgs.DescriptorConditions.AddCondition(Assist.GetPropertyName((HyperMission i) => i.Archived), false);
+			findArgs.DescriptorConditions.AddCondition(Assist.GetPropertyName((HyperMission i) => i.Archived), false, Comparers.DoesNotExist);
 			var docs = await HyperStore.ExecuteAsync(findArgs);
 
 			if (docs == null || !docs.Any())
 				return;
 
-			foreach (var workflow in docs)
+			foreach (var doc in docs)
 			{
-				var data = workflow.GetPayload<HyperMission>();
+				var data = doc.GetPayload<HyperMission>();
 				if (data == null)
 				{
-					Console.WriteLine($"Failed to load data from document: {data.Id}");
+					await OnToastMessage.InvokeAsync(new ToastMessage($"Failed to load data from document: {data.Id}", ToastMessageType.Error));
 					continue;
 				}
 
-				Items.Add(data);
+				var model = new MissionItemVm(data, HyperStore);
+				await model.UpdateStatus();
+				model.OnToastMessage = OnToastMessage;
+
+				Items.Add(model);
 			}
 
 			IsLoadedData = true;
@@ -78,9 +88,14 @@ namespace Orions.Systems.CrossModules.Components
 			//TODO
 		}
 
-		public void ShowPropertyGrid(HyperMission item)
+		public async Task ManageAsync(MissionItemVm item)
 		{
-			SelectedItem = item;
+			await OnManage.InvokeAsync(item.Mission);
+		}
+
+		public void ShowPropertyGrid(MissionItemVm item)
+		{
+			SelectedItem = item.Mission;
 			IsShowProperty = true;
 		}
 
@@ -94,7 +109,5 @@ namespace Orions.Systems.CrossModules.Components
 			PropertyGridVm.CleanSourceCache();
 			IsShowProperty = false;
 		}
-
-
 	}
 }

@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Components;
 
 using Orions.Node.Common;
-using Orions.Infrastructure.HyperMedia;
 
 using System;
 using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Components
 {
-	public class MissionListBase : BaseBlazorComponent<MissionListVm>, IDisposable
+	public class MissionEditorBase : BaseBlazorComponent<MissionEditorVm>
 	{
-		IDisposable thisReference;
-
 		[Parameter]
 		public IHyperArgsSink HyperStore
 		{
@@ -20,10 +17,10 @@ namespace Orions.Systems.CrossModules.Components
 		}
 
 		[Parameter]
-		public EventCallback<HyperMission> OnManage
+		public string MissionId
 		{
-			get => Vm.OnManage;
-			set => Vm.OnManage = value;
+			get => Vm.MissionId;
+			set => Vm.MissionId = value;
 		}
 
 
@@ -40,7 +37,7 @@ namespace Orions.Systems.CrossModules.Components
 
 		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
 
-		public MissionListBase()
+		public MissionEditorBase()
 		{
 
 		}
@@ -50,11 +47,6 @@ namespace Orions.Systems.CrossModules.Components
 			await base.OnInitializedAsync();
 
 			await Vm.Init();
-		}
-
-		void IDisposable.Dispose()
-		{
-			thisReference?.Dispose();
 		}
 	}
 }

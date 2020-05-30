@@ -1,5 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/missions"
+@page "/mission/{MissionId}"
 
 @using Orions.Infrastructure.HyperMedia
 
@@ -7,13 +8,43 @@
 
 @inject NavigationManager navManager
 
-<MissionList HyperStore="HyperStore"></MissionList>
+<Toast @ref="ToastRef"></Toast>
 
+@if (IsEditMode)
+{
+	<MissionEditor HyperStore="HyperStore" MissionId="@MissionId"></MissionEditor>
+}
+else
+{
+	<MissionList HyperStore="HyperStore" OnManage="OnManage" OnToastMessage="OnToastMessage"></MissionList>
+}
 @code{
+
+	private Toast ToastRef { get; set; }
+
+	[Parameter]
+	public string MissionId { get; set; }
+
+	private bool IsEditMode { get { return string.IsNullOrWhiteSpace(MissionId) == false; } }
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+	}
+
+	private async Task OnManage(HyperMission mission)
+	{
+		if (mission == null) return;
+
+		var url = $"{navManager.BaseUri}mission/{mission.Id}";
+
+		await NavigateToUrlAsync(url, true);
+
+	}
+
+	private void OnToastMessage(ToastMessage msg)
+	{
+		ToastRef.Show(msg);
 	}
 }
 

@@ -7697,7 +7697,7 @@ i.ui-intro-button {
     font-size: 22px; }
 
 .workflow-container .group-title {
-  padding: 10px 15px 5px 25px;
+  padding: 10px 15px 5px 15px;
   font-size: 16px;
   font-weight: bold; }
 
@@ -7765,6 +7765,94 @@ i.ui-intro-button {
       font-size: 11px; }
     .mission-container .list-table table .list-cmd-container a .list-cmd-delete {
       color: red !important; }
+
+.mission-editor-container .mission-editor-header .header-actions a {
+  cursor: pointer;
+  opacity: 0.5;
+  transition: 0.5s;
+  vertical-align: top;
+  max-width: 90px; }
+  .mission-editor-container .mission-editor-header .header-actions a:hover {
+    opacity: 1;
+    transition: 0.5s; }
+
+.mission-editor-container .mission-editor-header .header-actions .header-cmd-label {
+  font-size: 12px;
+  letter-spacing: 0.5px; }
+
+.mission-editor-container .mission-editor-header .header-actions .verical-separator, .mission-editor-container .mission-editor-header .header-actions .mission-status-container {
+  display: inline-block; }
+
+.mission-editor-container .mission-editor-header .header-actions .verical-separator {
+  width: 1px;
+  height: 60%;
+  background-color: darkgray; }
+
+.mission-editor-container .mission-editor-header .header-actions .mission-status-container {
+  padding: 0 10px; }
+  .mission-editor-container .mission-editor-header .header-actions .mission-status-container .status-block {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+    width: 50px;
+    height: 57px;
+    border-radius: 3px;
+    font-size: 12px;
+    box-shadow: inset 0 -3em 3em rgba(0, 0, 0, 0.1), 0 0 0 2px white, 0.3em 0.3em 1em rgba(0, 0, 0, 0.3); }
+
+.mission-editor-container .spliter-container {
+  position: fixed;
+  height: calc(100% - 150px);
+  width: calc(100% - 90px); }
+  .mission-editor-container .spliter-container .phase-header {
+    background-color: #e1e1e1;
+    margin-bottom: 9px !important; }
+    .mission-editor-container .spliter-container .phase-header .phase-header-title {
+      display: inline-block;
+      padding: 10px 5px;
+      letter-spacing: 0.5px;
+      font-weight: 500; }
+    .mission-editor-container .spliter-container .phase-header .btns {
+      display: inline-block;
+      float: right; }
+      .mission-editor-container .spliter-container .phase-header .btns .btn {
+        padding: 8px 0 0 0;
+        cursor: pointer;
+        opacity: 0.5;
+        transition: 0.5s; }
+        .mission-editor-container .spliter-container .phase-header .btns .btn:hover {
+          opacity: 1;
+          transition: 0.5s; }
+      .mission-editor-container .spliter-container .phase-header .btns .material-icons {
+        font-size: 20px; }
+  .mission-editor-container .spliter-container .phase-action {
+    cursor: pointer;
+    border: 1px solid #979696;
+    width: 100%;
+    margin: 3px 0;
+    text-align: left; }
+    .mission-editor-container .spliter-container .phase-action:hover {
+      background-color: #ff7f504d; }
+    .mission-editor-container .spliter-container .phase-action .phase-label {
+      display: inline-block;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      padding: 5px 0; }
+  .mission-editor-container .spliter-container .phase-btns {
+    float: right; }
+    .mission-editor-container .spliter-container .phase-btns .btn {
+      padding: 0px;
+      cursor: pointer;
+      opacity: 0.5;
+      transition: 0.5s; }
+      .mission-editor-container .spliter-container .phase-btns .btn:hover {
+        opacity: 1;
+        transition: 0.5s; }
+    .mission-editor-container .spliter-container .phase-btns .material-icons {
+      font-size: 20px; }
+
+.mission-editor-container .cmd-delete {
+  color: red !important; }
 
 .tagonomy-editor-container .list-header .header-actions .cmd-create, .tagonomy-editor-container .list-header .header-actions .cmd-up, .tagonomy-editor-container .list-header .header-actions .cmd-down, .tagonomy-editor-container .list-header .header-actions .cmd-delete, .tagonomy-editor-container .list-header .header-actions .cmd-refresh, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist {
   cursor: pointer;

@@ -52,7 +52,11 @@ namespace Orions.Systems.CrossModules.Components
 
 		public async Task Init()
 		{
-			if (HyperStore == null) return;
+			if (HyperStore == null)
+			{
+				await OnToastMessage.InvokeAsync(new ToastMessage("Missing Hyper Store", ToastMessageType.Error));
+				return;
+			}
 
 			await PopulateData();
 

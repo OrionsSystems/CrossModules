@@ -1,0 +1,124 @@
+﻿@namespace Orions.Systems.CrossModules.Components
+
+
+@inherits MissionEditorBase
+
+@using Syncfusion.EJ2.Blazor.Layouts
+@using Syncfusion.EJ2.Blazor.Navigations
+@using Orions.Infrastructure.HyperMedia
+
+<div class="mission-editor-container">
+
+	@if (Vm.IsLoadedData)
+	{
+
+		<div class="row mission-editor-header">
+			<div class="header-actions col-lg-12">
+				<div class="mission-status-container">
+					<div class="status-block" style="background-color: #fdfdfd">
+						@Vm.Source.StatusText
+					</div>
+				</div>
+
+				<div class="verical-separator"></div>
+
+				<a class="btn" @onclick="@Vm.Source.LoadInstanceCommand">
+					<MatIcon Icon="@MatIconNames.Play_arrow"></MatIcon>
+					<div class="header-cmd-label">Activate</div>
+				</a>
+				<a class="btn" @onclick="@Vm.Source.LoadNewInstanceCommand">
+					<MatIcon Icon="@MatIconNames.Play_arrow"></MatIcon>
+					<div class="header-cmd-label">Load New Instance</div>
+				</a>
+				<a class="btn" @onclick="@Vm.Source.UnloadCommand">
+					<MatIcon Icon="@MatIconNames.Stop"></MatIcon>
+					<div class="header-cmd-label">Deactivate</div>
+				</a>
+				<a class="btn cmd-delete" @onclick="@Vm.Source.ClearCommandWarning">
+					<MatIcon Icon="@MatIconNames.Clear"></MatIcon>
+					<div class="header-cmd-label">Clear</div>
+				</a>
+
+				<div class="verical-separator"></div>
+
+				<a class="btn">
+					<MatIcon Icon="@MatIconNames.Blur_on"></MatIcon>
+					<div class="header-cmd-label">Workflow</div>
+				</a>
+				<a class="btn">
+					<MatIcon Icon="@MatIconNames.Blur_linear"></MatIcon>
+					<div class="header-cmd-label">Workflow Instance</div>
+				</a>
+				<a class="btn">
+					<MatIcon Icon="@MatIconNames.Burst_mode"></MatIcon>
+					<div class="header-cmd-label">Metadata</div>
+				</a>
+				<a class="btn">
+					<MatIcon Icon="@MatIconNames.Gradient"></MatIcon>
+					<div class="header-cmd-label">Metadata Active</div>
+				</a>
+				<div class="verical-separator"></div>
+			</div>
+
+		</div>
+
+		<div class="spliter-container">
+			<EjsSplitter Width="100%" Orientation="Syncfusion.EJ2.Blazor.Layouts.Orientation.Horizontal">
+				<SplitterPanes>
+					<SplitterPane Size="30%" Min="20%" Max="60%" Collapsible="true">
+						<ContentTemplate>
+
+							<div class="row m-0 phase-header">
+								<div class="col-lg-12">
+									<div class="phase-header-title">Phases</div>
+									<div class="btns">
+										<a class="btn" title="Add Phase" @onclick="@Vm.OnAddPhase">
+											<MatIcon Icon="@MatIconNames.Add"></MatIcon>
+										</a>
+									</div>
+								</div>
+							</div>
+
+							@if (Vm.Source != null && Vm.Source.Mission != null && Vm.Source.Mission.Phases.Any())
+							{
+								@foreach (var phase in Vm.Source.Mission.Phases)
+								{
+									<div class="row m-0">
+										<div class="col-lg-12">
+											<a class="btn phase-action" @onclick="@(ev => { Vm.OnSelectPhase(phase); })">
+												<div class="phase-label">@phase.Name</div>
+												@*<div class="stage">Stage</div>*@
+
+												<div class="phase-btns">
+													<a class="btn cmd-delete" title="Delete Phase">
+														<MatIcon Icon="@MatIconNames.Delete" @onclick="@(ev => { Vm.OnRemovePhase(phase); })"></MatIcon>
+													</a>
+												</div>
+											</a>
+										</div>
+									</div>
+								}
+							}
+						</ContentTemplate>
+					</SplitterPane>
+					<SplitterPane Size="70%" Min="40%">
+						<ContentTemplate>
+							<PropertyGrid Vm="Vm.PropertyGridVm"
+											  Loader="Vm.LoadPropertyGrid"
+											  CancelVisible="false"
+											  HyperStore="Vm.HyperStore"
+											  OKVisible="false">
+							</PropertyGrid>
+						</ContentTemplate>
+					</SplitterPane>
+				</SplitterPanes>
+			</EjsSplitter>
+		</div>
+	}
+	@if (!Vm.IsLoadedData)
+	{
+		<Loader Settings="@LoaderSetting"></Loader>
+	}
+
+</div>
+

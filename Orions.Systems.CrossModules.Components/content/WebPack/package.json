@@ -4,8 +4,11 @@
 	"description": "",
 	"private": true,
 	"scripts": {
-		"watch": "webpack --watch",
-		"build": "webpack"
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build": "npm run build:Debug && npm run build:Release",
+		"build:Debug": "webpack --mode development",
+		"build:Release": "webpack --mode production",
+		"watch": "webpack --mode development --watch"
 	},
 	"author": "",
 	"devDependencies": {

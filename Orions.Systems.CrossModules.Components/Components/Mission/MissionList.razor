@@ -3,6 +3,8 @@
 
 @inherits MissionListBase
 
+@using Orions.Infrastructure.HyperMedia
+
 	<div class="mission-container">
 
 		<div class="row mission-list-header">
@@ -27,43 +29,79 @@
 
 		@if (Vm.Items.Any() && Vm.IsLoadedData)
 		{
-			var rowIndex = 0;
+			var groups = Vm.Items.GroupBy(it => it.Mission.Group).ToDictionary(el => el.Key, el => el.ToList());
 
 			<div class="row">
 				<div class="col-lg-12 header-title">Missions</div>
 			</div>
 
-			<div class="table-responsive list-table">
+			@foreach (KeyValuePair<string, List<MissionItemVm>> entry in groups)
+			{
+				var groupName = entry.Key;
+				var groupData = entry.Value;
+				var rowIndex = 0;
 
-				<table class="table table-striped table-bordered table-hover">
-					<thead>
-						<tr>
-							<th width="1%" class="nowrap center"></th>
-							<th width="5%" class="nowrap center">Group</th>
-							<th>Name</th>
-							<th width="20%" class="nowrap center"></th>
-						</tr>
-					</thead>
-					<tbody>
-						@foreach (var item in Vm.Items)
-						{
-							rowIndex++;
+				<div class="row">
+					<div class="col-lg-12 group-title">@groupName</div>
+				</div>
 
-							<tr @key="item.Id">
-								<td class="center nowrap">@rowIndex</td>
-								<td>@item.Group</td>
-								<td>@item.Name</td>
-								<td class="center list-cmd-container">
-									<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
-										<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
-										<div class="list-cmd-label">Properties</div>
-									</a>
-								</td>
+				<div class="table-responsive list-table">
+
+					<table class="table table-striped table-bordered table-hover">
+						<thead>
+							<tr>
+								<th width="1%" class="nowrap center"></th>
+								<th>Name</th>
+								<th width="20%" class="nowrap center"></th>
 							</tr>
-						}
-					</tbody>
-				</table>
-			</div>
+						</thead>
+						<tbody>
+							@foreach (var item in groupData)
+							{
+								rowIndex++;
+
+								<tr @key="item.Mission.Id">
+									<td class="center nowrap">@rowIndex</td>
+									<td>
+										<div class="name-container">
+											<div class="workflow-status"></div>
+											<div class="workflow-label-container">
+												<div class="workflow-name">
+													<h6>@item.Mission.Name</h6>
+												</div>
+												<div class="workflow-id">
+													@($"Id:{item.Mission.Id}")
+												</div>
+												<div class="status">
+													@item.StatusText
+												</div>
+											</div>
+										</div>
+									</td>
+									<td class="center list-cmd-container">
+										<a class="btn btn-sm" @onclick="@item.LoadCommand">
+											<MatIcon Icon="@MatIconNames.Play_arrow"></MatIcon>
+											<div class="list-cmd-label">Load</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@item.UnloadCommand">
+											<MatIcon Icon="@MatIconNames.Stop"></MatIcon>
+											<div class="list-cmd-label">Unload</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(async e => { await Vm.ManageAsync(item); })">
+											<MatIcon Icon="@MatIconNames.Gavel"></MatIcon>
+											<div class="list-cmd-label">Manage</div>
+										</a>
+										<a class="btn btn-sm" @onclick="@(e => { Vm.ShowPropertyGrid(item); })">
+											<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
+											<div class="list-cmd-label">Properties</div>
+										</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
 		}
 		@if (!Vm.IsLoadedData)
 		{
