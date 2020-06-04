@@ -7766,6 +7766,10 @@ i.ui-intro-button {
       font-size: 11px; }
     .mission-container .list-table table .list-cmd-container a .list-cmd-delete {
       color: red !important; }
+  .mission-container .list-table table .list-cmd-container .cmd-play {
+    color: green; }
+  .mission-container .list-table table .list-cmd-container .cmd-stop {
+    color: red; }
 
 .mission-editor-container {
   height: calc(100% - 80px); }
@@ -7849,47 +7853,41 @@ i.ui-intro-button {
   .mission-editor-container .cmd-delete {
     color: red !important; }
 
-.tagonomy-editor-container .list-header .header-actions .cmd-create, .tagonomy-editor-container .list-header .header-actions .cmd-up, .tagonomy-editor-container .list-header .header-actions .cmd-down, .tagonomy-editor-container .list-header .header-actions .cmd-delete, .tagonomy-editor-container .list-header .header-actions .cmd-refresh, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist {
-  cursor: pointer;
-  opacity: 0.5;
-  transition: 0.5s; }
-  .tagonomy-editor-container .list-header .header-actions .cmd-create:hover, .tagonomy-editor-container .list-header .header-actions .cmd-up:hover, .tagonomy-editor-container .list-header .header-actions .cmd-down:hover, .tagonomy-editor-container .list-header .header-actions .cmd-delete:hover, .tagonomy-editor-container .list-header .header-actions .cmd-refresh:hover, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist:hover {
-    opacity: 1;
+.tagonomy-editor-container {
+  height: calc(100% - 62px); }
+  .tagonomy-editor-container .list-header .header-actions .cmd-create, .tagonomy-editor-container .list-header .header-actions .cmd-up, .tagonomy-editor-container .list-header .header-actions .cmd-down, .tagonomy-editor-container .list-header .header-actions .cmd-delete, .tagonomy-editor-container .list-header .header-actions .cmd-refresh, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist {
+    cursor: pointer;
+    opacity: 0.5;
     transition: 0.5s; }
-
-.tagonomy-editor-container .list-header .header-actions .cmd-delete .material-icons, .tagonomy-editor-container .list-header .header-actions .cmd-delete .cmd-label {
-  color: #b00020; }
-
-.tagonomy-editor-container .list-header .header-actions .cmd-label {
-  font-size: 12px; }
-
-.tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-create {
-  cursor: pointer;
-  opacity: 0.5;
-  transition: 0.5s; }
-  .tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-create:hover {
-    opacity: 1;
+    .tagonomy-editor-container .list-header .header-actions .cmd-create:hover, .tagonomy-editor-container .list-header .header-actions .cmd-up:hover, .tagonomy-editor-container .list-header .header-actions .cmd-down:hover, .tagonomy-editor-container .list-header .header-actions .cmd-delete:hover, .tagonomy-editor-container .list-header .header-actions .cmd-refresh:hover, .tagonomy-editor-container .list-header .header-actions .cmd-vizlist:hover {
+      opacity: 1;
+      transition: 0.5s; }
+  .tagonomy-editor-container .list-header .header-actions .cmd-delete .material-icons, .tagonomy-editor-container .list-header .header-actions .cmd-delete .cmd-label {
+    color: #b00020; }
+  .tagonomy-editor-container .list-header .header-actions .cmd-label {
+    font-size: 12px; }
+  .tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-create {
+    cursor: pointer;
+    opacity: 0.5;
     transition: 0.5s; }
-
-.tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-label {
-  font-size: 11px; }
-
-.tagonomy-editor-container .tagonomy-node-container .element-container .element-name {
-  display: inline-block;
-  font-size: 14px;
-  letter-spacing: 1.5px;
-  margin: auto 5px; }
-
-.tagonomy-editor-container .tagonomy-node-container .element-container .cmd-edit, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-up, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-down, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete {
-  cursor: pointer;
-  opacity: 0.5;
-  transition: 0.5s; }
-  .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-edit:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-up:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-down:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete:hover {
-    opacity: 1;
+    .tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-create:hover {
+      opacity: 1;
+      transition: 0.5s; }
+  .tagonomy-editor-container .tagonomy-node-container .create-element-container .cmd-label {
+    font-size: 11px; }
+  .tagonomy-editor-container .tagonomy-node-container .element-container .element-name {
+    display: inline-block;
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    margin: auto 5px; }
+  .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-edit, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-up, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-down, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete {
+    cursor: pointer;
+    opacity: 0.5;
     transition: 0.5s; }
-
-.tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete .material-icons, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete .cmd-label {
-  color: #b00020; }
-
-.tagonomy-editor-container .tagonomy-node-container .element-container .cmd-label {
-  font-size: 11px; }
+    .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-edit:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-up:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-down:hover, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete:hover {
+      opacity: 1;
+      transition: 0.5s; }
+  .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete .material-icons, .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-delete .cmd-label {
+    color: #b00020; }
+  .tagonomy-editor-container .tagonomy-node-container .element-container .cmd-label {
+    font-size: 11px; }
