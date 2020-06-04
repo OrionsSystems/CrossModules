@@ -47,9 +47,9 @@ namespace Orions.Systems.CrossModules.Components
 			new NavMenuItem{ Address="dashboards", Label="Dashboards", MatIcon=MatIconNames.View_module },
 			new NavMenuItem{ Address="themes", Label="Themes", MatIcon=MatIconNames.Color_lens},
 			new NavMenuItem{ Address="wizzard", Label="Wizzard", MatIcon=MatIconNames.Widgets},
-			new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow, EnableLeftMenu=true },
-			new NavMenuItem{ Address="workflows", Label="Workflows", MatIcon=MatIconNames.Library_books, EnableLeftMenu=true},
-			new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension,  EnableLeftMenu=true }
+			new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow, EnableLeftMenu=false },
+			new NavMenuItem{ Address="workflows", Label="Workflows", MatIcon=MatIconNames.Library_books},
+			new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension,  EnableLeftMenu=false }
 		};
 
 		private NavMenuItem SelectedNavItem { get; set; }
