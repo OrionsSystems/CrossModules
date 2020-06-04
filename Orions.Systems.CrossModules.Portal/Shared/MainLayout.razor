@@ -1,14 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@inherits MissionListBase
 
 @using Orions.Systems.CrossModules.Portal.Providers
 @using Syncfusion.EJ2.Blazor.SplitButtons
 @using Syncfusion.EJ2.Blazor.Navigations
-@using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
 
-@inject NavigationManager NavigationManager
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject CustomSettingsProvider CustomSettingsProvider
-@inject NavigationManager navigationManager
 
 @if (IsEmbedded)
 {
@@ -56,7 +51,7 @@ else
 				<ChildContent>
 					<div class="content-area">
 						<div class="dock">
-							<NavMenu Items="@NavItems" />
+							<NavMenu Items="@NavItems" Version="@VersionLabel" />
 						</div>
 					</div>
 				</ChildContent>
@@ -85,101 +80,6 @@ else
 else
 {
 	<link href="css/theme-white.css" rel="stylesheet" />
-}
-
-@code{
-
-	private List<NavMenuItem> NavItems = new List<NavMenuItem> {
-		new NavMenuItem{ Address="", Label="Home", Alias="properties", MatIcon=MatIconNames.Home },
-		new NavMenuItem{ Address="dashboards", Label="Dashboards", MatIcon=MatIconNames.View_module },
-		new NavMenuItem{ Address="themes", Label="Themes", MatIcon=MatIconNames.Color_lens},
-		new NavMenuItem{ Address="wizzard", Label="Wizzard", MatIcon=MatIconNames.Widgets},
-		new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow, EnableLeftMenu=false },
-		new NavMenuItem{ Address="workflows", Label="Workflows", MatIcon=MatIconNames.Library_books},
-		new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension,  EnableLeftMenu=false }
-	};
-
-	private NavMenuItem SelectedNavItem { get; set; }
-
-	private bool IsEnableLeftMenu { get { return SelectedNavItem?.EnableLeftMenu ?? false; } }
-
-	private EjsSidebar dockSidebarInstance;
-
-	private string CurrentTheme { get; set; }
-
-	private bool IsEmbedded { get; set; }
-
-	protected override async Task OnInitializedAsync()
-	{
-		await base.OnInitializedAsync();
-
-		SelectedNavItem = FindNavItem();
-
-		CurrentTheme = await GetTheme();
-
-		var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
-		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("embed", out var token))
-		{
-			IsEmbedded = true;
-		}
-
-		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var value))
-		{
-			CurrentTheme = value;
-		}
-	}
-
-	private NavMenuItem FindNavItem()
-	{
-		var currentaddress = navigationManager.ToBaseRelativePath(navigationManager.Uri).ToString();
-
-		var data = NavItems.Where(it => currentaddress.Contains(string.IsNullOrWhiteSpace(it.Alias)? it.Address: it.Alias)).FirstOrDefault();
-
-		if (data == null) {
-			data = NavItems.FirstOrDefault();
-		}
-
-		return data;
-	}
-
-	private async Task Logout()
-	{
-		await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).LogOut();
-
-		NavigationManager.NavigateTo("/login");
-	}
-
-	private async Task<string> GetTheme()
-	{
-		var theme = await CustomSettingsProvider.GetParameter(CustomSettingsProvider.THEME_KEY);
-
-		if (string.IsNullOrWhiteSpace(theme)) return CustomSettingsProvider.THEME_WHITE;
-
-		return theme;
-	}
-
-	public async Task OnThemeSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
-	{
-		if (args.Element.ID.Equals(CustomSettingsProvider.THEME_DARK, StringComparison.InvariantCultureIgnoreCase))
-		{
-			await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_DARK);
-			CurrentTheme = CustomSettingsProvider.THEME_DARK;
-		}
-
-		if (args.Element.ID.Equals(CustomSettingsProvider.THEME_WHITE, StringComparison.InvariantCultureIgnoreCase))
-		{
-			await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_WHITE);
-			CurrentTheme = CustomSettingsProvider.THEME_WHITE;
-		}
-	}
-
-	public async Task OnItemSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
-	{
-		if (args.Element.ID.Equals("Logout", StringComparison.InvariantCultureIgnoreCase))
-		{
-			await Logout();
-		}
-	}
 }
 
 <style>

@@ -182,8 +182,6 @@ body.highcontrast #dockSidebar {
    transform: none !important;
 }
 
-
-
 /* Left Sidebar */
 
 .left-sidebar-container {
@@ -228,4 +226,22 @@ menu-items-container {
    font-size: 12px;
    font-style: italic;
    letter-spacing: 0.5px;
+}
+
+.version {
+   position: absolute;
+   bottom: 0px;
+   text-align: center;
+   width: 68px;
+   padding: 5px 0;
+}
+
+.ver-label {
+   font-style: italic;
+}
+
+.ver-value {
+   font-size: 12px;
+   letter-spacing: 0.5px;
+   font-weight: 500;
 }

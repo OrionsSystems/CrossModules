@@ -4,20 +4,20 @@
 @inject NavigationManager navManager
 
 
-	<MatNavMenu Class="mat-nav">
+<MatNavMenu Class="mat-nav">
 
-		@if (Items != null && Items.Any())
+	@if (Items != null && Items.Any())
+	{
+		@foreach (var item in Items)
 		{
-			@foreach (var item in Items)
-			{
-				<MatNavItem OnClick="@(ev => ForceNavigation(item.Address))" Selected="@IsSelected(item)">
-					<MatIcon Icon="@item.MatIcon"></MatIcon>
-					<div class="nav-label">@item.Label</div>
-				</MatNavItem>
-			}
+			<MatNavItem OnClick="@(ev => ForceNavigation(item.Address))" Selected="@IsSelected(item)">
+				<MatIcon Icon="@item.MatIcon"></MatIcon>
+				<div class="nav-label">@item.Label</div>
+			</MatNavItem>
 		}
+	}
 
-		@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>
+	@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>
 		<MatNavItem OnClick="@(ev => ForceNavigation())" NavLinkMatch="NavLinkMatch.All" Selected="@IsSelected("properties")">
 			<MatIcon Icon="@MatIconNames.Home"></MatIcon>
 			<div class="nav-label">Home</div>
@@ -46,12 +46,23 @@
 			<MatIcon Icon="@MatIconNames.Extension"></MatIcon>
 			<div class="nav-label">Tagonomies</div>
 		</MatNavItem>*@
-	</MatNavMenu>
+</MatNavMenu>
+
+@if (string.IsNullOrWhiteSpace(Version) == false)
+{
+	<div class="version">
+		<div class="ver-label">ver:</div>
+		<div class="ver-value">@Version</div>
+	</div>
+}
 
 @code{
 
 	[Parameter]
 	public List<NavMenuItem> Items { get; set; }
+
+	[Parameter]
+	public string Version { get; set; }
 
 	private string CurrentLocation { get { return navManager.ToBaseRelativePath(navManager.Uri).ToString(); } }
 
@@ -62,7 +73,7 @@
 
 	private bool IsSelected(NavMenuItem item)
 	{
-		var place = string.IsNullOrWhiteSpace(item.Alias) ? item.Address: item.Alias;
+		var place = string.IsNullOrWhiteSpace(item.Alias) ? item.Address : item.Alias;
 
 		if (CurrentLocation.Contains(place)) return true;
 
