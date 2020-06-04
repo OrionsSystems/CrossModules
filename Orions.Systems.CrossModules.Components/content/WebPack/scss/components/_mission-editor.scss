@@ -1,5 +1,7 @@
 ﻿
 .mission-editor-container {
+	height: calc(100% - 80px);
+
 	.mission-editor-header {
 
 		.header-actions {
@@ -50,9 +52,8 @@
 	}
 
 	.spliter-container {
-		position: fixed;
-		height: calc(100% - 150px);
-		width: calc(100% - 90px);
+
+		height: 100%;
 
 		.phase-header {
 			background-color: #e1e1e1;

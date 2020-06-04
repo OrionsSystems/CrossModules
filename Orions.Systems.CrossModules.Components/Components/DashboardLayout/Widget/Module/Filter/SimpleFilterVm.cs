@@ -40,7 +40,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			get
 			{
-				return this.Widget?.MaxDate ?? new DateTime(2019, 12, 31);
+				return this.Widget?.MaxDate ?? DateTime.UtcNow.AddDays(15);
 			}
 		}
 

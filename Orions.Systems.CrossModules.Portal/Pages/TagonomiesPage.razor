@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/tagonomies"
-@page "/tagonomy/{TagonomyId}/edit"
+@page "/tagonomies/{TagonomyId}/edit"
 
 @using Orions.Infrastructure.HyperSemantic
 @using Syncfusion.EJ2.Blazor.Notifications
@@ -51,7 +51,7 @@ else
 	{
 		if (tagonomy == null) return;
 
-		var url = $"{navManager.BaseUri}tagonomy/{tagonomy.Id}/edit";
+		var url = $"{navManager.BaseUri}tagonomies/{tagonomy.Id}/edit";
 
 		await NavigateToUrlAsync(url, true);
 
@@ -61,7 +61,7 @@ else
 	{
 		if (tagonomy == null) return;
 
-		var url = $"{navManager.BaseUri}vizlist/{tagonomy.Id}";
+		var url = $"{navManager.BaseUri}tagonomies/{tagonomy.Id}/vizlist";
 
 		await NavigateToUrlAsync(url, true);
 

@@ -1,8 +1,10 @@
 ﻿@inherits LayoutComponentBase
+
 @using Orions.Systems.CrossModules.Portal.Providers
 @using Syncfusion.EJ2.Blazor.SplitButtons
 @using Syncfusion.EJ2.Blazor.Navigations
 @using Microsoft.AspNetCore.WebUtilities @*for QueryHelpers*@
+
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject CustomSettingsProvider CustomSettingsProvider
@@ -10,144 +12,178 @@
 
 @if (IsEmbedded)
 {
-<div class="control-section">
-    <div class="col-lg-12 col-sm-12 col-md-12">
-        <div id="target">
-            <div class="sidebar-content">
-                @Body
-            </div>
-        </div>
-    </div>
-</div>
+	<div class="control-section">
+		<div class="col-lg-12 col-sm-12 col-md-12">
+			<div id="target">
+				<div class="sidebar-content">
+					@Body
+				</div>
+			</div>
+		</div>
+	</div>
 }
 else
 {
-<div class="control-section">
-    <div class="col-lg-12 col-sm-12 col-md-12" id="sidebar-section">
-        <div id="head">
-            <div class="header">
-                <div class="menu">
-                    <img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
-                </div>
-                <div class="right-content">
-                    @*<EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
-                        <DropDownButtonEvents ItemSelected="OnThemeSelected"></DropDownButtonEvents>
-                        <DropDownButtonItems>
-                            <DropDownButtonItem Id="Dark" Text="Dark"></DropDownButtonItem>
-                            <DropDownButtonItem Id="White" Text="White"></DropDownButtonItem>
-                        </DropDownButtonItems>
-                    </EjsDropDownButton>*@
-                    <AuthorizeView>
-                        <Authorized>
-                            <EjsDropDownButton Content="@context.User.Identity.Name">
-                                <DropDownButtonEvents ItemSelected="OnItemSelected"></DropDownButtonEvents>
-                                <DropDownButtonItems>
-                                    <DropDownButtonItem Id="Logout" Text="Logout"></DropDownButtonItem>
-                                </DropDownButtonItems>
-                            </EjsDropDownButton>
-                        </Authorized>
-                    </AuthorizeView>
-                </div>
-            </div>
-        </div>
-        <EjsSidebar ID="dockSidebar" Type="Syncfusion.EJ2.Blazor.Navigations.SidebarType.Over" Target="#target" EnableDock="true" DockSize="70px">
-            <ChildContent>
-                <div class="content-area">
-                    <div class="dock">
-                        <NavMenu />
-                    </div>
-                </div>
-            </ChildContent>
-        </EjsSidebar>
-        <div id="target">
-            <div class="sidebar-content">
-                @Body
-            </div>
-        </div>
-    </div>
-</div>
+	<div class="control-section">
+		<div class="col-lg-12 col-sm-12 col-md-12" id="sidebar-section">
+			<div id="head">
+				<div class="header">
+					<div class="menu">
+						<img alt="image" class="img-circle" src="/image/orions-logo-sm.png">
+					</div>
+					<div class="right-content">
+						@*<EjsDropDownButton IconCss="e-icons e-message" Content="Theme">
+								 <DropDownButtonEvents ItemSelected="OnThemeSelected"></DropDownButtonEvents>
+								 <DropDownButtonItems>
+									  <DropDownButtonItem Id="Dark" Text="Dark"></DropDownButtonItem>
+									  <DropDownButtonItem Id="White" Text="White"></DropDownButtonItem>
+								 </DropDownButtonItems>
+							</EjsDropDownButton>*@
+						<AuthorizeView>
+							<Authorized>
+								<EjsDropDownButton Content="@context.User.Identity.Name">
+									<DropDownButtonEvents ItemSelected="OnItemSelected"></DropDownButtonEvents>
+									<DropDownButtonItems>
+										<DropDownButtonItem Id="Logout" Text="Logout"></DropDownButtonItem>
+									</DropDownButtonItems>
+								</EjsDropDownButton>
+							</Authorized>
+						</AuthorizeView>
+					</div>
+				</div>
+			</div>
+			<EjsSidebar @ref="@dockSidebarInstance" Type="Syncfusion.EJ2.Blazor.Navigations.SidebarType.Over" Target="#target" EnableDock="true" DockSize="70px">
+				<ChildContent>
+					<div class="content-area">
+						<div class="dock">
+							<NavMenu Items="@NavItems" />
+						</div>
+					</div>
+				</ChildContent>
+			</EjsSidebar>
+			<div id="target">
+
+				<LeftSideMenu Enable="@IsEnableLeftMenu" />
+
+				<div class="sidebar-content">
+					@Body
+				</div>
+			</div>
+		</div>
+	</div>
 }
 
 
 @if (CurrentTheme == CustomSettingsProvider.THEME_DARK)
 {
-<link href="css/theme/bootstrap/bootstrap-dark.css" rel="stylesheet" />
-<link href="css/theme/sync/material-dark.css" rel="stylesheet" />
-<link href="css/theme/md/all.css" rel="stylesheet" />
-<link href="css/theme/all.css" rel="stylesheet" />
-<link href="css/theme-dark.css" rel="stylesheet" />
+	<link href="css/theme/bootstrap/bootstrap-dark.css" rel="stylesheet" />
+	<link href="css/theme/sync/material-dark.css" rel="stylesheet" />
+	<link href="css/theme/md/all.css" rel="stylesheet" />
+	<link href="css/theme/all.css" rel="stylesheet" />
+	<link href="css/theme-dark.css" rel="stylesheet" />
 }
 else
 {
-<link href="css/theme-white.css" rel="stylesheet" />
+	<link href="css/theme-white.css" rel="stylesheet" />
 }
 
 @code{
 
-    private string CurrentTheme { get; set; }
+	private List<NavMenuItem> NavItems = new List<NavMenuItem> {
+		new NavMenuItem{ Address="", Label="Home", Alias="properties", MatIcon=MatIconNames.Home },
+		new NavMenuItem{ Address="dashboards", Label="Dashboards", MatIcon=MatIconNames.View_module },
+		new NavMenuItem{ Address="themes", Label="Themes", MatIcon=MatIconNames.Color_lens},
+		new NavMenuItem{ Address="wizzard", Label="Wizzard", MatIcon=MatIconNames.Widgets},
+		new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow, EnableLeftMenu=false },
+		new NavMenuItem{ Address="workflows", Label="Workflows", MatIcon=MatIconNames.Library_books},
+		new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension,  EnableLeftMenu=false }
+	};
 
-    private bool IsEmbedded { get; set; }
+	private NavMenuItem SelectedNavItem { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
+	private bool IsEnableLeftMenu { get { return SelectedNavItem?.EnableLeftMenu ?? false; } }
 
-        CurrentTheme = await GetTheme();
+	private EjsSidebar dockSidebarInstance;
 
-        var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("embed", out var token))
-        {
-            IsEmbedded = true;
-        }
+	private string CurrentTheme { get; set; }
 
-        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var value))
-        {
-            CurrentTheme = value;
-        }
-    }
+	private bool IsEmbedded { get; set; }
 
-    private async Task Logout()
-    {
-        await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).LogOut();
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
 
-        NavigationManager.NavigateTo("/login");
-    }
+		SelectedNavItem = FindNavItem();
 
-    private async Task<string> GetTheme()
-    {
-        var theme = await CustomSettingsProvider.GetParameter(CustomSettingsProvider.THEME_KEY);
+		CurrentTheme = await GetTheme();
 
-        if (string.IsNullOrWhiteSpace(theme)) return CustomSettingsProvider.THEME_WHITE;
+		var uri = navigationManager.ToAbsoluteUri(navigationManager.Uri);
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("embed", out var token))
+		{
+			IsEmbedded = true;
+		}
 
-        return theme;
-    }
+		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("theme", out var value))
+		{
+			CurrentTheme = value;
+		}
+	}
 
-    public async Task OnThemeSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
-    {
-        if (args.Element.ID.Equals(CustomSettingsProvider.THEME_DARK, StringComparison.InvariantCultureIgnoreCase))
-        {
-            await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_DARK);
-            CurrentTheme = CustomSettingsProvider.THEME_DARK;
-        }
+	private NavMenuItem FindNavItem()
+	{
+		var currentaddress = navigationManager.ToBaseRelativePath(navigationManager.Uri).ToString();
 
-        if (args.Element.ID.Equals(CustomSettingsProvider.THEME_WHITE, StringComparison.InvariantCultureIgnoreCase))
-        {
-            await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_WHITE);
-            CurrentTheme = CustomSettingsProvider.THEME_WHITE;
-        }
-    }
+		var data = NavItems.Where(it => currentaddress.Contains(string.IsNullOrWhiteSpace(it.Alias)? it.Address: it.Alias)).FirstOrDefault();
 
-    public async Task OnItemSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
-    {
-        if (args.Element.ID.Equals("Logout", StringComparison.InvariantCultureIgnoreCase))
-        {
-            await Logout();
-        }
-    }
+		if (data == null) {
+			data = NavItems.FirstOrDefault();
+		}
+
+		return data;
+	}
+
+	private async Task Logout()
+	{
+		await ((CustomAuthenticationStateProvider)AuthenticationStateProvider).LogOut();
+
+		NavigationManager.NavigateTo("/login");
+	}
+
+	private async Task<string> GetTheme()
+	{
+		var theme = await CustomSettingsProvider.GetParameter(CustomSettingsProvider.THEME_KEY);
+
+		if (string.IsNullOrWhiteSpace(theme)) return CustomSettingsProvider.THEME_WHITE;
+
+		return theme;
+	}
+
+	public async Task OnThemeSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
+	{
+		if (args.Element.ID.Equals(CustomSettingsProvider.THEME_DARK, StringComparison.InvariantCultureIgnoreCase))
+		{
+			await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_DARK);
+			CurrentTheme = CustomSettingsProvider.THEME_DARK;
+		}
+
+		if (args.Element.ID.Equals(CustomSettingsProvider.THEME_WHITE, StringComparison.InvariantCultureIgnoreCase))
+		{
+			await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_WHITE);
+			CurrentTheme = CustomSettingsProvider.THEME_WHITE;
+		}
+	}
+
+	public async Task OnItemSelected(Syncfusion.EJ2.Blazor.SplitButtons.MenuEventArgs args)
+	{
+		if (args.Element.ID.Equals("Logout", StringComparison.InvariantCultureIgnoreCase))
+		{
+			await Logout();
+		}
+	}
 }
 
 <style>
-    .e-message::before {
-        content: '\e30d';
-    }
+	.e-message::before {
+		content: '\e30d';
+	}
 </style>

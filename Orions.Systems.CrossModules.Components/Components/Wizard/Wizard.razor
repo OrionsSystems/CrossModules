@@ -163,21 +163,18 @@
 		DispatcherTimer();
 	}
 
-	private void DispatcherTimer(int refreshTime = 2000)
+	private void DispatcherTimer(int refreshTimeInSeconds = 2)
 	{
-		var t = new Task(() =>
+		var _ = Task.Run(async delegate
 		{
 			for (; ; )
 			{
 				Vm.UpdateUI();
-
-				InvokeAsync(StateHasChanged);
-
-				Task.Delay(refreshTime).Wait();
+				await InvokeAsync(StateHasChanged);
+				await Task.Delay(TimeSpan.FromSeconds(refreshTimeInSeconds));
 			}
-		});
 
-		t.Start();
+		});
 	}
 
 }
