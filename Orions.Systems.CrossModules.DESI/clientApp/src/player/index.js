@@ -6,10 +6,7 @@ window.Orions.Player = {
         let video = document.getElementById(videoElementId)
         let shakaPlayer = new shaka.Player(video);
         this.shakaPlayer = shakaPlayer;
-        shakaPlayer.load(file)
-            .then(() => {
-                self.vmInstance.invokeMethodAsync("OnPlayerReady");
-            })
+        
 
         video.addEventListener('timeupdate', function (e) {
             vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime);
@@ -42,12 +39,6 @@ window.Orions.Player = {
 			}
         });
 
-        video.addEventListener('playing', function (e) {
-            console.log('play')
-            console.log(e)
-            vmInstance.invokeMethodAsync("OnVideoPlaying");
-        });
-
         video.addEventListener('pause', function (e) {
             console.log('pause')
             console.log(e)
@@ -56,12 +47,24 @@ window.Orions.Player = {
 
         this.video = video;
 
+        this.wheelEventHandler = function (e) {
+            if (!e.shiftKey) {
+                vmInstance.invokeMethodAsync('OnMouseWheelHandler', e.deltaY > 0);
+			}
+        }
+        document.querySelector('.right-column').addEventListener('wheel', this.wheelEventHandler)
+
         window.playerDebug = this;
+
+        return shakaPlayer.load(file)
+            .then(() => {
+                self.vmInstance.invokeMethodAsync("OnPlayerReady");
+            })
     },
     setSrc: function (url, vmInstance) {
         let self = this;
 
-        self.shakaPlayer.load(url)
+        return self.shakaPlayer.load(url)
             .then(() => {
                 self.vmInstance.invokeMethodAsync("OnPlayerReady");
 			})
@@ -76,11 +79,9 @@ window.Orions.Player = {
 
         let self = this;
 
-        this.video.currentTime = position;
-        this.video.play()
-            .then(() => {
-                self.vmInstance.invokeMethodAsync("OnVideoPlaying");
-            });
+        self.video.currentTime = position;
+
+        return self.video.play();
     },
 
     setVolumeLevel: function (volLevel) {
@@ -94,8 +95,25 @@ window.Orions.Player = {
     },
     pause: function () {
         console.log('pause request')
-        this.video.pause();
+
+        let pausePromise = new Promise((resolve, reject) => {
+            let pausedHandler = function(e) {
+                resolve();
+                this.removeEventListener('pause', pausedHandler)
+            };
+            this.video.addEventListener('pause', pausedHandler)
+            this.video.pause();
+		})
+
+        return pausePromise;
     },
+
+    dispose: function () {
+        let rightColumn = document.querySelector('.right-column')
+        if (typeof rightColumn !== 'undefined') {
+            rightColumn.removeEventListener('wheel', this.wheelEventHandler);
+		}
+	},
 
     playbackControl: {
         init: function (elementId, componentRef) {

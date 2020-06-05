@@ -15,6 +15,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model
 
 		public bool IsSelected { get; set; }
 		public string BorderColor { get; set; }
+		public BorderTypeEnum BorderType { get; set; } = BorderTypeEnum.Solid;
+		public bool IsReadonly { get; set; } = false;
 		public string Label { get; internal set; }
 
 		public override bool Equals(object other)
@@ -36,6 +38,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model
 				return false;
 
 			return true;
+		}
+
+		public enum BorderTypeEnum
+		{
+			Solid = 0,
+			Dashed = 1
 		}
 	}
 }

@@ -80,6 +80,42 @@
 						<div class="marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
 					}
 				}
+
+				@if (TrackingSequenceStartMarkers?.Any() ?? false)
+				{
+
+					foreach (var marker in TrackingSequenceStartMarkers)
+					{
+						<div class="tracking-sequence-start-marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
+					}
+				}
+
+				@if (CurrentSelectedTrackingSequenceBoundaries != null)
+				{
+
+					var styleLeft = $"{CurrentSelectedTrackingSequenceBoundaries.Item1.PercentagePosition}%";
+					var styleWidth = $"{CurrentSelectedTrackingSequenceBoundaries.Item2.PercentagePosition - CurrentSelectedTrackingSequenceBoundaries.Item1.PercentagePosition}%";
+
+					<div class="current-selected-tracking-sequence-timeline-segment" style="left:@styleLeft; width:@styleWidth"></div>
+				}
+
+				@if (IntermediateElementsMarkers?.Any() ?? false)
+				{
+
+					foreach (var marker in IntermediateElementsMarkers)
+					{
+						<div class="tracking-sequence-intermediate-element-marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
+					}
+				}
+
+				@if (TrackingSequenceEndMarkers?.Any() ?? false)
+				{
+
+					foreach (var marker in TrackingSequenceEndMarkers)
+					{
+						<div class="tracking-sequence-end-marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
+					}
+				}
 			</div>
 		</div>
 		<div class="time-markers time-markers-bottom">

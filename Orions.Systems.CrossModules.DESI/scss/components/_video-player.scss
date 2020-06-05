@@ -238,13 +238,42 @@
 					align-items: center;
 
 					.marker {
-						width: 10px;
-						height: 10px;
 						background-color: white;
 						position: absolute;
 						width: 7px;
 						height: 7px;
 						transform: translateX(-3.5px) rotate(45deg);
+					}
+
+					.tracking-sequence-start-marker, .tracking-sequence-end-marker, .tracking-sequence-intermediate-element-marker {
+						height: 30px;
+						background-color: transparent;
+						position: absolute;
+						border-top: 1px solid yellow;
+						border-bottom: 1px solid yellow;
+					}
+
+					.tracking-sequence-start-marker {
+						width: 7px;
+						border-left: 1px solid yellow;
+					}
+
+					.tracking-sequence-end-marker {
+						width: 7px;
+						border-right: 1px solid yellow;
+						transform: translateX(-7px);
+					}
+
+					.tracking-sequence-intermediate-element-marker {
+						width: 1px;
+						background-color: yellow;
+					}
+
+					.current-selected-tracking-sequence-timeline-segment {
+						position: absolute;
+						height:30px;
+						background:green;
+						opacity:0.3;
 					}
 				}
 			}

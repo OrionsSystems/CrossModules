@@ -399,13 +399,32 @@ body {
           display: flex;
           align-items: center; }
           .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .marker {
-            width: 10px;
-            height: 10px;
             background-color: white;
             position: absolute;
             width: 7px;
             height: 7px;
             transform: translateX(-3.5px) rotate(45deg); }
+          .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-start-marker, .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-end-marker, .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-intermediate-element-marker {
+            height: 30px;
+            background-color: transparent;
+            position: absolute;
+            border-top: 1px solid yellow;
+            border-bottom: 1px solid yellow; }
+          .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-start-marker {
+            width: 7px;
+            border-left: 1px solid yellow; }
+          .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-end-marker {
+            width: 7px;
+            border-right: 1px solid yellow;
+            transform: translateX(-7px); }
+          .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .tracking-sequence-intermediate-element-marker {
+            width: 1px;
+            background-color: yellow; }
+          .tagging-video-player-container .video-control-bar .timeline .time-fill .markers-overlay .current-selected-tracking-sequence-timeline-segment {
+            position: absolute;
+            height: 30px;
+            background: green;
+            opacity: 0.3; }
   .tagging-video-player-container .video-player-overlay {
     position: absolute !important;
     top: 60px;

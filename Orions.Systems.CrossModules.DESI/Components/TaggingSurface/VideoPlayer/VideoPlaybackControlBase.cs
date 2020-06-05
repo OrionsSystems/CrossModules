@@ -71,6 +71,18 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public List<TimelineMarker> TimelineMarkers { get; set; }
 
+		[Parameter]
+		public List<TimelineMarker> TrackingSequenceStartMarkers { get; set; }
+
+		[Parameter]
+		public List<TimelineMarker> TrackingSequenceEndMarkers { get; set; }
+
+		[Parameter]
+		public List<TimelineMarker> IntermediateElementsMarkers { get; set; }
+
+		[Parameter]
+		public Tuple<TimelineMarker, TimelineMarker> CurrentSelectedTrackingSequenceBoundaries { get; set; }
+
 		public VideoPlaybackControlBase()
 		{
 			_elementId = $"playback-control-{Guid.NewGuid()}";

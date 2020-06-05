@@ -22,6 +22,7 @@ using System.Diagnostics;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Util;
 using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
+using System.Runtime.CompilerServices;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -33,6 +34,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private readonly string UntaggedSelectedMarkerBoundsColor = "#FF0000";
 		private readonly string TaggedUnselectedMarkerBoundsColor = "#E3FF00";
 		private readonly string UntaggedUnselectedMarkerBoundsColor = "#FFFF00";
+		private readonly string TrackingSequenceElementMarkerBoundsColor = "#FF0000";
 
 		private string _componentId { get; set; }
 		private List<Rectangle> _rectangles = new List<Rectangle>();
@@ -40,9 +42,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private SemaphoreSlim _initializationSemaphore = new SemaphoreSlim(1, 1);
 		private SemaphoreSlim _updateTagsClientSemaphore = new SemaphoreSlim(1, 1);
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
-		protected bool _mediaPaused = true;
 		private DotNetObjectReference<TaggingSurfaceBase> _componentJsReference { get; set; }
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
+		private AsyncManualResetEvent _rectanglesUpdated = new AsyncManualResetEvent(true);
 
 		[Parameter]
 		public EventCallback<TagModel> OnTagSelected { get; set; }
@@ -130,7 +132,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task FrameImageRendered()
 		{
-			_lastFrameRendered = MediaDataStore?.Data?.MediaInstances[0].CurrentPositionFrameImage;
 			_currentPositionFrameRendered.Set();
 		}
 
@@ -144,6 +145,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, newFrameImage)
 				&& newFrameImage != null)
 			{
+				await _rectanglesUpdated.WaitAsync();
+				_currentPositionFrameRendered.Reset();
+				_lastFrameRendered = newFrameImage;
 				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId, UniImage.ConvertByteArrayToBase64Url(newFrameImage) });
 			}
 			else
@@ -193,6 +197,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.Add(TaskDataStore.CurrentTaskChanged.Subscribe(_ => OnCurrentTaskChanged()));
 
+			_dataStoreSubscriptions.Add(MediaDataStore.FrameModeChanged.Subscribe(mediaData => OnFrameModeChanged(mediaData.FrameModeEnabled)));
+
 			var aggregatedSub = Observable.Merge(
 				TagsStore.CurrentTaskTagsCollectionChanged.Select(_ => true),
 				TagsStore.TagPropertyChanged
@@ -216,6 +222,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				_initializationTaskTcs.SetResult(true);
 			}
 			_initializationSemaphore.Release();
+
+			OverlayMediaWithCanvas(MediaDataStore.Data.FrameModeEnabled);
 		}
 
 		public void OnTagPositionOrSizeChanged(Rectangle rectangle)
@@ -227,6 +235,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				tagModel.Geometry = tagModel.Geometry.WithNewBounds(rectF);
 			}
+		}
+
+		private void OnFrameModeChanged(bool frameModeEnabled)
+		{
+			OverlayMediaWithCanvas(frameModeEnabled);
 		}
 
 		private async Task OnCurrentTaskChanged()
@@ -247,7 +260,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				if (TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Video)
 				{
 					var position = GetCurrentPosition();
-					return new List<Rectangle>(tags.Where(t => t.TagHyperId.Equals(position)).Select(ConvertToRectangle));
+					var tagRectangles = new List<Rectangle>(tags.Where(t => t.TagHyperId.Equals(position)).Select(ConvertToRectangle));
+					var trackingRectangles = new List<Rectangle>(
+						tags.Where(t => t.IsSelected && (t.TrackingSequence?.Elements?.Any(e => e.HyperId.Equals(position)) ?? false)).SelectMany(t => t.TrackingSequence.Elements.Where(e => e.HyperId.Equals(position))).Select(ConvertToTrackingSequenceRectangle));
+
+					return tagRectangles.Concat(trackingRectangles).ToList();
 				}
 				else if (TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Image || TaskDataStore.Data.CurrentTask.IsComparative())
 				{
@@ -256,6 +273,25 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 
 			return new List<Rectangle>();
+		}
+
+		private Rectangle ConvertToTrackingSequenceRectangle(TrackingSequenceElement sequenceElement)
+		{
+			var rectangle = new Rectangle
+			{
+				X = sequenceElement.Geometry.ProportionalBounds.X,
+				Y = sequenceElement.Geometry.ProportionalBounds.Y,
+				Height = sequenceElement.Geometry.ProportionalBounds.Height,
+				Width = sequenceElement.Geometry.ProportionalBounds.Width,
+				Id = sequenceElement.HyperId.ToString(),
+				BorderColor = TrackingSequenceElementMarkerBoundsColor,
+				IsSelected = false,
+				Label = "",
+				BorderType = Rectangle.BorderTypeEnum.Dashed,
+				IsReadonly = true
+			};
+
+			return rectangle;
 		}
 
 		private Rectangle ConvertToRectangle(TagModel tagModel)
@@ -317,6 +353,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				_rectanglesClientUpdateIsRunning = true;
 				await Task.WhenAll(_initializationTaskTcs.Task, _currentPositionFrameRendered.WaitAsync());
+				_rectanglesUpdated.Reset();
 
 				List<Rectangle> newRectangleCollection = null;
 				while (_updateTagsOnClientQueue.TryPeek(out newRectangleCollection))
@@ -381,6 +418,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			finally
 			{
 				_rectanglesClientUpdateIsRunning = false;
+				_rectanglesUpdated.Set();
 			}
 		}
 
@@ -389,16 +427,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			ActionDispatcher.Dispatch(SetTagsSelectionModeAction.Create(mode));
 		}
 
-		protected async Task OverlayMediaWithCanvas(bool overlay)
+		protected async Task OverlayMediaWithCanvas(bool overlay, [CallerMemberName] string caller = "")
 		{
+			Debug.WriteLine($"Overlay with canvas: {overlay}. Caller: {caller}");
+
 			await _initializationTaskTcs.Task;
 			await this.JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { ".tagging-canvas, .tagging-surface-child-content", new { visibility = overlay ? "visible" : "hidden" } });
-		}
-
-		protected async Task OnMediaPaused()
-		{
-			_mediaPaused = true;
-			this.OverlayMediaWithCanvas(true);
 		}
 
 		private async Task OnDefaultMediaInstanceChanged()

@@ -10,11 +10,8 @@
 	@if (MediaDataStore.Data.MediaInstances?.Count == 1)
 	{
 			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
-							OnMediaPaused="async () => { await OnMediaPaused(); }"
-							OnMediaPlay="async () => { _mediaPaused = false; this.OverlayMediaWithCanvas(false); }"
-							OnMediaLoading="async () => { if (!_mediaPaused) this.OverlayMediaWithCanvas(false); }"
-							OnMediaLoaded="async () => this.OverlayMediaWithCanvas(true)"
-							OnTagSelected="this.OnTagSelected"/>
+							OnTagSelected="this.OnTagSelected"
+							/>
 		<canvas class="tagging-canvas">
 		</canvas>
 	}

@@ -25,8 +25,13 @@
 						  CurrentTimePosition="this.CurrentPosition"
 						  TotalDuration="this.TotalDuration"
 						  VolumeLevel="VolumeLevel"
-						  TimelineMarkers="TimelineMarkers"/>
-	@if (CurrentFrameIsLoading || ((IsVideoLoading || IsVideoBuffering) && !Paused))
+						  TimelineMarkers="TimelineMarkers"
+						  TrackingSequenceStartMarkers="TrackingSequenceStartMarkers"
+						  TrackingSequenceEndMarkers="TrackingSequenceEndMarkers"
+						  IntermediateElementsMarkers="IntermediateElementsMarkers"
+						  CurrentSelectedTrackingSequenceBoundaries="CurrentSelectedTrackingSequenceBoundaries"
+						/>
+	@if ((CurrentFrameIsLoading && Paused) || ((IsVideoLoading || IsVideoBuffering) && !Paused))
 	{
 		var bufferingClass = IsVideoBuffering ? "transparent" : "";
 		<div class="video-player-overlay @bufferingClass">

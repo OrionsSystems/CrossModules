@@ -19,6 +19,9 @@ using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.Desi.Common.Util;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
+using Orions.Node.Common;
+using Microsoft.AspNetCore.Components.Web;
+using Orions.Systems.Desi.Common.Tracking;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -30,13 +33,25 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private TaskCompletionSource<bool> _initializationTaskTcs = new TaskCompletionSource<bool>();
 		private List<IDisposable> _subscriptions = new List<IDisposable>();
 		private AsyncManualResetEvent _playerReady = new AsyncManualResetEvent(false);
-		private AsyncManualResetEvent _playerPauseRequest = new AsyncManualResetEvent(true);
-		private AsyncManualResetEvent _playerPlayRequest = new AsyncManualResetEvent(true);
+		private Task _playerPlayRequest = Task.CompletedTask;
 		private PlayerJsState _playerState = PlayerJsState.Initial;
 
 		protected string _videoElementId = $"videoplayer-{Guid.NewGuid().ToString()}";
 		private bool _lockPositionUpdate = false;
-		protected bool CurrentFrameIsLoading { get; set; } = false;
+		protected bool CurrentFrameIsLoading
+		{
+			get
+			{
+				if (MediaInstance != null)
+				{
+					return MediaInstance.CurrentPositionFrameImage == null;
+				}
+				else
+				{
+					return false;
+				}
+			}
+		}
 		protected bool IsVideoLoading { get; set; } = true;
 		protected bool IsVideoBuffering { get { return _playerState == PlayerJsState.Buffering; } }
 		protected bool Paused { get; private set; } = true;
@@ -86,24 +101,109 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
+		protected List<Model.TimelineMarker> TrackingSequenceStartMarkers
+		{
+			get
+			{
+				var markers = new List<Model.TimelineMarker>();
+
+				if (TrackingDataStore != null && _taskPlaybackInfo != null)
+				{
+					var currentTrackingSequenceStart = TrackingDataStore.Data?.TrackingSequenceStart;
+					if (currentTrackingSequenceStart != null)
+					{
+						var currentSequnceStartMarker = new Model.TimelineMarker
+						{
+							Id = currentTrackingSequenceStart.HyperId.SliceId.ToString(),
+							PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(currentTrackingSequenceStart.HyperId) / (double)_taskPlaybackInfo.TotalFrames * 100
+						};
+
+						markers.Add(currentSequnceStartMarker);
+					}
+				}
+
+				return markers;
+			}
+		}
+
+		protected List<Model.TimelineMarker> TrackingSequenceEndMarkers
+		{
+			get
+			{
+				var markers = new List<Model.TimelineMarker>();
+
+				if (TrackingDataStore?.Data != null && _taskPlaybackInfo != null)
+				{
+					var currentTrackingSequenceEnd = TrackingDataStore.Data.TrackingSequenceEnd;
+					if (currentTrackingSequenceEnd != null)
+					{
+						var currentSequnceEndMarker = new Model.TimelineMarker
+						{
+							Id = currentTrackingSequenceEnd.HyperId.SliceId.ToString(),
+							PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(currentTrackingSequenceEnd.HyperId) / (double)_taskPlaybackInfo.TotalFrames * 100
+						};
+
+						markers.Add(currentSequnceEndMarker);
+					}
+				}
+
+				return markers;
+			}
+		}
+
+		protected List<Model.TimelineMarker> IntermediateElementsMarkers
+		{
+			get
+			{
+				var markers = new List<Model.TimelineMarker>();
+
+				if (TrackingDataStore?.Data != null && _taskPlaybackInfo != null)
+				{
+					foreach(var intermediateElement in TrackingDataStore.Data.IntermediateElements ?? new List<TrackingSequenceElement>())
+					{
+						var newMarker = new Model.TimelineMarker
+						{
+							Id = intermediateElement.HyperId.SliceId.ToString(),
+							PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(intermediateElement.HyperId) / (double)_taskPlaybackInfo.TotalFrames * 100
+						};
+						markers.Add(newMarker);
+					}
+				}
+
+				return markers;
+			}
+		}
+
+		protected Tuple<Model.TimelineMarker, Model.TimelineMarker> CurrentSelectedTrackingSequenceBoundaries
+		{
+			get
+			{
+				if (TagsStore.Data.SelectedTags.Any(t => t.TrackingSequence != null && t.TrackingSequence.Duration != TimeSpan.Zero))
+				{
+					var tag = TagsStore.Data.SelectedTags.First(t => t.TrackingSequence != null && t.TrackingSequence.Duration != TimeSpan.Zero);
+					var start = new Model.TimelineMarker
+					{
+						Id = tag.TagHyperId.SliceId.ToString(),
+						PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(tag.TagHyperId) / (double)_taskPlaybackInfo.TotalFrames * 100
+					};
+					var end = new Model.TimelineMarker
+					{
+						PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(tag.TrackingSequence.Elements.Last().HyperId) / (double)_taskPlaybackInfo.TotalFrames * 100
+					};
+
+					return new Tuple<Model.TimelineMarker, Model.TimelineMarker>(start, end);
+				}
+
+				return null;
+			}
+		}
+
 		public VideoPlayerBase()
 		{
 			_componentReference = DotNetObjectReference.Create(this);
 		}
 
 		#region Parameters
-		[Parameter]
-		public EventCallback OnPaused { get; set; }
-
-		[Parameter]
-		public EventCallback OnPlay { get; set; }
-
-		[Parameter]
-		public EventCallback OnLoading { get; set; }
-
-		[Parameter]
-		public EventCallback OnLoaded { get; set; }
-
 		private TaskModel _currentTask;
 		[Parameter]
 		public TaskModel CurrentTask
@@ -159,9 +259,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[Inject]
 		public INetStoreProvider NetStoreProvider { get; set; }
 
+		[Inject]
+		public IMediaDataStore MediaDataStore { get; set; }
+
+		[Inject]
+		public ITrackingDataStore TrackingDataStore { get; set; }
+
 		public async Task GoToNextFrame()
 		{
-			if (!IsVideoLoading && !CurrentFrameIsLoading && Paused)
+			if (Paused)
 			{
 				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) + 1;
 				if (newFrameIndex > _taskPlaybackInfo.TotalFrames - 1) newFrameIndex = _taskPlaybackInfo.TotalFrames - 1;
@@ -172,7 +278,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task GoToPreviousFrame()
 		{
-			if (!IsVideoLoading && !CurrentFrameIsLoading && Paused)
+			if (Paused)
 			{
 				var newFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(this.CurrentPosition) - 1;
 				if (newFrameIndex < 0) newFrameIndex = 0;
@@ -181,22 +287,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-
-
-		[JSInvokable]
-		public async Task OnVideoPlaying()
-		{
-			_playerState = PlayerJsState.Playing;
-			_playerPlayRequest.Set();
-
-			UpdateState();
-		}
-
 		[JSInvokable]
 		public async Task OnVideoPaused()
 		{
 			_playerState = PlayerJsState.Paused;
-			_playerPauseRequest.Set();
 
 			UpdateState();
 		}
@@ -245,14 +339,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			CurrentPosition = TimeSpan.FromSeconds(positionInSeconds);
 			CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(CurrentPosition);
 
-			if (Paused)
-			{
-				await UpdateFrameImageByCurrentPosition();
-			}
-			else
-			{
-				ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
-			}
+			//if (Paused)
+			//{
+			//	await UpdateFrameImageByCurrentPosition();
+			//}
+
+			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
 
 			UpdateState();
 		}
@@ -269,47 +361,41 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Play()
 		{
-			if (!CurrentFrameIsLoading)
+			await _playerReady.WaitAsync();
+			ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
+			Paused = false;
+
+			if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
 			{
-				await _playerReady.WaitAsync();
-				ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
-				Paused = false;
-
-				if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
-				{
-					CurrentPosition = TimeSpan.Zero;
-				}
-
-				await OnPlay.InvokeAsync(null);
-				_playerPlayRequest.Reset();
-				await JSRuntime.InvokeVoidAsync("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
+				CurrentPosition = TimeSpan.Zero;
 			}
+
+			_playerPlayRequest = JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
+			await _playerPlayRequest;
+			_playerState = PlayerJsState.Playing;
 		}
 
 		public async Task Pause(bool callJsPause = true)
 		{
 			if (!Paused)
 			{
-				ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
-				Paused = true;
-
 				if (callJsPause)
 				{
 					await WaitPlayerApi();
-					_playerPauseRequest.Reset();
-					await JSRuntime.InvokeVoidAsync("Orions.Player.pause", new object[] { });
-					await _playerPauseRequest.WaitAsync();
+					await JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.pause");
 				}
 
-				await OnPaused.InvokeAsync(null);
+				Paused = true;
+				ActionDispatcher.Dispatch(SetFrameModeAction.Create(true));
+
+				UpdateState();
 			}
 		}
 
 		private async Task WaitPlayerApi()
 		{
 			await _playerReady.WaitAsync();
-			await _playerPauseRequest.WaitAsync();
-			await _playerPlayRequest.WaitAsync();
+			await _playerPlayRequest;
 		}
 
 		public async Task ChangeVolumeLevel(double value)
@@ -327,8 +413,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		#region Component lifecycle hook overrides
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			await OnLoading.InvokeAsync(null);
-
 			_store = NetStoreProvider.CurrentNetStore;
 
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
@@ -340,6 +424,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags) && i.Source.SelectedTags.IsNotNullOrEmpty())
 				.Select(i => i.Source.SelectedTags.Last())
 				.Subscribe(i => GoToSelectedTagFrame(i)));
+			_subscriptions.Add(TagsStore.Data.GetPropertyChangedObservable()
+				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.SelectedTags))
+				.Subscribe(_ => UpdateState()));
 
 			_subscriptions.Add(TagsStore.Data
 				.GetPropertyChangedObservable()
@@ -347,6 +434,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				.Subscribe(_ => UpdateState()));
 
 			_subscriptions.Add(TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => UpdateState()));
+			_subscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => UpdateState()));
+			_subscriptions.Add(
+				TrackingDataStore.Data.GetPropertyChangedObservable()
+					.Where(i => i.EventArgs.PropertyName == nameof(TrackingData.TrackingSequenceStart)
+						|| i.EventArgs.PropertyName == nameof(TrackingData.TrackingSequenceEnd))
+					.Subscribe(_ => UpdateState()));
 
 			if (TagsStore?.Data?.SelectedTags?.LastOrDefault() != null)
 			{
@@ -363,6 +456,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 		#endregion // Component lifecycle hook overrides
 
+		private Dictionary<int, Task> _frameLoadingTasks = new Dictionary<int, Task>();
 		private async Task UpdateFrameImageByCurrentPosition()
 		{
 			var hyperId = _taskPlaybackInfo.GetPositionHyperId(CurrentFrameIndex);
@@ -370,24 +464,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			if (hyperId.SliceId == null)
 				return;
 
+			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
+			
 			var frameLoadTask = CacheService.GetCachedFrameAsync(_store, hyperId, null);
+			_frameLoadingTasks[CurrentFrameIndex] = frameLoadTask;
 
 			if (!frameLoadTask.IsCompleted)
 			{
-				OnLoading.InvokeAsync(null);
-				CurrentFrameIsLoading = true;
 				UpdateState();
 				await frameLoadTask;
 			}
 
-			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
-
-			CurrentFrameIsLoading = false;
-
-			if (!IsVideoLoading)
-			{
-				OnLoaded.InvokeAsync(null);
-			}
 			UpdateState();
 		}
 
@@ -398,8 +485,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			var newPosition = _taskPlaybackInfo.GetPositionByFrameIndex(CurrentFrameIndex);
 			CurrentPosition = newPosition;
 
-			//await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { newPosition.TotalSeconds });
-			await UpdateFrameImageByCurrentPosition();
+			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
+
+			UpdateState();
 		}
 
 		private void UpdateCurrentPositionFrameImage(byte[] imageData) => PausedFrameBase64 = imageData != null ? UniImage.ConvertByteArrayToBase64Url(imageData) : null;
@@ -409,21 +497,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			await _initializationTaskTcs.Task;
 
-			await OnLoading.InvokeAsync(null);
-
 			var videoDashUrl = (MediaInstance.MediaSource as HyperAssetPlaylistEntry).GetUrl();
+			IsVideoLoading = true;
+			_playerReady.Reset();
 			if (!_playerInitialized)
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.Player.init", _componentReference, _videoElementId, videoDashUrl);
+				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.init", _componentReference, _videoElementId, videoDashUrl);
 			}
 			else
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.Player.setSrc", videoDashUrl);
+				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setSrc", videoDashUrl);
 			}
-			IsVideoLoading = true;
-			_playerReady.Reset();
-
-			await OnLoaded.InvokeAsync(null);
 
 			if (TagsStore?.Data?.SelectedTags?.Any() ?? false)
 			{
@@ -453,6 +537,21 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateCurrentTaskData();
 		}
 
+		[JSInvokable]
+		public async Task OnMouseWheelHandler(bool up)
+		{
+			if(up)
+			{
+				await GoToNextFrame();
+			}
+			else
+			{
+				await GoToPreviousFrame();
+			}
+
+			UpdateState();
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -460,6 +559,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				_subscriptions.ForEach(i => i.Dispose());
 				_subscriptions.Clear();
 			}
+
+			JSRuntime.InvokeVoidAsync("Orions.Player.dispose");
 
 			base.Dispose(disposing);
 		}

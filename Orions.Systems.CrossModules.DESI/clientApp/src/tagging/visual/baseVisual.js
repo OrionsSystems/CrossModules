@@ -5,15 +5,18 @@ const defaultFillColor = new paper.Color(255, 255, 255, 0.1);
 const defaultSelectedColor = new paper.Color(255, 255, 255, 0.1);
 const defaultStrokeColor = new paper.Color(255, 0, 0, 1);
 const defaultSelectedStrokeColor = new paper.Color(0, 0, 255, 1);
+const defaultStrokeDashArray = [10, 4];
 
 export default class BaseVisual {
 	constructor(containerRectangle, opts = {}) {
 		this.min_size = 8;
 		this.containerRectangle = containerRectangle;
 		this.strokeColor = isDefined(opts.borderColor) ? opts.borderColor : defaultStrokeColor;
+		this.strokeDashArray = isDefined(opts.borderType) && opts.borderType == 1 ? defaultStrokeDashArray : [];
 		this.fillColor = defaultFillColor;
 		this.selectedColor = defaultSelectedColor;
 		this.selectedStrokeColor = isDefined(opts.borderColor) ? opts.borderColor : defaultSelectedStrokeColor;
+		this.isReadonly = isDefined(opts.isReadonly) ? opts.isReadonly : false;
 		this.elements = [];
 		this.eventListeners = {
 			'selected': [],
@@ -140,13 +143,18 @@ export default class BaseVisual {
 		var rect = new paper.Rectangle(new paper.Point(), new paper.Point(this.width, this.height)); // top_left is set as position.
 		this.path = new paper.Path.Rectangle(rect);
 		this.path.strokeColor = this.is_selected ? this.selectedStrokeColor : this.strokeColor;
+		this.path.dashArray = this.strokeDashArray;
 		this.path.fillColor = this.is_selected ? this.selectedColor : this.fillColor;
+
 		this.path.owner = this;
 
 		this.main_group = new paper.Group();
-		this.main_group.onMouseDown = this.path_onMouseDown;
-		this.main_group.onMouseUp = this.path_onMouseUp;
-		this.main_group.onMouseDrag = this.path_onMouseDrag;
+
+		if (!this.isReadonly) {
+			this.main_group.onMouseDown = this.path_onMouseDown;
+			this.main_group.onMouseUp = this.path_onMouseUp;
+			this.main_group.onMouseDrag = this.path_onMouseDrag;
+		}
 
 		this.main_group.owner = this;
 		this.main_group.addChild(this.path);

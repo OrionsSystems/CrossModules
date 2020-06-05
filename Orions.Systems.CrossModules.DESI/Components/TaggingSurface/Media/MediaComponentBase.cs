@@ -14,18 +14,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Media
 		private MediaInstance _media;
 
 		[Parameter]
-		public EventCallback OnMediaPaused { get; set; }
-
-		[Parameter]
-		public EventCallback OnMediaPlay { get; set; }
-
-		[Parameter]
-		public EventCallback OnMediaLoading { get; set; }
-
-		[Parameter]
-		public EventCallback OnMediaLoaded { get; set; }
-
-		[Parameter]
 		public EventCallback<TagModel> OnTagSelected { get; set; }
 
 		[Parameter]
