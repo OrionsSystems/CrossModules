@@ -1,7 +1,7 @@
-﻿@import url("../../scss/open-iconic/font/css/open-iconic-bootstrap.min.css");
+﻿@import url("open-iconic/font/css/open-iconic-bootstrap.min.css");
 @font-face {
   font-family: 'Neutraface';
-  src: url("../../fonts/Neutraface 2 ttf missing/Neutraface 2 Text Demi/Neutraface 2 Text Demi.ttf"); }
+  src: url("../fonts/Neutraface 2 ttf missing/Neutraface 2 Text Demi/Neutraface 2 Text Demi.ttf"); }
 
 html, body {
   font-family: 'Neutraface';

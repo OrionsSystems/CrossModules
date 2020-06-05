@@ -4,6 +4,9 @@
       "inputFile": "scss/styles.scss",
       "minify": {
          "enabled": false
+      },
+      "options": {
+         "relativeUrls": false
       }
    }
 ]
