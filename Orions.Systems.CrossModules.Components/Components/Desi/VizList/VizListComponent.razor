@@ -43,34 +43,12 @@
 
             @if (Data.TagonomyNodes != null)
             {
-                _tagonomyNodesShortcutSub?.Dispose();
-                var sub = KeyboardListener?.CreateSubscription();
-                _tagonomyNodesShortcutSub = sub;
-
 		<div class="nodes-container">
 			@foreach (var tagonomyNode in Data.TagonomyNodes)
 			{
-				var stringKey = KeyCodeHelper.GetStringKey(tagonomyNode.KeyCode + 1);
-				var keys = MapKeyCodeToKeys(stringKey);
-				keys.Foreach(k => sub.AddShortcut(k, () => { SelectTagonomyNode(tagonomyNode); UpdateState(); }));
-                var tagonomyButtonId = GetTagonomyNodeButtonId(tagonomyNode);
-
-				<button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode(tagonomyNode)" id="@tagonomyButtonId">
-					<div class="key node">@stringKey</div>
-					@if (tagonomyNode.IconData.IsNotNullOrEmpty())
-					{
-						<img src="@tagonomyNode.IconData.GetImgSource()" />
-					}
-					@tagonomyNode.Title
-					@if (tagonomyNode.IsChecked == true)
-					{
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" /></svg>
-					}
-					else if (tagonomyNode.IsChecked == null && tagonomyNode.IsPathPending)
-					{
-						<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M9.29 15.88L13.17 12 9.29 8.12c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3c-.39.39-1.02.39-1.41 0-.38-.39-.39-1.03 0-1.42z" /></svg>
-					}
-				</button>			
+				<TagonomyNode
+                              TagonomyNodeModel="@tagonomyNode"
+                              OnNodeSelected="@(() => { SelectTagonomyNode(tagonomyNode); UpdateState(); })"/>
 			}
 		</div>
             }
@@ -116,7 +94,7 @@
                     @foreach (var property in propertyGroup.GroupItems)
                     {
                         var stringKey = KeyCodeHelper.GetStringKey(property.KeyCodeDelta + 1);
-                        var keys = MapKeyCodeToKeys(stringKey);
+                        var keys = KeyCodeHelper.MapKeyCodeToKeys(stringKey);
                         keys.Foreach(k => sub.AddShortcut(k, KeyModifiers.Shift, () => SelectTagonomyProperty(property), KeyboardEventType.KeyDown));
 
                         <button class="viz-btn nodes" @onclick="_ => SelectTagonomyProperty(property)">
@@ -139,12 +117,11 @@
 }
 else
 {
-    _tagonomyNodesShortcutSub?.Dispose();
     _tagonomyPropertiesShortcutSub?.Dispose();
 }
 
 @code{
-    private IDisposable _tagonomyNodesShortcutSub;
+    
     private IDisposable _tagonomyPropertiesShortcutSub;
     private IDisposable _shortcutsSub;
 
@@ -166,28 +143,10 @@ else
     {
         if (disposing)
         {
-            _tagonomyNodesShortcutSub?.Dispose();
             _tagonomyPropertiesShortcutSub?.Dispose();
             _shortcutsSub.Dispose();
         }
         base.Dispose(disposing);
-    }
-
-    private IEnumerable<Key> MapKeyCodeToKeys(string keyCode)
-    {
-        if (int.TryParse(keyCode, out var keyCodeResult))
-        {
-            Enum.TryParse<Key>($"{"Num"}{keyCodeResult}", out var result1);
-            Enum.TryParse<Key>($"{"NumPad"}{keyCodeResult}", out var result2);
-
-            yield return result1;
-            yield return result2;
-        }
-        else
-        {
-            Enum.TryParse<Key>(keyCode, out var result);
-            yield return result;
-        }
     }
 
     private void TryFinishExecution()

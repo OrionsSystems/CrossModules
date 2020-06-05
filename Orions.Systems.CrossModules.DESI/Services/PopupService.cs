@@ -70,7 +70,7 @@ namespace Orions.Systems.CrossModules.Desi.Services
 
 		public void RegisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElId);
 
-		public void UnregisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.RegisterTagonomyNodePopper(node, referenceElId);
+		public void UnregisterTagonomyNodePopper(TagonomyNodeModel node, string referenceElId) => PopperServiceComponent.UnregisterTagonomyNodePopper(node, referenceElId);
 
 		public void ClearTagonomyNodePoppers()
 		{

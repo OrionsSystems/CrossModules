@@ -38,7 +38,10 @@
 	{
 		try
 		{
-			await JSRuntime.InvokeVoidAsync("Orions.Vizlist.initPopover", ReferenceElementId, ComponentId);
+			if (firstRender)
+			{
+				await JSRuntime.InvokeVoidAsync("Orions.Vizlist.initPopover", ReferenceElementId, ComponentId);
+			}
 		}
 		catch { }
 	}

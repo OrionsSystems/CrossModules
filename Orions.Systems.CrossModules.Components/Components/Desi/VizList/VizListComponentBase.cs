@@ -50,20 +50,6 @@ namespace Orions.Systems.CrossModules.Components.Desi.VizList
 
 		protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
 		{
-			if(Data?.TagonomyNodes?.Any() != null && PopupService != null)
-			{
-				var nodesWithUIPopper = Data.TagonomyNodes.Where(n => n.GuiNodeElement != null).ToList();
-				foreach(var node in nodesWithUIPopper)
-				{
-					var referenceElementId = GetTagonomyNodeButtonId(node);
-					PopupService.RegisterTagonomyNodePopper(node, referenceElementId);
-				}
-			}
-			else
-			{
-				PopupService?.ClearTagonomyNodePoppers();
-			}
-
 			await this.JSRuntime.InvokeVoidAsync("Orions.Vizlist.init", _componentId);
 			this.VizListRendered?.Invoke();
 		}
@@ -81,11 +67,6 @@ namespace Orions.Systems.CrossModules.Components.Desi.VizList
 					.Sample(TimeSpan.FromMilliseconds(UpdateStateTickRateMilliseconds))
 					.Subscribe(_ => UpdateState());
 			});
-		}
-
-		protected string GetTagonomyNodeButtonId(TagonomyNodeModel tagonomyNode)
-		{
-			return $"node-id-{tagonomyNode.Id}";
 		}
 
 		protected override void Dispose(bool disposing)

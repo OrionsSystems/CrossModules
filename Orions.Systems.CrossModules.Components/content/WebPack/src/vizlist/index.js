@@ -8,7 +8,6 @@ window.Orions.Vizlist = {
 			element.draggable();
 		}
 	},
-
 	initPopover: function (referenceElId, targetElId) {
 		let nodeButton = document.querySelector(`#${referenceElId}`)
 		let imagePopup = document.querySelector(`#${targetElId}`)
@@ -30,17 +29,21 @@ window.Orions.Vizlist = {
 				}
 			]
 		};
-		let popper = createPopper(nodeButton, imagePopup, cfg);
-		nodeButton.addEventListener('mouseenter', function (e) {
-			imagePopup.style.display = 'block'
-			popper.update();
-		})
-		nodeButton.addEventListener('mouseleave', function (e) {
-			imagePopup.style.display = 'none';
-		})
 
-		nodeButton.addEventListener('click', function (e) {
-			imagePopup.style.display = 'none';
-		})
+		if (nodeButton != null && imagePopup != null) {
+			let popper = createPopper(nodeButton, imagePopup, cfg);
+
+			nodeButton.addEventListener('mouseenter', function (e) {
+				imagePopup.style.display = 'block'
+				popper.update();
+			})
+			nodeButton.addEventListener('mouseleave', function (e) {
+				imagePopup.style.display = 'none';
+			})
+
+			nodeButton.addEventListener('click', function (e) {
+				imagePopup.style.display = 'none';
+			})
+		}
 	}
 }

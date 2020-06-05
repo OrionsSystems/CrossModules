@@ -1,0 +1,85 @@
+﻿@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent
+@namespace Orions.Systems.CrossModules.Components.Desi.VizList
+@using Systems.Desi.Common.TagonomyExecution;
+@using Orions.Systems.Desi.Common.Extensions;
+@using Orions.Systems.CrossModules.Components.Desi.Services;
+@using Orions.Systems.Desi.Common.Util;
+
+@{
+	var sub = KeyboardListener?.CreateSubscription();
+	_tagonomyNodesShortcutSub = sub;
+
+	var stringKey = KeyCodeHelper.GetStringKey(TagonomyNodeModel.KeyCode + 1);
+	var keys = KeyCodeHelper.MapKeyCodeToKeys(stringKey);
+	keys.Foreach(k => sub.AddShortcut(k, () => { SelectTagonomyNode(); }));
+	var tagonomyButtonId = GetTagonomyNodeButtonId();
+}
+
+<button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode()" id="@tagonomyButtonId">
+	<div class="key node">@stringKey</div>
+	@if (TagonomyNodeModel.IconData.IsNotNullOrEmpty())
+	{
+		<img src="@TagonomyNodeModel.IconData.GetImgSource()" />
+	}
+	@TagonomyNodeModel.Title
+	@if (TagonomyNodeModel.IsChecked == true)
+	{
+		<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none" /><path d="M9 16.17L5.53 12.7c-.39-.39-1.02-.39-1.41 0-.39.39-.39 1.02 0 1.41l4.18 4.18c.39.39 1.02.39 1.41 0L20.29 7.71c.39-.39.39-1.02 0-1.41-.39-.39-1.02-.39-1.41 0L9 16.17z" /></svg>
+	}
+	else if (TagonomyNodeModel.IsChecked == null && TagonomyNodeModel.IsPathPending)
+	{
+		<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M9.29 15.88L13.17 12 9.29 8.12c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0l4.59 4.59c.39.39.39 1.02 0 1.41L10.7 17.3c-.39.39-1.02.39-1.41 0-.38-.39-.39-1.03 0-1.42z" /></svg>
+	}
+</button>
+
+@code {
+	[Inject]
+	public IKeyboardListener KeyboardListener { get; set; }
+
+	[Inject]
+	public IPopupService PopupService { get; set; }
+
+	[Parameter]
+	public TagonomyNodeModel TagonomyNodeModel { get; set; }
+
+	[Parameter]
+	public EventCallback OnNodeSelected { get; set; }
+
+	private IDisposable _tagonomyNodesShortcutSub;
+
+	protected async Task SelectTagonomyNode()
+	{
+		await this.OnNodeSelected.InvokeAsync(null);
+		UpdateState();
+	}
+
+	protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
+	{
+		await base.OnAfterRenderAsyncSafe(firstRender);
+
+		if (firstRender)
+		{
+			if(TagonomyNodeModel.GuiNodeElement != null)
+			{
+				PopupService.RegisterTagonomyNodePopper(TagonomyNodeModel, GetTagonomyNodeButtonId());
+			}
+		}
+	}
+
+	protected string GetTagonomyNodeButtonId()
+	{
+		return $"node-id-{TagonomyNodeModel.Id}";
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			_tagonomyNodesShortcutSub?.Dispose();
+
+			PopupService.UnregisterTagonomyNodePopper(TagonomyNodeModel, GetTagonomyNodeButtonId());
+		}
+
+		base.Dispose(disposing);
+	}
+}
