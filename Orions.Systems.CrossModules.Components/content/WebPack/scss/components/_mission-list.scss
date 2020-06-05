@@ -30,7 +30,6 @@
 			}
 
 			.header-cmd-label {
-
 			}
 		}
 	}
@@ -68,6 +67,14 @@
 					.list-cmd-delete {
 						color: red !important;
 					}
+				}
+
+				.cmd-play {
+					color: green;
+				}
+
+				.cmd-stop {
+					color: red;
 				}
 			}
 		}

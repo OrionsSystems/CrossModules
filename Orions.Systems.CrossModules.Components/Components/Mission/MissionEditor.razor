@@ -63,7 +63,7 @@
 		</div>
 
 		<div class="spliter-container">
-			<EjsSplitter Width="100%" Orientation="Syncfusion.EJ2.Blazor.Layouts.Orientation.Horizontal">
+			<EjsSplitter Width="100%" Orientation="Syncfusion.EJ2.Blazor.Layouts.Orientation.Horizontal" SeparatorSize="7" CssClass="mission-splitter">
 				<SplitterPanes>
 					<SplitterPane Size="30%" Min="20%" Max="60%" Collapsible="true">
 						<ContentTemplate>
@@ -101,7 +101,7 @@
 							}
 						</ContentTemplate>
 					</SplitterPane>
-					<SplitterPane Size="70%" Min="40%">
+					<SplitterPane Size="70%">
 						<ContentTemplate>
 							<PropertyGrid Vm="Vm.PropertyGridVm"
 											  Loader="Vm.LoadPropertyGrid"

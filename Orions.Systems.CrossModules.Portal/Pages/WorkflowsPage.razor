@@ -1,7 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/workflows"
-@page "/workflow/{WorkflowId}/instances"
-@page "/workflow/{WorkflowStatusId}/history"
+@page "/workflows/{WorkflowId}/instances"
+@page "/workflows/{WorkflowStatusId}/history"
 
 @using Orions.Infrastructure.HyperMedia
 
@@ -51,7 +51,7 @@ else
 	{
 		if (wf == null) return;
 
-		var url = $"{navManager.BaseUri}workflow-designer/{wf.Id}";
+		var url = $"{navManager.BaseUri}workflows/{wf.Id}/designer";
 
 		await NavigateToUrlAsync(url, true);
 	}
@@ -60,7 +60,7 @@ else
 	{
 		if (wf == null) return;
 
-		var url = $"{navManager.BaseUri}workflow/{wf.Id}/instances";
+		var url = $"{navManager.BaseUri}workflows/{wf.Id}/instances";
 		await NavigateToUrlAsync(url, false);
 	}
 
@@ -68,7 +68,7 @@ else
 	{
 		if (status == null) return;
 
-		var url = $"{navManager.BaseUri}workflow-designer/{status.Configuration.Id}/instance/{status.WorkflowInstanceId}";
+		var url = $"{navManager.BaseUri}workflows/{status.Configuration.Id}/instance/{status.WorkflowInstanceId}/designer";
 		await NavigateToUrlAsync(url, true);
 	}
 
@@ -76,7 +76,7 @@ else
 	{
 		if (status == null) return;
 
-		var url = $"{navManager.BaseUri}workflow/{status.Configuration.Id}/history";
+		var url = $"{navManager.BaseUri}workflows/{status.Configuration.Id}/history";
 		await NavigateToUrlAsync(url, false);
 	}
 

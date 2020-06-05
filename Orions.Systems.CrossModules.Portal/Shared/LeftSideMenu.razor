@@ -1,0 +1,54 @@
+﻿
+@inherits BaseOrionsComponent
+
+@inject NavigationManager navManager
+
+
+<div class="left-sidebar-container">
+	<div class="left-sidebar">
+
+		<div style="text-align: center;" class="text-content"> Left Sidebar Demo</div>
+
+		<div class="menu-items-container">
+			<div class="side-item">
+				<div class="side-item-lbl">Assets</div>
+				<div class="side-item-desc">VIew, filter, manage content</div>
+			</div>
+			<div class="side-item">
+				<div class="side-item-lbl">Cameras</div>
+				<div class="side-item-desc">Remote cameras management</div>
+			</div>
+			<div class="side-item">
+				<div class="side-item-lbl">Content Groups</div>
+				<div class="side-item-desc">Content organizations</div>
+			</div>
+		</div>
+	</div>
+	<div class="left-sidebar-dragbar"></div>
+</div>
+
+@if (!Enable)
+{
+	<style>
+		.left-sidebar-container {
+			display:none;
+		}
+		.sidebar-content {
+			margin-left: 70px !important;
+		}
+	</style>
+}
+
+@code{
+
+	[Parameter]
+	public bool Enable { get; set; }
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+	}
+
+
+}
+

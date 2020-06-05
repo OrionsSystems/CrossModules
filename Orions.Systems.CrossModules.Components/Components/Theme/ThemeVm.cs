@@ -22,6 +22,8 @@ namespace Orions.Systems.CrossModules.Components
 
 		public bool IsLoadedDataResult { get; private set; }
 
+		public LoaderConfiguration LoaderSetting { get; set; } = new LoaderConfiguration() { Visible = true };
+
 		public bool ShowConfirmDeleteTheme { get; set; }
 
 		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
@@ -47,6 +49,8 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			if (this.HyperStore != null)
 				SelectedData =  await GetTheme(themeId);
+
+			IsLoadedDataResult = true;
 		}
 
 		public async Task<StyleTheme> GetTheme(string themeId)

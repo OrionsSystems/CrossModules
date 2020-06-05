@@ -44,11 +44,11 @@
 			<label for="tagonmyNodeGroups" class="col-sm-2 col-form-label">Add Element</label>
 			<div class="col-sm-10">
 				<div class="row create-element-container">
-					<div class="col-sm-9">
+					<div class="col-sm-7">
 						<EjsComboBox TValue="string" @bind-Value="@Vm.SelectedTagonomyAddElement" Placeholder="Select element" DataSource="@Vm.ComboBoxElements">
 						</EjsComboBox>
 					</div>
-					<div class="col-sm-3">
+					<div class="col-sm-5 right">
 						<a class="btn cmd-create" @onclick="Vm.AddTagonomyElement">
 							<MatIcon Icon="@MatIconNames.Add_circle"></MatIcon>
 							<div class="cmd-label">Add</div>

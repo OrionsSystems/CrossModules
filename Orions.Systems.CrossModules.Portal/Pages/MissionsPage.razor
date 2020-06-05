@@ -1,6 +1,6 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 @page "/missions"
-@page "/mission/{MissionId}"
+@page "/missions/{MissionId}"
 
 @using Orions.Infrastructure.HyperMedia
 
@@ -36,7 +36,7 @@ else
 	{
 		if (mission == null) return;
 
-		var url = $"{navManager.BaseUri}mission/{mission.Id}";
+		var url = $"{navManager.BaseUri}missions/{mission.Id}";
 
 		await NavigateToUrlAsync(url, true);
 
