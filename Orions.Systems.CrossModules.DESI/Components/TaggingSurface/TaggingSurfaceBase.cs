@@ -429,8 +429,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		protected async Task OverlayMediaWithCanvas(bool overlay, [CallerMemberName] string caller = "")
 		{
-			Debug.WriteLine($"Overlay with canvas: {overlay}. Caller: {caller}");
-
 			await _initializationTaskTcs.Task;
 			await this.JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { ".tagging-canvas, .tagging-surface-child-content", new { visibility = overlay ? "visible" : "hidden" } });
 		}

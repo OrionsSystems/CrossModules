@@ -339,11 +339,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			CurrentPosition = TimeSpan.FromSeconds(positionInSeconds);
 			CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByPosition(CurrentPosition);
 
-			//if (Paused)
-			//{
-			//	await UpdateFrameImageByCurrentPosition();
-			//}
-
 			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
 
 			UpdateState();
@@ -500,6 +495,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			var videoDashUrl = (MediaInstance.MediaSource as HyperAssetPlaylistEntry).GetUrl();
 			IsVideoLoading = true;
 			_playerReady.Reset();
+			_lockPositionUpdate = true; // lock position update to prevent initial timeupdate after loading new video source
 			if (!_playerInitialized)
 			{
 				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.init", _componentReference, _videoElementId, videoDashUrl);
@@ -517,6 +513,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await Play();
 			}
+
+			_lockPositionUpdate = false;
 
 			UpdateState();
 		}

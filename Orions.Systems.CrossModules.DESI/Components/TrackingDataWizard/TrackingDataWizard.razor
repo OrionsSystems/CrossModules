@@ -1,78 +1,91 @@
 ﻿@namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard 
+@using Orions.Systems.Desi.Common.Tracking; 
 @inherits TrackingDataWizardBase
 
-<div class="tracking-data-wizard-container">
-	@if (TrackingDataStore.Data.IsBusy)
-	{
-		<div>
-			Creating tracking sequence... <DotsLoader CssClass="tracking-dots-loader"/>
-		</div>
-	}
-	<div class="tracking-sequence-tag-container tracking-sequence-start-container">
-		<div class="tag-container">
-			<div class="title">
-				Sequence start:
+	<div class="tracking-data-wizard-container">
+		@if (TrackingDataStore.Data.IsBusy)
+		{
+			<div>
+				Creating tracking sequence... <DotsLoader CssClass="tracking-dots-loader" />
 			</div>
-			<TagInfoTemplate
-				TrackingSequenceElement="TrackingDataStore.Data.TrackingSequenceStart"/>
-		</div>
-		<div class="buttons-container">
-			<Button OnClick="OnSetTrackingSequenceStartClick" Enabled="@StartSequenceButtonsEnabled">
-				<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
-			</Button>
-			<Button OnClick="OnClearTrackingSequenceStartClicked" Enabled="@StartSequenceButtonsEnabled">
-				<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
-			</Button>
-		</div>
-	</div>
-	<div class="tracking-sequence-tag-container tracking-sequence-end-container">
-		<div class="tag-container">
-			<div class="title">
-				Sequence end:
+		}
+		<div class="tracking-sequence-tag-container tracking-sequence-start-container">
+			<div class="tag-container">
+				<div class="title">
+					Sequence start:
+				</div>
+				<TagInfoTemplate TrackingSequenceElement="TrackingDataStore.Data.TrackingSequenceStart" />
 			</div>
-			<TagInfoTemplate 
-				TrackingSequenceElement="TrackingDataStore.Data.TrackingSequenceEnd" />
+			<div class="buttons-container">
+				<Button OnClick="OnSetTrackingSequenceStartClick" Enabled="@StartSequenceButtonsEnabled">
+					<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
+				</Button>
+				<Button OnClick="OnClearTrackingSequenceStartClicked" Enabled="@StartSequenceButtonsEnabled">
+					<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
+				</Button>
+			</div>
 		</div>
-		<div class="buttons-container">
-			<Button OnClick="OnSetTrackingSequenceEndClick" Enabled="@StartSequenceButtonsEnabled">
-				<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
-			</Button>
-			<Button OnClick="() => { }" Enabled="@StartSequenceButtonsEnabled">
-				<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
+		<div class="tracking-sequence-tag-container tracking-sequence-end-container">
+			<div class="tag-container">
+				<div class="title">
+					Sequence end:
+				</div>
+				<TagInfoTemplate TrackingSequenceElement="TrackingDataStore.Data.TrackingSequenceEnd" />
+			</div>
+			<div class="buttons-container">
+				<Button OnClick="OnSetTrackingSequenceEndClick" Enabled="@StartSequenceButtonsEnabled">
+					<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
+				</Button>
+				<Button OnClick="() => { }" Enabled="@StartSequenceButtonsEnabled">
+					<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
+				</Button>
+			</div>
+		</div>
+		<div class="tracking-type-selection-container">
+			<div class="title">Tracking type</div>
+			<div class="selection-input-container">
+				<select @onchange="(e) => OnTrackingTypeSelectionChanged(e)">
+					@foreach (var tracingType in TrackingDataStore.Data.AvailableTracingTypes)
+					{
+						<option value="@tracingType" selected="@(tracingType == SelectedTrackingType)">@tracingType</option>
+					}
+				</select>
+			</div>
+		</div>
+		<div class="button-container">
+			<Button Enabled="SelectedTag != null" OnClick="OnAddIntermediateElementClicked">
+				<div class="button">Add intermediate element</div>
 			</Button>
 		</div>
-	</div>
-	<div class="tracking-type-selection-container">
-		<div class="title">Tracking type</div>
-		<div class="selection-input-container">
-			<select @onchange="(e) => OnTrackingTypeSelectionChanged(e)">
-				@foreach(var tracingType in TrackingDataStore.Data.AvailableTracingTypes)
+		<div class="button-container">
+			<Button Enabled="@TrackingDataStore.Data.CanCreateTrackingSequence" OnClick="OnCreateTrackingSequenceClicked">
+				<div class="button">Create tracking sequence</div>
+			</Button>
+		</div>
+		@if(TrackingDataStore.Data.TrackingType == TrackingType.EmguCv)
+		{
+			<div class="tracking-algorithm-selection-container">
+				<div class="title">Tracking Algorithm</div>
+				<div class="selection-input-container">
+					<select @onchange="(e) => OnTrackingAlgorithmSelectionChanged(e)">
+						@foreach (var algorithm in ((EmguCvTrackingConfiguration)(TrackingDataStore.Data.Configuration)).AvailableAlgorithms)
+						{
+							<option value="@algorithm" selected="@(algorithm == SelectedTrackingAlgorithm)">@algorithm</option>
+						}
+					</select>
+				</div>
+			</div>
+		}
+		@if (TrackingDataStore.Data.IntermediateElements?.Any() ?? false)
+		{
+			<div class="intermediate-elements-list-container">
+				<div class="title">
+					Intermediate elements:
+				</div>
+				@foreach (var item in TrackingDataStore.Data.IntermediateElements)
 				{
-					<option value="@tracingType" selected="@(tracingType == SelectedTrackingType)">@tracingType</option>
+					<IntermediateElementTemplate TrackingSequenceElement="item" />
 				}
-			</select>
-		</div>
-	</div>
-	<div class="button-container">
-		<Button Enabled="SelectedTag != null" OnClick="OnAddIntermediateElementClicked">
-			<div class="button">Add intermediate element</div>
-		</Button>
-	</div>
-	<div class="button-container">
-		<Button Enabled="@TrackingDataStore.Data.CanCreateTrackingSequence" OnClick="OnCreateTrackingSequenceClicked">
-			<div class="button">Create tracking sequence</div>
-		</Button>
-	</div>
-	@if (TrackingDataStore.Data.IntermediateElements?.Any() ?? false)
-	{
-		<div class="intermediate-elements-list-container">
-			<div class="title">
-				Intermediate elements:
 			</div>
-			@foreach(var item in TrackingDataStore.Data.IntermediateElements)
-			{
-				<IntermediateElementTemplate TrackingSequenceElement="item"/>
-			}
-		</div>
-	}
-</div>
+		}
+	</div>

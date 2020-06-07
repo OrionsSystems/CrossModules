@@ -41,6 +41,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard
 		}
 
 		protected TrackingType SelectedTrackingType { get { return TrackingDataStore.Data.TrackingType; } }
+		protected EmguCvTrackingConfiguration.Algorithm? SelectedTrackingAlgorithm { get { return (TrackingDataStore.Data.Configuration as EmguCvTrackingConfiguration)?.TrackerAlgorithm; } }
 
 		protected void OnSetTrackingSequenceStartClick()
 		{
@@ -82,6 +83,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard
 		{
 			var type = Enum.Parse<TrackingType>(e.Value.ToString());
 			ActionDispatcher.Dispatch(SetTrackingTypeAction.Create(type));
+		}
+
+		protected void OnTrackingAlgorithmSelectionChanged(ChangeEventArgs e)
+		{
+			var algorithm = Enum.Parse<EmguCvTrackingConfiguration.Algorithm>(e.Value.ToString());
+			if(TrackingDataStore.Data.Configuration as EmguCvTrackingConfiguration != null)
+			{
+				(TrackingDataStore.Data.Configuration as EmguCvTrackingConfiguration).TrackerAlgorithm = algorithm;
+			}
 		}
 
 		protected void OnCreateTrackingSequenceClicked() =>
