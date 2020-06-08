@@ -40,7 +40,7 @@ namespace Orions.Systems.CrossModules.Desi.Services
 		public void LogException(string message, Exception e)
 		{
 			var userName = GetCurrentUserName();
-			_logger.Error(e, $"Exception thrown UserName: {userName}");
+			_logger.Error(e, $"Exception thrown. Message: {message} UserName: {userName}");
 		}
 
 		private string GetCurrentUserName()

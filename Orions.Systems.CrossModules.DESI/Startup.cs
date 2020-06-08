@@ -20,6 +20,7 @@ using Orions.Systems.Desi.Core;
 using Syncfusion.EJ2.Blazor;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Tracking;
+using Microsoft.JSInterop;
 
 namespace Orions.Systems.CrossModules.Desi
 {
@@ -56,6 +57,7 @@ namespace Orions.Systems.CrossModules.Desi
 			Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(syncfusionLicense);
 
 			services.AddScoped<ILoggerService, BlazorLoggerService>();
+			services.AddTransient<IJSRuntimeSafe, JSRuntimeSafe>();
 		}
 
 		private void AddViewModels(IServiceCollection services)

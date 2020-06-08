@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
+using Orions.Systems.CrossModules.Components.Desi.Services;
 
 namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 {
@@ -12,7 +13,7 @@ namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 		protected List<IDisposable> _dataStoreSubscriptions = new List<IDisposable>();
 
 		[Inject]
-		public IJSRuntime JSRuntime { get; set; }
+		public IJSRuntimeSafe JSRuntime { get; set; }
 
 		[Inject]
 		public ILoggerService Logger { get; set; }

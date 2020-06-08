@@ -39,6 +39,7 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 			//this.Vm.SlicePositionBiasHalfRange = 5;
 
 			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));
+			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => this.UpdateState()));
 
 			_subscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))

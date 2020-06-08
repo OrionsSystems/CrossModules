@@ -52,7 +52,14 @@
 				@if (Vm.TasksData?.Tasks != null && Vm.TasksData.CurrentTask != null)
 				{
 					{
-						<TaskNavigationWidget />
+						@if(!Vm?.TasksData?.CurrentTask?.IsExpanded ?? true)
+						{
+							<TaskNavigationWidget />
+						}
+						else
+						{
+							<div style="width:100%; height: 60px"></div>
+						}
 
 						<TaggingSurface @ref="TaggingSurface"
 										OnTagSelected="(tagModel) => this.Vm.SelectTagCommand.Execute(tagModel)">
