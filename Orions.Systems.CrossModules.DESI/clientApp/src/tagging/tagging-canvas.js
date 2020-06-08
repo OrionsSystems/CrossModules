@@ -68,6 +68,12 @@ window.Orions.TaggingSurface = {
 			surface.updateFrameImage(imageBase64);
 		}
 	},
+	setFrameMode: function (componentId, visible) {
+		let surface = this.surfaces[componentId];
+		if (isDefined(surface)) {
+			surface.setFrameMode(visible);
+		}
+	},
 	dispose: function (componentId) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
@@ -215,7 +221,7 @@ class TaggingSurface {
 				return;
 			}
 
-			if (event.point.x < self.raster.strokeBounds.x
+			if (self.raster == null || event.point.x < self.raster.strokeBounds.x
 				|| event.point.x > self.raster.strokeBounds.x + self.raster.strokeBounds.width
 				|| event.point.y < self.raster.strokeBounds.y
 				|| event.point.y > self.raster.strokeBounds.y + self.raster.strokeBounds.height) {
@@ -241,6 +247,17 @@ class TaggingSurface {
 		}
 
 		tool.onMouseUp = function (event) {
+			let propagateClickToUnderlyingPlayerContainer = function () {
+				let videoPlayerContainer = document.querySelector('.video-player')
+				if (typeof videoPlayerContainer !== 'undefined') {
+					videoPlayerContainer.click();
+				}
+			}
+
+			if (self.raster == null) {
+				propagateClickToUnderlyingPlayerContainer();
+			}
+
 			if (isDefined(mouseDownAt) == false)
 				return;
 
@@ -251,6 +268,7 @@ class TaggingSurface {
 				if (isDefined(path))
 					path.remove();
 
+				propagateClickToUnderlyingPlayerContainer();
 				return;
 			}
 
@@ -423,5 +441,14 @@ class TaggingSurface {
 		for (let listener of Orions.TaggingSurface.surfaceRegisteredListeners) {
 			listener(this);
 		}
+	}
+
+	setFrameMode(visible) {
+		if (this.raster != null) {
+			this.raster.visible = visible
+		}
+
+		this.resetZoom();
+		this.canvas.style.background = visible ? 'black' : 'transparent'
 	}
 }

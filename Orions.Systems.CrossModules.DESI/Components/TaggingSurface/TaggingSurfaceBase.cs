@@ -101,6 +101,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
+		public async Task SurfaceClicked()
+		{
+
+		}
+
+		[JSInvokable]
 		public async Task<string> TagAdded(Rectangle rectangle)
 		{
 			rectangle.Id = Guid.NewGuid().ToString();
@@ -168,11 +174,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.Add(MediaDataStore.PositionUpdated.Subscribe(_ =>
 			{
-				if (MediaDataStore.Data.FrameModeEnabled)
-				{
-					_currentPositionFrameRendered.Reset();
-					UpdateRectangles();
-				}
+				UpdateRectangles();
 			}));
 			_dataStoreSubscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => OnCurrentPositionFrameImageChanged()));
 
@@ -218,12 +220,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			await _initializationSemaphore.WaitAsync();
 			if (!_initializationTaskTcs.Task.IsCompleted && MediaDataStore.Data.MediaInstances?.Any() == true)
 			{
-				await InitializeClientJs();
+				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, _componentId });
 				_initializationTaskTcs.SetResult(true);
 			}
 			_initializationSemaphore.Release();
 
-			OverlayMediaWithCanvas(MediaDataStore.Data.FrameModeEnabled);
+			await OnFrameModeChanged(MediaDataStore.Data.FrameModeEnabled);
 		}
 
 		public void OnTagPositionOrSizeChanged(Rectangle rectangle)
@@ -237,9 +239,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private void OnFrameModeChanged(bool frameModeEnabled)
+		private async Task OnFrameModeChanged(bool frameModeEnabled)
 		{
-			OverlayMediaWithCanvas(frameModeEnabled);
+			await _initializationTaskTcs.Task;
+			await this.JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setFrameMode", _componentId, frameModeEnabled);
 		}
 
 		private async Task OnCurrentTaskChanged()
@@ -332,11 +335,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			ActionDispatcher.Dispatch(ToggleTagSelectionAction.Create(tagModel));
 		}
 
-		private async Task InitializeClientJs()
-		{
-			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, _componentId });
-		}
-
 		private HyperId GetCurrentPosition()
 		{
 			if (MediaDataStore != null && MediaDataStore.Data.MediaInstances.Count == 1)
@@ -346,6 +344,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			return TaskDataStore.Data.CurrentTask?.HyperId ?? new HyperId();
 		}
+
+		public static TaggingSurfaceBase CurrentTaggingSurface;
 
 		private async Task UpdateTagsOnClient()
 		{
@@ -425,12 +425,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private void SetSelectionMode(TagsSelectionMode mode)
 		{
 			ActionDispatcher.Dispatch(SetTagsSelectionModeAction.Create(mode));
-		}
-
-		protected async Task OverlayMediaWithCanvas(bool overlay, [CallerMemberName] string caller = "")
-		{
-			await _initializationTaskTcs.Task;
-			await this.JSRuntime.InvokeVoidAsync("Orions.Dom.setStyle", new object[] { ".tagging-canvas, .tagging-surface-child-content", new { visibility = overlay ? "visible" : "hidden" } });
 		}
 
 		private async Task OnDefaultMediaInstanceChanged()
