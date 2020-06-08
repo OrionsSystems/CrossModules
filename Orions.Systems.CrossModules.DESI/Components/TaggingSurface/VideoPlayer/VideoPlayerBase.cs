@@ -22,6 +22,7 @@ using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 using Orions.Node.Common;
 using Microsoft.AspNetCore.Components.Web;
 using Orions.Systems.Desi.Common.Tracking;
+using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -87,7 +88,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					var markers = TagsStore.Data.CurrentTaskTags.GroupBy(t => t.TagHyperId).Select(g =>
 						new Model.TimelineMarker
 						{
-							Id = g.Key.SliceId.ToString(),
+							Id = g.Key.StringSerializationValue,
 							PercentagePosition = _taskPlaybackInfo.GetFrameIndexByHyperId(g.Key) / (double)_taskPlaybackInfo.TotalFrames * 100
 						})
 						.ToList();
@@ -533,6 +534,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task OnMediaInstanceChanged()
 		{
 			UpdateCurrentTaskData();
+		}
+
+		protected void OnTimelineTagMarkerClicked(TimelineMarker marker)
+		{
+			var tagId = HyperId.Parse(marker.Id);
+			var tag = TagsStore.Data.CurrentTaskTags.SingleOrDefault(t => t.TagHyperId.Equals(tagId));
+
+			ActionDispatcher.Dispatch(SelectSingleTagAction.Create(tag));
 		}
 
 		[JSInvokable]

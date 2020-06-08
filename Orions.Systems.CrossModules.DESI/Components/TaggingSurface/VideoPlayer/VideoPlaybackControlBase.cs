@@ -33,6 +33,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public EventCallback<TimeSpan> OnPositionChanged { get; set; }
 
 		[Parameter]
+		public EventCallback<TimelineMarker> OnMarkerClicked { get; set; }
+
+		[Parameter]
 		public bool IsPlaying { get; set; }
 
 		[Parameter]
@@ -104,6 +107,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				}
 				_afterRenderTasks.Clear();
 			}
+		}
+
+		public void TimeLineMarkerClicked(TimelineMarker marker)
+		{
+			OnMarkerClicked.InvokeAsync(marker);
 		}
 
 		[JSInvokable]

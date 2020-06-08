@@ -77,7 +77,7 @@
 				{
 					foreach (var marker in TimelineMarkers)
 					{
-						<div class="marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")"></div>
+						<div class="marker" data-sliceId="@(marker.Id)" style="left:@($"{marker.PercentagePosition}%")" @onclick="() => TimeLineMarkerClicked(marker)"></div>
 					}
 				}
 
