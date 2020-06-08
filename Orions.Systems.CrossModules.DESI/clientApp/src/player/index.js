@@ -1,6 +1,7 @@
 window.Orions.Player = {
     init: function (vmInstance, videoElementId, file) {
         this.vmInstance = vmInstance;
+        this.timeupdateTimerIds = []
         let self = this;
 
         let video = document.getElementById(videoElementId)
@@ -8,12 +9,21 @@ window.Orions.Player = {
         this.shakaPlayer = shakaPlayer;
         
 
-        video.addEventListener('timeupdate', function (e) {
-            vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime);
+        //video.addEventListener('timeupdate', function (e) {
+        //    vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime);
 
-            console.log("timeupdate: " + this.currentTime)
-            console.log(e);
-        });
+        //    console.log("timeupdate: " + this.currentTime)
+        //    console.log(e);
+        //});
+
+        let clearTimeUpdateIntervals = function () {
+            console.log('intervals cleared: ' + self.timeupdateTimerIds.length)
+            for (let interval of self.timeupdateTimerIds) {
+                clearInterval(interval)
+            }
+
+            self.timeupdateTimerIds = []
+		}
 
         video.addEventListener('canplay', function (e) {
             console.log('ready')
@@ -23,13 +33,19 @@ window.Orions.Player = {
         });
 
         video.addEventListener('ended', function () {
+            clearTimeUpdateIntervals()
             vmInstance.invokeMethodAsync("OnVideoEndJs");
 
             this.isPaused = true;
         });
 
+        video.addEventListener('play', function () {
+            self.timeupdateTimerIds.push(setInterval(function () {
+                vmInstance.invokeMethodAsync("OnPositionUpdate", self.video.currentTime);
+			}, 50))
+		})
+
         shakaPlayer.addEventListener('buffering', function (e) {
-            console.log('buffer')
             console.log(e)
             if (e.buffering) {
                 vmInstance.invokeMethodAsync("OnVideoBuffering", true, this.getMediaElement().paused);
@@ -40,8 +56,7 @@ window.Orions.Player = {
         });
 
         video.addEventListener('pause', function (e) {
-            console.log('pause')
-            console.log(e)
+            clearTimeUpdateIntervals()
             vmInstance.invokeMethodAsync("OnVideoPaused");
         });
 
