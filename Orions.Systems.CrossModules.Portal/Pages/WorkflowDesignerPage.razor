@@ -1,10 +1,11 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/workflows/{WorkflowId}/designer"
 @page "/workflows/{WorkflowId}/instance/{WorkflowInstanceId}/designer"
 
 @inherits PortalBaseComponent
 
-@using Orions.Infrastructure.HyperMedia
+@layout Layout
 
 <WorkflowDesigner HyperStore="HyperStore" WorkflowId="@WorkflowId" WorkflowInstanceId="@WorkflowInstanceId"></WorkflowDesigner>
 

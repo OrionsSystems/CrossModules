@@ -1,16 +1,13 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/tagonomies"
 @page "/tagonomies/{TagonomyId}/edit"
 
-@using Orions.Infrastructure.HyperSemantic
-@using Syncfusion.EJ2.Blazor.Notifications
-
 @inherits PortalBaseComponent
 
-@inject NavigationManager navManager
+@layout Layout
 
-
-<Toast @ref="ToastRef"></Toast>
+@using Orions.Infrastructure.HyperSemantic
 
 @if (IsEditMode)
 {
@@ -18,14 +15,10 @@
 }
 else
 {
-	<TagonomyList HyperStore="@HyperStore" OnManage="@OnManage" OnEdit="@OnEdit">
-	</TagonomyList>
+	<TagonomyList HyperStore="@HyperStore" OnManage="@OnManage" OnEdit="@OnEdit"></TagonomyList>
 }
 
 @code{
-
-
-	private Toast ToastRef { get; set; }
 
 	[Parameter]
 	public string TagonomyId { get; set; }
@@ -41,35 +34,27 @@ else
 	{
 		if (tagonomy == null) return;
 
-		var url = $"{navManager.BaseUri}tagonomy-designer/{tagonomy.Id}";
+		var url = $"{NavigationManager.BaseUri}tagonomy-designer/{tagonomy.Id}";
 
 		await NavigateToUrlAsync(url, true);
-
 	}
 
 	private async Task OnEdit(Tagonomy tagonomy)
 	{
 		if (tagonomy == null) return;
 
-		var url = $"{navManager.BaseUri}tagonomies/{tagonomy.Id}/edit";
+		var url = $"{NavigationManager.BaseUri}tagonomies/{tagonomy.Id}/edit";
 
 		await NavigateToUrlAsync(url, true);
-
 	}
 
 	private async Task ShowVizList(Tagonomy tagonomy)
 	{
 		if (tagonomy == null) return;
 
-		var url = $"{navManager.BaseUri}tagonomies/{tagonomy.Id}/vizlist";
+		var url = $"{NavigationManager.BaseUri}tagonomies/{tagonomy.Id}/vizlist";
 
 		await NavigateToUrlAsync(url, true);
-
-	}
-
-	private void OnToastMessage(ToastMessage msg)
-	{
-		ToastRef.Show(msg);
 	}
 
 }

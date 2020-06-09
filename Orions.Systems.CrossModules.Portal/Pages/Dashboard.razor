@@ -1,16 +1,17 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/dashboards"
 @page "/dashboard/{tag}"
 @page "/dashboard/{DashboadId}/Id"
+
+@inherits PortalBaseComponent
+
+@layout Layout
 
 @using Orions.Infrastructure.HyperMedia
 @using Microsoft.AspNetCore.WebUtilities
 @using Orions.Node.Common
 @using Orions.Common
-
-@inherits PortalBaseComponent
-
-@inject NavigationManager navManager
 
 @if (IsDashboardListMode && isInit)
 {
@@ -103,7 +104,7 @@
 	{
 		await base.OnInitializedAsync();
 
-		var uri = navManager.ToAbsoluteUri(navManager.Uri);
+		var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
 
 		if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("mode", out var _mode))
 		{
@@ -137,28 +138,28 @@
 	{
 		isShowViewDashboard = isPreviewMode;
 
-		var query = new Dictionary<string, string> { { "mode", isPreviewMode ? "view": "design" } };
-		var url = $"{navManager.BaseUri}dashboard/{DashboadId}/Id";
-		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
+		var query = new Dictionary<string, string> { { "mode", isPreviewMode ? "view" : "design" } };
+		var url = $"{NavigationManager.BaseUri}dashboard/{DashboadId}/Id";
+		NavigationManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
 	}
 
 	private void OnBackToList()
 	{
-		var url = $"{navManager.BaseUri}dashboards";
-		navManager.NavigateTo(url, true);
+		var url = $"{NavigationManager.BaseUri}dashboards";
+		NavigationManager.NavigateTo(url, true);
 	}
 
 	private void OnSelectTag(string tag)
 	{
-		var url = $"{navManager.BaseUri}dashboard/{tag}";
-		navManager.NavigateTo(url, true);
+		var url = $"{NavigationManager.BaseUri}dashboard/{tag}";
+		NavigationManager.NavigateTo(url, true);
 	}
 
 	private void OnSelectDesignDashboard(string dashboardId)
 	{
 		var query = new Dictionary<string, string> { { "mode", "design" } };
-		var url = $"{navManager.BaseUri}dashboard/{dashboardId}/Id";
-		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
+		var url = $"{NavigationManager.BaseUri}dashboard/{dashboardId}/Id";
+		NavigationManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
 
 		isShowViewDashboard = false;
 	}
@@ -166,8 +167,8 @@
 	private void OnSelectViewDashboard(string dashboardId)
 	{
 		var query = new Dictionary<string, string> { { "mode", "view" } };
-		var url = $"{navManager.BaseUri}dashboard/{dashboardId}/Id";
-		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
+		var url = $"{NavigationManager.BaseUri}dashboard/{dashboardId}/Id";
+		NavigationManager.NavigateTo(QueryHelpers.AddQueryString(url, query), true);
 
 		isShowViewDashboard = true;
 	}
@@ -176,10 +177,11 @@
 	{
 		Search = search;
 
-		var url = $"{navManager.BaseUri}dashboards";
+		var url = $"{NavigationManager.BaseUri}dashboards";
 
-		if (string.IsNullOrWhiteSpace(search)) {
-			navManager.NavigateTo(url, false);
+		if (string.IsNullOrWhiteSpace(search))
+		{
+			NavigationManager.NavigateTo(url, false);
 			return;
 		}
 
@@ -188,7 +190,7 @@
 
 		};
 
-		navManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
+		NavigationManager.NavigateTo(QueryHelpers.AddQueryString(url, query), false);
 	}
 
 	private async Task LoadDashboard(string dashboardId)

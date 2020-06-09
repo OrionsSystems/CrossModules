@@ -1,18 +1,18 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/"
 
 @inherits PortalBaseComponent
 
-@inject NavigationManager MyNavigationManager
+@layout Layout
 
 @code{
-
 
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
 
-		MyNavigationManager.NavigateTo("/properties", true);
+		NavigationManager.NavigateTo("/properties", true);
 
 	}
 }

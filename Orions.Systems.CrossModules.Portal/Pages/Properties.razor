@@ -1,12 +1,12 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/properties"
 
 @inherits PortalBaseComponent
 
-@inject NavigationManager MyNavigationManager
+@layout Layout
 
 @using Orions.Infrastructure.HyperMedia
-
 @using Syncfusion.EJ2.Blazor.DropDowns
 
 <div class="container-fluid">
@@ -322,7 +322,7 @@
 
 	private void OnSelectStory(string data)
 	{
-		var address = MyNavigationManager.BaseUri + "dashboard/" + data;
-		MyNavigationManager.NavigateTo(address, true);
+		var address = NavigationManager.BaseUri + "dashboard/" + data;
+		NavigationManager.NavigateTo(address, true);
 	}
 }

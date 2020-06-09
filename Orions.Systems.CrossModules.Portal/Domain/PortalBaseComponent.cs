@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components;
+using Microsoft.JSInterop;
+using Orions.Systems.CrossModules.Portal.Services;
 
 namespace Orions.Systems.CrossModules.Portal.Domain
 {
@@ -15,6 +17,18 @@ namespace Orions.Systems.CrossModules.Portal.Domain
 	{
 		[CascadingParameter]
 		public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+
+		[CascadingParameter]
+		public Toast ToastRef { get; set; }
+
+		[CascadingParameter]
+		protected SolutionVmEx Solution { get; set; }
+
+		[Inject] 
+		protected NavigationManager NavigationManager { get; set; }
+
+		[Inject] 
+		protected IJSRuntime JSRuntime { get; set; }
 
 		public IHyperArgsSink HyperStore { get; set; }
 
@@ -46,6 +60,11 @@ namespace Orions.Systems.CrossModules.Portal.Domain
 			}
 
 			await base.OnInitializedAsync();
+		}
+
+		protected virtual void OnToastMessage(ToastMessage msg)
+		{
+			ToastRef.Show(msg);
 		}
 	}
 }
