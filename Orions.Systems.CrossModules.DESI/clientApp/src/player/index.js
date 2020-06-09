@@ -17,7 +17,6 @@ window.Orions.Player = {
         //});
 
         let clearTimeUpdateIntervals = function () {
-            console.log('intervals cleared: ' + self.timeupdateTimerIds.length)
             for (let interval of self.timeupdateTimerIds) {
                 clearInterval(interval)
             }
@@ -26,9 +25,6 @@ window.Orions.Player = {
 		}
 
         video.addEventListener('canplay', function (e) {
-            console.log('ready')
-            console.log(e)
-
             vmInstance.invokeMethodAsync("OnPlayerReady");
         });
 
@@ -46,7 +42,6 @@ window.Orions.Player = {
 		})
 
         shakaPlayer.addEventListener('buffering', function (e) {
-            console.log(e)
             if (e.buffering) {
                 vmInstance.invokeMethodAsync("OnVideoBuffering", true, this.getMediaElement().paused);
             }
@@ -90,8 +85,6 @@ window.Orions.Player = {
 	},
 
     setPositionAndPlay: function (position) {
-        console.log('seek request: ' + position)
-
         let self = this;
 
         self.video.currentTime = position;
@@ -106,7 +99,7 @@ window.Orions.Player = {
         this.video.playbackRate = speed;
     },
     play: function () {
-        this.video.play();
+        return this.video.play();
     },
     pause: function () {
         console.log('pause request')
