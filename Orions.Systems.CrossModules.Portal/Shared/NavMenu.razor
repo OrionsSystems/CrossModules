@@ -10,42 +10,21 @@
 	{
 		@foreach (var item in Items)
 		{
-			<MatNavItem OnClick="@(ev => ForceNavigation(item.Address))" Selected="@IsSelected(item)">
-				<MatIcon Icon="@item.MatIcon"></MatIcon>
+			<MatNavItem OnClick="@(ev => ForceNavigation(item.Address))" Selected="@IsSelected(item)" title="@item.Description">
+				@if (string.IsNullOrEmpty(item.ImageSource))
+				{
+					<MatIcon Icon="@item.MatIcon" Class="nav-mat-icon"></MatIcon>
+				}
+				else
+				{
+					<img src="@item.ImageSource" class="nav-img-src">
+				}
+
 				<div class="nav-label">@item.Label</div>
 			</MatNavItem>
 		}
 	}
 
-	@*<MatNavItem Href="/"> <MatIcon Icon="home"></MatIcon></MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation())" NavLinkMatch="NavLinkMatch.All" Selected="@IsSelected("properties")">
-			<MatIcon Icon="@MatIconNames.Home"></MatIcon>
-			<div class="nav-label">Home</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("dashboards"))" Selected="@IsSelected("dashboard")">
-			<MatIcon Icon="@MatIconNames.View_module">
-			</MatIcon><div class="nav-label">Dashboards</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("themes"))" Selected="@IsSelected("themes")">
-			<MatIcon Icon="@MatIconNames.Color_lens"></MatIcon>
-			<div class="nav-label">Themes</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("wizzard"))" Selected="@IsSelected("wizzard")">
-			<MatIcon Icon="@MatIconNames.Widgets"></MatIcon>
-			<div class="nav-label">Wizzard</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("missions"))" Selected="@IsSelected("missions")">
-			<MatIcon Icon="@MatIconNames.Slideshow"></MatIcon>
-			<div class="nav-label">Missions</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("workflows"))" Selected="@IsSelected("workflow")">
-			<MatIcon Icon="@MatIconNames.Library_books"></MatIcon>
-			<div class="nav-label">Workflows</div>
-		</MatNavItem>
-		<MatNavItem OnClick="@(ev => ForceNavigation("tagonomies"))" Selected="@IsSelected("tagonomies")">
-			<MatIcon Icon="@MatIconNames.Extension"></MatIcon>
-			<div class="nav-label">Tagonomies</div>
-		</MatNavItem>*@
 </MatNavMenu>
 
 @if (string.IsNullOrWhiteSpace(Version) == false)
@@ -73,6 +52,8 @@
 
 	private bool IsSelected(NavMenuItem item)
 	{
+		if (string.IsNullOrWhiteSpace(item.Address) && string.IsNullOrWhiteSpace(item.Alias)) return false;
+
 		var place = string.IsNullOrWhiteSpace(item.Alias) ? item.Address : item.Alias;
 
 		if (CurrentLocation.Contains(place)) return true;

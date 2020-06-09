@@ -1,7 +1,10 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/tagonomy-designer/{TagonomyId}"
 
 @inherits PortalBaseComponent
+
+@layout Layout
 
 <TagonomyDesigner HyperStore="@HyperStore" TagonomyId="@TagonomyId"></TagonomyDesigner>
 
@@ -60,7 +63,6 @@
 	.mdc-list-item--selected, .mdc-list-item--activated {
 		color: #ffffff !important;
 	}
-
 </style>
 
 

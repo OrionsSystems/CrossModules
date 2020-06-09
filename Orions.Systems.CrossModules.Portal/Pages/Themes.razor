@@ -1,10 +1,11 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
 @page "/themes"
 @page "/theme/{ThemeId}"
 
 @inherits PortalBaseComponent
 
-@inject NavigationManager NavigationManager
+@layout Layout
 
 @using Orions.Infrastructure.HyperMedia
 
@@ -12,7 +13,8 @@
 {
 	<Theme HyperStore="@HyperStore" ThemeId="@ThemeId" OnClickBack="@OnClickBack"></Theme>
 }
-else { 
+else
+{
 	<ThemeList HyperStore="@HyperStore" OnOpenTheme="@OnOpenTheme"></ThemeList>
 }
 
@@ -29,14 +31,14 @@ else {
 		await base.OnInitializedAsync();
 	}
 
-	private void OnOpenTheme(StyleTheme data) 
-	{ 
-		if(data != null && !string.IsNullOrWhiteSpace(data.Id))
+	private void OnOpenTheme(StyleTheme data)
+	{
+		if (data != null && !string.IsNullOrWhiteSpace(data.Id))
 			NavigationManager.NavigateTo("/theme/" + data.Id, true);
 	}
 
-	private void OnClickBack(bool forceLoad) 
-	{ 
+	private void OnClickBack(bool forceLoad)
+	{
 		NavigationManager.NavigateTo("/themes", forceLoad);
 	}
 

@@ -1,4 +1,10 @@
-﻿@page "/tagonomies/{TagonomyId}/vizlist"
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
+@page "/tagonomies/{TagonomyId}/vizlist"
+
+@inherits PortalBaseComponent
+
+@layout Layout
 
 @using Orions.Infrastructure.HyperSemantic
 @using Orions.Systems.Desi.Common.TagonomyExecution
@@ -6,7 +12,6 @@
 @using Orions.Infrastructure.HyperMedia
 @using Orions.Node.Common
 
-@inherits PortalBaseComponent
 
 @if (Source != null)
 {
