@@ -135,12 +135,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
 
-		[JSInvokable]
-		public async Task FrameImageRendered()
-		{
-			_currentPositionFrameRendered.Set();
-		}
-
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
 			await _initializationTaskTcs.Task;
@@ -154,9 +148,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				await _rectanglesUpdated.WaitAsync();
 				_currentPositionFrameRendered.Reset();
 				_lastFrameRendered = newFrameImage;
-				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId, UniImage.ConvertByteArrayToBase64Url(newFrameImage) });
+				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId, UniImage.ConvertByteArrayToBase64Url(newFrameImage) });
+				_currentPositionFrameRendered.Set();
 			}
-			else
+			else if(_lastFrameRendered != null)
 			{
 				_currentPositionFrameRendered.Set();
 			}

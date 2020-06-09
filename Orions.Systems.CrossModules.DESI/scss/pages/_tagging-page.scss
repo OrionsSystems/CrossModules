@@ -235,22 +235,29 @@
 		}
 	}
 
-	.tracking-data-wizard-container {
+	.tracking-wizard-loader-component-css .wizard-loader-overlay {
+		background-color: white;
+		display: flex;
+		align-items: center;
+		opacity: 0.5;
+
+		.wizard-dots-loader {
+			height: 28px;
+			margin-top: 10px;
+
+			.sk-flow-dot {
+				background-color: #707070;
+			}
+		}
+	}
+
+	.tracking-wizard-loader-component-css .tracking-data-wizard-container {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
 		padding: 10px;
 		overflow-y: auto;
 		height: 100%;
-
-		.tracking-dots-loader {
-			height: 28px;
-			margin-top: 10px;
-
-			.sk-flow-dot {
-				background-color: #bdbdbd;
-			}
-		}
 
 		.image-button {
 			height: 30px;
@@ -439,7 +446,7 @@
 	top: 0;
 	left: 0;
 	visibility: hidden;
-	z-index:9999;
+	z-index: 9999;
 
 	& > .copy-btn {
 		width: 100%;

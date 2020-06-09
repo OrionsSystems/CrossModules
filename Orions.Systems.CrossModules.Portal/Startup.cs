@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Orions.Common;
+using Orions.SDK;
 using Orions.Systems.CrossModules.Components;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.CrossModules.Portal.Domain.Desi;

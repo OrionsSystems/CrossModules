@@ -4,6 +4,7 @@ using Orions.Systems.Desi.Common.Extensions;
 using Orions.Systems.Desi.Common.General;
 using Orions.Systems.Desi.Common.Models;
 using Orions.Systems.Desi.Common.TagsExploitation;
+using Orions.Systems.Desi.Common.TaskExploitation;
 using Orions.Systems.Desi.Common.Tracking;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard
 
 		[Inject]
 		public ITagsStore TagsStore { get; set; }
+
+		[Inject]
+		public ITaskDataStore TaskDataStore { get; set; }
 
 		[Inject]
 		public IActionDispatcher ActionDispatcher { get; set; }
@@ -77,6 +81,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard
 			_dataStoreSubscriptions.Add(TrackingDataStore.Data.GetPropertyChangedObservable()
 				.Subscribe(_ => UpdateState()));
 			_dataStoreSubscriptions.Add(TagsStore.SelectedTagsUpdated.Subscribe(_ => UpdateState()));
+			_dataStoreSubscriptions.Add(TaskDataStore.CurrentTaskChanged.Subscribe(_ => UpdateState()));
 		}
 
 		protected void OnTrackingTypeSelectionChanged(ChangeEventArgs e)

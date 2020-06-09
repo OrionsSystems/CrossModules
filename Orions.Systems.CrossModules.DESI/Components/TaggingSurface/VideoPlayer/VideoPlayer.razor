@@ -37,14 +37,14 @@
 		var bufferingClass = IsVideoBuffering ? "transparent" : "";
 		<div class="video-player-overlay @bufferingClass">
 			<div class="overlay-message">
-			@if (CurrentFrameIsLoading)
-			{
-				@("Loading frame image...")
-			}
-			else if (IsVideoLoading || IsVideoBuffering)
-			{
+				@if (IsVideoLoading || IsVideoBuffering)
+				{
 				@("Buffering video...")
-			}
+				}
+				else if (CurrentFrameIsLoading)
+				{
+				@("Loading frame image...")
+				}
 			</div>
 			<DotsLoader CssClass="video-overlay-dots-loader"/>
 		</div>

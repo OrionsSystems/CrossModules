@@ -8,7 +8,6 @@ window.Orions.Player = {
         let shakaPlayer = new shaka.Player(video);
         this.shakaPlayer = shakaPlayer;
         
-
         //video.addEventListener('timeupdate', function (e) {
         //    vmInstance.invokeMethodAsync("OnPositionUpdate", this.currentTime);
 
@@ -31,8 +30,6 @@ window.Orions.Player = {
         video.addEventListener('ended', function () {
             clearTimeUpdateIntervals()
             vmInstance.invokeMethodAsync("OnVideoEndJs");
-
-            this.isPaused = true;
         });
 
         video.addEventListener('play', function () {
@@ -179,13 +176,3 @@ window.Orions.Player = {
         }
     }
 };
-
-function Base64ToByteArray(payload) {
-    var binary_string = window.atob(payload);
-    var len = binary_string.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
-    }
-    return bytes.buffer;
-}

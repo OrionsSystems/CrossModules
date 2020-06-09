@@ -1106,36 +1106,41 @@ body {
       height: calc(100% - 60px - 60px);
       top: 60px;
       background: black; }
-  .tagging-page-container .tracking-data-wizard-container {
+  .tagging-page-container .tracking-wizard-loader-component-css .wizard-loader-overlay {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    opacity: 0.5; }
+    .tagging-page-container .tracking-wizard-loader-component-css .wizard-loader-overlay .wizard-dots-loader {
+      height: 28px;
+      margin-top: 10px; }
+      .tagging-page-container .tracking-wizard-loader-component-css .wizard-loader-overlay .wizard-dots-loader .sk-flow-dot {
+        background-color: #707070; }
+  .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container {
     display: flex;
     flex-direction: column;
     flex: 1;
     padding: 10px;
     overflow-y: auto;
     height: 100%; }
-    .tagging-page-container .tracking-data-wizard-container .tracking-dots-loader {
-      height: 28px;
-      margin-top: 10px; }
-      .tagging-page-container .tracking-data-wizard-container .tracking-dots-loader .sk-flow-dot {
-        background-color: #bdbdbd; }
-    .tagging-page-container .tracking-data-wizard-container .image-button {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .image-button {
       height: 30px;
       width: 30px;
       cursor: pointer; }
-      .tagging-page-container .tracking-data-wizard-container .image-button.accept-button {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .image-button.accept-button {
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
         background-color: green; }
-      .tagging-page-container .tracking-data-wizard-container .image-button.clear-button {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .image-button.clear-button {
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
         background-color: red; }
-    .tagging-page-container .tracking-data-wizard-container .disabled .image-button {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .disabled .image-button {
       opacity: 0.5;
       cursor: no-drop; }
-    .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container {
       display: flex; }
-      .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container {
         background-color: white;
         border-radius: 4px;
         padding: 8px;
@@ -1145,90 +1150,90 @@ body {
         display: flex;
         flex-direction: column;
         flex-grow: 1; }
-        .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .title {
+        .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .title {
           border-bottom: 1px solid #DEDEDE;
           padding-bottom: 4px; }
-        .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container {
+        .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container {
           padding: 4px;
           overflow: hidden;
           display: flex;
           flex-direction: column;
           flex-grow: 1; }
-          .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .position-label {
+          .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .position-label {
             margin-bottom: 5px; }
-          .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .tag-thumbnail {
+          .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .tag-thumbnail {
             border-radius: 4px;
             border: 5px solid #fe8d63;
             background-color: black;
             overflow: hidden;
             flex-grow: 1; }
-            .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .tag-thumbnail img {
+            .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .tag-container .tag-thumbnail-container .tag-thumbnail img {
               object-fit: contain;
               width: 100%;
               height: 100%; }
-      .tagging-page-container .tracking-data-wizard-container .tracking-sequence-tag-container .buttons-container {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-sequence-tag-container .buttons-container {
         display: flex;
         flex-direction: column;
         width: 40px;
         padding-left: 10px;
         justify-content: center; }
-    .tagging-page-container .tracking-data-wizard-container .tracking-type-selection-container, .tagging-page-container .tracking-data-wizard-container .tracking-algorithm-selection-container {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-type-selection-container, .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-algorithm-selection-container {
       display: flex;
       flex-direction: column;
       margin-bottom: 10px; }
-      .tagging-page-container .tracking-data-wizard-container .tracking-type-selection-container .title, .tagging-page-container .tracking-data-wizard-container .tracking-algorithm-selection-container .title {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-type-selection-container .title, .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-algorithm-selection-container .title {
         color: #f5f5f5;
         margin-bottom: 3px; }
-      .tagging-page-container .tracking-data-wizard-container .tracking-type-selection-container .selection-input-container select, .tagging-page-container .tracking-data-wizard-container .tracking-algorithm-selection-container .selection-input-container select {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-type-selection-container .selection-input-container select, .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .tracking-algorithm-selection-container .selection-input-container select {
         width: 100%;
         color: #f5f5f5;
         background-color: #787878;
         border: 1px solid black;
         padding: 5px; }
-    .tagging-page-container .tracking-data-wizard-container .button-container {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .button-container {
       margin-bottom: 10px; }
-      .tagging-page-container .tracking-data-wizard-container .button-container .disabled .button {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .button-container .disabled .button {
         background-color: #8fc07a;
         color: #e0e0e0;
         cursor: no-drop; }
-      .tagging-page-container .tracking-data-wizard-container .button-container .button {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .button-container .button {
         width: 100%;
         background-color: #76B356;
         color: #f5f5f5;
         padding: 6px;
         cursor: pointer;
         user-select: none; }
-      .tagging-page-container .tracking-data-wizard-container .button-container .button:active {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .button-container .button:active {
         background-color: #5e9442; }
-    .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .title {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .title {
       color: #f5f5f5; }
-    .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container {
+    .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container {
       display: flex;
       height: 150px; }
-      .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side {
         display: flex;
         flex-direction: column;
         flex-grow: 1; }
-        .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .title {
+        .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .title {
           color: #f5f5f5;
           margin-bottom: 10px; }
-        .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .thumbnail-container {
+        .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .thumbnail-container {
           border-radius: 4px;
           border: 5px solid #fe8d63;
           background-color: black;
           overflow: hidden;
           margin-bottom: 10px; }
-          .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .thumbnail-container img {
+          .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .left-side .thumbnail-container img {
             object-fit: contain;
             width: 100%;
             height: 100%; }
-      .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .right-side {
+      .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .right-side {
         display: flex;
         flex-direction: column;
         width: 40px;
         padding-left: 10px;
         justify-content: center; }
-        .tagging-page-container .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .right-side .clear-button {
+        .tagging-page-container .tracking-wizard-loader-component-css .tracking-data-wizard-container .intermediate-elements-list-container .intermediate-element-container .right-side .clear-button {
           border-top-left-radius: 4px;
           border-top-right-radius: 4px; }
 

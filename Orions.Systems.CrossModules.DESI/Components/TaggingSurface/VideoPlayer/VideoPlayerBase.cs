@@ -79,6 +79,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 		protected double PlaybackSpeed { get; set; } = 1;
 		protected double VolumeLevel { get; set; } = 100;
+
 		protected List<Model.TimelineMarker> TimelineMarkers
 		{
 			get
@@ -300,7 +301,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public async Task OnPlayerReady()
 		{
 			_playerReady.Set();
-			_playerInitialized = true;
 			IsVideoLoading = false;
 		}
 
@@ -357,7 +357,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Play()
 		{
-			await _playerReady.WaitAsync();
+			await WaitPlayerApi();
 			ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
 			Paused = false;
 
@@ -505,6 +505,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setSrc", videoDashUrl);
 			}
+			_playerInitialized = true;
 
 			if (TagsStore?.Data?.SelectedTags?.Any() ?? false)
 			{

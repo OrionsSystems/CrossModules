@@ -1,6 +1,7 @@
 ﻿@using Microsoft.JSInterop;
 @using Syncfusion.EJ2.Blazor.Inputs;
 @using Syncfusion.EJ2.Blazor.Notifications;
+@using Orions.Systems.CrossModules.Components.OverlayLoader; 
 @inherits SVGMapEditorBase
 
 @if (this.Vm.IsMapOverlayInitialized.Value)
@@ -84,14 +85,16 @@
 						@if (!Vm.IsAutoPlayOn)
 						{
 							<OverlayLoader IsLoading="this.Vm.TagsAreBeingLoaded.Value">
-								<EjsSlider TValue="double[]"
-										   Type="SliderType.Range"
-										   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
-										   Step="@Vm.TagDateRangeFilter.Step"
-										   Min="0"
-										   Max="@Vm.TagDateRangeFilter.MaxRangeValue"
-										   Value=@Vm.TagDateRangeFilter.Value>
-								</EjsSlider>
+								<Content>
+									<EjsSlider TValue="double[]"
+											   Type="SliderType.Range"
+											   ValueChanged="(double[] e) => Vm.TagDateRangeFilter.SliderValueChanged(e)"
+											   Step="@Vm.TagDateRangeFilter.Step"
+											   Min="0"
+											   Max="@Vm.TagDateRangeFilter.MaxRangeValue"
+											   Value=@Vm.TagDateRangeFilter.Value>
+									</EjsSlider>
+								</Content>
 							</OverlayLoader>
 
 						}
@@ -164,7 +167,9 @@
 						<a class="btn btn-sm btn-outline-dark" title="Close" @onclick="@(() => this.CloseHyperTagInfoPopup())">X</a>
 					</div>
 					<OverlayLoader IsLoading="this.Vm.NextHyperTagInfoIsBeingLoaded.Value">
-						<img src="@Vm.TagInfoImageBase64Url" />
+						<Content>
+							<img src="@Vm.TagInfoImageBase64Url" />
+						</Content>
 					</OverlayLoader>
 				</div>
 			</div>

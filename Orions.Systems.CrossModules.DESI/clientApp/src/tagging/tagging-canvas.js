@@ -65,7 +65,7 @@ window.Orions.TaggingSurface = {
 	updateFrameImage: function (componentId, imageBase64) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
-			surface.updateFrameImage(imageBase64);
+			return surface.updateFrameImage(imageBase64);
 		}
 	},
 	setFrameMode: function (componentId, visible) {
@@ -169,24 +169,28 @@ class TaggingSurface {
 
 			self.raster.visible = false;
 
-			self.raster.onLoad = function () {
-				self.raster.position = self.scope.view.center
+			let loadPromise = new Promise((resolve, reject) => {
+				self.raster.onLoad = function () {
+					self.raster.position = self.scope.view.center
 
-				let viewAspectRatio = self.scope.view.bounds.width / self.scope.view.bounds.height
-				let imageAspectRatio = self.raster.width / self.raster.height
+					let viewAspectRatio = self.scope.view.bounds.width / self.scope.view.bounds.height
+					let imageAspectRatio = self.raster.width / self.raster.height
 
-				if (viewAspectRatio < imageAspectRatio) {
-					self.raster.size.width = self.scope.view.bounds.width
-					self.raster.size.height = self.raster.size.width / imageAspectRatio;
+					if (viewAspectRatio < imageAspectRatio) {
+						self.raster.size.width = self.scope.view.bounds.width
+						self.raster.size.height = self.raster.size.width / imageAspectRatio;
+					}
+					else {
+						self.raster.size.height = self.scope.view.bounds.height
+						self.raster.size.width = self.raster.size.height * imageAspectRatio;
+					}
+
+					self.raster.visible = true;
+					resolve();
 				}
-				else {
-					self.raster.size.height = self.scope.view.bounds.height
-					self.raster.size.width = self.raster.size.height * imageAspectRatio;
-				}
+			})
 
-				self.raster.visible = true;
-				self.componentRef.invokeMethodAsync("FrameImageRendered")
-			}
+			return loadPromise;
 		}
 
 		let getProportionalRectangle = function (coords, containerRectangle) {
@@ -419,7 +423,7 @@ class TaggingSurface {
 		}
 
 		self.updateFrameImage = function (imageBase64) {
-			updateFrameImageOnCanvas(imageBase64);
+			return updateFrameImageOnCanvas(imageBase64);
 		}
 
 		self.setViewPosition = function (relativeX, relativeY) {
