@@ -1,0 +1,13 @@
+﻿@page "/test-debug"
+@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent
+
+<h3>TestPage</h3>
+
+@code {
+	protected override Task OnInitializedAsyncSafe()
+	{
+		throw new Exception("Something really test happened");
+
+		return base.OnInitializedAsyncSafe();
+	}
+}

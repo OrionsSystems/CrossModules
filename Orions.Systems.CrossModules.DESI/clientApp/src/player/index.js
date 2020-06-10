@@ -59,7 +59,7 @@ window.Orions.Player = {
                 vmInstance.invokeMethodAsync('OnMouseWheelHandler', e.deltaY > 0);
 			}
         }
-        document.querySelector('.right-column').addEventListener('wheel', this.wheelEventHandler)
+        document.getElementById('page-layout-right-column').addEventListener('wheel', this.wheelEventHandler)
 
         window.playerDebug = this;
 
@@ -114,7 +114,7 @@ window.Orions.Player = {
     },
 
     dispose: function () {
-        let rightColumn = document.querySelector('.right-column')
+        let rightColumn = document.getElementById('page-layout-right-column')
         if (typeof rightColumn !== 'undefined') {
             rightColumn.removeEventListener('wheel', this.wheelEventHandler);
 		}

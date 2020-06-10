@@ -48,7 +48,7 @@
 				<MinimapControl />
 				<button class="exit-button" @onclick="() => this.Vm.CompleteProcessingCommand.Execute(null)">Save & Exit</button>
 			</div>
-			<div class="right-column">
+			<div class="right-column" id="page-layout-right-column">
 				@if (Vm.TasksData?.Tasks != null && Vm.TasksData.CurrentTask != null)
 				{
 					{

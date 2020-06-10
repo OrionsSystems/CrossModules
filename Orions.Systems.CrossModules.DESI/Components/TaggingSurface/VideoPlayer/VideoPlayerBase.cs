@@ -357,18 +357,26 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public async Task Play()
 		{
-			await WaitPlayerApi();
-			ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
-			Paused = false;
-
-			if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
+			try
 			{
-				CurrentPosition = TimeSpan.Zero;
-			}
+				await WaitPlayerApi();
+				ActionDispatcher.Dispatch(SetFrameModeAction.Create(false));
+				Paused = false;
 
-			_playerPlayRequest = JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
-			await _playerPlayRequest;
-			_playerState = PlayerJsState.Playing;
+				if (CurrentPosition.TotalMillisecondsLong() >= TotalDuration.TotalMillisecondsLong())
+				{
+					CurrentPosition = TimeSpan.Zero;
+				}
+
+				_playerPlayRequest = JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
+				await _playerPlayRequest;
+				_playerState = PlayerJsState.Playing;
+			}
+			catch(Exception e)
+			{
+				Logger?.LogException("An exception occured while trying to start a playback", e);
+				throw;
+			}
 		}
 
 		public async Task Pause(bool callJsPause = true)
