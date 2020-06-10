@@ -8,8 +8,9 @@ const defaultSelectedStrokeColor = new paper.Color(0, 0, 255, 1);
 const defaultStrokeDashArray = [10, 4];
 
 export default class BaseVisual {
-	constructor(containerRectangle, opts = {}) {
+	constructor(containerRectangle, layer, opts = {}) {
 		this.min_size = 8;
+		this.layer = layer;
 		this.containerRectangle = containerRectangle;
 		this.strokeColor = isDefined(opts.borderColor) ? opts.borderColor : defaultStrokeColor;
 		this.strokeDashArray = isDefined(opts.borderType) && opts.borderType == 1 ? defaultStrokeDashArray : [];
@@ -159,6 +160,8 @@ export default class BaseVisual {
 		this.main_group.owner = this;
 		this.main_group.addChild(this.path);
 		this.main_group.position = new paper.Point(top_left.x / 2 + bottom_right.x / 2, top_left.y / 2 + bottom_right.y / 2);
+
+		this.layer.addChild(this.main_group);
 
 		this.updateElements();
 	}

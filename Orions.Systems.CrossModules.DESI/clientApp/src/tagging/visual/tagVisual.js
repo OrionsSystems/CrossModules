@@ -5,8 +5,8 @@ import { isDefined } from '../../../../../Orions.Systems.CrossModules.Components
 
 export default class TagVisual extends BaseVisual {
 
-	constructor(containerRectangle, opts = {}) {
-		super(containerRectangle, opts)
+	constructor(containerRectangle, layer, opts = {}) {
+		super(containerRectangle, layer, opts)
 		this.adornerSize = 8;
 		this.is_selected = false;
 		this.label = isDefined(opts.label) ? opts.label : null;
@@ -45,13 +45,13 @@ export default class TagVisual extends BaseVisual {
 			let adornerMovedHandler = function () {
 				self.fire('resized');
 			}
-			let rightBottomAdorner = new AdornerElement(self.containerRectangle, 'bottomRight')
+			let rightBottomAdorner = new AdornerElement(self.containerRectangle, 'bottomRight', self.layer)
 			rightBottomAdorner.create(new paper.Point(p2.x - this.adornerSize / 2, p2.y - this.adornerSize / 2), new paper.Point(p2.x + this.adornerSize / 2, p2.y + this.adornerSize / 2));
 			rightBottomAdorner.on('moved_inner', adornerMovedInnerHandler);
 			rightBottomAdorner.on('moved', adornerMovedHandler)
 			this.elements.push(rightBottomAdorner);
 
-			let topLeftAdorner = new AdornerElement(self.containerRectangle, 'topLeft')
+			let topLeftAdorner = new AdornerElement(self.containerRectangle, 'topLeft', self.layer)
 			topLeftAdorner.create(new paper.Point(p1.x - this.adornerSize / 2, p1.y - this.adornerSize / 2), new paper.Point(p1.x + this.adornerSize / 2, p1.y + this.adornerSize / 2));
 			topLeftAdorner.on('moved_inner', adornerMovedInnerHandler);
 			topLeftAdorner.on('moved', adornerMovedHandler)

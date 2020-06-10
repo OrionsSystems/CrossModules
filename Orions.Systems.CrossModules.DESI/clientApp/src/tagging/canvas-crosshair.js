@@ -9,13 +9,20 @@ function getMousePos(canvas, evt) {
 }
 
 export default class CanvasCrosshair {
-	constructor(paperScope) {
+	constructor(paperScope, layer) {
 		this.scope = paperScope;
+		this.layer = layer;
+
 		this.vertticalLine1 = new Path.Line(new Point(0, 0), new Point(0, 0));
 		this.vertticalLine2 = new Path.Line(new Point(0, 0), new Point(0, 0));
 
 		this.horizontalLine1 = new Path.Line(new Point(0, 0), new Point(0, 0));
 		this.horizontalLine2 = new Path.Line(new Point(0, 0), new Point(0, 0));
+
+		this.layer.addChild(this.vertticalLine1)
+		this.layer.addChild(this.vertticalLine2)
+		this.layer.addChild(this.horizontalLine1)
+		this.layer.addChild(this.horizontalLine2)
 	}
 
 	move(point) {
@@ -32,5 +39,10 @@ export default class CanvasCrosshair {
 		this.horizontalLine2 = new Path.Line(new Point(point.x + 1, point.y), new Point(this.scope.view.bounds.right, point.y))
 		this.horizontalLine1.strokeColor = 'red'
 		this.horizontalLine2.strokeColor = 'red'
+
+		this.layer.addChild(this.vertticalLine1)
+		this.layer.addChild(this.vertticalLine2)
+		this.layer.addChild(this.horizontalLine1)
+		this.layer.addChild(this.horizontalLine2)
 	}
 }

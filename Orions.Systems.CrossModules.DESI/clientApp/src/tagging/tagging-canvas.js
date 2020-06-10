@@ -103,7 +103,12 @@ class TaggingSurface {
 		let rect;
 
 		self.scope.setup(self.canvas);
-		let crosshair = new CanvasCrosshair(self.scope);
+		self.itemsLayer = new paper.Layer();
+		self.rasterLayer = new paper.Layer();
+		self.scope.project.addLayer(self.rasterLayer);
+		self.scope.project.addLayer(self.itemsLayer);
+
+		let crosshair = new CanvasCrosshair(self.scope, self.itemsLayer);
 
 		function notifyViewPositionUpdate() {
 			for (let listener of Orions.TaggingSurface.canvasViewPositionUpdatedListeners) {
@@ -160,30 +165,40 @@ class TaggingSurface {
 		}
 
 		let updateFrameImageOnCanvas = function (imageBase64) {
+			let raster;
 			if (self.raster == null) {
-				self.raster = new paper.Raster(imageBase64);
+				raster = new paper.Raster(imageBase64);
 			}
 			else {
-				self.raster.source = imageBase64
+				
+				raster = new paper.Raster(imageBase64);
+				//raster.source = imageBase64
 			}
 
-			self.raster.visible = false;
+			raster.visible = false;
+			self.rasterLayer.addChild(raster);
 
 			let loadPromise = new Promise((resolve, reject) => {
-				self.raster.onLoad = function () {
-					self.raster.position = self.scope.view.center
+				raster.onLoad = function () {
+					raster.position = self.scope.view.center
 
 					let viewAspectRatio = self.scope.view.bounds.width / self.scope.view.bounds.height
-					let imageAspectRatio = self.raster.width / self.raster.height
+					let imageAspectRatio = raster.width / raster.height
 
 					if (viewAspectRatio < imageAspectRatio) {
-						self.raster.size.width = self.scope.view.bounds.width
-						self.raster.size.height = self.raster.size.width / imageAspectRatio;
+						raster.size.width = self.scope.view.bounds.width
+						raster.size.height = raster.size.width / imageAspectRatio;
 					}
 					else {
-						self.raster.size.height = self.scope.view.bounds.height
-						self.raster.size.width = self.raster.size.height * imageAspectRatio;
+						raster.size.height = self.scope.view.bounds.height
+						raster.size.width = raster.size.height * imageAspectRatio;
 					}
+
+					if (self.raster != null) {
+						self.raster.remove();
+					}
+
+					self.raster = raster;
 
 					self.raster.visible = true;
 					resolve();
@@ -325,7 +340,7 @@ class TaggingSurface {
 				self.items.splice(self.items.indexOf(tagwithSameId), 1);
 			}
 
-			var newTagVisual = new TagVisual(self.raster.strokeBounds, tag);
+			var newTagVisual = new TagVisual(self.raster.strokeBounds, self.itemsLayer, tag);
 			var tagCoords = getRectangleRealFromProportional(tag, self.raster.strokeBounds);
 
 			newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
