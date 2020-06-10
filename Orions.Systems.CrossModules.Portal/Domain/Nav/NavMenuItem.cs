@@ -19,5 +19,7 @@ namespace Orions.Systems.CrossModules.Portal
 		public string ImageSource { get; set; }
 
 		public bool EnableLeftMenu { get; set; }
+
+		public bool ForceReload { get; set; } = true;
 	}
 }

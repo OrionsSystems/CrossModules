@@ -10,7 +10,7 @@
 	{
 		@foreach (var item in Items)
 		{
-			<MatNavItem OnClick="@(ev => ForceNavigation(item.Address))" Selected="@IsSelected(item)" title="@item.Description">
+			<MatNavItem OnClick="@(async ev => await OnSelectNavigationItem(item))" Selected="@IsSelected(item)" title="@item.Description">
 				@if (string.IsNullOrEmpty(item.ImageSource))
 				{
 					<MatIcon Icon="@item.MatIcon" Class="nav-mat-icon"></MatIcon>
@@ -43,6 +43,9 @@
 	[Parameter]
 	public string Version { get; set; }
 
+	[Parameter]
+	public EventCallback<NavMenuItem> OnSelect { get; set; }
+
 	private string CurrentLocation { get { return navManager.ToBaseRelativePath(navManager.Uri).ToString(); } }
 
 	protected override void OnInitialized()
@@ -61,11 +64,9 @@
 		return false;
 	}
 
-
-	private void ForceNavigation(string address = "")
-	{
-		var url = $"{navManager.BaseUri}{address}";
-		navManager.NavigateTo(url, true);
+	private async Task OnSelectNavigationItem(NavMenuItem item) {
+		await OnSelect.InvokeAsync(item);
 	}
+
 
 }

@@ -1,10 +1,6 @@
-﻿@namespace Orions.Systems.CrossModules.Portal.Pages
-
-@page "/properties"
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
 
 @inherits PortalBaseComponent
-
-@layout Layout
 
 @using Orions.Infrastructure.HyperMedia
 @using Syncfusion.EJ2.Blazor.DropDowns
@@ -278,6 +274,7 @@
 @code{
 
 	private string GroveRedirectTag = "Escalator";
+
 	public bool IsSelected { get; set; }
 
 	List<Stories> LocalData = new List<Stories>();
