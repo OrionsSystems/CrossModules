@@ -14,6 +14,8 @@ namespace Orions.Systems.CrossModules.Portal.Services
 	[Entity(typeof(SolutionEntity))]
 	public class SolutionVmEx : SolutionVm
 	{
+		private readonly int _overlayShowMessageInterval = 4400;
+
 		public BlazorCommand SaveCommand { get; set; } = new BlazorCommand();
 
 		public BlazorCommand ChangeLayoutCommand { get; set; } = new BlazorCommand();
@@ -27,6 +29,12 @@ namespace Orions.Systems.CrossModules.Portal.Services
 		public SolutionVmEx()
 		{
 			SaveCommand.Delegate = OnSave;
+
+			this.ChangeLayoutCommand.Delegate = OnChangeLayout;
+
+			Logger.Instance.EntryLogged += Instance_EntryLogged;
+
+			DialogService = new DialogService();
 		}
 
 		public override void BeginInvoke(Action action)
@@ -39,6 +47,12 @@ namespace Orions.Systems.CrossModules.Portal.Services
 			throw new NotImplementedException();
 		}
 
+		private void Instance_EntryLogged(ILogger logger, ILogEntry entry)
+		{
+			if (entry.Type > LogEntryTypes.Info && entry.Notification == LogEntryNotifications.Local)
+				ShowOverlayNotification(entry.ToString(), entry.Type >= LogEntryTypes.Warning);
+		}
+
 		private void OnSave(DefaultCommand command, object parameter)
 		{
 			Save();
@@ -46,7 +60,16 @@ namespace Orions.Systems.CrossModules.Portal.Services
 
 		public override void ShowOverlayNotification(string message, bool severe = false)
 		{
-			throw new NotImplementedException();
+			this.OverlayNotificationVisibleProp.Value = true;
+			this.OverlayNotificationTextProp.Value = message;
+
+			_lastOverlayNotificationShown = DateTime.Now;
+
+			Task.Delay(_overlayShowMessageInterval).ContinueWith(a =>
+			{
+				if (DateTime.Now - _lastOverlayNotificationShown > TimeSpan.FromSeconds(4))
+					this.OverlayNotificationVisibleProp.Value = false;
+			}).ConfigureAwait(true);
 		}
 
 		public override void ShowWebPage(string title, string url, IModuleVm moduleVm, bool launchInExternalBrowser)
@@ -62,7 +85,6 @@ namespace Orions.Systems.CrossModules.Portal.Services
 		public override void OnSave()
 		{
 			Logger.Instance.HighPriorityInfo(this, nameof(OnSave), "Saving...");
-
 		}
 
 		protected override void OnEntityAssigned(INotifyProperty<SolutionEntity> prop, SolutionEntity newValue)
@@ -123,6 +145,25 @@ namespace Orions.Systems.CrossModules.Portal.Services
 
 			//AddTab(tabHome, false);
 
+		}
+
+
+		private void OnChangeLayout(DefaultCommand command, object parameter)
+		{
+			// Cycle layout.
+			var values = Enum.GetValues(typeof(SolutionEntity.Layouts)).Cast<SolutionEntity.Layouts>().ToList();
+
+			var value = this.EntityProp.Value.Layout;
+			int index = values.IndexOf(value);
+
+			if (index < values.Count - 1)
+				value = values[index + 1];
+			else
+				value = values[0];
+
+			this.EntityProp.Value.Layout = value;
+
+			ShowOverlayNotification("Layout " + value);
 		}
 
 

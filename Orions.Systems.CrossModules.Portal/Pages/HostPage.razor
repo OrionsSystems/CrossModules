@@ -1,0 +1,14 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Pages
+
+@page "/module/{Module}"
+
+
+<h1 class="text-danger">Host Page</h1>
+<h5>Module name: @Module</h5>
+
+@code{
+
+	[Parameter]
+	public string Module { get; set; }
+
+}

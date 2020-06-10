@@ -1,36 +1,32 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MatBlazor;
+
+using Microsoft.AspNetCore.Components;
+
+using Orions.Systems.CrossModules.Portal;
+using Orions.Systems.CrossModules.Portal.Domain;
+using Orions.Systems.CrossModules.Portal.Providers;
+
+using Syncfusion.EJ2.Blazor.Navigations;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-using Orions.Systems.CrossModules.Portal;
-using Orions.Systems.CrossModules.Portal.Providers;
-using Microsoft.AspNetCore.Components.Authorization;
-using Syncfusion.EJ2.Blazor.Navigations;
-using Microsoft.AspNetCore.WebUtilities;
-using MatBlazor;
-using Orions.Common;
-using Orions.SDK;
-using Orions.Infrastructure.Common;
-
-using Orions.Systems.CrossModules.Portal.Domain;
-
 namespace Orions.Systems.CrossModules.Components
 {
 	public class LayoutBase : PortalLayoutComponent
 	{
 
-		protected List<NavMenuItem> NavItems = new List<NavMenuItem> 
+		protected List<NavMenuItem> NavItems = new List<NavMenuItem>
 		{
 			new NavMenuItem{ Address="", Label="Home", Alias="properties", MatIcon=MatIconNames.Home },
-			new NavMenuItem{ Address="dashboards", Label="Dashboards", MatIcon=MatIconNames.View_module },
+			new NavMenuItem{ Address="dashboards", Label="Dashboards", MatIcon=MatIconNames.View_module},
 			new NavMenuItem{ Address="themes", Label="Themes", MatIcon=MatIconNames.Color_lens},
 			new NavMenuItem{ Address="wizzard", Label="Wizzard", MatIcon=MatIconNames.Widgets},
-			new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow, EnableLeftMenu = false },
+			new NavMenuItem{ Address="missions", Label="Missions", MatIcon=MatIconNames.Slideshow },
 			new NavMenuItem{ Address="workflows", Label="Workflows", MatIcon=MatIconNames.Library_books},
-			new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension,  EnableLeftMenu = false }
+			new NavMenuItem{ Address="tagonomies", Label="Tagonomies", MatIcon=MatIconNames.Extension }
 		};
 
 		private NavMenuItem SelectedNavItem { get; set; }
@@ -43,12 +39,9 @@ namespace Orions.Systems.CrossModules.Components
 		{
 			await base.OnInitializedAsync();
 
-			//PopulateModules();
-
-			SelectedNavItem = FindNavItem();
-
 			MappingModuleToNavigation();
 
+			SelectedNavItem = FindNavItem();
 		}
 
 		private void MappingModuleToNavigation()
@@ -60,17 +53,19 @@ namespace Orions.Systems.CrossModules.Components
 				var imgSrc = mod.ImageSourceProp.Value?.DataAsBase64();
 				if (imgSrc != null)
 				{
-					imgSrc = $"data:image/png;base64,{imgSrc}";
+					imgSrc = $"data:image/png;base64, {imgSrc}";
 				}
 
 				NavItems.Add(
 					new NavMenuItem
 					{
 						Source = mod,
+						Address = $"module/{mod.Signature}",
 						Label = mod.Signature,
 						ImageSource = imgSrc,
 						Description = mod.HelpText,
-						MatIcon = MatIconNames.Developer_board
+						MatIcon = MatIconNames.Developer_board,
+						EnableLeftMenu = true
 					}
 				);
 			}
@@ -113,6 +108,15 @@ namespace Orions.Systems.CrossModules.Components
 				await CustomSettingsProvider.SetParameter(CustomSettingsProvider.THEME_KEY, CustomSettingsProvider.THEME_WHITE);
 				CurrentTheme = CustomSettingsProvider.THEME_WHITE;
 			}
+		}
+
+		protected void ForceNavigation(NavMenuItem item)
+		{
+			var address = item.Address ?? String.Empty;
+			var url = $"{NavigationManager.BaseUri}{address}";
+			NavigationManager.NavigateTo(url, item.ForceReload);
+
+			SelectedNavItem = item;
 		}
 
 	}
