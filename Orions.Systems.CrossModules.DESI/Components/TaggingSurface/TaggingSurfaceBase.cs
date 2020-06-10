@@ -23,6 +23,7 @@ using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Util;
 using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 using System.Runtime.CompilerServices;
+using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -357,16 +358,17 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					{
 						await _updateTagsClientSemaphore.WaitAsync();
 
-						
 						var oldRectangleCollection = _rectangles;
 
+						var rectanglesUpdateRequest = new RectanglesUpdateRequest();
 						// update tags
 						foreach (var newTag in newRectangleCollection)
 						{
 							var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
 							if (oldTag != null && !oldTag.Equals(newTag))
 							{
-								await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
+								rectanglesUpdateRequest.Updates.Add(newTag);
+								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
 							}
 						}
 
@@ -379,7 +381,8 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							}
 							else
 							{
-								await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
+								rectanglesUpdateRequest.Removals.Add(oldTag);
+								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
 							}
 						}
 
@@ -392,9 +395,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 							}
 							else
 							{
-								await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
+								rectanglesUpdateRequest.Addings.Add(newTag);
+								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
 							}
 						}
+
+						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateRectangles", new object[] { _componentId, rectanglesUpdateRequest });
 
 						_updateTagsOnClientQueue.TryDequeue(out _);
 						_rectangles = newRectangleCollection;

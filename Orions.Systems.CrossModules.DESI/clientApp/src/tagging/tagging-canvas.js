@@ -50,6 +50,12 @@ window.Orions.TaggingSurface = {
 			surface.removeTag(tag);
 		}
 	},
+	updateRectangles: function (componentId, updates) {
+		let surface = this.surfaces[componentId];
+		if (isDefined(surface)) {
+			surface.updateRectangles(updates);
+		}
+	},
 	attachElementPositionToTag: function (componentId, id, elementSelector) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
@@ -165,15 +171,7 @@ class TaggingSurface {
 		}
 
 		let updateFrameImageOnCanvas = function (imageBase64) {
-			let raster;
-			if (self.raster == null) {
-				raster = new paper.Raster(imageBase64);
-			}
-			else {
-				
-				raster = new paper.Raster(imageBase64);
-				//raster.source = imageBase64
-			}
+			let raster = new paper.Raster(imageBase64);
 
 			raster.visible = false;
 			self.rasterLayer.addChild(raster);
@@ -387,6 +385,20 @@ class TaggingSurface {
 				tagToRemove.remove();
 
 				self.items.splice(self.items.indexOf(tagToRemove), 1);
+			}
+		}
+
+		self.updateRectangles = function (updates) {
+			for (let tag of updates.addings) {
+				self.addTag(tag);
+			}
+
+			for (let tag of updates.updates) {
+				self.updateTag(tag);
+			}
+
+			for (let tag of updates.removals) {
+				self.removeTag(tag);
 			}
 		}
 
