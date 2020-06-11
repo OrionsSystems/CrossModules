@@ -102,12 +102,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 
 		[JSInvokable]
-		public async Task SurfaceClicked()
-		{
-
-		}
-
-		[JSInvokable]
 		public async Task<string> TagAdded(Rectangle rectangle)
 		{
 			rectangle.Id = Guid.NewGuid().ToString();

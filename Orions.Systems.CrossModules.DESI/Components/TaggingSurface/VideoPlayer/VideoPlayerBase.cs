@@ -235,10 +235,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				if (_mediaInstance != null)
 				{
-					_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
-						.Select(i => i.Source.CurrentPositionFrameImage)
-						.Subscribe(UpdateCurrentPositionFrameImage));
+					//_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
+					//	.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
+					//	.Select(i => i.Source.CurrentPositionFrameImage)
+					//	.Subscribe(UpdateCurrentPositionFrameImage));
 				}
 				OnMediaInstanceChanged();
 			});
@@ -494,8 +494,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			UpdateState();
 		}
 
-		private void UpdateCurrentPositionFrameImage(byte[] imageData) => PausedFrameBase64 = imageData != null ? UniImage.ConvertByteArrayToBase64Url(imageData) : null;
-
 		private bool _playerInitialized = false;
 		private async Task UpdateCurrentTaskData()
 		{
@@ -558,11 +556,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			if(up)
 			{
-				await GoToNextFrame();
+				GoToNextFrame();
 			}
 			else
 			{
-				await GoToPreviousFrame();
+				GoToPreviousFrame();
 			}
 
 			UpdateState();
