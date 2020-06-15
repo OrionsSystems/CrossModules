@@ -1,36 +1,39 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.JSInterop;
+
 using Orions.Infrastructure.HyperMedia;
 using Orions.Node.Common;
 using Orions.Systems.CrossModules.Components;
-using Microsoft.JSInterop;
 using Orions.Systems.CrossModules.Portal.Services;
 
-namespace Orions.Systems.CrossModules.Portal.Domain
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace Orions.Systems.CrossModules.Portal.Components
 {
 	[Authorize]
 	public class PortalBaseComponent : BaseOrionsComponent
 	{
 		[CascadingParameter]
-		public Task<AuthenticationState> AuthenticationStateTask { get; set; }
+		protected Task<AuthenticationState> AuthenticationStateTask { get; set; }
 
 		[CascadingParameter]
-		public Toast ToastRef { get; set; }
+		protected Toast ToastRef { get; set; }
 
 		[CascadingParameter]
 		protected SolutionVmEx Solution { get; set; }
 
-		[Inject] 
+		[Inject]
 		protected NavigationManager NavigationManager { get; set; }
 
-		[Inject] 
+		[Inject]
 		protected IJSRuntime JSRuntime { get; set; }
 
-		public IHyperArgsSink HyperStore { get; set; }
+		protected IHyperArgsSink HyperStore { get; set; }
 
 		protected override async Task OnInitializedAsync()
 		{

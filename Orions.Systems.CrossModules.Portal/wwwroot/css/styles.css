@@ -246,6 +246,43 @@ body.highcontrast #dockSidebar {
 .mdc-list-item--activated {
   color: #057ece !important; }
 
+.version {
+  position: absolute;
+  bottom: 0px;
+  text-align: center;
+  width: 68px;
+  padding: 5px 0; }
+
+.ver-label {
+  font-style: italic; }
+
+.ver-value {
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  font-weight: 500; }
+
+.shared-card-explorer-control-container .shared-card-control-row {
+  margin: 0;
+  padding: 0; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
+    padding: 2px 3px;
+    margin: auto 0; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
+    padding: 2px 3px;
+    margin: auto 0; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search {
+    padding: 2px 3px;
+    margin: auto 0; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
+    padding: 2px 3px;
+    margin: auto 0; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
+    background-color: orange; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {
+    background-color: green; }
+  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .crd-tab-creator {
+    background-color: red; }
+
 /* SIDEBAR  */
 .sidebar-content.e-content-animation {
   transform: none !important; }
@@ -262,45 +299,62 @@ body.highcontrast #dockSidebar {
   /*   width: calc(320px - 62px);*/
   width: 100%; }
 
-menu-items-container {
+.menu-items-container {
   display: flex;
   flex-wrap: wrap; }
 
 .side-item {
-  border: 1px solid #808080;
-  border-radius: 5px;
   flex-grow: 1;
-  margin: 3px 5px;
-  padding: 3px; }
-  .side-item:hover {
-    cursor: pointer;
-    background-color: #d1d1d1; }
-
-.side-item-lbl {
-  text-align: center;
-  font-size: 17px;
-  font-weight: 400; }
-
-.side-item-desc {
-  text-align: center;
-  font-size: 12px;
-  font-style: italic;
-  letter-spacing: 0.5px; }
-
-.version {
-  position: absolute;
-  bottom: 0px;
-  text-align: center;
-  width: 68px;
-  padding: 5px 0; }
-
-.ver-label {
-  font-style: italic; }
-
-.ver-value {
-  font-size: 12px;
-  letter-spacing: 0.5px;
-  font-weight: 500; }
+  margin: 0px 3px;
+  padding: 2px 0;
+  width: 100%; }
+  .side-item .side-item-container {
+    display: flex;
+    padding: 3px; }
+    .side-item .side-item-container .side-item-main {
+      flex-grow: 1; }
+      .side-item .side-item-container .side-item-main .side-item-lbl {
+        text-align: center;
+        font-size: 17px;
+        font-weight: 400;
+        min-height: 17px; }
+      .side-item .side-item-container .side-item-main .side-item-desc {
+        text-align: center;
+        font-size: 12px;
+        font-style: italic;
+        letter-spacing: 0.5px;
+        min-height: 12px; }
+    .side-item .side-item-container .side-item-action {
+      display: flex;
+      margin: auto 0; }
+      .side-item .side-item-container .side-item-action .cmd-properties {
+        opacity: 0.3;
+        transition: 0.5s;
+        padding: 0 2px;
+        display: flex; }
+      .side-item .side-item-container .side-item-action .cmd-tab {
+        padding: 5px 10px;
+        border-left: 1px solid black;
+        background-color: #f6f6f6;
+        transition: 0.5s; }
+        .side-item .side-item-container .side-item-action .cmd-tab:hover {
+          background-color: #bbbce3;
+          border: none;
+          transition: 0.5s; }
+    .side-item .side-item-container:hover {
+      cursor: pointer; }
+      .side-item .side-item-container:hover .cmd-properties {
+        opacity: 1;
+        transition: 0.5s; }
+  .side-item .brd-default {
+    border: 1px solid #808080;
+    border-radius: 5px; }
+    .side-item .brd-default:hover {
+      background-color: #d1d1d1; }
+  .side-item .brd-creator {
+    background-color: #C0DE14; }
+    .side-item .brd-creator:hover {
+      background-color: #d1d1d1; }
 
 /* Property page*/
 #selected-property {

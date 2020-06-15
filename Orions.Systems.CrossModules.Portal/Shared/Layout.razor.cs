@@ -7,13 +7,14 @@ using Orions.Systems.CrossModules.Portal.Domain;
 using Orions.Systems.CrossModules.Portal.Providers;
 
 using Syncfusion.EJ2.Blazor.Navigations;
+using Orions.Systems.CrossModules.Portal.Components;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Orions.Systems.CrossModules.Components
+namespace Orions.Systems.CrossModules.Portal
 {
 	public class LayoutBase : PortalLayoutComponent
 	{
@@ -112,11 +113,18 @@ namespace Orions.Systems.CrossModules.Components
 
 		protected void ForceNavigation(NavMenuItem item)
 		{
+			var vm = item.Source;
+			if (vm != null) {
+				vm.SelectedCommand.Execute(null);
+			}
+
 			var address = item.Address ?? String.Empty;
 			var url = $"{NavigationManager.BaseUri}{address}";
 			NavigationManager.NavigateTo(url, item.ForceReload);
 
 			SelectedNavItem = item;
+
+			StateHasChanged();
 		}
 
 	}

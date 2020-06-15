@@ -1,0 +1,78 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits CardControlBase
+
+<div class="side-item">
+
+	<div class="side-item-container @GetBorderClass() @(IsCompactMode ?"side-compact":"side-full")" style="@GetCustomStatusBackgroudColor()">
+
+		@if (IsCompactMode)
+		{
+			<div class="side-item-lbl">@Source.TitleProp?.Value</div>
+		}
+		else
+		{
+			<div class="side-item-main" @onclick="@OnClickCardControl">
+				<div class="side-item-lbl">@Source.TitleProp?.Value</div>
+				<div class="side-item-desc">@Source.DescriptionProp?.Value</div>
+			</div>
+
+
+			<div class="side-item-action">
+
+				<!-- Help button -->
+				@if (Source?.HelpVisibleProp.Value ?? false)
+				{
+					<a class="cmd">
+						<MatIcon Icon="@MatIconNames.Help"></MatIcon>
+					</a>
+				}
+
+				<!-- Properties button, wrapped in a border so we can use ShowPropertiesProp AND autoHideStyle-->
+				@if (Source?.ShowPropertiesProp.Value ?? false)
+				{
+					<a class="cmd cmd-properties">
+						<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
+					</a>
+				}
+
+				<!-- Favourites button, wrapped in a border so we can use ShowPropertiesProp AND autoHideStyle-->
+				@if (Source?.ShowFavouritesProp.Value ?? false)
+				{
+					<a class="cmd">
+						<MatIcon Icon="@MatIconNames.Favorite"></MatIcon>
+					</a>
+				}
+
+				<!-- Active button -->
+				@if (Source?.ShowActiveProp.Value ?? false)
+				{
+					<a class="cmd">
+						<div class="active-lbl">Active</div>
+					</a>
+				}
+
+				<!--Tab button-->
+				@if (Source?.ShowTabProp.Value ?? false)
+				{
+					<a class="cmd cmd-tab">
+						<div class="tab-lbl">Tab</div>
+					</a>
+				}
+
+				<!--... button-->
+				@if (Source?.ShowExpandProp.Value ?? false)
+				{
+					<a class="cmd">
+						<div class="expand-lbl">...</div>
+					</a>
+				}
+
+			</div>
+
+			<!--Secondary (right) Custom status color -->
+		}
+
+	</div>
+</div>
+
