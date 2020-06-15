@@ -75,7 +75,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		private object _rectanglesSetterLock = new object();
-		private Queue<List<Rectangle>> _updateTagsOnClientQueue = new Queue<List<Rectangle>>();
 		private List<Rectangle> Rectangles
 		{
 			get => _rectangles;
@@ -88,15 +87,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private bool _rectanglesClientUpdateIsRunning = false;
+		private RenderQueueHelper<List<Rectangle>> _tagsClientUpdateQueue = new RenderQueueHelper<List<Rectangle>>();
 		private void QueueUpdateTagsOnClient(List<Rectangle> newCollection)
 		{
-			_updateTagsOnClientQueue.Enqueue(newCollection);
-
-			if (!_rectanglesClientUpdateIsRunning)
-			{
-				Task.Run(() => UpdateTagsOnClient());
-			}
+			_tagsClientUpdateQueue.Enqueue(UpdateTagsOnClient, newCollection);
 		}
 
 		[Parameter]
@@ -269,11 +263,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			await _currentPositionFrameRendered.WaitAsync();
 
-			_lastFrameRendered = null;
-			_currentPositionFrameRendered.Reset();
-
-			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetFrameImage", new object[] { _componentId });
-
 			UpdateRectangles();
 		}
 
@@ -373,82 +362,75 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public static TaggingSurfaceBase CurrentTaggingSurface;
 
-		private async Task UpdateTagsOnClient()
+		private async Task UpdateTagsOnClient(List<Rectangle> newRectangleCollection)
 		{
 			try
 			{
-				_rectanglesClientUpdateIsRunning = true;
 				await Task.WhenAll(_initializationTaskTcs.Task, _currentPositionFrameRendered.WaitAsync());
 				_rectanglesUpdated.Reset();
 
-				List<Rectangle> newRectangleCollection = null;
-				while (_updateTagsOnClientQueue.TryPeek(out newRectangleCollection))
+				try
 				{
-					try
+					await _updateTagsClientSemaphore.WaitAsync();
+
+					var oldRectangleCollection = _rectangles;
+
+					var rectanglesUpdateRequest = new RectanglesUpdateRequest();
+					// update tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						await _updateTagsClientSemaphore.WaitAsync();
-
-						var oldRectangleCollection = _rectangles;
-
-						var rectanglesUpdateRequest = new RectanglesUpdateRequest();
-						// update tags
-						foreach (var newTag in newRectangleCollection)
+						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
+						if (oldTag != null && !oldTag.Equals(newTag))
 						{
-							var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
-							if (oldTag != null && !oldTag.Equals(newTag))
-							{
-								rectanglesUpdateRequest.Updates.Add(newTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
-							}
+							rectanglesUpdateRequest.Updates.Add(newTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
 						}
-
-						// remove removed tags
-						foreach (var oldTag in oldRectangleCollection)
-						{
-							if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
-							{
-								continue;
-							}
-							else
-							{
-								rectanglesUpdateRequest.Removals.Add(oldTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
-							}
-						}
-
-						// add newly added tags
-						foreach (var newTag in newRectangleCollection)
-						{
-							if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
-							{
-								continue;
-							}
-							else
-							{
-								rectanglesUpdateRequest.Addings.Add(newTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
-							}
-						}
-
-						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateRectangles", new object[] { _componentId, rectanglesUpdateRequest });
-
-						_updateTagsOnClientQueue.TryDequeue(out _);
-						_rectangles = newRectangleCollection;
 					}
-					catch (Exception e)
+
+					// remove removed tags
+					foreach (var oldTag in oldRectangleCollection)
 					{
-						Logger.LogException("Exception occured while trying to update tags on the canvas", e);
-						throw;
+						if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							rectanglesUpdateRequest.Removals.Add(oldTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
+						}
 					}
-					finally
+
+					// add newly added tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						_updateTagsClientSemaphore.Release();
+						if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							rectanglesUpdateRequest.Addings.Add(newTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
+						}
 					}
+
+					await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateRectangles", new object[] { _componentId, rectanglesUpdateRequest });
+
+					_rectangles = newRectangleCollection;
+				}
+				catch (Exception e)
+				{
+					Logger.LogException("Exception occured while trying to update tags on the canvas", e);
+					throw;
+				}
+				finally
+				{
+					_updateTagsClientSemaphore.Release();
 				}
 			}
 			finally
 			{
-				_rectanglesClientUpdateIsRunning = false;
 				_rectanglesUpdated.Set();
 			}
 		}
