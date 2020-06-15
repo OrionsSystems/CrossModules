@@ -1,4 +1,6 @@
 ﻿
+$leftSideBarWidth: 380px;
+
 @mixin shared-card-control-common {
 	padding: 2px 3px;
 	margin: auto 0;
@@ -51,7 +53,7 @@
 /* Left Sidebar */
 
 .left-sidebar-container {
-	width: 320px;
+	width: $leftSideBarWidth;
 	height: 100%;
 	position: relative;
 	background-color: #ebeaea73;
@@ -103,7 +105,7 @@
 			margin: auto 0;
 
 			.cmd-properties {
-				opacity: 0.3;
+				opacity: 0.2;
 				transition: 0.5s;
 				padding: 0 2px;
 				display: flex;
@@ -118,6 +120,35 @@
 				&:hover {
 					background-color: #bbbce3;
 					border: none;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-active {
+				padding: 3px 8px;
+				margin-left: 3px;
+				margin: auto 0;
+				font-size: 13px;
+			}
+
+			.ca-plus {
+				background-color: black;
+				color: white !important;
+				transition: 0.5s;
+
+				&:hover {
+					background-color: #A092BE !important;
+					transition: 0.5s;
+				}
+			}
+
+			.ca-minus {
+				border: 1px solid black;
+				transition: 0.5s;
+
+				&:hover {
+					background-color: #A092BE !important;
+					color: white !important;
 					transition: 0.5s;
 				}
 			}

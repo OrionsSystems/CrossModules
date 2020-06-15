@@ -47,7 +47,7 @@
 				<!-- Active button -->
 				@if (Source?.ShowActiveProp.Value ?? false)
 				{
-					<a class="cmd">
+					<a class="cmd cmd-active @(Source?.ActiveProp.Value ?? false ? "ca-plus" : "ca-minus")">
 						<div class="active-lbl">Active</div>
 					</a>
 				}
