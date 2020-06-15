@@ -10,7 +10,7 @@
 		@if (MediaDataStore.Data.MediaInstances?.Count == 1)
 		{
 			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]" />
-			<canvas class="tagging-canvas">
+			<canvas class="tagging-canvas" style="@(CurrentFrameIsRendering?"visibility:hidden":"")">
 			</canvas>
 			@if (CurrentFrameIsRendering)
 			{

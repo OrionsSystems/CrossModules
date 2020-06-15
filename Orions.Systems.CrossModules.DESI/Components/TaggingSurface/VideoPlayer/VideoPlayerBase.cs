@@ -350,10 +350,20 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			await OnPositionUpdate(newPosition.TotalSeconds);
 
-			if (!Paused)
+			await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { CurrentPosition.TotalSeconds });
+		}
+
+		protected async Task OnMediaPositionChanged()
+		{
+			if (Paused)
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { newPosition.TotalSeconds });
-			}
+				await _playerReady.WaitAsync();
+
+				CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByHyperId(MediaInstance.CurrentPosition);
+				CurrentPosition = _taskPlaybackInfo.GetPositionByFrameIndex(CurrentFrameIndex);
+
+				await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { CurrentPosition.TotalSeconds });
+			}	
 		}
 
 		public async Task Play()
@@ -437,6 +447,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				.GetPropertyChangedObservable()
 				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 				.Subscribe(_ => UpdateState()));
+
+			_subscriptions.Add(MediaDataStore.PositionUpdated
+				.Subscribe(_ => OnMediaPositionChanged()));
 
 			_subscriptions.Add(TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => UpdateState()));
 			_subscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => UpdateState()));
