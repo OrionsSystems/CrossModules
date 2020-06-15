@@ -23,6 +23,7 @@ using Orions.Node.Common;
 using Microsoft.AspNetCore.Components.Web;
 using Orions.Systems.Desi.Common.Tracking;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
+using System.Threading;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -460,28 +461,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 		#endregion // Component lifecycle hook overrides
 
-		private Dictionary<int, Task> _frameLoadingTasks = new Dictionary<int, Task>();
-		private async Task UpdateFrameImageByCurrentPosition()
-		{
-			var hyperId = _taskPlaybackInfo.GetPositionHyperId(CurrentFrameIndex);
-
-			if (hyperId.SliceId == null)
-				return;
-
-			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
-			
-			var frameLoadTask = CacheService.GetCachedFrameAsync(_store, hyperId, null);
-			_frameLoadingTasks[CurrentFrameIndex] = frameLoadTask;
-
-			if (!frameLoadTask.IsCompleted)
-			{
-				UpdateState();
-				await frameLoadTask;
-			}
-
-			UpdateState();
-		}
-
 		private async Task GoToFrame(int index)
 		{
 			CurrentFrameIndex = index;
@@ -556,11 +535,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			if(up)
 			{
-				GoToNextFrame();
+				GoToPreviousFrame();
 			}
 			else
 			{
-				GoToPreviousFrame();
+				GoToNextFrame();
 			}
 
 			UpdateState();

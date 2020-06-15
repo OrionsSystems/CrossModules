@@ -47,6 +47,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
 		private AsyncManualResetEvent _rectanglesUpdated = new AsyncManualResetEvent(true);
 
+		private bool _showFrameLoadOverlay = true;
+		public bool CurrentFrameIsRendering
+		{
+			get
+			{
+				return (MediaDataStore?.Data?.FrameModeEnabled ?? false) && _showFrameLoadOverlay;
+			}
+		}
+
 		[Parameter]
 		public EventCallback<TagModel> OnTagSelected { get; set; }
 
@@ -130,27 +139,34 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
 
+		private RenderQueueHelper<byte[]> _renderQueueHelper = new RenderQueueHelper<byte[]>();
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
 			await _initializationTaskTcs.Task;
+
+			_renderQueueHelper.Enqueue(RenderFrame, MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage);
+		}
+
+		public async Task RenderFrame(byte[] newFrameImage)
+		{
 			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { _componentId });
 
-			var newFrameImage = MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage;
-
-			if (!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, newFrameImage)
-				&& newFrameImage != null)
+			if (!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, newFrameImage) && newFrameImage != null)
 			{
 				await _rectanglesUpdated.WaitAsync();
 				_currentPositionFrameRendered.Reset();
 				_lastFrameRendered = newFrameImage;
+
 				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId, UniImage.ConvertByteArrayToBase64Url(newFrameImage) });
+
 				_currentPositionFrameRendered.Set();
 			}
-			else if(_lastFrameRendered != null)
+			else if (_lastFrameRendered != null)
 			{
 				_currentPositionFrameRendered.Set();
 			}
 
+			UpdateState();
 			UpdateRectangles();
 		}
 
@@ -164,6 +180,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.Add(MediaDataStore.PositionUpdated.Subscribe(_ =>
 			{
+				UpdateState();
 				UpdateRectangles();
 			}));
 			_dataStoreSubscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => OnCurrentPositionFrameImageChanged()));
@@ -202,6 +219,18 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.AddItem(aggregatedSub);
 
+			_renderQueueHelper.WaitCallbackDelay = 300;
+			_renderQueueHelper.WaitStartCallback = () =>
+			{
+				_showFrameLoadOverlay = true;
+				UpdateState();
+			};
+			_renderQueueHelper.WaitCompleteCallback = () =>
+			{
+				_showFrameLoadOverlay = MediaDataStore.Data.DefaultMediaInstance.CurrentPositionFrameImage == null;
+				UpdateState();
+			};
+
 			UpdateRectangles();
 		}
 
@@ -231,6 +260,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task OnFrameModeChanged(bool frameModeEnabled)
 		{
+			UpdateState();
 			await _initializationTaskTcs.Task;
 			await this.JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setFrameMode", _componentId, frameModeEnabled);
 		}
@@ -238,6 +268,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task OnCurrentTaskChanged()
 		{
 			await _currentPositionFrameRendered.WaitAsync();
+
+			_lastFrameRendered = null;
+			_currentPositionFrameRendered.Reset();
+
+			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetFrameImage", new object[] { _componentId });
+
 			UpdateRectangles();
 		}
 
@@ -433,6 +469,89 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose", new object[] { _componentId });
 
 			base.Dispose(disposing);
+		}
+	}
+
+	public class RenderQueueHelper<T>
+	{
+		private List<(Func<T, Task>, T args)> _queue = new List<(Func<T, Task>, T args)>();
+		private object _operationsLock = new object();
+		private bool _queueIsRunning = false;
+		public Action WaitStartCallback { get; set; }
+		public Action WaitCompleteCallback { get; set; }
+		public int WaitCallbackDelay { get; set; } = 100;
+
+		public void SetRenderWaitCallback(Action start, Action complete, int delay)
+		{
+			WaitStartCallback = start;
+			WaitCompleteCallback = complete;
+			WaitCallbackDelay = 200;
+		}
+
+		public void Enqueue(Func<T, Task> action, T args)
+		{
+			lock (_operationsLock)
+			{
+				if (_queue.Count == 0)
+				{
+					_queue.Add((action, args));
+					RunQueue();
+				}
+				else if (_queue.Count == 1)
+				{
+					_queue.Add((action, args));
+				}
+				else
+				{
+					_queue.RemoveAt(1);
+					_queue.Add((action, args));
+				}
+			}
+		}
+
+		private async Task RunQueue()
+		{
+			_queueIsRunning = true;
+			RunWaitStartCallback();
+			while (true)
+			{
+				(Func<T, Task>, T) item;
+				lock (_operationsLock)
+				{
+					var nextExists = _queue.Any();
+					if (!nextExists)
+					{
+						break;
+					}
+					else
+					{
+						item = _queue.First();
+					}
+				}
+
+				await item.Item1.Invoke(item.Item2);
+
+				lock (_operationsLock)
+				{
+					_queue.RemoveAt(0);
+				}
+			}
+			RunWaitCompleteCallback();
+			_queueIsRunning = false;
+		}
+
+		private void RunWaitCompleteCallback()
+		{
+			WaitCompleteCallback?.Invoke();
+		}
+
+		private async Task RunWaitStartCallback()
+		{
+			await Task.Delay(WaitCallbackDelay);
+			if (_queueIsRunning)
+			{
+				WaitStartCallback?.Invoke();
+			}
 		}
 	}
 

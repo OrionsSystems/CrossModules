@@ -2,21 +2,29 @@
 
 @inherits TaggingSurfaceBase
 
-<div class="tagging-surface-container" id="@this.ComponentIdHtml">
-	<div class="tagging-surface-child-content">
-		@ChildContent
+	<div class="tagging-surface-container" id="@this.ComponentIdHtml">
+		<div class="tagging-surface-child-content">
+			@ChildContent
+		</div>
+
+		@if (MediaDataStore.Data.MediaInstances?.Count == 1)
+		{
+			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]" />
+			<canvas class="tagging-canvas">
+			</canvas>
+			@if (CurrentFrameIsRendering)
+			{
+				<div class="tagging-surface-overlay transparent">
+					<div class="overlay-message">
+						@("Loading frame image...")
+					</div>
+					<DotsLoader CssClass="tagging-surface-overlay-dots-loader" />
+				</div>
+			}
+		}
+		else if (MediaDataStore.Data.MediaInstances?.Count == 2)
+		{
+			<div> *** comparative tagging is not yet implemented *** </div>
+		}
+
 	</div>
-
-	@if (MediaDataStore.Data.MediaInstances?.Count == 1)
-	{
-			<MediaComponent Media="@MediaDataStore.Data.MediaInstances[0]"
-							/>
-		<canvas class="tagging-canvas">
-		</canvas>
-	}
-	else if (MediaDataStore.Data.MediaInstances?.Count == 2)
-	{
-		<div> *** comparative tagging is not yet implemented *** </div>
-	}
-
-</div>

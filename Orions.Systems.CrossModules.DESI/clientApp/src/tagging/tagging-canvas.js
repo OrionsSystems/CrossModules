@@ -74,6 +74,14 @@ window.Orions.TaggingSurface = {
 			return surface.updateFrameImage(imageBase64);
 		}
 	},
+
+	resetFrameImage: function (componentId) {
+		let surface = this.surfaces[componentId];
+		if (isDefined(surface)) {
+			return surface.resetFrameImage();
+		}
+	},
+
 	setFrameMode: function (componentId, visible) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
@@ -451,6 +459,12 @@ class TaggingSurface {
 
 		self.updateFrameImage = function (imageBase64) {
 			return updateFrameImageOnCanvas(imageBase64);
+		}
+
+		self.resetFrameImage = function () {
+			if (self.raster != null) {
+				self.raster.remove();
+			}
 		}
 
 		self.setViewPosition = function (relativeX, relativeY) {

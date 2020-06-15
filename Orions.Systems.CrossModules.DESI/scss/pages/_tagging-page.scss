@@ -226,6 +226,37 @@
 		align-items: center;
 		position: relative;
 
+		.tagging-surface-overlay {
+			position: absolute !important;
+			top: #{$player-frame-counter-height};
+			left: 0;
+			width: 100%;
+			height: calc(100% - #{$player-control-bar-height} - #{$player-frame-counter-height});
+			z-index: 9999;
+			background: rgba(0, 0, 0, 1);
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+
+			$red: #de0000;
+
+			.overlay-message {
+				margin-bottom: 12px;
+				color: $red;
+				font-weight: 500;
+			}
+
+			.tagging-surface-overlay-dots-loader .sk-flow-dot {
+				background-color: $red;
+			}
+
+			&.transparent {
+				background: rgba(245, 245, 245, 0.2);
+			}
+		}
+
 		.tagging-canvas {
 			position: absolute;
 			width: 100%;
