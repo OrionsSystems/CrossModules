@@ -235,10 +235,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, _componentId });
 				_initializationTaskTcs.SetResult(true);
+				await OnFrameModeChanged(MediaDataStore.Data.FrameModeEnabled);
 			}
 			_initializationSemaphore.Release();
 
-			await OnFrameModeChanged(MediaDataStore.Data.FrameModeEnabled);
 		}
 
 		public void OnTagPositionOrSizeChanged(Rectangle rectangle)
