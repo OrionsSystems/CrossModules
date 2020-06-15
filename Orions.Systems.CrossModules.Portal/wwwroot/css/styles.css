@@ -223,6 +223,14 @@ body.highcontrast #dockSidebar {
   top: 7px;
   left: 21px; }
 
+img.nav-img-src {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  filter: invert(100%);
+  top: 6px;
+  left: 21px; }
+
 .mdc-list-item--selected .material-icons {
   left: 18px; }
 

@@ -51,11 +51,7 @@ namespace Orions.Systems.CrossModules.Portal
 
 			foreach (var mod in Solution.VisibleModules)
 			{
-				var imgSrc = mod.ImageSourceProp.Value?.DataAsBase64();
-				if (imgSrc != null)
-				{
-					imgSrc = $"data:image/png;base64, {imgSrc}";
-				}
+				var imgSrc = mod.ImageSourceProp.Value?.DataBase64Link;
 
 				NavItems.Add(
 					new NavMenuItem
