@@ -1,0 +1,11 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits SolutionExplorerControlBase
+
+<div class="solution-explorer-container">
+
+	@if (SelectedItem != null) { 
+		<SharedCardsExplorerControl SelectedItem="@SelectedItem"></SharedCardsExplorerControl>
+	}
+</div>
+

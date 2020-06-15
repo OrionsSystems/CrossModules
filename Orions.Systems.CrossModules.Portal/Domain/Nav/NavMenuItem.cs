@@ -20,6 +20,6 @@ namespace Orions.Systems.CrossModules.Portal
 
 		public bool EnableLeftMenu { get; set; }
 
-		public bool ForceReload { get; set; } = true;
+		public bool ForceReload { get; set; }
 	}
 }

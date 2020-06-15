@@ -1,0 +1,154 @@
+﻿
+@mixin shared-card-control-common {
+	padding: 2px 3px;
+	margin: auto 0;
+}
+
+.shared-card-explorer-control-container {
+
+	.shared-card-control-row {
+		margin: 0;
+		padding: 0;
+
+		.shared-card-control-refresh {
+			@include shared-card-control-common;
+		}
+
+		.shared-card-control-time-range {
+			@include shared-card-control-common;
+		}
+
+		.shared-card-control-search {
+			@include shared-card-control-common;
+		}
+
+		.shared-card-control-toggle {
+			@include shared-card-control-common;
+		}
+
+		.shared-card-container {
+			.brd-creator {
+				background-color: orange;
+			}
+
+			.brd-item-creator {
+				background-color: green;
+			}
+
+			.crd-tab-creator {
+				background-color: red;
+			}
+		}
+	}
+}
+
+/* SIDEBAR  */
+
+.sidebar-content.e-content-animation {
+	transform: none !important;
+}
+
+/* Left Sidebar */
+
+.left-sidebar-container {
+	width: 320px;
+	height: 100%;
+	position: relative;
+	background-color: #ebeaea73;
+}
+
+.left-sidebar {
+	position: absolute;
+	/*   width: calc(320px - 62px);*/
+	width: 100%;
+}
+
+
+.menu-items-container {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+.side-item {
+	flex-grow: 1;
+	margin: 0px 3px;
+	padding: 2px 0;
+	width: 100%;
+
+	.side-item-container {
+		display: flex;
+		padding: 3px;
+
+		.side-item-main {
+			flex-grow: 1;
+
+			.side-item-lbl {
+				text-align: center;
+				font-size: 17px;
+				font-weight: 400;
+				min-height: 17px;
+			}
+
+			.side-item-desc {
+				text-align: center;
+				font-size: 12px;
+				font-style: italic;
+				letter-spacing: 0.5px;
+				min-height: 12px;
+			}
+		}
+
+		.side-item-action {
+			display: flex;
+			margin: auto 0;
+
+			.cmd-properties {
+				opacity: 0.3;
+				transition: 0.5s;
+				padding: 0 2px;
+				display: flex;
+			}
+
+			.cmd-tab {
+				padding: 5px 10px;
+				border-left: 1px solid black;
+				background-color: #f6f6f6;
+				transition: 0.5s;
+
+				&:hover {
+					background-color: #bbbce3;
+					border: none;
+					transition: 0.5s;
+				}
+			}
+		}
+
+		&:hover {
+			cursor: pointer;
+
+			.cmd-properties {
+				opacity: 1;
+				transition: 0.5s;
+			}
+		}
+	}
+
+	.brd-default {
+		border: 1px solid #808080;
+		border-radius: 5px;
+
+		&:hover {
+			background-color: #d1d1d1;
+		}
+	}
+
+	.brd-creator {
+		background-color: #C0DE14;
+
+		&:hover {
+			background-color: #d1d1d1;
+		}
+	}
+}
+
+

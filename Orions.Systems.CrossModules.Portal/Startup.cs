@@ -67,6 +67,8 @@ namespace Orions.Systems.CrossModules.Portal
 				config.VisibleStateDuration = 3000;
 			});
 
+			services.AddScoped<SolutionVmEx>();
+
 			// Custom AuthenticationState provider
 			services.AddScoped<AuthenticationStateProvider, CustomAuthenticationStateProvider>();
 			services.AddScoped<CustomSettingsProvider>();

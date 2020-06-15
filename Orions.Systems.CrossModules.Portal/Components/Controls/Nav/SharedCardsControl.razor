@@ -1,0 +1,28 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits SharedCardsControlBase
+
+<div class="shared-card-container">
+
+	@if (CreateItemsSource != null && CreateItemsSource.Any())
+	{
+		<div class="menu-items-container">
+			@foreach (var item in CreateItemsSource)
+			{
+				<CardHostControl Source="@item"></CardHostControl>
+			}
+		</div>
+	}
+
+	@if (ItemsSource != null && ItemsSource.Any())
+	{
+		<div class="menu-items-container">
+			@foreach (var src in ItemsSource)
+			{
+				<CardHostControl Source="@src"></CardHostControl>
+			}
+		</div>
+	}
+
+</div>
+

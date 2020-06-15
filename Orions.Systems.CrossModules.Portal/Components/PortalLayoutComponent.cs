@@ -10,7 +10,7 @@ using Orions.Systems.CrossModules.Portal.Services;
 using Orions.Systems.CrossModules.Components;
 using Orions.SDK;
 
-namespace Orions.Systems.CrossModules.Portal.Domain
+namespace Orions.Systems.CrossModules.Portal.Components
 {
 	public class PortalLayoutComponent : LayoutComponentBase
 	{
@@ -26,6 +26,7 @@ namespace Orions.Systems.CrossModules.Portal.Domain
 		[Inject]
 		protected CustomSettingsProvider CustomSettingsProvider { get; set; }
 
+		[Inject]
 		protected SolutionVmEx Solution { get; set; }
 
 		protected string VersionLabel { get; set; }
@@ -40,7 +41,9 @@ namespace Orions.Systems.CrossModules.Portal.Domain
 		{
 			await base.OnInitializedAsync();
 
-			Solution = new SolutionVmEx();
+			if (Solution == null) {
+				Solution = new SolutionVmEx();
+			}
 
 			Solution.EntityProp.Value = new SolutionEntity();
 
