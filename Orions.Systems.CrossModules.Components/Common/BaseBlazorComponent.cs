@@ -55,7 +55,7 @@ namespace Orions.Systems.CrossModules.Components
 			}
 		}
 
-		protected override void OnDataContextAssigned(BaseVm dataContext)
+		protected override void OnDataContextAssigned(object dataContext)
 		{
 			base.OnDataContextAssigned(dataContext);
 		}
@@ -63,10 +63,10 @@ namespace Orions.Systems.CrossModules.Components
 
 	public class BaseBlazorComponent : BaseOrionsComponent
 	{
-		BaseVm _dataContext;
+		object _dataContext;
 
 		[Parameter]
-		public BaseVm DataContext
+		public object DataContext
 		{
 			get
 			{
@@ -80,7 +80,11 @@ namespace Orions.Systems.CrossModules.Components
 
 				if (_dataContext != null)
 				{
-					_dataContext.PropertyChanged -= DataContext_PropertyChanged;
+
+					var baseVm = (BaseVm)value;
+					if (baseVm != null)
+						baseVm.PropertyChanged -= DataContext_PropertyChanged;
+
 					if (_dataContext is BlazorVm blazorVmPrevious)
 						blazorVmPrevious.OwnerComponent = null;
 				}
@@ -88,7 +92,9 @@ namespace Orions.Systems.CrossModules.Components
 				_dataContext = value;
 				if (value != null)
 				{
-					value.PropertyChanged += DataContext_PropertyChanged;
+					var baseVm = (BaseVm)_dataContext;
+					if (baseVm != null)
+						baseVm.PropertyChanged += DataContext_PropertyChanged;
 				}
 
 				OnDataContextAssigned(value);
@@ -108,7 +114,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		protected virtual void OnDataContextAssigned(BaseVm dataContext)
+		protected virtual void OnDataContextAssigned(object dataContext)
 		{
 			if (dataContext is IBlazorVm blazorVm)
 				blazorVm.OwnerComponent = this;

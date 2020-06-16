@@ -14,7 +14,7 @@ namespace Orions.Systems.CrossModules.Components
 		{
 		}
 
-		protected override void OnDataContextAssigned(BaseVm dataContext)
+		protected override void OnDataContextAssigned(object dataContext)
 		{
 			base.OnDataContextAssigned(dataContext);
 
