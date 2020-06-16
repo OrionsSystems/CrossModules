@@ -14,6 +14,19 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		[Inject]
 		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
+		[Inject]
+		public MissionsViewModel MissionsViewModel
+		{
+			get
+			{
+				return Vm;
+			}
+			set
+			{
+				Vm = value;
+			}
+		}
+
 		protected override async Task OnInitializedAsyncSafe()
 		{
 			await Initialize();

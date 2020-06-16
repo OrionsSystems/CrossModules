@@ -32,14 +32,14 @@
 						  IntermediateElementsMarkers="IntermediateElementsMarkers"
 						  CurrentSelectedTrackingSequenceBoundaries="CurrentSelectedTrackingSequenceBoundaries"
 						/>
-	@if (((IsVideoLoading || IsVideoBuffering) && !Paused))
+	@if ((IsVideoBuffering && !Paused) || IsVideoLoading)
 	{
 		var bufferingClass = IsVideoBuffering ? "transparent" : "";
 		<div class="tagging-surface-overlay @bufferingClass">
 			<div class="overlay-message">
 				@if (IsVideoLoading || IsVideoBuffering)
 				{
-				@("Buffering video...")
+					@("Buffering video...")
 				}
 			</div>
 			<DotsLoader CssClass="tagging-surface-overlay-dots-loader"/>

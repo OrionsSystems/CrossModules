@@ -80,6 +80,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TrackingDataWizard
 			_dataStoreSubscriptions.Add(TrackingDataStore.DataChanged.Subscribe(_ => UpdateState()));
 			_dataStoreSubscriptions.Add(TrackingDataStore.Data.GetPropertyChangedObservable()
 				.Subscribe(_ => UpdateState()));
+
 			_dataStoreSubscriptions.Add(TagsStore.SelectedTagsUpdated.Subscribe(_ => UpdateState()));
 			_dataStoreSubscriptions.Add(TaskDataStore.CurrentTaskChanged.Subscribe(_ => UpdateState()));
 		}
