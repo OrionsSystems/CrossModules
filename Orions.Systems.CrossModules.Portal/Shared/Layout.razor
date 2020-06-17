@@ -1,8 +1,8 @@
-﻿@inherits LayoutBase
-
-@using Orions.Systems.CrossModules.Portal.Providers
+﻿@using Orions.Systems.CrossModules.Portal.Providers
 @using Syncfusion.EJ2.Blazor.SplitButtons
 @using Syncfusion.EJ2.Blazor.Navigations
+
+@inherits LayoutBase
 
 <Toast @ref="ToastRef"></Toast>
 
@@ -72,6 +72,29 @@
 				</div>
 			</div>
 		}
+
+		@if (Solution != null && Solution.PropertyControlVisibleProp.Value)
+		{
+			<div class="dashboard-modal modal fade show" id="propertyModal" tabindex="-1" role="dialog" style="display: block;">
+				<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-body">
+							<PropertyGrid Vm="@PropertyGridVm"
+											  Loader="@LoadPropertyGrid"
+											  OkCommand="@OKPropertiesCommand"
+											  CancelCommand="@CancelPropertiesCommand"
+											  OKVisible="@Solution.OKPropertiesCommandVisibleProp.Value"
+											  CancelVisible="@Solution.CancelPropertiesCommandVisibleProp.Value"
+											  HyperStore="@Solution.PropertyControlHyperStoreProp.Value">
+							</PropertyGrid>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-backdrop fade show"></div>
+		}
+
 
 	</CascadingValue>
 </CascadingValue>

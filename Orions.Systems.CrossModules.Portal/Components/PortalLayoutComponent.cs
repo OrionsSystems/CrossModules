@@ -47,6 +47,8 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 			Solution.EntityProp.Value = new SolutionEntity();
 
+			Solution.OnStateChanged += ReloadState;
+
 			CurrentTheme = await GetTheme();
 
 			var uri = NavigationManager.ToAbsoluteUri(NavigationManager.Uri);
@@ -79,6 +81,9 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			return theme;
 		}
 
-		
+		private void ReloadState()
+		{
+			StateHasChanged();
+		}
 	}
 }

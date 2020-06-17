@@ -36,7 +36,7 @@
 				<!-- Properties button, wrapped in a border so we can use ShowPropertiesProp AND autoHideStyle-->
 				@if (Source?.ShowPropertiesProp.Value ?? false)
 				{
-					<a class="cmd cmd-properties">
+					<a class="cmd cmd-properties" @onclick="@OnPropertyClick">
 						<MatIcon Icon="@MatIconNames.Settings"></MatIcon>
 					</a>
 				}

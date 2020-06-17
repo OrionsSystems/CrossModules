@@ -13,12 +13,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Orions.Systems.CrossModules.Components;
 
 namespace Orions.Systems.CrossModules.Portal
 {
-	public class LayoutBase : PortalLayoutComponent
+	public partial class LayoutBase : PortalLayoutComponent
 	{
-
 		protected List<NavMenuItem> NavItems = new List<NavMenuItem>
 		{
 			new NavMenuItem{ Address="", Label="Home", Alias="properties", MatIcon=MatIconNames.Home },
@@ -36,6 +36,8 @@ namespace Orions.Systems.CrossModules.Portal
 
 		protected EjsSidebar dockSidebarInstance { get; set; }
 
+		public PropertyGridVm PropertyGridVm { get; set; } = new PropertyGridVm();
+
 		protected override async Task OnInitializedAsync()
 		{
 			await base.OnInitializedAsync();
@@ -43,13 +45,45 @@ namespace Orions.Systems.CrossModules.Portal
 			MappingModuleToNavigation();
 
 			SelectedNavItem = FindNavItem();
+
+			var modVm = SelectedNavItem?.Source;
+			if (modVm != null)
+			{
+				modVm.SelectedCommand.Execute(null);
+			}
+		}
+
+		protected Task<object> LoadPropertyGrid()
+		{
+			PropertyGridVm.CleanSourceCache();
+			return Task.FromResult<object>(Solution.PropertyControlValueProp.Value);
+		}
+
+		protected void OKPropertiesCommand()
+		{
+			Solution.OKPropertiesCommand.Execute(null);
+			OnClosePropertyGrid();
+		}
+
+		protected void CancelPropertiesCommand()
+		{
+			Solution.CancelPropertiesCommand.Execute(null);
+			OnClosePropertyGrid();
+		}
+
+		private void OnClosePropertyGrid()
+		{
+			if (PropertyGridVm != null)
+				PropertyGridVm.CleanSourceCache();
+
+			StateHasChanged();
 		}
 
 		private void MappingModuleToNavigation()
 		{
-			if (Solution != null && !Solution.VisibleModules.Any()) return;
+			if (Solution != null && !Solution.ActiveModules.Any()) return;
 
-			foreach (var mod in Solution.VisibleModules)
+			foreach (var mod in Solution.ActiveModules)
 			{
 				var imgSrc = mod.ImageSourceProp.Value?.DataBase64Link;
 
@@ -72,7 +106,7 @@ namespace Orions.Systems.CrossModules.Portal
 		{
 			var currentaddress = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).ToString();
 
-			if (string.IsNullOrWhiteSpace(currentaddress)) return null;
+			if (string.IsNullOrWhiteSpace(currentaddress)) return NavItems.FirstOrDefault(it => string.IsNullOrWhiteSpace(it.Address));
 
 			var data = NavItems.Where(it => currentaddress.Contains(string.IsNullOrWhiteSpace(it.Alias) ? it.Address : it.Alias)).FirstOrDefault();
 
