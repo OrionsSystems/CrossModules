@@ -24,6 +24,7 @@ using Orions.Systems.Desi.Common.Util;
 using Orions.Systems.CrossModules.Components.Desi.Infrastructure;
 using System.Runtime.CompilerServices;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
+using Orions.Systems.Desi.Common.Tracking;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -66,6 +67,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public IMediaDataStore MediaDataStore { get; set; }
 
 		[Inject]
+		public ITrackingDataStore TrackingDataStore { get; set; }
+
+		[Inject]
 		public ITaskDataStore TaskDataStore { get; set; }
 
 		[Inject]
@@ -82,16 +86,12 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				lock (_rectanglesSetterLock)
 				{
-					QueueUpdateTagsOnClient(value);
+					_tagsClientUpdateQueue.Enqueue(UpdateTagsOnClient, value);
 				}
 			}
 		}
 
 		private RenderQueueHelper<List<Rectangle>> _tagsClientUpdateQueue = new RenderQueueHelper<List<Rectangle>>();
-		private void QueueUpdateTagsOnClient(List<Rectangle> newCollection)
-		{
-			_tagsClientUpdateQueue.Enqueue(UpdateTagsOnClient, newCollection);
-		}
 
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
@@ -282,6 +282,13 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 					var trackingRectangles = new List<Rectangle>(
 						tags.Where(t => t.IsSelected && (t.TrackingSequence?.Elements?.Any(e => e.HyperId.Equals(position)) ?? false)).SelectMany(t => t.TrackingSequence.Elements.Where(e => e.HyperId.Equals(position))).Select(ConvertToTrackingSequenceRectangle));
 
+
+					var currentTrackingSequenceElement = TrackingDataStore?.Data?.CurrentTrackingSequenceElement;
+					if (currentTrackingSequenceElement != null)
+					{
+						trackingRectangles.Add(ConvertToTrackingSequenceRectangle(currentTrackingSequenceElement));
+					}
+
 					return tagRectangles.Concat(trackingRectangles).ToList();
 				}
 				else if (TaskDataStore.Data.CurrentTask.ContentMode == ContentModes.Image || TaskDataStore.Data.CurrentTask.IsComparative())
@@ -383,7 +390,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						if (oldTag != null && !oldTag.Equals(newTag))
 						{
 							rectanglesUpdateRequest.Updates.Add(newTag);
-							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
 						}
 					}
 
@@ -397,7 +403,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						else
 						{
 							rectanglesUpdateRequest.Removals.Add(oldTag);
-							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
 						}
 					}
 
@@ -411,7 +416,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 						else
 						{
 							rectanglesUpdateRequest.Addings.Add(newTag);
-							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
 						}
 					}
 
