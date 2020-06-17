@@ -23,11 +23,6 @@
 	protected override void OnInitializedSafe()
 	{
 		ContainerTabSet.AddTab(this);
-
-		if (Active)
-		{
-			Activate();
-		}
 	}
 
 	public void Dispose()
@@ -35,7 +30,7 @@
 		ContainerTabSet.RemoveTab(this);
 	}
 
-	void Activate()
+	public void Activate()
 	{
 		ContainerTabSet.SetActivateTab(this);
 	}

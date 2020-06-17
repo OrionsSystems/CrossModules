@@ -1,14 +1,15 @@
 ﻿@using Orions.Systems.Desi.Core.ViewModels;
-@using Orions.Systems.Desi.Common.Models; 
-@using Orions.Common; 
-@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent
+@using Orions.Systems.Desi.Common.Models;
+@using Orions.Common;
+@*@inherits Orions.Systems.CrossModules.Components.Desi.Infrastructure.BaseComponent*@
+@inherits Orions.Systems.CrossModules.Desi.Infrastructure.BaseViewModelComponent<TrackingSequenceElementViewModel>
 
 <div class="tag-thumbnail-container">
 	<div class="position-label">
-		Position: (@Vm?.Element.HyperId.FragmentIdSimple : @Vm?.Element.HyperId.SliceIdSimple)
+		Position: (@Vm?.Element?.HyperId.FragmentIdSimple : @Vm?.Element?.HyperId.SliceIdSimple)
 	</div>
 	<div class="tag-thumbnail">
-		<img src="@(Vm?.Thumbnail != null ? UniImage.ConvertByteArrayToBase64Url(Vm.Thumbnail) : "")" class="img-no-error"/>
+		<img src="@(Vm?.Thumbnail != null ? UniImage.ConvertByteArrayToBase64Url(Vm.Thumbnail) : "")" class="img-no-error" />
 	</div>
 </div>
 
@@ -28,7 +29,7 @@
 		{
 			SetProperty(ref _trackingSequenceElement, value, () =>
 			{
-				if(value != null)
+				if (value != null)
 				{
 					Vm = new TrackingSequenceElementViewModel(TrackingSequenceElement,
 						DependencyResolver.GetFrameCacheService(),
@@ -42,6 +43,4 @@
 			});
 		}
 	}
-
-	protected TrackingSequenceElementViewModel Vm { get; set; }
 }

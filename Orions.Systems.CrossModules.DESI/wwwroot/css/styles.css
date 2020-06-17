@@ -10,6 +10,8 @@ body {
   flex-direction: column;
   height: 100%;
   overflow: hidden; }
+  .main *:focus {
+    outline: none; }
 
 .top-row {
   width: 100%;
@@ -1099,7 +1101,7 @@ body {
       .tagging-page-container .tagging-surface-container .tagging-surface-overlay .tagging-surface-overlay-dots-loader .sk-flow-dot {
         background-color: #de0000; }
       .tagging-page-container .tagging-surface-container .tagging-surface-overlay.transparent {
-        background: rgba(245, 245, 245, 0.2); }
+        background: rgba(245, 245, 245, 0.05); }
     .tagging-page-container .tagging-surface-container .tagging-canvas {
       position: absolute;
       width: 100%;
