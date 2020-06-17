@@ -9,7 +9,8 @@ using Orions.Systems.Desi.Common.Util;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	public class SharedCardsExplorerControlBase : BaseBlazorComponent
+	[ViewModel(typeof(LevelModuleVm), true)]
+	public partial class SharedCardsExplorerControl : BaseBlazorComponent
 	{
 		protected LevelModuleVm Context
 		{

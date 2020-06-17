@@ -8,10 +8,9 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	public class CardHostControlBase : BaseBlazorComponent
+	public partial class CardHostControl : BaseBlazorComponent
 	{
-
-		public CardControlVm CardControl { get; private set; }
+		public CardControlVm CardVm { get; private set; }
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -34,11 +33,11 @@ namespace Orions.Systems.CrossModules.Portal.Components
 		{
 			if (DataContext is NavigationEntryVm entryVm)
 			{
-				CardControl = new CardControlVm(entryVm);
-				CardControl.StartingItem += Vm_StartingItem;
+				CardVm = new CardControlVm(entryVm);
+				CardVm.StartingItem += Vm_StartingItem;
 			}
-			else { 
-			
+			else {
+				CardVm = null;
 			}
 		}
 

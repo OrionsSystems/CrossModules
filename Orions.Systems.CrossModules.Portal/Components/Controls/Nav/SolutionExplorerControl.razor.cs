@@ -10,7 +10,7 @@ using Orions.Systems.CrossModules.Portal.Services;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	public class SolutionExplorerControlBase : BaseOrionsComponent
+	public partial class SolutionExplorerControl : BaseOrionsComponent
 	{
 		[CascadingParameter]
 		protected SolutionVmEx Solution { get; set; }
