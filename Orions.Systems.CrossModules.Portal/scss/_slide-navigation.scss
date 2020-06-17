@@ -22,6 +22,10 @@ $leftSideBarWidth: 350px;
 
 		.shared-card-control-search {
 			@include shared-card-control-common;
+
+			.form-control {
+				height: 30px;
+			}
 		}
 
 		.shared-card-control-toggle {

@@ -40,9 +40,15 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			await base.OnInitializedAsync();
 		}
 
+		protected void OnPropertyClick()
+		{
+			var cmd = Source.EventHandler.ItemPropertiesCommand;
+			cmd.Execute(Source);
+			StateHasChanged();
+		}
+
 		protected string GetCustomStatusBackgroudColor()
 		{
-
 			if (Source.HasCustomStatusBrushProp.Value)
 			{
 				var color = Source.CustomStatusBrushProp.Value;

@@ -3,8 +3,6 @@
 
 @inject NavigationManager navManager
 
-
-
 <MatNavMenu Class="mat-nav">
 
 	@if (Items != null && Items.Any())
@@ -56,11 +54,14 @@
 
 	private bool IsSelected(NavMenuItem item)
 	{
-		if (string.IsNullOrWhiteSpace(item.Address) && string.IsNullOrWhiteSpace(item.Alias)) return false;
-
-		var place = string.IsNullOrWhiteSpace(item.Alias) ? item.Address : item.Alias;
-
-		if (CurrentLocation.Contains(place)) return true;
+		if (string.IsNullOrWhiteSpace(item.Address) != true && CurrentLocation.Contains(item.Address))
+		{
+			return true;
+		}
+		if (string.IsNullOrWhiteSpace(item.Address) == true && string.IsNullOrWhiteSpace(CurrentLocation))
+		{
+			return true;
+		}
 
 		return false;
 	}
@@ -68,6 +69,5 @@
 	private async Task OnSelectNavigationItem(NavMenuItem item) {
 		await OnSelect.InvokeAsync(item);
 	}
-
 
 }

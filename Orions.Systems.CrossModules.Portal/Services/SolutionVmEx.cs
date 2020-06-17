@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Orions.Common;
+using Orions.Infrastructure.Common;
+using Orions.Infrastructure.HyperMedia;
+using Orions.Node.Common;
+using Orions.SDK;
+using Orions.Systems.CrossModules.Components;
+
+using System;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Orions.Common;
-using Orions.SDK;
-using Orions.Infrastructure.Common;
-using Orions.Systems.CrossModules.Components;
-using Orions.Node.Common;
-using Orions.Infrastructure.HyperMedia;
 
 namespace Orions.Systems.CrossModules.Portal.Services
 {
@@ -15,6 +15,10 @@ namespace Orions.Systems.CrossModules.Portal.Services
 	public class SolutionVmEx : SolutionVm
 	{
 		private readonly int _overlayShowMessageInterval = 4400;
+
+		public delegate void StateChanged();
+
+		public event StateChanged OnStateChanged;
 
 		public BlazorCommand SaveCommand { get; set; } = new BlazorCommand();
 
@@ -35,13 +39,6 @@ namespace Orions.Systems.CrossModules.Portal.Services
 			Logger.Instance.EntryLogged += Instance_EntryLogged;
 
 			DialogService = new DialogService();
-		}
-
-		public override void BeginInvoke(Action action)
-		{
-			// TODO !?
-			action.Invoke();
-			// Application.Current.Dispatcher.BeginInvoke(action);
 		}
 
 		public override bool CheckAccess()
@@ -101,7 +98,7 @@ namespace Orions.Systems.CrossModules.Portal.Services
 			{
 				// Show intro
 				this.OverlayControlVisibleProp.Value = true;
-				
+
 				//TODO
 			}
 
@@ -168,6 +165,20 @@ namespace Orions.Systems.CrossModules.Portal.Services
 			ShowOverlayNotification("Layout " + value);
 		}
 
+
+		public override async Task BeginInvoke(Action action)
+		{
+			//await Task.Run(action);
+			await Task.Run(() => action());
+			OnStateChanged?.Invoke();
+		}
+
+		public override async Task InvokeAsync(Action action)
+		{
+			//await Task.Run(action);
+			await Task.Run(() => action());
+			OnStateChanged?.Invoke();
+		}
 
 	}
 }
