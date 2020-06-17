@@ -12,7 +12,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		private VmType _vm;
 		private IDisposable _propertyChangedTracker;
 
-		[Inject]
+		// disabled [Inject] attribute on base vm to make it possible to create vms manually (not only with DI)
+		//[Inject]
 		public VmType Vm
 		{
 			get => _vm;

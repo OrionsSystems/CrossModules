@@ -39,7 +39,9 @@ namespace Orions.Systems.CrossModules.Portal.Services
 
 		public override void BeginInvoke(Action action)
 		{
-			throw new NotImplementedException();
+			// TODO !?
+			action.Invoke();
+			// Application.Current.Dispatcher.BeginInvoke(action);
 		}
 
 		public override bool CheckAccess()

@@ -74,6 +74,14 @@ window.Orions.TaggingSurface = {
 			return surface.updateFrameImage(imageBase64);
 		}
 	},
+
+	resetFrameImage: function (componentId) {
+		let surface = this.surfaces[componentId];
+		if (isDefined(surface)) {
+			return surface.resetFrameImage();
+		}
+	},
+
 	setFrameMode: function (componentId, visible) {
 		let surface = this.surfaces[componentId];
 		if (isDefined(surface)) {
@@ -331,26 +339,26 @@ class TaggingSurface {
 			crosshair.move(event.point)
 		}
 
-		self.addTag = function (tag) {
-			let tagwithSameId = self.items.find(t => t.id == tag.id)
-			if (isDefined(tagwithSameId)) {
-				tagwithSameId.remove();
-				self.items.splice(self.items.indexOf(tagwithSameId), 1);
+		self.addRectangle = function (rectangle) {
+			let rectanglewithSameId = self.items.find(t => t.id == rectangle.id)
+			if (isDefined(rectanglewithSameId)) {
+				rectanglewithSameId.remove();
+				self.items.splice(self.items.indexOf(rectanglewithSameId), 1);
 			}
 
-			var newTagVisual = new TagVisual(self.raster.strokeBounds, self.itemsLayer, tag);
-			var tagCoords = getRectangleRealFromProportional(tag, self.raster.strokeBounds);
+			var newRectangleVisual = new TagVisual(self.raster.strokeBounds, self.itemsLayer, rectangle);
+			var rectangleCoords = getRectangleRealFromProportional(rectangle, self.raster.strokeBounds);
 
-			newTagVisual.create(tagCoords.topLeft, tagCoords.bottomRight)
-			newTagVisual.id = tag.id;
+			newRectangleVisual.create(rectangleCoords.topLeft, rectangleCoords.bottomRight)
+			newRectangleVisual.id = rectangle.id;
 
-			if (tag.isSelected) {
-				newTagVisual.select(true);
+			if (rectangle.isSelected) {
+				newRectangleVisual.select(true);
 			}
 
-			self.items.push(newTagVisual)
+			self.items.push(newRectangleVisual)
 
-			newTagVisual.on('selected', function (selectedVisual) {
+			newRectangleVisual.on('selected', function (selectedVisual) {
 				self.componentRef.invokeMethodAsync("TagSelected", selectedVisual.id);
 			})
 
@@ -366,39 +374,39 @@ class TaggingSurface {
 
 				self.componentRef.invokeMethodAsync("TagPositionOrSizeChanged", rect);
 			}
-			newTagVisual.on('moved', resizedOrMovedHandler)
-			newTagVisual.on('resized', resizedOrMovedHandler)
+			newRectangleVisual.on('moved', resizedOrMovedHandler)
+			newRectangleVisual.on('resized', resizedOrMovedHandler)
 		}
 
-		self.updateTag = function (tag) {
-			let tagToUpdate = self.items.find(i => i.id == tag.id);
+		self.updateRectangle = function (rectangle) {
+			let rectangleToUpdate = self.items.find(i => i.id == rectangle.id);
 
-			if (isDefined(tagToUpdate)) {
-				tagToUpdate.update(tag);
+			if (isDefined(rectangleToUpdate)) {
+				rectangleToUpdate.update(rectangle);
 			}
 		}
 
-		self.removeTag = function (tag) {
-			let tagToRemove = self.items.find(i => i.id == tag.id);
+		self.removeRectangle = function (rectangle) {
+			let rectangleToRemove = self.items.find(i => i.id == rectangle.id);
 
-			if (isDefined(tagToRemove)) {
-				tagToRemove.remove();
+			if (isDefined(rectangleToRemove)) {
+				rectangleToRemove.remove();
 
-				self.items.splice(self.items.indexOf(tagToRemove), 1);
+				self.items.splice(self.items.indexOf(rectangleToRemove), 1);
 			}
 		}
 
 		self.updateRectangles = function (updates) {
 			for (let tag of updates.addings) {
-				self.addTag(tag);
+				self.addRectangle(tag);
 			}
 
 			for (let tag of updates.updates) {
-				self.updateTag(tag);
+				self.updateRectangle(tag);
 			}
 
 			for (let tag of updates.removals) {
-				self.removeTag(tag);
+				self.removeRectangle(tag);
 			}
 		}
 
@@ -451,6 +459,12 @@ class TaggingSurface {
 
 		self.updateFrameImage = function (imageBase64) {
 			return updateFrameImageOnCanvas(imageBase64);
+		}
+
+		self.resetFrameImage = function () {
+			if (self.raster != null) {
+				self.raster.remove();
+			}
 		}
 
 		self.setViewPosition = function (relativeX, relativeY) {

@@ -31,4 +31,12 @@
 		<ProjectReference Include="..\Orions.Systems.CrossModules.Components\Orions.Systems.CrossModules.Components.Debug.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\activity-white.png" LogicalName="activity-white.png" />
+		<EmbeddedResource Include="Resources\Data_icon.png" LogicalName="Data_icon.png" />
+		<EmbeddedResource Include="Resources\Embedded_icon.png" LogicalName="Embedded_icon.png" />
+		<EmbeddedResource Include="Resources\fav_white.png" LogicalName="fav_white.png" />
+		<EmbeddedResource Include="Resources\Tools_icon.png" LogicalName="Tools_icon.png" />
+	</ItemGroup>
+
 </Project>

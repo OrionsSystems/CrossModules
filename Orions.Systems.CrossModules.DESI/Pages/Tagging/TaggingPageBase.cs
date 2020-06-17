@@ -14,12 +14,15 @@ using Microsoft.JSInterop;
 using Orions.Systems.Desi.Common.Services;
 using Orions.Systems.CrossModules.Components.Desi.Services;
 using Orions.Systems.Desi.Common.Util;
+using Orions.Systems.Desi.Common.Models;
+using Orions.Systems.Desi.Common.Extensions;
+using Orions.Systems.CrossModules.Desi.Components.TabSet;
 
 namespace Orions.Systems.CrossModules.Desi.Pages
 {
 	public class TaggingPageBase : BaseViewModelComponent<TaggingViewModel>
 	{
-		private List<IDisposable> _subscriptions = new List<IDisposable>();
+		protected override bool AutoWirePropertyChangedListener => false;
 		protected TaggingSurface TaggingSurface;
 
 		[Inject]
@@ -34,14 +37,29 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		[Inject]
 		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
+		[Inject]
+		public TaggingViewModel AuthenticationViewModel
+		{
+			get
+			{
+				return Vm;
+			}
+			set
+			{
+				Vm = value;
+			}
+		}
+
+		protected Tab TrackingTab { get; set; }
+		protected Tab TagsTab { get; set; }
+
 		protected override async Task OnInitializedAsyncSafe()
 		{
-			//this.Vm.SlicePositionBiasHalfRange = 5;
-
-			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));
-			_subscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => this.UpdateState()));
-
-			_subscriptions.Add(KeyboardListener.CreateSubscription()
+			_dataStoreSubscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskChanged.Subscribe(_ => this.UpdateState()));
+			_dataStoreSubscriptions.Add(TaggingSystem.TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => this.UpdateState()));
+			_dataStoreSubscriptions.Add(TaggingSystem.TagsStore.SelectedTagsUpdated.Subscribe(tags => this.OnSelectedTagsUpdated(tags)));
+			_dataStoreSubscriptions.Add(TaggingSystem.TrackingDataStore.TrackingSequenceCreatedForTag.Subscribe(_ => this.TagsTab.Activate()));
+			_dataStoreSubscriptions.Add(KeyboardListener.CreateSubscription()
 				.AddShortcut(Key.T, () => Vm.ActivateTagonomyExecutionCommand.Execute(null))
 				.AddShortcut(Key.N, () => Vm.ConfirmCurrentTaskTagsCommand.Execute(null))
 				.AddShortcut(Key.P, () => Vm.GoPreviousTaskCommand.Execute(null))
@@ -51,7 +69,13 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 				}));
 		}
 
-		protected override bool AutoWirePropertyChangedListener => false;
+		private void OnSelectedTagsUpdated(IReadOnlyCollection<TagModel> tags)
+		{
+			if ((Vm.CurrentTask?.HasCreateTrackingSequence() ?? false) && tags.All(i => i.TrackingSequence == null))
+			{
+				TrackingTab.Activate();
+			}
+		}
 
 		private List<Action> _afterRenderTasks = new List<Action>();
 
@@ -84,10 +108,6 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		{
 			if (disposing)
 			{
-				foreach(var sub in _subscriptions)
-				{
-					sub.Dispose();
-				}
 				Vm?.Dispose();
 				Vm = null;
 			}

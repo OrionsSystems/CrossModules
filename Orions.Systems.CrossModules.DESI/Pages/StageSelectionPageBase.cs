@@ -17,6 +17,19 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		[Inject]
 		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
+		[Inject]
+		public StageSelectionViewModel AuthenticationViewModel
+		{
+			get
+			{
+				return Vm;
+			}
+			set
+			{
+				Vm = value;
+			}
+		}
+
 		protected override async Task OnInitializedAsyncSafe()
 		{
 			this.Vm.MissionsData.CurrentWorkflow.Stages = new List<PhaseModel>(); // refactor this

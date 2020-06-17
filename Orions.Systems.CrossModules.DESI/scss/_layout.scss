@@ -16,6 +16,10 @@ body{
 	flex-direction: column;
 	height:100%;
 	overflow:hidden;
+
+	*:focus{
+		outline:none;
+	}
 }
 
 .top-row {

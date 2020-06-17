@@ -1,7 +1,7 @@
 ﻿@namespace Orions.Systems.CrossModules.Portal.Pages
 
 @page "/themes"
-@page "/theme/{ThemeId}"
+@page "/themes/{ThemeId}"
 
 @inherits PortalBaseComponent
 
@@ -34,7 +34,7 @@ else
 	private void OnOpenTheme(StyleTheme data)
 	{
 		if (data != null && !string.IsNullOrWhiteSpace(data.Id))
-			NavigationManager.NavigateTo("/theme/" + data.Id, true);
+			NavigationManager.NavigateTo("/themes/" + data.Id, true);
 	}
 
 	private void OnClickBack(bool forceLoad)

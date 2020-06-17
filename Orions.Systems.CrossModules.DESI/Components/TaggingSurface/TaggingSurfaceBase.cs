@@ -47,6 +47,15 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private AsyncManualResetEvent _currentPositionFrameRendered = new AsyncManualResetEvent(false);
 		private AsyncManualResetEvent _rectanglesUpdated = new AsyncManualResetEvent(true);
 
+		private bool _showFrameLoadOverlay = true;
+		public bool CurrentFrameIsRendering
+		{
+			get
+			{
+				return (MediaDataStore?.Data?.FrameModeEnabled ?? false) && _showFrameLoadOverlay;
+			}
+		}
+
 		[Parameter]
 		public EventCallback<TagModel> OnTagSelected { get; set; }
 
@@ -66,7 +75,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		public IActionDispatcher ActionDispatcher { get; set; }
 
 		private object _rectanglesSetterLock = new object();
-		private Queue<List<Rectangle>> _updateTagsOnClientQueue = new Queue<List<Rectangle>>();
 		private List<Rectangle> Rectangles
 		{
 			get => _rectangles;
@@ -79,15 +87,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private bool _rectanglesClientUpdateIsRunning = false;
+		private RenderQueueHelper<List<Rectangle>> _tagsClientUpdateQueue = new RenderQueueHelper<List<Rectangle>>();
 		private void QueueUpdateTagsOnClient(List<Rectangle> newCollection)
 		{
-			_updateTagsOnClientQueue.Enqueue(newCollection);
-
-			if (!_rectanglesClientUpdateIsRunning)
-			{
-				Task.Run(() => UpdateTagsOnClient());
-			}
+			_tagsClientUpdateQueue.Enqueue(UpdateTagsOnClient, newCollection);
 		}
 
 		[Parameter]
@@ -99,12 +102,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			_componentId = Guid.NewGuid().ToString();
 			_componentJsReference = DotNetObjectReference.Create<TaggingSurfaceBase>(this);
-		}
-
-		[JSInvokable]
-		public async Task SurfaceClicked()
-		{
-
 		}
 
 		[JSInvokable]
@@ -136,27 +133,34 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
 
+		private RenderQueueHelper<byte[]> _renderQueueHelper = new RenderQueueHelper<byte[]>();
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
 			await _initializationTaskTcs.Task;
+
+			_renderQueueHelper.Enqueue(RenderFrame, MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage);
+		}
+
+		public async Task RenderFrame(byte[] newFrameImage)
+		{
 			await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.resetZoom", new object[] { _componentId });
 
-			var newFrameImage = MediaDataStore?.Data?.MediaInstances?.FirstOrDefault()?.CurrentPositionFrameImage;
-
-			if (!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, newFrameImage)
-				&& newFrameImage != null)
+			if (!EqualityComparer<byte[]>.Default.Equals(_lastFrameRendered, newFrameImage) && newFrameImage != null)
 			{
 				await _rectanglesUpdated.WaitAsync();
 				_currentPositionFrameRendered.Reset();
 				_lastFrameRendered = newFrameImage;
+
 				await JSRuntime.InvokeVoidAsyncWithPromise("Orions.TaggingSurface.updateFrameImage", new object[] { _componentId, UniImage.ConvertByteArrayToBase64Url(newFrameImage) });
+
 				_currentPositionFrameRendered.Set();
 			}
-			else if(_lastFrameRendered != null)
+			else if (_lastFrameRendered != null)
 			{
 				_currentPositionFrameRendered.Set();
 			}
 
+			UpdateState();
 			UpdateRectangles();
 		}
 
@@ -170,6 +174,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.Add(MediaDataStore.PositionUpdated.Subscribe(_ =>
 			{
+				UpdateState();
 				UpdateRectangles();
 			}));
 			_dataStoreSubscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => OnCurrentPositionFrameImageChanged()));
@@ -208,6 +213,18 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			_dataStoreSubscriptions.AddItem(aggregatedSub);
 
+			_renderQueueHelper.WaitCallbackDelay = 300;
+			_renderQueueHelper.WaitStartCallback = () =>
+			{
+				_showFrameLoadOverlay = true;
+				UpdateState();
+			};
+			_renderQueueHelper.WaitCompleteCallback = () =>
+			{
+				_showFrameLoadOverlay = MediaDataStore.Data.DefaultMediaInstance.CurrentPositionFrameImage == null;
+				UpdateState();
+			};
+
 			UpdateRectangles();
 		}
 
@@ -218,10 +235,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setupTaggingSurface", new object[] { _componentJsReference, _componentId });
 				_initializationTaskTcs.SetResult(true);
+				await OnFrameModeChanged(MediaDataStore.Data.FrameModeEnabled);
 			}
 			_initializationSemaphore.Release();
 
-			await OnFrameModeChanged(MediaDataStore.Data.FrameModeEnabled);
 		}
 
 		public void OnTagPositionOrSizeChanged(Rectangle rectangle)
@@ -237,6 +254,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		private async Task OnFrameModeChanged(bool frameModeEnabled)
 		{
+			UpdateState();
 			await _initializationTaskTcs.Task;
 			await this.JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.setFrameMode", _componentId, frameModeEnabled);
 		}
@@ -244,6 +262,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		private async Task OnCurrentTaskChanged()
 		{
 			await _currentPositionFrameRendered.WaitAsync();
+
 			UpdateRectangles();
 		}
 
@@ -343,82 +362,75 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 		public static TaggingSurfaceBase CurrentTaggingSurface;
 
-		private async Task UpdateTagsOnClient()
+		private async Task UpdateTagsOnClient(List<Rectangle> newRectangleCollection)
 		{
 			try
 			{
-				_rectanglesClientUpdateIsRunning = true;
 				await Task.WhenAll(_initializationTaskTcs.Task, _currentPositionFrameRendered.WaitAsync());
 				_rectanglesUpdated.Reset();
 
-				List<Rectangle> newRectangleCollection = null;
-				while (_updateTagsOnClientQueue.TryPeek(out newRectangleCollection))
+				try
 				{
-					try
+					await _updateTagsClientSemaphore.WaitAsync();
+
+					var oldRectangleCollection = _rectangles;
+
+					var rectanglesUpdateRequest = new RectanglesUpdateRequest();
+					// update tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						await _updateTagsClientSemaphore.WaitAsync();
-
-						var oldRectangleCollection = _rectangles;
-
-						var rectanglesUpdateRequest = new RectanglesUpdateRequest();
-						// update tags
-						foreach (var newTag in newRectangleCollection)
+						var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
+						if (oldTag != null && !oldTag.Equals(newTag))
 						{
-							var oldTag = oldRectangleCollection.SingleOrDefault(t => t.Id == newTag.Id);
-							if (oldTag != null && !oldTag.Equals(newTag))
-							{
-								rectanglesUpdateRequest.Updates.Add(newTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
-							}
+							rectanglesUpdateRequest.Updates.Add(newTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateTag", new object[] { _componentId, newTag });
 						}
-
-						// remove removed tags
-						foreach (var oldTag in oldRectangleCollection)
-						{
-							if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
-							{
-								continue;
-							}
-							else
-							{
-								rectanglesUpdateRequest.Removals.Add(oldTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
-							}
-						}
-
-						// add newly added tags
-						foreach (var newTag in newRectangleCollection)
-						{
-							if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
-							{
-								continue;
-							}
-							else
-							{
-								rectanglesUpdateRequest.Addings.Add(newTag);
-								//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
-							}
-						}
-
-						await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateRectangles", new object[] { _componentId, rectanglesUpdateRequest });
-
-						_updateTagsOnClientQueue.TryDequeue(out _);
-						_rectangles = newRectangleCollection;
 					}
-					catch (Exception e)
+
+					// remove removed tags
+					foreach (var oldTag in oldRectangleCollection)
 					{
-						Logger.LogException("Exception occured while trying to update tags on the canvas", e);
-						throw;
+						if (newRectangleCollection.Any(t => t.Id == oldTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							rectanglesUpdateRequest.Removals.Add(oldTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.removeTag", new object[] { _componentId, oldTag });
+						}
 					}
-					finally
+
+					// add newly added tags
+					foreach (var newTag in newRectangleCollection)
 					{
-						_updateTagsClientSemaphore.Release();
+						if (oldRectangleCollection.Any(t => t.Id == newTag.Id))
+						{
+							continue;
+						}
+						else
+						{
+							rectanglesUpdateRequest.Addings.Add(newTag);
+							//await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.addTag", new object[] { _componentId, newTag });
+						}
 					}
+
+					await JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.updateRectangles", new object[] { _componentId, rectanglesUpdateRequest });
+
+					_rectangles = newRectangleCollection;
+				}
+				catch (Exception e)
+				{
+					Logger.LogException("Exception occured while trying to update tags on the canvas", e);
+					throw;
+				}
+				finally
+				{
+					_updateTagsClientSemaphore.Release();
 				}
 			}
 			finally
 			{
-				_rectanglesClientUpdateIsRunning = false;
 				_rectanglesUpdated.Set();
 			}
 		}
@@ -439,6 +451,89 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			JSRuntime.InvokeVoidAsync("Orions.TaggingSurface.dispose", new object[] { _componentId });
 
 			base.Dispose(disposing);
+		}
+	}
+
+	public class RenderQueueHelper<T>
+	{
+		private List<(Func<T, Task>, T args)> _queue = new List<(Func<T, Task>, T args)>();
+		private object _operationsLock = new object();
+		private bool _queueIsRunning = false;
+		public Action WaitStartCallback { get; set; }
+		public Action WaitCompleteCallback { get; set; }
+		public int WaitCallbackDelay { get; set; } = 100;
+
+		public void SetRenderWaitCallback(Action start, Action complete, int delay)
+		{
+			WaitStartCallback = start;
+			WaitCompleteCallback = complete;
+			WaitCallbackDelay = 200;
+		}
+
+		public void Enqueue(Func<T, Task> action, T args)
+		{
+			lock (_operationsLock)
+			{
+				if (_queue.Count == 0)
+				{
+					_queue.Add((action, args));
+					RunQueue();
+				}
+				else if (_queue.Count == 1)
+				{
+					_queue.Add((action, args));
+				}
+				else
+				{
+					_queue.RemoveAt(1);
+					_queue.Add((action, args));
+				}
+			}
+		}
+
+		private async Task RunQueue()
+		{
+			_queueIsRunning = true;
+			RunWaitStartCallback();
+			while (true)
+			{
+				(Func<T, Task>, T) item;
+				lock (_operationsLock)
+				{
+					var nextExists = _queue.Any();
+					if (!nextExists)
+					{
+						break;
+					}
+					else
+					{
+						item = _queue.First();
+					}
+				}
+
+				await item.Item1.Invoke(item.Item2);
+
+				lock (_operationsLock)
+				{
+					_queue.RemoveAt(0);
+				}
+			}
+			RunWaitCompleteCallback();
+			_queueIsRunning = false;
+		}
+
+		private void RunWaitCompleteCallback()
+		{
+			WaitCompleteCallback?.Invoke();
+		}
+
+		private async Task RunWaitStartCallback()
+		{
+			await Task.Delay(WaitCallbackDelay);
+			if (_queueIsRunning)
+			{
+				WaitStartCallback?.Invoke();
+			}
 		}
 	}
 

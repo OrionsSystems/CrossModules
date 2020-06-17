@@ -1,0 +1,14 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits BaseOrionsComponent
+
+	<div class="solution-explorer-container">
+
+		@if (SelectedItem != null)
+		{
+			@*<SharedCardsExplorerControl DataContext="@SelectedItem"></SharedCardsExplorerControl>*@
+
+			<ViewModelControlSelectorControl DataContext="@SelectedItem"></ViewModelControlSelectorControl>
+		}
+	</div>
+

@@ -1,0 +1,28 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits BaseBlazorComponent
+
+<div class="shared-card-container">
+
+	@if (CreateItemsSource != null && CreateItemsSource.Any())
+	{
+		<div class="menu-items-container">
+			@foreach (var item in CreateItemsSource)
+			{
+				<CardHostControl DataContext="@item"></CardHostControl>
+			}
+		</div>
+	}
+
+	@if (ItemsSource != null && ItemsSource.Any())
+	{
+		<div class="menu-items-container">
+			@foreach (var src in ItemsSource)
+			{
+				<CardHostControl DataContext="@src"></CardHostControl>
+			}
+		</div>
+	}
+
+</div>
+

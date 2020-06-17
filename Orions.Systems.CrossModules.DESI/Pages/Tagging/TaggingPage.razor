@@ -34,11 +34,11 @@
 					</div>
 					<div class="tabs-control">
 						<TabSet>
-							<Tab Active="true" Title="Tags">
+							<Tab Active="true" Title="Tags" @ref="TagsTab">
 								<TagsPreviewControl EditTagCommand="this.Vm.EditTagCommand"
 													RemoveTagCommand="this.Vm.RemoveTagCommand" />
 							</Tab>
-							<Tab Title="Tracking">
+							<Tab Title="Tracking" @ref="TrackingTab">
 								<TrackingDataWizard/>
 							</Tab>
 							<Tab Title="Segmentation">Segmentation content</Tab>

@@ -23,6 +23,7 @@ using Orions.Node.Common;
 using Microsoft.AspNetCore.Components.Web;
 using Orions.Systems.Desi.Common.Tracking;
 using Orions.Systems.CrossModules.Desi.Components.TaggingSurface.Model;
+using System.Threading;
 
 namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 {
@@ -235,10 +236,10 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			{
 				if (_mediaInstance != null)
 				{
-					_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
-						.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
-						.Select(i => i.Source.CurrentPositionFrameImage)
-						.Subscribe(UpdateCurrentPositionFrameImage));
+					//_subscriptions.Add(_mediaInstance.GetPropertyChangedObservable()
+					//	.Where(i => i.EventArgs.PropertyName == nameof(MediaInstance.CurrentPositionFrameImage))
+					//	.Select(i => i.Source.CurrentPositionFrameImage)
+					//	.Subscribe(UpdateCurrentPositionFrameImage));
 				}
 				OnMediaInstanceChanged();
 			});
@@ -349,10 +350,20 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			await OnPositionUpdate(newPosition.TotalSeconds);
 
-			if (!Paused)
+			await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { CurrentPosition.TotalSeconds });
+		}
+
+		protected async Task OnMediaPositionChanged()
+		{
+			if (Paused)
 			{
-				await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { newPosition.TotalSeconds });
-			}
+				await _playerReady.WaitAsync();
+
+				CurrentFrameIndex = _taskPlaybackInfo.GetFrameIndexByHyperId(MediaInstance.CurrentPosition);
+				CurrentPosition = _taskPlaybackInfo.GetPositionByFrameIndex(CurrentFrameIndex);
+
+				await JSRuntime.InvokeVoidAsync("Orions.Player.setPosition", new object[] { CurrentPosition.TotalSeconds });
+			}	
 		}
 
 		public async Task Play()
@@ -437,6 +448,9 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				.Where(i => i.EventArgs.PropertyName == nameof(TagsExploitationData.CurrentTaskTags))
 				.Subscribe(_ => UpdateState()));
 
+			_subscriptions.Add(MediaDataStore.PositionUpdated
+				.Subscribe(_ => OnMediaPositionChanged()));
+
 			_subscriptions.Add(TaskDataStore.CurrentTaskExpandedChanged.Subscribe(_ => UpdateState()));
 			_subscriptions.Add(MediaDataStore.FrameImageChanged.Subscribe(_ => UpdateState()));
 			_subscriptions.Add(
@@ -460,28 +474,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		}
 		#endregion // Component lifecycle hook overrides
 
-		private Dictionary<int, Task> _frameLoadingTasks = new Dictionary<int, Task>();
-		private async Task UpdateFrameImageByCurrentPosition()
-		{
-			var hyperId = _taskPlaybackInfo.GetPositionHyperId(CurrentFrameIndex);
-
-			if (hyperId.SliceId == null)
-				return;
-
-			ActionDispatcher?.Dispatch(UpdatePositionAction.Create(this.MediaInstance, CurrentPosition));
-			
-			var frameLoadTask = CacheService.GetCachedFrameAsync(_store, hyperId, null);
-			_frameLoadingTasks[CurrentFrameIndex] = frameLoadTask;
-
-			if (!frameLoadTask.IsCompleted)
-			{
-				UpdateState();
-				await frameLoadTask;
-			}
-
-			UpdateState();
-		}
-
 		private async Task GoToFrame(int index)
 		{
 			CurrentFrameIndex = index;
@@ -493,8 +485,6 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 			UpdateState();
 		}
-
-		private void UpdateCurrentPositionFrameImage(byte[] imageData) => PausedFrameBase64 = imageData != null ? UniImage.ConvertByteArrayToBase64Url(imageData) : null;
 
 		private bool _playerInitialized = false;
 		private async Task UpdateCurrentTaskData()
@@ -558,11 +548,11 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			if(up)
 			{
-				await GoToNextFrame();
+				GoToPreviousFrame();
 			}
 			else
 			{
-				await GoToPreviousFrame();
+				GoToNextFrame();
 			}
 
 			UpdateState();

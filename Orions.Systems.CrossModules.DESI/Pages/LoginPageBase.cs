@@ -16,6 +16,19 @@ namespace Orions.Systems.CrossModules.Desi.Pages
 		[Inject]
 		public IAuthenticationSystem AuthenticationSystem { get; set; }
 
+		[Inject]
+		public AuthenticationViewModel AuthenticationViewModel 
+		{
+			get
+			{
+				return Vm;
+			}
+			set
+			{
+				Vm = value;
+			}
+		}
+
 		[JSInvokable]
 		public void Login()
 		{
