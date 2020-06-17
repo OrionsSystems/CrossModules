@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 using Orions.Systems.CrossModules.Components.Desi.Services;
+using System.Reactive.Subjects;
+using System.Reactive.Linq;
 
 namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 {
@@ -17,6 +19,10 @@ namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 
 		[Inject]
 		public ILoggerService Logger { get; set; }
+
+		public BaseComponent()
+		{
+		}
 
 		#region Lifecycle methods overrides
 		protected sealed override void OnAfterRender(bool firstRender)
@@ -60,6 +66,14 @@ namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 		{
 			try
 			{
+				_updateStateSubject
+					.Sample(TimeSpan.FromMilliseconds(50))
+					.Subscribe(_ =>
+					{
+						this.InvokeAsync(() => StateHasChanged());
+					});
+				
+
 				this.OnInitializedSafe();
 				base.OnInitialized();
 			}
@@ -169,11 +183,14 @@ namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 			return true;
 		}
 
+		private Subject<object> _updateStateSubject = new Subject<object>();
 		public void UpdateState()
 		{
 			if (!IsDisposed)
 			{
-				InvokeAsync(StateHasChanged);
+				_updateStateSubject.OnNext(null);
+
+				//this.InvokeAsync(() => this.StateHasChanged());
 			}
 		}
 
@@ -193,6 +210,7 @@ namespace Orions.Systems.CrossModules.Components.Desi.Infrastructure
 				// TODO: set large fields to null.
 
 				CleanupDataStoreSubscriptions();
+				_updateStateSubject.Dispose();
 
 				IsDisposed = true;
 			}

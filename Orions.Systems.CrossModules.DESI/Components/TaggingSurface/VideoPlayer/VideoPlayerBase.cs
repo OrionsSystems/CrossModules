@@ -380,7 +380,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				}
 
 				_playerPlayRequest = JSRuntime.InvokeVoidAsyncWithPromise("Orions.Player.setPositionAndPlay", CurrentPosition.TotalSeconds);
-				await _playerPlayRequest;
+				await WaitPlayerApi();
 				_playerState = PlayerJsState.Playing;
 			}
 			catch(Exception e)

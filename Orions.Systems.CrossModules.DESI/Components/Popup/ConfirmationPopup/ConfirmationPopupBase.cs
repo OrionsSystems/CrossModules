@@ -31,7 +31,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 			this.OnlyOkMode = false;
 			_tcs = new TaskCompletionSource<bool>();
 
-			this.InvokeAsync(() => StateHasChanged());
+			UpdateState();
 			var result = await _tcs.Task;
 
 			return result;
@@ -43,7 +43,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.ConfirmationPopup
 			this.OnlyOkMode = true;
 			_tcs = new TaskCompletionSource<bool>();
 
-			this.InvokeAsync(() => StateHasChanged());
+			UpdateState();
 			var result = await _tcs.Task;
 
 			return result;
