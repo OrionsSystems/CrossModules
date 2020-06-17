@@ -1,7 +1,6 @@
 ﻿using Orions.Common;
 using Orions.SDK;
 using Orions.Systems.CrossModules.Components;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
@@ -10,18 +9,14 @@ using Orions.Systems.Desi.Common.Util;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	[ViewModel(typeof(LevelModuleVm), true)]
-	public class SharedCardsExplorerControlBase : BaseBlazorComponent, ICardControl
+	public class SharedCardsExplorerControlBase : BaseBlazorComponent
 	{
-		[Parameter]
-		public IModuleVm SelectedItem { get; set; }
-
 		protected LevelModuleVm Context
 		{
 			get
 			{
-				if (SelectedItem == null) return null;
-				return SelectedItem as LevelModuleVm;
+				if (DataContext == null) return null;
+				return DataContext as LevelModuleVm;
 			}
 		}
 
@@ -76,9 +71,9 @@ namespace Orions.Systems.CrossModules.Portal.Components
 		{
 			//var comboVal = args.Value;
 
-			if (SelectedItem == null) return;
+			if (DataContext == null) return;
 
-			var levelModule = SelectedItem as LevelModuleVm;
+			var levelModule = DataContext as LevelModuleVm;
 
 			if (levelModule != null)
 			{
@@ -94,17 +89,18 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 				StateHasChanged();
 			}
-
 		}
 
-		private void IsLoaded()
+		protected override void OnDataContextAssigned(object dataContext)
 		{
-			foreach (var value in Enum.GetValues(typeof(LevelModuleVm.TimeRanges)))
-			{
-				//this.radComboBoxTimeRange.Items.Add(value);
-			}
+			base.OnDataContextAssigned(dataContext);
 
-			//this.radComboBoxTimeRange.SelectedItem = LevelModuleVm.TimeRanges.All;
+			// TODO
+		}
+
+		protected override void OnStateHasChanged()
+		{
+			base.OnStateHasChanged();
 		}
 
 		private void ChangeCollapseAllButtonVisibility()
@@ -112,114 +108,56 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			//TODO
 		}
 
-		//private void OnDataContextChanged(LevelModuleVm oldLvm, LevelModuleVm lvm)
-		//{
-		//	var oldLvm = e.OldValue as LevelModuleVm;
-		//	if (oldLvm != null)
-		//	{
-		//		//if (oldLvm.SolutionVmProp.Value != null)
-		//		//	oldLvm.SolutionVmProp.Value.RefreshCommand.Executed -= RefreshCommand_Executed;
+		private void OnDataContextChanged(object newDataContext)
+		{
+			var oldLvm = DataContext as LevelModuleVm;
+			if (oldLvm != null)
+			{
+				//if (oldLvm.SolutionVmProp.Value != null)
+				//	oldLvm.SolutionVmProp.Value.RefreshCommand.Executed -= RefreshCommand_Executed;
 
-		//		oldLvm.LevelIndexProp.ValueChanged -= LevelIndexProp_ValueChanged;
+				oldLvm.LevelIndexProp.ValueChanged -= LevelIndexProp_ValueChanged;
 
-		//		oldLvm.NotifyLevelGenerated -= Lvm_NotifyLevelGenerated;
-		//	}
+				oldLvm.NotifyLevelGenerated -= Lvm_NotifyLevelGenerated;
+			}
 
-		//	var lvm = e.NewValue as LevelModuleVm;
-		//	if (lvm != null)
-		//	{
-		//		//if (lvm.SolutionVmProp.Value != null)
-		//		//	lvm.SolutionVmProp.Value.RefreshCommand.Executed += RefreshCommand_Executed;
+			var lvm = newDataContext as LevelModuleVm;
+			if (lvm != null)
+			{
+				//if (lvm.SolutionVmProp.Value != null)
+				//	lvm.SolutionVmProp.Value.RefreshCommand.Executed += RefreshCommand_Executed;
 
-		//		lvm.LevelIndexProp.ValueChanged += LevelIndexProp_ValueChanged;
+				lvm.LevelIndexProp.ValueChanged += LevelIndexProp_ValueChanged;
 
-		//		lvm.NotifyLevelGenerated += Lvm_NotifyLevelGenerated;
-		//	}
+				lvm.NotifyLevelGenerated += Lvm_NotifyLevelGenerated;
+			}
 
-		//	LevelIndexProp_ValueChanged(null, 0);
-		//}
+			LevelIndexProp_ValueChanged(null, 0);
+		}
 
-		//private void LevelIndexProp_ValueChanged(INotifyProperty<int> prop, int newValue)
-		//{
-		//	var d = this.DataContext as LevelModuleVm;
-		//	var entity = d.EntityAs<ModuleEntity>();
+		private void Lvm_NotifyLevelGenerated()
+		{
+			ChangeCollapseAllButtonVisibility();
+		}
 
-		//	collapseAllButton.IsChecked = entity.GetLevelViewCollapsed(d.CurrentLevelProp.Value?.OwnerVm?.ToString() ?? "");
+		private void LevelIndexProp_ValueChanged(INotifyProperty<int> prop, int newValue)
+		{
+			var d = DataContext as LevelModuleVm;
+			var entity = d.EntityAs<ModuleEntity>();
 
-		//	// Reset search when switching levels.
-		//	this.textBoxSearch.Text = string.Empty;
-		//}
+			var isChecked = entity.GetLevelViewCollapsed(d.CurrentLevelProp.Value?.OwnerVm?.ToString() ?? "");
+			//collapseAllButton.IsChecked = isChecked;
 
-		//private void textBoxSearch_GotFocus(object sender, RoutedEventArgs e)
-		//{
-		//	textBlockSearch.Visibility = Visibility.Collapsed;
-		//}
-
-		//private void TextBoxSearch_LostFocus(object sender, RoutedEventArgs e)
-		//{
-		//	if (this.textBoxSearch.Text.Trim().Length == 0)
-		//		textBlockSearch.Visibility = Visibility.Visible;
-		//}
+			// Reset search when switching levels.
+			//this.textBoxSearch.Text = string.Empty;
+		}
 
 		protected void textBoxSearch_KeyDown(KeyboardEventArgs e)
 		{
 			if (e.Key == Key.Enter.ToString())
 			{
-				//Force an update and try to release focus.
-					
-					//TODO !?
-					//textBoxSearch.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-					//textBlockSearch.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-				}
-
-			//{
-			//	var itemsVm = textBoxSearch.DataContext as IItemsModuleVm;
-			//	itemsVm.SearchProp.Value = textBoxSearch.Text;
-			//}
+				
 			}
-
-			//private void UserControl_Drop(object sender, DragEventArgs e)
-			//{
-			//	var module = this.DataContext as IDropModule;
-			//	module?.OnDrop(e.Data);
-			//}
-
-			//private void UpdateCollapseButton()
-			//{
-			//	var d = this.DataContext as LevelModuleVm;
-			//	var entity = d.EntityAs<ModuleEntity>();
-			//	entity.SetLevelViewCollapsed(d.CurrentLevelProp.Value?.OwnerVm?.ToString() ?? "", collapseAllButton.IsChecked == true);
-
-			//	var entryVms = sharedCardsControl.ItemsSource.OfType<NavigationEntryVm>().ToList();
-
-			//	foreach (var entry in entryVms)
-			//	{
-			//		if (entry.GroupName != null)
-			//		{
-			//			entry.IsVisible.Value = !collapseAllButton.IsChecked.Value;
-			//		}
-			//	}
-			//}
-
-			//private void CollapseAllButton_Checked(object sender, RoutedEventArgs e)
-			//{
-			//	UpdateCollapseButton();
-			//}
-
-			//private void CollapseAllButton_Unchecked(object sender, RoutedEventArgs e)
-			//{
-			//	UpdateCollapseButton();
-			//}
-
-			//private void radComboBoxTimeRange_SelectionChanged(object sender, SelectionChangedEventArgs e)
-			//{
-			//	if (this.ViewModel<LevelModuleVm>() != null && this.radComboBoxTimeRange.SelectedItem != null)
-			//	{
-			//		var value = (LevelModuleVm.TimeRanges)this.radComboBoxTimeRange.SelectedItem;
-			//		this.ViewModel<LevelModuleVm>().TimeRangeProp.Value = value;
-
-			//		var t = this.ViewModel<LevelModuleVm>().RefreshCurrentLevelAsync();
-			//	}
-			//}
 		}
+	}
 }

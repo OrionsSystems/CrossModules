@@ -9,7 +9,7 @@
 		<div class="menu-items-container">
 			@foreach (var item in CreateItemsSource)
 			{
-				<CardHostControl Source="@item"></CardHostControl>
+				<CardHostControl DataContext="@item"></CardHostControl>
 			}
 		</div>
 	}
@@ -19,7 +19,7 @@
 		<div class="menu-items-container">
 			@foreach (var src in ItemsSource)
 			{
-				<CardHostControl Source="@src"></CardHostControl>
+				<CardHostControl DataContext="@src"></CardHostControl>
 			}
 		</div>
 	}

@@ -2,10 +2,13 @@
 
 @inherits SolutionExplorerControlBase
 
-<div class="solution-explorer-container">
+	<div class="solution-explorer-container">
 
-	@if (SelectedItem != null) { 
-		<SharedCardsExplorerControl SelectedItem="@SelectedItem"></SharedCardsExplorerControl>
-	}
-</div>
+		@if (SelectedItem != null)
+		{
+			@*<SharedCardsExplorerControl DataContext="@SelectedItem"></SharedCardsExplorerControl>*@
+
+			<ViewModelControlSelectorControl DataContext="@SelectedItem"></ViewModelControlSelectorControl>
+		}
+	</div>
 

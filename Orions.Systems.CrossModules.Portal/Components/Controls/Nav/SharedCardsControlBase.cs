@@ -10,16 +10,13 @@ using Orions.Systems.CrossModules.Components;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	public class SharedCardsControlBase : BaseOrionsComponent, ICardControl
+	public class SharedCardsControlBase : BaseBlazorComponent
 	{
 		[Parameter]
 		public IEnumerable<NavigationEntryVm> CreateItemsSource { get; set; }
 
 		[Parameter]
 		public IEnumerable<NavigationEntryVm> ItemsSource { get; set; }
-
-		[Parameter]
-		public IModuleVm SelectedItem { get; set; }
 
 		protected override async Task OnInitializedAsync()
 		{
