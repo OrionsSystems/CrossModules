@@ -9,13 +9,12 @@ using System.Threading.Tasks;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
-	[ViewModel(typeof(CardControlVm), false)]
-	public class CardControlBase : BaseOrionsComponent
+	[ViewModel(typeof(CardControlVm), true)]
+	public partial class CardControl : BaseBlazorComponent
 	{
-		[CascadingParameter]
-		protected NavigationEntryVm Source { get; set; }
+		protected CardControlVm CardVm { get { return (CardControlVm) DataContext; }  }
 
-		public CardControlVm CardControl { get; set; } 
+		protected NavigationEntryVm Source { get { return CardVm?.EntryVmProp.Value; } }
 
 		public bool IsCompactMode
 		{
@@ -29,9 +28,9 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 		protected void OnClickCardControl()
 		{
-			var ctr = new CardControlVm(Source);
-
-			ctr.StartItem(null);
+			if (CardVm != null) {
+				CardVm.StartItem(null);
+			}
 
 			StateHasChanged();
 		}

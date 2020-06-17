@@ -1,5 +1,5 @@
 ﻿
-$leftSideBarWidth: 380px;
+$leftSideBarWidth: 350px;
 
 @mixin shared-card-control-common {
 	padding: 2px 3px;
@@ -85,16 +85,15 @@ $leftSideBarWidth: 380px;
 			flex-grow: 1;
 
 			.side-item-lbl {
+				font-weight: 700;
 				text-align: center;
-				font-size: 17px;
-				font-weight: 400;
-				min-height: 17px;
+				font-size: 14px;
+				min-height: 14px;
 			}
 
 			.side-item-desc {
 				text-align: center;
 				font-size: 12px;
-				font-style: italic;
 				letter-spacing: 0.5px;
 				min-height: 12px;
 			}
@@ -102,7 +101,9 @@ $leftSideBarWidth: 380px;
 
 		.side-item-action {
 			display: flex;
+			justify-content: flex-end;
 			margin: auto 0;
+			min-width: 50px;
 
 			.cmd-properties {
 				opacity: 0.2;
@@ -113,7 +114,7 @@ $leftSideBarWidth: 380px;
 
 			.cmd-tab {
 				padding: 5px 10px;
-				border-left: 1px solid black;
+				border-left: 1px solid #e7e7e2;
 				background-color: #f6f6f6;
 				transition: 0.5s;
 
@@ -165,8 +166,9 @@ $leftSideBarWidth: 380px;
 	}
 
 	.brd-default {
-		border: 1px solid #808080;
+		border: 1px solid #e7e7e2;
 		border-radius: 5px;
+		background-color: white;
 
 		&:hover {
 			background-color: #d1d1d1;

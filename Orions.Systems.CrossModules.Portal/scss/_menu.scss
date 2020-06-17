@@ -136,6 +136,10 @@ body.highcontrast {
 
 /* LEFT MAT MENU */
 
+.mdc-list-item {
+	border-left: 4px solid rgba(0, 0, 0, 0.00) !important;
+}
+
 .mdc-list-item--selected {
 	border-left: 4px solid #057ece !important;
 	background-color: none !important;

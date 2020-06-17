@@ -1,6 +1,11 @@
-﻿@namespace Orions.Systems.CrossModules.Portal.Components
+﻿@using Orions.Common
+@using Orions.SDK
 
-@inherits CardControlBase
+@namespace Orions.Systems.CrossModules.Portal.Components
+
+@attribute [ViewModel(typeof(CardControlVm), true)]
+
+@inherits BaseBlazorComponent
 
 <div class="side-item">
 
@@ -13,8 +18,8 @@
 		else
 		{
 			<div class="side-item-main" @onclick="@OnClickCardControl">
-				<div class="side-item-lbl">@Source.TitleProp?.Value</div>
-				<div class="side-item-desc">@Source.DescriptionProp?.Value</div>
+				<div class="side-item-lbl">@Source.TitleProp.Value</div>
+				<div class="side-item-desc">@Source.DescriptionProp.Value</div>
 			</div>
 
 

@@ -1,67 +1,72 @@
-﻿@namespace Orions.Systems.CrossModules.Portal.Components
-
-@inherits SharedCardsExplorerControlBase
-
+﻿@using Orions.Common
+@using Orions.SDK
 @using Syncfusion.EJ2.Blazor.DropDowns
 
-	<div class="shared-card-explorer-control-container">
+@namespace Orions.Systems.CrossModules.Portal.Components
 
-		<div class="row shared-card-control-row">
-			<div class="col-sm-1 shared-card-control-refresh" title="Refresh">
-				<a class="cmd" @onclick="@RefreshLevelCommand">
-					<MatIcon Icon="@MatIconNames.Refresh"></MatIcon>
-				</a>
-			</div>
+@attribute [ViewModel(typeof(LevelModuleVm), true)]
 
-			<div class="col-sm-5 shared-card-control-time-range">
-				<EjsComboBox TValue="int?"
-								 ModelType="typeof(TimeRangeItem)"
-								 @bind-Value="@SelectedComboBoxTimeRangeIndex"
-								 Placeholder="Select a time range"
-								 DataSource="ComboBoxTimeRangeItems"
-								 ShowClearButton="true">
-					<ComboBoxFieldSettings Text="Name" Value="Value"></ComboBoxFieldSettings>
-					<ComboBoxEvents TValue="string" ValueChange="ComboBoxTimeRange_SelectionChanged"></ComboBoxEvents>
-				</EjsComboBox>
-			</div>
+@inherits BaseBlazorComponent
 
-			<div class="col-sm-5 shared-card-control-search">
-				<div class="input-group">
-					<input type="text" class="form-control" placeholder="Search" @onkeydown="textBoxSearch_KeyDown">
-					@*<div class="input-group-append">
+
+<div class="shared-card-explorer-control-container">
+
+	<div class="row shared-card-control-row">
+		<div class="col-sm-1 shared-card-control-refresh" title="Refresh">
+			<a class="cmd" @onclick="@RefreshLevelCommand">
+				<MatIcon Icon="@MatIconNames.Refresh"></MatIcon>
+			</a>
+		</div>
+
+		<div class="col-sm-5 shared-card-control-time-range">
+			<EjsComboBox TValue="int?"
+							 ModelType="typeof(TimeRangeItem)"
+							 @bind-Value="@SelectedComboBoxTimeRangeIndex"
+							 Placeholder="Select a time range"
+							 DataSource="ComboBoxTimeRangeItems"
+							 ShowClearButton="true">
+				<ComboBoxFieldSettings Text="Name" Value="Value"></ComboBoxFieldSettings>
+				<ComboBoxEvents TValue="string" ValueChange="ComboBoxTimeRange_SelectionChanged"></ComboBoxEvents>
+			</EjsComboBox>
+		</div>
+
+		<div class="col-sm-5 shared-card-control-search">
+			<div class="input-group">
+				<input type="text" class="form-control" placeholder="Search" @onkeydown="textBoxSearch_KeyDown">
+				@*<div class="input-group-append">
 						<button class="btn btn-outline-secondary" type="button">
 							<MatIcon Icon="@MatIconNames.Search"></MatIcon>
 						</button>
 					</div>*@
-				</div>
 			</div>
-
-			<div class="col-sm-1 shared-card-control-toggle" title="Expand/Collapse All">
-				<a @onclick="OnToggleButton">
-					@if (IsToggleChecked)
-					{
-						<MatIcon Icon="@MatIconNames.Toggle_on"></MatIcon>
-					}
-					else
-					{
-						<MatIcon Icon="@MatIconNames.Toggle_off"></MatIcon>
-					}
-				</a>
-			</div>
-
 		</div>
 
-		@if (Context.IsPopulatingProp.Value)
-		{
-			<Loader></Loader>
-		}
-		else
-		{
-			<SharedCardsControl SelectedItem="@SelectedItem"
-									  CreateItemsSource="@Context?.CurrentLevelProp?.Value?.CreateItems"
-									  ItemsSource="@Context?.CurrentLevelProp?.Value?.FilteredItems"></SharedCardsControl>
-
-		}
+		<div class="col-sm-1 shared-card-control-toggle" title="Expand/Collapse All">
+			<a @onclick="OnToggleButton">
+				@if (IsToggleChecked)
+				{
+					<MatIcon Icon="@MatIconNames.Toggle_on"></MatIcon>
+				}
+				else
+				{
+					<MatIcon Icon="@MatIconNames.Toggle_off"></MatIcon>
+				}
+			</a>
+		</div>
 
 	</div>
+
+	@if (Context.IsPopulatingProp.Value)
+	{
+		<Loader></Loader>
+	}
+	else
+	{
+		<SharedCardsControl DataContext="@DataContext"
+								  CreateItemsSource="@Context?.CurrentLevelProp?.Value?.CreateItems"
+								  ItemsSource="@Context?.CurrentLevelProp?.Value?.FilteredItems"></SharedCardsControl>
+
+	}
+
+</div>
 
