@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System.Collections.Concurrent;
 using Microsoft.JSInterop;
 using Orions.Infrastructure.HyperSemantic;
 using Orions.Node.Common;
@@ -91,7 +92,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 			}
 		}
 
-		private RenderQueueHelper<List<Rectangle>> _tagsClientUpdateQueue = new RenderQueueHelper<List<Rectangle>>();
+		private RenderQueueHelper<List<Rectangle>> _tagsClientUpdateQueue = new RenderQueueHelper<List<Rectangle>>() { Id = "Tags" };
 
 		[Parameter]
 		public RenderFragment ChildContent { get; set; }
@@ -133,7 +134,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		[JSInvokable]
 		public async Task TagPositionOrSizeChanged(Rectangle rectangle) => OnTagPositionOrSizeChanged(rectangle);
 
-		private RenderQueueHelper<byte[]> _renderQueueHelper = new RenderQueueHelper<byte[]>();
+		private RenderQueueHelper<byte[]> _renderQueueHelper = new RenderQueueHelper<byte[]>() { Id = "Frames"};
 		private async Task OnCurrentPositionFrameImageChanged()
 		{
 			await _initializationTaskTcs.Task;
@@ -460,12 +461,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 
 	public class RenderQueueHelper<T>
 	{
-		private List<(Func<T, Task>, T args)> _queue = new List<(Func<T, Task>, T args)>();
+		private ConcurrentQueue<(Func<T, Task>, T args)> _queue = new ConcurrentQueue<(Func<T, Task>, T args)>();
 		private object _operationsLock = new object();
 		private bool _queueIsRunning = false;
 		public Action WaitStartCallback { get; set; }
 		public Action WaitCompleteCallback { get; set; }
 		public int WaitCallbackDelay { get; set; } = 100;
+
+		public string Id { get; set; }
 
 		public void SetRenderWaitCallback(Action start, Action complete, int delay)
 		{
@@ -478,52 +481,58 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 		{
 			lock (_operationsLock)
 			{
-				if (_queue.Count == 0)
+				if (_queue.IsEmpty)
 				{
-					_queue.Add((action, args));
+					_queue.Enqueue((action, args));
 					RunQueue();
 				}
 				else if (_queue.Count == 1)
 				{
-					_queue.Add((action, args));
+					_queue.Enqueue((action, args));
 				}
 				else
 				{
-					_queue.RemoveAt(1);
-					_queue.Add((action, args));
+					_queue.TryDequeue(out _);
+					_queue.Enqueue((action, args));
 				}
 			}
 		}
 
 		private async Task RunQueue()
 		{
-			_queueIsRunning = true;
-			RunWaitStartCallback();
-			while (true)
+			try
 			{
-				(Func<T, Task>, T) item;
-				lock (_operationsLock)
+				_queueIsRunning = true;
+				RunWaitStartCallback();
+				while (true)
 				{
-					var nextExists = _queue.Any();
-					if (!nextExists)
+					try
 					{
-						break;
+						(Func<T, Task>, T) item;
+						lock (_operationsLock)
+						{
+							if (!_queue.TryPeek(out item))
+							{
+								break;
+							}
+						}
+
+						await item.Item1.Invoke(item.Item2);
 					}
-					else
+					catch
 					{
-						item = _queue.First();
+					}
+					finally
+					{
+						_queue.TryDequeue(out _);
 					}
 				}
-
-				await item.Item1.Invoke(item.Item2);
-
-				lock (_operationsLock)
-				{
-					_queue.RemoveAt(0);
-				}
+				RunWaitCompleteCallback();
 			}
-			RunWaitCompleteCallback();
-			_queueIsRunning = false;
+			finally
+			{
+				_queueIsRunning = false;
+			}
 		}
 
 		private void RunWaitCompleteCallback()

@@ -18,7 +18,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup
 		{
 			this.IsDisplayed = true;
 			_tcs = new TaskCompletionSource<bool>();
-			OnStateHasChanged();
+			UpdateState();
 
 			using (_timer = new Timer(1000))
 			{
@@ -27,7 +27,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup
 				_timer.Elapsed += (s, e) =>
 				{
 					SecondsToTimeOutLeft -= 1;
-					OnStateHasChanged();
+					UpdateState();
 
 					if (SecondsToTimeOutLeft == 0)
 					{
@@ -47,19 +47,14 @@ namespace Orions.Systems.CrossModules.Desi.Components.SessionIsOverPopup
 			this.IsDisplayed = false;
 			_tcs.SetResult(true);
 
-			OnStateHasChanged();
+			UpdateState();
 		}
 
 		public void OnSaveAndExit()
 		{
 			this.IsDisplayed = false;
 			_tcs.SetResult(false);
-			OnStateHasChanged();
-		}
-
-		private void OnStateHasChanged()
-		{
-			this.InvokeAsync(() => this.StateHasChanged());
+			UpdateState();
 		}
 	}
 }
