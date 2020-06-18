@@ -464,6 +464,19 @@ img.nav-img-src {
   100% {
     transform: rotate(360deg); } }
 
+.colapse-container {
+  position: relative; }
+  .colapse-container .cmd {
+    cursor: pointer; }
+  .colapse-container .cmd-colapse {
+    padding: 2px 5px;
+    transition: 0.5s;
+    border-left: 1px solid #e7e7e2;
+    display: flex; }
+    .colapse-container .cmd-colapse:hover {
+      background-color: #bbbce3;
+      transition: 0.5s; }
+
 /* Property page*/
 #selected-property {
   margin-top: 20px;

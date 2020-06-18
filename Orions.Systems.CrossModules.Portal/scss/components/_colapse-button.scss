@@ -1,0 +1,20 @@
+﻿
+.colapse-container {
+	position: relative;
+
+	.cmd {
+		cursor: pointer;
+	}
+
+	.cmd-colapse {
+		padding: 2px 5px;
+		transition: 0.5s;
+		border-left: 1px solid #e7e7e2;
+		display: flex;
+
+		&:hover {
+			background-color: #bbbce3;
+			transition: 0.5s;
+		}
+	}
+}

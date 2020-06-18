@@ -1,0 +1,41 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits BaseBlazorComponent
+
+@if (Visibility)
+{
+	<div class="colapse-container">
+		<a class="cmd cmd-colapse" @onclick="OnToggle" title="@ToolTip">
+			@if (IsChecked)
+			{
+				<MatIcon Icon="@MatIconNames.Keyboard_arrow_up"></MatIcon>
+			}
+			else
+			{
+				<MatIcon Icon="@MatIconNames.Keyboard_arrow_down"></MatIcon>
+			}
+		</a>
+	</div>
+}
+
+@code{
+
+	[Parameter]
+	public bool Visibility { get; set; } = true;
+
+	[Parameter]
+	public string ToolTip { get; set; }
+
+	[Parameter]
+	public bool IsChecked { get; set; }
+
+	public EventCallback<bool> OnChange { get; set; }
+
+	private async Task OnToggle()
+	{
+		IsChecked = !IsChecked;
+
+		await OnChange.InvokeAsync(IsChecked);
+	}
+
+}
