@@ -5,18 +5,8 @@
 @using Orions.Systems.CrossModules.Components.Desi.Services;
 @using Orions.Systems.Desi.Common.Util;
 
-@{
-	var sub = KeyboardListener?.CreateSubscription();
-	_tagonomyNodesShortcutSub = sub;
-
-	var stringKey = KeyCodeHelper.GetStringKey(TagonomyNodeModel.KeyCode + 1);
-	var keys = KeyCodeHelper.MapKeyCodeToKeys(stringKey);
-	keys.Foreach(k => sub.AddShortcut(k, () => { SelectTagonomyNode(); }));
-	var tagonomyButtonId = GetTagonomyNodeButtonId();
-}
-
-<button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode()" id="@tagonomyButtonId">
-	<div class="key node">@stringKey</div>
+<button class="viz-btn nodes" @onclick="_ => SelectTagonomyNode()" id="@TagonomyButtonId">
+	<div class="key node">@StringKey</div>
 	@if (TagonomyNodeModel.IconData.IsNotNullOrEmpty())
 	{
 		<img src="@TagonomyNodeModel.IconData.GetImgSource()" />
@@ -33,53 +23,68 @@
 </button>
 
 @code {
-	[Inject]
-	public IKeyboardListener KeyboardListener { get; set; }
+    private IDisposable _tagonomyNodesShortcutSub;
 
-	[Inject]
-	public IPopupService PopupService { get; set; }
+    [Inject]
+    public IKeyboardListener KeyboardListener { get; set; }
 
-	[Parameter]
-	public TagonomyNodeModel TagonomyNodeModel { get; set; }
+    [Inject]
+    public IPopupService PopupService { get; set; }
 
-	[Parameter]
-	public EventCallback OnNodeSelected { get; set; }
+    [Parameter]
+    public TagonomyNodeModel TagonomyNodeModel { get; set; }
 
-	private IDisposable _tagonomyNodesShortcutSub;
+    [Parameter]
+    public EventCallback OnNodeSelected { get; set; }
 
-	protected async Task SelectTagonomyNode()
-	{
-		await this.OnNodeSelected.InvokeAsync(null);
-		UpdateState();
-	}
+    private string StringKey { get; set; }
+    private string TagonomyButtonId { get; set; }
 
-	protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
-	{
-		await base.OnAfterRenderAsyncSafe(firstRender);
+    protected async Task SelectTagonomyNode()
+    {
+        await this.OnNodeSelected.InvokeAsync(null);
+        UpdateState();
+    }
 
-		if (firstRender)
-		{
-			if(TagonomyNodeModel.GuiNodeElement != null)
-			{
-				PopupService.RegisterTagonomyNodePopper(TagonomyNodeModel, GetTagonomyNodeButtonId());
-			}
-		}
-	}
+    protected override void OnParametersSetSafe()
+    {
+        base.OnParametersSetSafe();
 
-	protected string GetTagonomyNodeButtonId()
-	{
-		return $"node-id-{TagonomyNodeModel.Id}";
-	}
+        _tagonomyNodesShortcutSub?.Dispose();
+        var sub = KeyboardListener.CreateSubscription();
+        _tagonomyNodesShortcutSub = sub;
+        StringKey = KeyCodeHelper.GetStringKey(TagonomyNodeModel.KeyCode + 1);
+        KeyCodeHelper.MapKeyCodeToKeys(StringKey).Foreach(k => sub.AddShortcut(k, () => SelectTagonomyNode()));
+        TagonomyButtonId = GetTagonomyNodeButtonId();
+    }
 
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing)
-		{
-			_tagonomyNodesShortcutSub?.Dispose();
+    protected override async Task OnAfterRenderAsyncSafe(bool firstRender)
+    {
+        await base.OnAfterRenderAsyncSafe(firstRender);
 
-			PopupService.UnregisterTagonomyNodePopper(TagonomyNodeModel, GetTagonomyNodeButtonId());
-		}
+        if (firstRender)
+        {
+            if(TagonomyNodeModel.GuiNodeElement != null)
+            {
+                PopupService.RegisterTagonomyNodePopper(TagonomyNodeModel, TagonomyButtonId);
+            }
+        }
+    }
 
-		base.Dispose(disposing);
-	}
+    protected string GetTagonomyNodeButtonId()
+    {
+        return $"node-id-{TagonomyNodeModel.Id}";
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing)
+        {
+            _tagonomyNodesShortcutSub?.Dispose();
+
+            PopupService.UnregisterTagonomyNodePopper(TagonomyNodeModel, GetTagonomyNodeButtonId());
+        }
+
+        base.Dispose(disposing);
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using Blazored.LocalStorage;
 using Microsoft.Extensions.Configuration;
 using Orions.Systems.Desi.Common.Authentication;
+using Orions.Systems.Desi.Common.Enums;
 using Orions.Systems.Desi.Common.Services;
 using System;
 using System.Collections.Generic;
@@ -34,6 +35,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 		public HyperNodeAuthenticationInfo HyperNodeAuthenticationData { get => _hyperNodeAuthenticationData; set => _hyperNodeAuthenticationData = value; }
 
 		public HyperDomainAuthenticationInfo HyperDomainAuthenticationData { get => _hyperDomainAuthenticationInfo; set => _hyperDomainAuthenticationInfo = value; }
+		public double VideoVolume { get => _appSettingsDto.VideoVolume; set => _appSettingsDto.VideoVolume = value; }
+		public double PlaybackRate { get => _appSettingsDto.PlaybackRate; set => _appSettingsDto.PlaybackRate = value; }
 
 		public void AddCustomNode(HyperNodeAuthenticationInfo authenticationData)
 		{
@@ -130,6 +133,8 @@ namespace Orions.Systems.CrossModules.Desi.Infrastructure
 			public bool IsStaySigned { get; set; }
 			public bool IsDevModeEnabled { get; set; }
 			public bool TaggingDisplayCrosshair { get; set; }
+			public double VideoVolume { get; set; } = 0;
+			public double PlaybackRate { get; set; } = 1;
 			public IList<HyperNodeAuthenticationDataDto> CustomNodes { get; } = new List<HyperNodeAuthenticationDataDto>();
 			public HyperNodeAuthenticationDataDto HyperNodeAuthenticationData { get; set; }
 			public HyperDomainAuthenticationDataDto HyperDomainAuthenticationData { get; set; }
