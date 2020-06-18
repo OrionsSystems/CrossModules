@@ -17,7 +17,7 @@
 					<Button OnClick="OnSetTrackingSequenceStartClick" Enabled="@StartSequenceButtonsEnabled">
 						<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
 					</Button>
-					<Button OnClick="OnClearTrackingSequenceStartClicked" Enabled="@StartSequenceButtonsEnabled">
+					<Button OnClick="OnClearTrackingSequenceStartClicked" Enabled="@(TrackingDataStore.Data.TrackingSequenceStart != null)">
 						<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
 					</Button>
 				</div>
@@ -33,7 +33,7 @@
 					<Button OnClick="OnSetTrackingSequenceEndClick" Enabled="@StartSequenceButtonsEnabled">
 						<img class="image-button accept-button" src="images/baseline_check_white_18dp.png" />
 					</Button>
-					<Button OnClick="() => { }" Enabled="@StartSequenceButtonsEnabled">
+					<Button OnClick="OnClearTrackingSequenceEndClicked" Enabled="@(TrackingDataStore.Data.TrackingSequenceEnd != null)">
 						<img class="image-button clear-button" src="images/baseline_close_white_18dp.png" />
 					</Button>
 				</div>
