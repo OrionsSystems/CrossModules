@@ -32,7 +32,7 @@
 
 		<div class="col-sm-5 shared-card-control-search">
 			<div class="input-group">
-				<input type="text" class="form-control" placeholder="Search" @onkeydown="textBoxSearch_KeyDown">
+				<input type="text" class="form-control" @bind-value="@Context.SearchProp.Value" placeholder="Search" @onkeydown="textBoxSearch_KeyDown">
 				@*<div class="input-group-append">
 						<button class="btn btn-outline-secondary" type="button">
 							<MatIcon Icon="@MatIconNames.Search"></MatIcon>
@@ -63,8 +63,8 @@
 	else
 	{
 		<SharedCardsControl DataContext="@DataContext"
-								  CreateItemsSource="@Context?.CurrentLevelProp?.Value?.CreateItems"
-								  ItemsSource="@Context?.CurrentLevelProp?.Value?.FilteredItems"></SharedCardsControl>
+								  CreateItemsSource="@Context.CurrentLevelProp.Value.CreateItems"
+								  ItemsSource="@Context.CurrentLevelProp.Value.FilteredItems"></SharedCardsControl>
 
 	}
 
