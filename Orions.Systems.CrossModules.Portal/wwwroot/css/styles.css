@@ -272,29 +272,34 @@ img.nav-img-src {
   letter-spacing: 0.5px;
   font-weight: 500; }
 
-.shared-card-explorer-control-container .shared-card-control-row {
-  margin: 0;
-  padding: 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search {
-    padding: 2px 3px;
-    margin: auto 0; }
-    .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search .form-control {
-      height: 30px; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
-    background-color: orange; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {
-    background-color: green; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .crd-tab-creator {
-    background-color: red; }
+.solution-explorer-container {
+  height: 100%; }
+  .solution-explorer-container .shared-card-explorer-control-container {
+    height: 100%; }
+    .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row {
+      margin: 0;
+      padding: 0;
+      height: 40px; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search {
+        padding: 2px 3px;
+        margin: auto 0; }
+        .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search .form-control {
+          height: 30px; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
+        background-color: orange; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {
+        background-color: green; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .crd-tab-creator {
+        background-color: red; }
 
 /* SIDEBAR  */
 .sidebar-content.e-content-animation {
@@ -309,8 +314,8 @@ img.nav-img-src {
 
 .left-sidebar {
   position: absolute;
-  /*   width: calc(320px - 62px);*/
-  width: 100%; }
+  width: 100%;
+  height: 100%; }
 
 .menu-items-container {
   display: flex;
@@ -324,8 +329,12 @@ img.nav-img-src {
   .side-item .side-item-container {
     display: flex;
     padding: 3px; }
+    .side-item .side-item-container .side-status-bar {
+      width: 5px;
+      min-height: 14px; }
     .side-item .side-item-container .side-item-main {
-      flex-grow: 1; }
+      flex-grow: 1;
+      padding-left: 7px; }
       .side-item .side-item-container .side-item-main .side-item-lbl {
         font-weight: 700;
         text-align: center;
@@ -341,11 +350,16 @@ img.nav-img-src {
       justify-content: flex-end;
       margin: auto 0;
       min-width: 50px; }
+      .side-item .side-item-container .side-item-action .cmd {
+        cursor: pointer; }
       .side-item .side-item-container .side-item-action .cmd-properties {
         opacity: 0.2;
         transition: 0.5s;
-        padding: 0 2px;
+        padding: 4px 2px;
         display: flex; }
+        .side-item .side-item-container .side-item-action .cmd-properties:hover {
+          background-color: #A092BE;
+          transition: 0.5s; }
       .side-item .side-item-container .side-item-action .cmd-tab {
         padding: 5px 10px;
         border-left: 1px solid #e7e7e2;
@@ -374,9 +388,27 @@ img.nav-img-src {
           background-color: #A092BE !important;
           color: white !important;
           transition: 0.5s; }
+      .side-item .side-item-container .side-item-action .cmd-expand {
+        padding: 5px 10px;
+        border-left: 1px solid #e7e7e2;
+        transition: 0.5s;
+        margin-left: 4px;
+        transition: 0.5s; }
+        .side-item .side-item-container .side-item-action .cmd-expand:hover {
+          background-color: #A092BE;
+          border: none;
+          transition: 0.5s; }
+      .side-item .side-item-container .side-item-action .cmd-favourite {
+        opacity: 0.2;
+        transition: 0.5s;
+        padding: 4px 2px;
+        display: flex; }
+        .side-item .side-item-container .side-item-action .cmd-favourite:hover {
+          background-color: #A092BE;
+          transition: 0.5s; }
     .side-item .side-item-container:hover {
       cursor: pointer; }
-      .side-item .side-item-container:hover .cmd-properties {
+      .side-item .side-item-container:hover .cmd-properties, .side-item .side-item-container:hover .cmd-favourite {
         opacity: 1;
         transition: 0.5s; }
   .side-item .brd-default {
@@ -389,6 +421,37 @@ img.nav-img-src {
     background-color: #C0DE14; }
     .side-item .brd-creator:hover {
       background-color: #d1d1d1; }
+
+.spin-loader-container {
+  position: relative;
+  height: calc(100% - 40px);
+  /* Safari */ }
+  .spin-loader-container .spin-loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3e769b;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; }
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg); } }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
 
 /* Property page*/
 #selected-property {

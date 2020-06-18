@@ -1,48 +1,57 @@
 ﻿
 $leftSideBarWidth: 350px;
 
+
+
 @mixin shared-card-control-common {
 	padding: 2px 3px;
 	margin: auto 0;
 }
 
-.shared-card-explorer-control-container {
+.solution-explorer-container {
+	height: 100%;
 
-	.shared-card-control-row {
-		margin: 0;
-		padding: 0;
+	.shared-card-explorer-control-container {
+		height: 100%;
 
-		.shared-card-control-refresh {
-			@include shared-card-control-common;
-		}
 
-		.shared-card-control-time-range {
-			@include shared-card-control-common;
-		}
+		.shared-card-control-row {
+			margin: 0;
+			padding: 0;
+			height: 40px;
 
-		.shared-card-control-search {
-			@include shared-card-control-common;
-
-			.form-control {
-				height: 30px;
-			}
-		}
-
-		.shared-card-control-toggle {
-			@include shared-card-control-common;
-		}
-
-		.shared-card-container {
-			.brd-creator {
-				background-color: orange;
+			.shared-card-control-refresh {
+				@include shared-card-control-common;
 			}
 
-			.brd-item-creator {
-				background-color: green;
+			.shared-card-control-time-range {
+				@include shared-card-control-common;
 			}
 
-			.crd-tab-creator {
-				background-color: red;
+			.shared-card-control-search {
+				@include shared-card-control-common;
+
+				.form-control {
+					height: 30px;
+				}
+			}
+
+			.shared-card-control-toggle {
+				@include shared-card-control-common;
+			}
+
+			.shared-card-container {
+				.brd-creator {
+					background-color: orange;
+				}
+
+				.brd-item-creator {
+					background-color: green;
+				}
+
+				.crd-tab-creator {
+					background-color: red;
+				}
 			}
 		}
 	}
@@ -65,8 +74,8 @@ $leftSideBarWidth: 350px;
 
 .left-sidebar {
 	position: absolute;
-	/*   width: calc(320px - 62px);*/
 	width: 100%;
+	height: 100%;
 }
 
 
@@ -85,8 +94,14 @@ $leftSideBarWidth: 350px;
 		display: flex;
 		padding: 3px;
 
+		.side-status-bar {
+			width: 5px;
+			min-height: 14px;
+		}
+
 		.side-item-main {
 			flex-grow: 1;
+			padding-left: 7px;
 
 			.side-item-lbl {
 				font-weight: 700;
@@ -109,11 +124,20 @@ $leftSideBarWidth: 350px;
 			margin: auto 0;
 			min-width: 50px;
 
+			.cmd {
+				cursor: pointer;
+			}
+
 			.cmd-properties {
 				opacity: 0.2;
 				transition: 0.5s;
-				padding: 0 2px;
+				padding: 4px 2px;
 				display: flex;
+
+				&:hover {
+					background-color: #A092BE;
+					transition: 0.5s;
+				}
 			}
 
 			.cmd-tab {
@@ -157,12 +181,41 @@ $leftSideBarWidth: 350px;
 					transition: 0.5s;
 				}
 			}
+
+			.cmd-expand {
+				padding: 5px 10px;
+				border-left: 1px solid #e7e7e2;
+				transition: 0.5s;
+				margin-left: 4px;
+				transition: 0.5s;
+
+				&:hover {
+					background-color: #A092BE;
+					border: none;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-favourite {
+				opacity: 0.2;
+				transition: 0.5s;
+				padding: 4px 2px;
+				display: flex;
+
+				&:hover {
+					background-color: #A092BE;
+					transition: 0.5s;
+				}
+			}
+
+			.cmd-help {
+			}
 		}
 
 		&:hover {
 			cursor: pointer;
 
-			.cmd-properties {
+			.cmd-properties, .cmd-favourite {
 				opacity: 1;
 				transition: 0.5s;
 			}
