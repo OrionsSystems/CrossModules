@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
-
+﻿
 using Orions.Common;
 using Orions.SDK;
 using Orions.Systems.CrossModules.Components;
@@ -12,9 +11,33 @@ namespace Orions.Systems.CrossModules.Portal.Components
 	[ViewModel(typeof(CardControlVm), true)]
 	public partial class CardControl : BaseBlazorComponent
 	{
-		protected CardControlVm CardVm { get { return (CardControlVm) DataContext; }  }
+		protected CardControlVm CardVm { get { return (CardControlVm)DataContext; } }
 
 		protected NavigationEntryVm Source { get { return CardVm?.EntryVmProp.Value; } }
+
+		public bool IsCreatorMode { get; private set; }
+
+		protected override async Task OnInitializedAsync()
+		{
+			await base.OnInitializedAsync();
+		}
+
+		protected override void OnDataContextAssigned(object dataContext)
+		{
+			base.OnDataContextAssigned(dataContext);
+
+			OnDataContextChanged();
+		}
+
+		private void OnDataContextChanged()
+		{
+
+			UpdateCreatorMode(CardVm.EntryVmProp.Value.HasMoreProp.Value);
+
+			//TODO create context menu
+
+			StateHasChanged();
+		}
 
 		public bool IsCompactMode
 		{
@@ -28,23 +51,47 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 		protected void OnClickCardControl()
 		{
-			if (CardVm != null) {
+			if (CardVm != null)
+			{
 				CardVm.StartItem(null);
 			}
 
 			StateHasChanged();
 		}
 
-		protected override async Task OnInitializedAsync()
-		{
-			await base.OnInitializedAsync();
-		}
-
 		protected void OnPropertyClick()
 		{
 			var cmd = Source.EventHandler.ItemPropertiesCommand;
 			cmd.Execute(Source);
-			StateHasChanged();
+		}
+
+		protected void OnActiveClick()
+		{
+			Source.ActiveProp.Value = !Source.ActiveProp.Value;
+		}
+
+		protected void OnLucnhTabClick()
+		{
+			var cmd = Source.EventHandler.ItemLaunchTabCommand;
+			cmd.Execute(Source);
+		}
+
+		protected void OnExpandClick()
+		{
+			var cmd = Source.EventHandler.ItemLaunchExpandCommand;
+			cmd.Execute(Source);
+		}
+
+		protected void OnFavouriteClick()
+		{
+			var cmd = Source.EventHandler.ItemFavouritesCommand;
+			cmd.Execute(Source);
+		}
+
+		protected void OnHelpClick()
+		{
+			var cmd = Source.EventHandler.ItemHelpCommand;
+			cmd.Execute(Source);
 		}
 
 		protected string GetCustomStatusBackgroudColor()
@@ -56,6 +103,18 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			}
 
 			return string.Empty;
+		}
+
+		private void UpdateCreatorMode(bool hasNewPropValue = false)
+		{
+			var isCreator = CardVm?.EntryVmProp.Value is CreatorEntryVm;
+			if (hasNewPropValue || isCreator)
+			{
+				IsCreatorMode = true;
+				return;
+			}
+
+			IsCreatorMode = false;
 		}
 
 		protected string GetBorderClass()

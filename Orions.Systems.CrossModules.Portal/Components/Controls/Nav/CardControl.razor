@@ -9,7 +9,7 @@
 
 <div class="side-item">
 
-	<div class="side-item-container @GetBorderClass() @(IsCompactMode ?"side-compact":"side-full")" style="@GetCustomStatusBackgroudColor()">
+	<div class="side-item-container @GetBorderClass() @(IsCompactMode ?"side-compact":"side-full")">
 
 		@if (IsCompactMode)
 		{
@@ -17,18 +17,21 @@
 		}
 		else
 		{
-			<div class="side-item-main" @onclick="@OnClickCardControl">
-				<div class="side-item-lbl">@Source.TitleProp.Value</div>
-				<div class="side-item-desc">@Source.DescriptionProp.Value</div>
-			</div>
+			var stMode = "text-align:" + (IsCreatorMode?"center":"left");
 
+			<div class="side-status-bar" style="@($"{GetCustomStatusBackgroudColor()}")"></div>
+
+			<div class="side-item-main" @onclick="@OnClickCardControl">
+				<div class="side-item-lbl" style="@stMode">@Source.TitleProp.Value</div>
+				<div class="side-item-desc" style="@stMode">@Source.DescriptionProp.Value</div>
+			</div>
 
 			<div class="side-item-action">
 
 				<!-- Help button -->
 				@if (Source?.HelpVisibleProp.Value ?? false)
 				{
-					<a class="cmd">
+					<a class="cmd cmd-help" @onclick="OnHelpClick">
 						<MatIcon Icon="@MatIconNames.Help"></MatIcon>
 					</a>
 				}
@@ -44,15 +47,15 @@
 				<!-- Favourites button, wrapped in a border so we can use ShowPropertiesProp AND autoHideStyle-->
 				@if (Source?.ShowFavouritesProp.Value ?? false)
 				{
-					<a class="cmd">
-						<MatIcon Icon="@MatIconNames.Favorite"></MatIcon>
+					<a class="cmd cmd-favourite" @onclick="@OnFavouriteClick">
+						<MatIcon Icon="@MatIconNames.Star_rate"></MatIcon>
 					</a>
 				}
 
 				<!-- Active button -->
 				@if (Source?.ShowActiveProp.Value ?? false)
 				{
-					<a class="cmd cmd-active @(Source?.ActiveProp.Value ?? false ? "ca-plus" : "ca-minus")">
+					<a class="cmd cmd-active @(Source?.ActiveProp.Value ?? false ? "ca-plus" : "ca-minus")" @onclick="@OnActiveClick">
 						<div class="active-lbl">Active</div>
 					</a>
 				}
@@ -60,7 +63,7 @@
 				<!--Tab button-->
 				@if (Source?.ShowTabProp.Value ?? false)
 				{
-					<a class="cmd cmd-tab">
+					<a class="cmd cmd-tab" @onclick="@OnLucnhTabClick">
 						<div class="tab-lbl">Tab</div>
 					</a>
 				}
@@ -68,7 +71,7 @@
 				<!--... button-->
 				@if (Source?.ShowExpandProp.Value ?? false)
 				{
-					<a class="cmd">
+					<a class="cmd cmd-expand" @onclick="OnExpandClick">
 						<div class="expand-lbl">...</div>
 					</a>
 				}

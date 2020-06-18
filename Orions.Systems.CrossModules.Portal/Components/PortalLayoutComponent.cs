@@ -47,6 +47,8 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 			Solution.EntityProp.Value = new SolutionEntity();
 
+			Solution.EntityProp.Value.EmbeddedNodeActive = false;
+
 			Solution.OnStateChanged += ReloadState;
 
 			CurrentTheme = await GetTheme();
