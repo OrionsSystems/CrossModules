@@ -3,12 +3,15 @@
 @page "/tagonomy-designer/{TagonomyId}"
 
 @inherits PortalBaseComponent
+@implements IDisposable
 
 @layout Layout
 
 <TagonomyDesigner HyperStore="@HyperStore" TagonomyId="@TagonomyId"></TagonomyDesigner>
 
 @code{
+
+	public bool ShowExtraCss { get; set; }
 
 	[Parameter]
 	public string TagonomyId { get; set; }
@@ -17,53 +20,67 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		ShowExtraCss = true;
+	}
+
+	public void Dispose()
+	{
+		ShowExtraCss = false;
 	}
 
 }
 
-<style>
+@if (ShowExtraCss)
+{
 
-	app, #sidebar-section, .e-sidebar-context {
-		height: 100%;
-	}
+	<style>
 
-	.header {
-		display: none;
-	}
+		app, #sidebar-section, .e-sidebar-context {
+			height: 100%;
+		}
 
-	.mainmenu-hidden .body {
-		margin-left: 70px !important;
-	}
+		.header {
+			display: none;
+		}
 
-	.e-sidebar.e-left.e-close.e-dock {
-		background-color: #1b1a1d !important;
-	}
+		.mainmenu-hidden .body {
+			margin-left: 70px !important;
+		}
 
-	.mainmenu-hidden .body-designer {
-		left: 0 !important;
-	}
+		.e-sidebar.e-left.e-close.e-dock {
+			background-color: #1b1a1d !important;
+		}
 
-	.body-designer {
-		left: 70px;
-	}
+		.mainmenu-hidden .body-designer {
+			left: 0 !important;
+		}
 
-	.e-sidebar-context {
-		overflow: hidden !important;
-	}
+		.body-designer {
+			left: 70px;
+		}
 
-	.ui-designer-grid svg {
-		background-image: url(images/flowDesigner/themedark.png);
-	}
+		.e-sidebar-context {
+			overflow: hidden !important;
+		}
 
-	.components-container {
-		position: absolute;
-		height: 100%;
-	}
+		.ui-designer-grid svg {
+			background-image: url(images/flowDesigner/themedark.png);
+		}
 
-	.mdc-list-item--selected, .mdc-list-item--activated {
-		color: #ffffff !important;
-	}
-</style>
+		.components-container {
+			position: absolute;
+			height: 100%;
+		}
+
+		.mdc-list-item--selected, .mdc-list-item--activated {
+			color: #ffffff !important;
+		}
+	</style>
+
+}
+
+
 
 
 
