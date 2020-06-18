@@ -280,10 +280,7 @@ namespace Orions.Systems.CrossModules.Desi.Components.TaggingSurface
 				{
 					var position = GetCurrentPosition();
 					var tagRectangles = new List<Rectangle>(tags.Where(t => t.TagHyperId.Equals(position)).Select(ConvertToRectangle));
-					var trackingRectangles = new List<Rectangle>(
-						tags.Where(t => t.IsSelected && (t.TrackingSequence?.Elements?.Any(e => e.HyperId.Equals(position)) ?? false)).SelectMany(t => t.TrackingSequence.Elements.Where(e => e.HyperId.Equals(position))).Select(ConvertToTrackingSequenceRectangle));
-
-
+					var trackingRectangles = new List<Rectangle>();
 					var currentTrackingSequenceElement = TrackingDataStore?.Data?.CurrentTrackingSequenceElement;
 					if (currentTrackingSequenceElement != null)
 					{
