@@ -282,7 +282,17 @@ img.nav-img-src {
       height: 40px; }
       .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
         padding: 2px 3px;
-        margin: auto 0; }
+        margin: auto 0;
+        cursor: pointer;
+        display: flex; }
+        .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh .cmd-refresh {
+          padding: 6px 0 0 0;
+          transition: 0.5s;
+          border: 1px solid rgba(255, 255, 255, 0); }
+          .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh .cmd-refresh:hover {
+            background-color: rgba(15, 39, 217, 0.09);
+            border: 1px solid grey;
+            transition: 0.5s; }
       .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
         padding: 2px 3px;
         margin: auto 0; }
@@ -293,7 +303,8 @@ img.nav-img-src {
           height: 30px; }
       .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
         padding: 2px 3px;
-        margin: auto 0; }
+        margin: auto 0;
+        cursor: pointer; }
       .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
         background-color: orange; }
       .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {

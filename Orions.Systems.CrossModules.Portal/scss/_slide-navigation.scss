@@ -2,7 +2,6 @@
 $leftSideBarWidth: 350px;
 
 
-
 @mixin shared-card-control-common {
 	padding: 2px 3px;
 	margin: auto 0;
@@ -22,6 +21,21 @@ $leftSideBarWidth: 350px;
 
 			.shared-card-control-refresh {
 				@include shared-card-control-common;
+
+				cursor: pointer;
+				display: flex;
+
+				.cmd-refresh {
+					padding: 6px 0 0 0;
+					transition: 0.5s;
+					border: 1px solid rgba(255, 255, 255, 0.00);
+
+					&:hover {
+						background-color: rgba(15, 39, 217, 0.09);
+						border: 1px solid grey;
+						transition: 0.5s;
+					}
+				}
 			}
 
 			.shared-card-control-time-range {
@@ -38,6 +52,7 @@ $leftSideBarWidth: 350px;
 
 			.shared-card-control-toggle {
 				@include shared-card-control-common;
+				cursor: pointer;
 			}
 
 			.shared-card-container {
