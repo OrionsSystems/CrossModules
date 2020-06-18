@@ -272,29 +272,34 @@ img.nav-img-src {
   letter-spacing: 0.5px;
   font-weight: 500; }
 
-.shared-card-explorer-control-container .shared-card-control-row {
-  margin: 0;
-  padding: 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search {
-    padding: 2px 3px;
-    margin: auto 0; }
-    .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search .form-control {
-      height: 30px; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
-    padding: 2px 3px;
-    margin: auto 0; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
-    background-color: orange; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {
-    background-color: green; }
-  .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .crd-tab-creator {
-    background-color: red; }
+.solution-explorer-container {
+  height: 100%; }
+  .solution-explorer-container .shared-card-explorer-control-container {
+    height: 100%; }
+    .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row {
+      margin: 0;
+      padding: 0;
+      height: 40px; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-refresh {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-time-range {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search {
+        padding: 2px 3px;
+        margin: auto 0; }
+        .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-search .form-control {
+          height: 30px; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-control-toggle {
+        padding: 2px 3px;
+        margin: auto 0; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-creator {
+        background-color: orange; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .brd-item-creator {
+        background-color: green; }
+      .solution-explorer-container .shared-card-explorer-control-container .shared-card-control-row .shared-card-container .crd-tab-creator {
+        background-color: red; }
 
 /* SIDEBAR  */
 .sidebar-content.e-content-animation {
@@ -309,8 +314,8 @@ img.nav-img-src {
 
 .left-sidebar {
   position: absolute;
-  /*   width: calc(320px - 62px);*/
-  width: 100%; }
+  width: 100%;
+  height: 100%; }
 
 .menu-items-container {
   display: flex;
@@ -416,6 +421,37 @@ img.nav-img-src {
     background-color: #C0DE14; }
     .side-item .brd-creator:hover {
       background-color: #d1d1d1; }
+
+.spin-loader-container {
+  position: relative;
+  height: calc(100% - 40px);
+  /* Safari */ }
+  .spin-loader-container .spin-loader {
+    border: 16px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 16px solid #3e769b;
+    width: 80px;
+    height: 80px;
+    -webkit-animation: spin 2s linear infinite;
+    animation: spin 2s linear infinite;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0; }
+
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg); }
+  100% {
+    -webkit-transform: rotate(360deg); } }
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(360deg); } }
 
 /* Property page*/
 #selected-property {
