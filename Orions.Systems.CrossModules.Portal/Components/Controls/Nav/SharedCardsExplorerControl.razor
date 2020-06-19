@@ -42,16 +42,11 @@
 		</div>
 
 		<div class="col-sm-1 shared-card-control-toggle" title="Expand/Collapse All">
-			<a @onclick="OnToggleButton">
-				@if (IsToggleChecked)
-				{
-					<MatIcon Icon="@MatIconNames.Toggle_on"></MatIcon>
-				}
-				else
-				{
-					<MatIcon Icon="@MatIconNames.Toggle_off"></MatIcon>
-				}
-			</a>
+			<ColapseButton @ref="@collapseAllButton" 
+								ToolTip="Expand/Collapse All" 
+								OnChange="UpdateCollapseButton"
+								Visibility="@ColapseButtonVisibility"
+								IsChecked="@IsToggleChecked"></ColapseButton>
 		</div>
 
 	</div>

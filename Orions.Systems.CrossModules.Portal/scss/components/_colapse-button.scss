@@ -7,10 +7,9 @@
 	}
 
 	.cmd-colapse {
-		padding: 2px 5px;
 		transition: 0.5s;
-		border-left: 1px solid #e7e7e2;
 		display: flex;
+		border-radius: 15px;
 
 		&:hover {
 			background-color: #bbbce3;

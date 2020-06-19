@@ -29,6 +29,7 @@
 	[Parameter]
 	public bool IsChecked { get; set; }
 
+	[Parameter]
 	public EventCallback<bool> OnChange { get; set; }
 
 	private async Task OnToggle()
