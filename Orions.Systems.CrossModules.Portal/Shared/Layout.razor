@@ -6,6 +6,9 @@
 
 <Toast @ref="ToastRef"></Toast>
 
+<OverlayNotification Visibility="@Solution.OverlayNotificationVisibleProp.Value" 
+							Text="@Solution.OverlayNotificationTextProp.Value"></OverlayNotification>
+
 <CascadingValue Value="@ToastRef">
 	<CascadingValue Value="@Solution">
 

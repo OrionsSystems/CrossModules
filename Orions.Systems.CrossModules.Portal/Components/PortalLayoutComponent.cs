@@ -85,7 +85,7 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 		private void ReloadState()
 		{
-			StateHasChanged();
+			InvokeAsync(StateHasChanged).Wait();
 		}
 	}
 }

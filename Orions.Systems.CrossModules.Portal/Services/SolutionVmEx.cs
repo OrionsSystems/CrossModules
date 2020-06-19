@@ -67,8 +67,11 @@ namespace Orions.Systems.CrossModules.Portal.Services
 
 			Task.Delay(_overlayShowMessageInterval).ContinueWith(a =>
 			{
-				if (DateTime.Now - _lastOverlayNotificationShown > TimeSpan.FromSeconds(4))
+				if (DateTime.Now - _lastOverlayNotificationShown > TimeSpan.FromSeconds(4)) {
 					this.OverlayNotificationVisibleProp.Value = false;
+					OnStateChanged?.Invoke();
+				}
+					
 			}).ConfigureAwait(true);
 		}
 
