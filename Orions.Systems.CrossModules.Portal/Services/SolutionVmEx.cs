@@ -39,6 +39,7 @@ namespace Orions.Systems.CrossModules.Portal.Services
 			Logger.Instance.EntryLogged += Instance_EntryLogged;
 
 			DialogService = new DialogService();
+			GraphicsService = new GraphicsService();
 		}
 
 		public override bool CheckAccess()
