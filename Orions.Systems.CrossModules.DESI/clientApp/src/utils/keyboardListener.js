@@ -1,10 +1,28 @@
-﻿window.Orions.KeyboardListener = {
+﻿import { Observable, Subject, of, from, interval } from 'rxjs'
+import { sample, takeUntil, concatMap } from 'rxjs/operators';
+
+window.Orions.KeyboardListener = {
 
     init: function (dotNetHandle) {
+        let repeatKeyEventSubject = new Subject();
+        repeatKeyEventSubject
+            .pipe(
+                sample(interval(200))
+            )
+            .subscribe(event => {
+                event.delayApplied = true
+                keyEventHandler(event)
+		    })
+
         let keyEventHandler = function (event) {
-            if (event.defaultPrevented || event.target.tagName.toLowerCase() === "input" || event.repeat) {
+            if (event.defaultPrevented || event.target.tagName.toLowerCase() === "input" ) {
                 return;
             }
+
+            if (event.repeat && !event.delayApplied) {
+                repeatKeyEventSubject.next(event)
+                return
+			}
 
             let keyCode = event.keyCode;
 

@@ -35,7 +35,7 @@ window.Orions.Player = {
         video.addEventListener('play', function () {
             self.timeupdateTimerIds.push(setInterval(function () {
                 vmInstance.invokeMethodAsync("OnPositionUpdate", self.video.currentTime);
-			}, 50))
+			}, 30))
 		})
 
         shakaPlayer.addEventListener('buffering', function (e) {
