@@ -107,7 +107,8 @@ app {
 
 .sidebar-content {
   padding: 10px;
-  flex-grow: 1; }
+  flex-grow: 1;
+  overflow: hidden; }
 
 .header {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
@@ -469,13 +470,34 @@ img.nav-img-src {
   .colapse-container .cmd {
     cursor: pointer; }
   .colapse-container .cmd-colapse {
-    padding: 2px 5px;
     transition: 0.5s;
-    border-left: 1px solid #e7e7e2;
-    display: flex; }
+    display: flex;
+    border-radius: 15px; }
     .colapse-container .cmd-colapse:hover {
       background-color: #bbbce3;
       transition: 0.5s; }
+
+.overlay-notification-container {
+  position: absolute;
+  /* opacity: 0.4; */
+  top: 10%;
+  left: 10%;
+  bottom: 10%;
+  right: 10%;
+  background-color: rgba(0, 0, 0, 0.58);
+  border: 5px solid rgba(155, 154, 154, 0.5);
+  z-index: 5000;
+  min-height: 200px;
+  min-width: 200px; }
+  .overlay-notification-container .overlay-notificatio-text {
+    text-align: center;
+    color: white;
+    top: 50%;
+    position: relative;
+    -ms-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    font-size: 20px; }
 
 /* Property page*/
 #selected-property {

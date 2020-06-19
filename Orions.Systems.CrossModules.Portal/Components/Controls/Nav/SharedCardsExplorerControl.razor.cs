@@ -6,12 +6,15 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Orions.Systems.Desi.Common.Util;
+using System.Linq;
 
 namespace Orions.Systems.CrossModules.Portal.Components
 {
 	[ViewModel(typeof(LevelModuleVm), true)]
 	public partial class SharedCardsExplorerControl : BaseBlazorComponent
 	{
+		protected ColapseButton collapseAllButton { get; private set; }
+
 		protected LevelModuleVm Context
 		{
 			get
@@ -40,7 +43,9 @@ namespace Orions.Systems.CrossModules.Portal.Components
 
 		protected List<TimeRangeItem> ComboBoxTimeRangeItems { get; private set; } = new List<TimeRangeItem>();
 
-		protected bool IsToggleChecked { get; set; } = true;
+		protected bool IsToggleChecked { get; set; }
+
+		protected bool ColapseButtonVisibility { get; set; } = true;
 
 		protected override async Task OnInitializedAsync()
 		{
@@ -104,9 +109,28 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			base.OnStateHasChanged();
 		}
 
-		private void ChangeCollapseAllButtonVisibility()
+		private void  ChangeCollapseAllButtonVisibility()
 		{
-			//TODO
+			Task.Run(() => {
+
+				var items = new List<NavigationEntryVm>(Context.CurrentLevelProp.Value.FilteredItems);
+
+				bool collapseButtonIsVisible = false;
+				if (items.Count == 0)
+				{
+					collapseButtonIsVisible = false;
+				}
+				else
+				{
+					collapseButtonIsVisible = items.Any(n => n.GroupName != null);
+				}
+
+				ColapseButtonVisibility = collapseButtonIsVisible ? true : false;
+
+				IsToggleChecked = false;
+
+
+			}).Wait();
 		}
 
 		private void OnDataContextChanged(object newDataContext)
@@ -158,6 +182,23 @@ namespace Orions.Systems.CrossModules.Portal.Components
 			if (e.Key == Key.Enter.ToString())
 			{
 				
+			}
+		}
+
+		private void UpdateCollapseButton() 
+		{
+			var d = this.DataContext as LevelModuleVm;
+			var entity = d.EntityAs<ModuleEntity>();
+			entity.SetLevelViewCollapsed(d.CurrentLevelProp.Value?.OwnerVm?.ToString() ?? "", collapseAllButton.IsChecked == true);
+
+			var entryVms = Context.CurrentLevelProp.Value.FilteredItems;
+
+			foreach (var entry in entryVms)
+			{
+				if (entry.GroupName != null)
+				{
+					entry.IsVisible.Value = !IsToggleChecked;
+				}
 			}
 		}
 	}
