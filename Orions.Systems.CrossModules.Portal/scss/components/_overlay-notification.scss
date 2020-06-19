@@ -1,0 +1,27 @@
+﻿
+$overlay-margin: 10%;
+
+.overlay-notification-container {
+	position: absolute;
+	/* opacity: 0.4; */
+	top: $overlay-margin;
+	left: $overlay-margin;
+	bottom: $overlay-margin;
+	right: $overlay-margin;
+	background-color: rgba(0, 0, 0, 0.58);
+	border: 5px solid rgba(155, 154, 154, 0.50);
+	z-index: 5000;
+	min-height: 200px;
+	min-width: 200px;
+
+	.overlay-notificatio-text {
+		text-align: center;
+		color: white;
+		top: 50%;
+		position: relative;
+		-ms-transform: translateY(-50%);
+		-webkit-transform: translateY(-50%);
+		transform: translateY(-50%);
+		font-size: 20px;
+	}
+}

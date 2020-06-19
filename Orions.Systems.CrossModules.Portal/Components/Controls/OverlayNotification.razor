@@ -1,0 +1,20 @@
+﻿@namespace Orions.Systems.CrossModules.Portal.Components
+
+@inherits BaseBlazorComponent
+
+@if (Visibility)
+{
+	<div class="overlay-notification-container">
+		<div class="overlay-notificatio-text">@Text</div>
+	</div>
+}
+
+@code{
+
+	[Parameter]
+	public bool Visibility { get; set; }
+
+	[Parameter]
+	public string Text { get; set; }
+
+}
