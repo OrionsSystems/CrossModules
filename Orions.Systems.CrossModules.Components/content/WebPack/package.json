@@ -25,7 +25,7 @@
 		"@svgdotjs/svg.js": "^3.0.16",
 		"bootstrap-colorpicker": "3.2.0",
 		"jquery": "^3.4.1",
-		"jquery-ui": "^1.12.1",
+		"jquery-ui": "^1.13.0",
 		"shaka-player": "^2.5.12",
 		"svg-pan-zoom": "^3.6.1",
 		"svg.draw.js": "^2.0.4"
